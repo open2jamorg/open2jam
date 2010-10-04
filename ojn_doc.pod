@@ -5,7 +5,7 @@ This post tries to describe the OJN format. This far from complete but we can al
 =head1 OJN FORMAT DOCUMENTATION 0.1
 
 The OJN file is where all the notes are stored, including the meta-data of the music.
-ItE<rsquo>s basically divided in 3 parts: header, notes and cover section.
+It's basically divided in 3 parts: header, notes and cover section.
 
 =head2 Header
 
@@ -13,7 +13,7 @@ The header section is where all the song meta-data and offsets is stored.
 
 Meta-data consists in the song title, levels, genre, etc..
 
-offsets are numbers used to know where to get the actual data.
+Offsets are numbers used to know where the actual data is in the file.
 
 In C struct notation, this is how the header looks like:
 
@@ -49,11 +49,12 @@ of the official songs, but can't say it will be always like that because anyone 
 
 =over
 
-=item B<songid: > the ID of the song, usually the same ID in the name of the file: o2ma[songid].ojn
+=item B<songid: > The ID of the song, usually the same ID in the name of the file: o2ma[songid].ojn
 
-=item B<signature: > probably a magic number to identify the files, the content is C<ojnE<lt>null-byteE<gt>> followed by more 4 characters, usually like this: E<lt>6f 6a 6e 00 9a 99 39 40E<gt>(hex notation)
+=item B<signature: > Probably a magic number to identify the files, the content is C<ojnE<lt>null-byteE<gt>> followed by more 4 characters, 
+usually like this: E<lt>6f 6a 6e 00 9a 99 39 40E<gt>(hex notation)
 
-=item B<genre: > a code number representing the genre of the song as follows in the table:
+=item B<genre: > A code number representing the genre of the song as follows in the table:
 
 0	Ballad
 1	Rock
@@ -67,29 +68,30 @@ of the official songs, but can't say it will be always like that because anyone 
 9	Traditional
 10	Etc
 
-=item B<bpm: >the song bpm. this is probably not related with the song actual bpm, ie. changing this field will not change the song speed.
+=item B<bpm: >The song bpm. this is probably not related with the song actual bpm, ie. changing this field will not change the song speed.
 
-=item B<level: >3 values representing respectively the easy, normal and hard levels of the song.
+=item B<level: > Three values representing respectively the easy, normal and hard levels of the song.
 
-=item B<note_count: >the number of notes in each level(easy, normal,hard).
+=item B<note_count: > The number of notes in each level (easy, normal, hard).
 
-=item B<package_count: >the number of packages in each level section(more about packages in the below Notes section).
+=item B<package_count: > The number of packages in each level section (more about packages in the Notes section).
 
-=item B<bmp_size: > this is the size of the preview image, in bytes.
+=item B<bmp_size: > This is the size of the preview image, in bytes.
 
-=item B<title: >the title of the song.
+=item B<title: > The title of the song, the name which appers in the music selector.
 
-=item B<artist: >the artist of the song.
+=item B<artist: > The artist of the song, the composer.
 
-=item B<noter: >the noter of the song.
+=item B<noter: > The noter of the song, the notecharter.
 
-=item B<ojm_file: >the name of the OJM file with the sounds of this music, usually is the same name of this file but ending in ojm.
+=item B<ojm_file: > The name of the OJM file with the sounds of this music, usually is the same name of this file but with ojm extension.
 
-=item B<cover_size: >this is the size of the cover image, in bytes.
+=item B<cover_size: > This is the size of the cover image, in bytes.
 
-=item B<time: >this is the duration of each level in seconds.
+=item B<time: > This is the duration of each level, in seconds.
 
-=item B<note_offset: >this 4 numbers are respectivly, the offset of the easy, normal, hard and cover section. these section are together, which means the normal offset is the end of the easy and the cover offset is the end of the hard section.
+=item B<note_offset: > These 4 numbers are respectivly, the offset of the easy, normal, hard and cover section. 
+These section are usually together, which means the normal offset is the end of the easy and the cover offset is the end of the hard section.
 
 =back
 
@@ -97,21 +99,22 @@ of the official songs, but can't say it will be always like that because anyone 
 
 =over
 
-=item B<unk_nums: >the par numbers(unk_nums[0], unk_nums[2], unk_nums[4]) are usually zero(even on non-official ones) the others are, 
+=item B<unk_nums: > The par numbers(unk_nums[0], unk_nums[2], unk_nums[4]) are usually zero(even on non-official ones) the others are, 
 either crescent numbers(unk_nums[1] E<lt> unk_nums[3] E<lt> unk_nums[5]) or all equal( in this case the music is the same in all levels), 
 these zeros makes me think they could be intE<rsquo>s but the values are usually to big in intE<rsquo>s to be something meaningful.
 
-=item B<unk_zero: >usually always zero.
+=item B<unk_zero: > Usually always zero.
 
-=item B<unk_time: >these usually are all equal, with notable exceptions when the music have different times, example: Gaussian Blur on hard 
-have 2 extra seconds than easy and normal, and incidentally the unk_time[2] of Gaussian Blur is also different. also these numbers are usually smaller than the time.
+=item B<unk_time: > These usually are all equal, with notable exceptions when the music have different times, 
+example: Gaussian Blur on hard have 2 extra seconds than easy and normal, and incidentally the unk_time[2] of Gaussian Blur is also different.
+Also these numbers are usually smaller than the time variable.
 
-=item B<unk_id: >funny variable, unk_id[0] is usually the number 29, while unk_id[1] is usually the songid.
+=item B<unk_id: > Funny variable, unk_id[0] is usually the number 29, while unk_id[1] is usually the same as the songid variable.
 
-=item B<unk_oldgenre: >another funny one, in official songs I saw things like E<lsquo>sicalE<rsquo> while the genre is 8(Classical), and E<lsquo>noE<rsquo> 
-with genre 3(Techno), they probally used this to store the genre in strings but gave up in the idea later ?
+=item B<unk_oldgenre: > Another funny one, in official songs I saw things like 'sical' while the genre is 8(Classical), and 'no' with genre 3(Techno), 
+they probally used this to store the genre in strings but gave up later ?
 
-=item B<unk_a: > ??.
+=item B<unk_a: > No idea.
 
 =back
 
@@ -122,12 +125,13 @@ with genre 3(Techno), they probally used this to store the genre in strings but 
 =head1 Cover section
 
 After the hard level notes section( note_offset[3] offset ), starts the
-cover image data, in JPEG format and have size cover_size, also they usually have a 8x8 preview image in BMP format right after this one.
+cover image data, in JPEG format and have size in the cover_size variable, 
+also they usually have a 8x8 preview image in BMP format right after this one, with the size in the bmp_size variable.
 
 ----
 
 And that's it for now. As you could see the notes section is lacking, I have some about the note section already but I'm trying to gather 
-more info and then I'll update this. I also now nothing about the OJM format and there's probably some kind of reference between the files 
+more info and then I'll update this. I also know nothing about the OJM format and there's probably some kind of reference between the files 
 so it makes this even harder.
 
 I got some scripts I made to extract info from the files. take a look at open2jam on github (http://github.com/chaosfox/open2jam)
