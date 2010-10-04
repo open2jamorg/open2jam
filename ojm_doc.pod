@@ -6,7 +6,10 @@ OMC -- pure ogg vorbis ?
 
 M30 -- ogg "xor'ed" encrypt, samples are decrpyted by xor'ing 4bytes a time with 'nami' <6E 61 6D 69>
 
-struct header {
+the header is probably 80 bytes, on M30
+the header is probably 20 bytes, on OMC
+
+struct OMC_header {
 
 	char signature[3]; // OJM, M30, OMC ?
 	char a1;
