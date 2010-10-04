@@ -1,0 +1,15 @@
+=head1
+
+struct header {
+
+	char signature[3]; // OJM, M30 ?
+	char a1;
+	short samples;
+	short musics;
+	unsigned int size; // $0014 sizeof header
+	unsigned int music_pos;
+	unsigned int end_pos;
+};
+
+
+=cut
