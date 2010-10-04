@@ -4,11 +4,9 @@ use warnings;
 use Data::Dumper;
 $|++;
 
-my %boo;
 
 pp_header($_) for(@ARGV);
 
-warn Dumper \%boo;
 sub pp_header
 {
 	open DATA, $_[0] or die $!;
@@ -29,11 +27,9 @@ sub pp_header
 	i3:@unk_time
 	i3:@package_count
 	s2:@unk_id
-	a5:$unk_sgenre
-	c14:@unk_zero2
-	c1:$unk_bool
-	a2:$unk_k
-	c6:@unk_zero3
+	a20:$unk_oldgenre
+	i:$bmp_size
+	s2:@unk_a
 	Z64:$title
 	Z32:$artist
 	Z32:$noter
@@ -46,8 +42,6 @@ sub pp_header
 	my @kk = sort keys %$h;
 	my @vv = map{$h->{$_}}@kk;
 	print Data::Dumper->Dump(\@vv,\@kk);
-
-	for(0..1){warn $_[0] if($h->{'unk_zero3'}[$_] != 0) }
 }
 
 

@@ -30,11 +30,9 @@ struct header {
 	int unk_time[3];
 	int package_count[3];
 	short unk_id[2];
-	char unk_oldgenre[5];
-	char unk_zero2[14];
-	char unk_bool[1];
-	char unk_k[2];
-	char unk_zero3[6];
+	char unk_oldgenre[20];
+	int bmp_size;
+	int unk_a;
 	char title[64];
 	char artist[32];
 	char noter[32];
@@ -77,6 +75,8 @@ of the official songs, but can't say it will be always like that because anyone 
 
 =item B<package_count: >the number of packages in each level section(more about packages in the below Notes section).
 
+=item B<bmp_size: > this is the size of the preview image, in bytes.
+
 =item B<title: >the title of the song.
 
 =item B<artist: >the artist of the song.
@@ -111,13 +111,7 @@ have 2 extra seconds than easy and normal, and incidentally the unk_time[2] of G
 =item B<unk_oldgenre: >another funny one, in official songs I saw things like E<lsquo>sicalE<rsquo> while the genre is 8(Classical), and E<lsquo>noE<rsquo> 
 with genre 3(Techno), they probally used this to store the genre in strings but gave up in the idea later ?
 
-=item B<unk_zero2: >usually they are all zero.
-
-=item B<unk_bool: >from the 713 songs(official and non-official) I got, 589 of then have 1 for this value, the rest is zero, probally a boolean.
-
-=item B<unk_k: >from all my songs, 405 of then have '8K', 236 have '6K' (mostly official ones) the rest is apparently junk.
-
-=item B<unk_zero3: >usually all zero.
+=item B<unk_a: > ??.
 
 =back
 
