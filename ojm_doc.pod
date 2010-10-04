@@ -2,9 +2,9 @@
 
 OJM -- raw wav, riff container maybe.
 
-OMC -- ogg vorbis ?
+OMC -- pure ogg vorbis ?
 
-M30 -- ogg "xor'ed" encrypt
+M30 -- ogg "xor'ed" encrypt, samples are decrpyted by xor'ing 4bytes a time with 'nami' <6E 61 6D 69>
 
 struct header {
 
