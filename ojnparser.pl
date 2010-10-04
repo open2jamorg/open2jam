@@ -12,14 +12,14 @@ my $unk_beat = 8*$speed; # note distribution in the beat
 #
 # unk_beat = 8 -- x1 speed !!
 #
-my $beatsize = 12*$unk_beat; # beat spacing size
+my $beatsize = 4*$unk_beat; # beat spacing size
 
 my @lvll = ('[Ex]','[Nx]','[Hx]');
 my $NOTEPAD = 100; # left side padding
 my $notelevel = 2; # 0,1,2 <-> E,N,H
 my $notesize = 10; #7 vertical size of a note
 my $notewidth = 50; #20 horizontal size of a note
-my $csize = 260; # comments space size
+my $csize = 200; # comments space size
 
 
 
@@ -143,8 +143,6 @@ while(!eof DATA && tell DATA < $endpos)
 }
 
 my ($width,$height) = (($notewidth * 7) + 2 * $NOTEPAD, ($maxbeat * $beatsize) + $csize);
-my $bottom = $height + 100;
-
 
 print qq(<?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
@@ -169,7 +167,7 @@ print line($NOTEPAD + (7 * $notewidth), 0, $NOTEPAD + (7 * $notewidth), $height,
 for my $i(0 .. $maxbeat)
 {
 	my $x2 = $NOTEPAD + (7 * $notewidth);
-	my $y  = $bottom - ($beatsize * $i) + $notesize;
+	my $y  = $height - (($beatsize * $i) + $notesize);
 	print line($NOTEPAD, $y, $x2, $y, $color[4]);
 	if ($i % $unk_beat == 0)
 	{
@@ -185,13 +183,16 @@ my %stat = (
     'min'  => $bpm,
     'max'  => $bpm
 );
+
+print comment("start notes");
+
 foreach my $v(@note)
 {
 	my $channel = $v->{'channel'};
 	if($channel eq 'BZM') # bpm changing ??
 	{
 		my $newbpm = $v->{'value'};
-		my $y = $bottom - ($beatsize * $v->{'beat'}) + $notesize;
+		my $y = $height - ($beatsize * $v->{'beat'}) + $notesize;
 		my $text = sprintf "%.2f", $newbpm;
 
 		print string(5, $NOTEPAD - (length($text) * 9)-4, $y - 10, $text, $color[6]);
@@ -206,7 +207,7 @@ foreach my $v(@note)
 		{
 			$stat{'tap'}++;
 			my $x = $NOTEPAD + ($channel * $notewidth);
-			my $y = $bottom - ($beatsize * $v->{'beat'});
+			my $y = $height - ($beatsize * $v->{'beat'});
 			print rect($x, $y, $notewidth - 1, $notesize - 1, $color[$c]);
 			print line($x, $y + $notesize - 1, $x + $notewidth - 1, $y + $notesize - 1, $color[10 + $c]);
 			print line($x, $y, $x + $notewidth - 1, $y, $color[10 + $c]);
@@ -218,8 +219,8 @@ foreach my $v(@note)
 				$lch[$channel] = $v->{'beat'};
 			}else{
 				my $x = $NOTEPAD + (($channel - 10) * $notewidth);
-				my $y = $bottom - ($beatsize * $v->{'beat'});
-				my $z = $bottom - ($beatsize * $lch[$channel]);
+				my $y = $height - ($beatsize * $v->{'beat'});
+				my $z = $height - ($beatsize * $lch[$channel]);
 				delete $lch[$channel];
 				print rect($x,$y,$notewidth-1,($z-$y)+$notesize-1, $color[20 + $c]);
 				print rect($x+1,$y,($notewidth*0.15)-1,($z-$y)+$notesize-1, $color[0]);
@@ -245,17 +246,6 @@ $y += 15;print string(1, 24, $y, " - BPM:        " . sprintf("%.3d",$bpm) . $st,
 
 print "</svg>\n";
 
-# ######################
-# # get the cover
-# seek DATA, $notepos[3], 0; # cover offset
-# my $jpg;
-# read DATA, $jpg, $h->{'jpg'} or die $!;
-# my $jpg_file = $filename;
-# $jpg_file =~ s/\..+$/.jpg/;
-# open JPG, ">$jpg_file";
-# binmode JPG;
-# print JPG $jpg;
-# close JPG;
 
 
 sub rect
@@ -273,6 +263,12 @@ sub string
 	my ($font,$x,$y, $string, $color) = @_;
 	$string =~ s/\0//g;
 	return qq(<text x="$x" y="$y" style="fill:$color;font-size:$font">$string</text>\n);
+}
+
+sub comment
+{
+	my ($str) = @_;
+	return qq(<!-- $str -->\n);
 }
 
 sub unpack2hash
