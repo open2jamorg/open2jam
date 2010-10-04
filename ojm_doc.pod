@@ -1,8 +1,14 @@
 =head1
 
+OJM -- raw wav, riff container maybe.
+
+OMC -- ogg vorbis ?
+
+M30 -- ogg "xor'ed" encrypt
+
 struct header {
 
-	char signature[3]; // OJM, M30 ?
+	char signature[3]; // OJM, M30, OMC ?
 	char a1;
 	short samples;
 	short musics;
