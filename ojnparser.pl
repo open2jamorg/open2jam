@@ -2,6 +2,7 @@
 use strict;
 use warnings;
 use GD;
+use Data::Dumper;
 
 
 my $filename = shift;
@@ -31,11 +32,12 @@ my %map  = (
 8 => 6
 );
 
-open DATA, $filename or die $!;
-binmode DATA;
+my $OJN;
+open $OJN, $filename or die $!;
+binmode $OJN;
 
 my $data;
-read DATA, $data, 300 or die $!;
+read $OJN, $data, 300 or die $!;
 
 my $h = unpack2hash(join(' ',qw/
 l:$songid
@@ -68,14 +70,15 @@ my ($artist,$title,$noter) = ($h->{'artist'},$h->{'title'},$h->{'noter'});
 
 my ($startpos,$endpos) = ($notepos[$notelevel],$notepos[$notelevel + 1]);
 
-seek DATA, $startpos, 0; # go to pos where lvl starts
+seek $OJN, $startpos, 0; # go to pos where lvl starts
 
 my @note;
 my $total_beats = 0;
-while(!eof DATA && tell DATA < $endpos)
+while(!eof $OJN && tell $OJN < $endpos)
 {
-	read DATA, $data, 8;
+	read $OJN, $data, 8;
 	my ($beat,$channel,$events_count) = unpack 'lss', $data;
+	$total_beats = $beat if ($beat > $total_beats);
 
 	if(defined $map{$channel})
 	{
@@ -84,40 +87,30 @@ while(!eof DATA && tell DATA < $endpos)
 			my ($value, $unk, $long_note);
 			if($channel == 1)
 			{
-				read DATA, $data, 4;
+				read $OJN, $data, 4;
 				($value) = unpack 'f', $data;
 			}else{
-				read DATA, $data, 4;
+				read $OJN, $data, 4;
 				($value, $unk, $long_note) = unpack 'sCC', $data;
 			}
 			next if($value == 0);
 
-			my $sub_beat = ($i / $events_count);
-			$total_beats = $beat if ($beat > $total_beats);
-
-			my $mychan;
-			if($channel == 1)
-			{
-				$mychan = 'BPM';
-			}else{
-				$mychan = $map{$channel} + ($long_note & 2 ? 10 : 0); # longnote ? 10 : 0
-			}
-
 			push @note, {
-			'channel' => $mychan,
-			'beat'    => $beat + $sub_beat,
+			'channel' => $map{$channel},
+			'beat'    => $beat + ($i / $events_count),
 			'value'   => $value,
-			'rawchan' => $channel
+			'long'    => $long_note,
 			};
+# 			print STDERR "beat: $beat, ch: $channel, unk: $unk\n";
 		}
 	}else{
-		print STDERR "raw beat: $beat, channel: $channel, events: $events_count\n";
-		seek DATA, 4 * $events_count, 1; ## jumping what ??
+		seek $OJN, 4 * $events_count, 1; ## jumping what ??
 	}
 }
+
 $total_beats = int($total_beats+0.5); # round up
 
-my ($width,$height) = (($note_width * 7) + 2 * $left_pad, ($total_beats * $beat_size) + $csize);
+my ($width,$height) = (($note_width * 7) + 2*$left_pad, ($total_beats * $beat_size) + $csize);
 
 my $im = GD::Image->new($width, $height);
 
@@ -131,27 +124,22 @@ $color[4]  = $im->colorAllocate( 50, 50, 50);  # dark gray
 $color[5]  = $im->colorAllocate(120,120,120);  # gray
 $color[6]  = $im->colorAllocate(255,150,150);  # pink
 $color[7]  = $im->colorAllocate(180,180,180);  # light gray
-$color[11] = $im->colorAllocate(193,193,194);  # light gray
-$color[12] = $im->colorAllocate( 54,170,197);  # light blue
-$color[13] = $im->colorAllocate(203,163, 66);  # light brown
-$color[21] = $im->colorAllocate(248,243,247);  # white
-$color[22] = $im->colorAllocate(130,231,241);  # light cyan
-$color[23] = $im->colorAllocate(255,246,157);  # light yellow
-$color[31] = $im->colorAllocate(198,194,198);  # light gray
-$color[32] = $im->colorAllocate(104,185,193);  # cyan
-$color[33] = $im->colorAllocate(204,197,126);  # light yellow
-
-
+$color[11] = $im->colorAllocate(248,243,247);  # white
+$color[12] = $im->colorAllocate(130,231,241);  # light cyan
+$color[13] = $im->colorAllocate(255,246,157);  # light yellow
+$color[11] = $im->colorAllocate(198,194,198);  # light gray
+$color[12] = $im->colorAllocate(104,185,193);  # cyan
+$color[13] = $im->colorAllocate(204,197,126);  # light yellow
 
 # vertical lines, delimiter the note space
-for my $i(0 .. 7)
+my $x = $left_pad;
+$im->line($x, 0, $x, $height, $color[5]); 
+for my $i(1 .. 6)
 {
-	my $x = $left_pad + ($i * $note_width);
+	$x += $note_width;
 	$im->line($x, 0, $x, $height, $color[4]);
 }
-$im->line($left_pad, 0, $left_pad, $height, $color[5]); 
-$im->line($left_pad + (7 * $note_width), 0, $left_pad + (7 * $note_width), $height, $color[5]);
-
+$im->line($x + $note_width, 0, $x + $note_width, $height, $color[5]);
 
 ## beat and sub_beat marker lines
 for my $beat(0 .. $total_beats)
@@ -183,36 +171,34 @@ foreach my $n(@note)
 	if($channel eq 'BPM')
 	{
 		my $newbpm = $n->{'value'};
+		my $x = $left_pad + (7 * $note_width) + 4;
 		my $y = $height - ($beat_size * $n->{'beat'}) - $note_height;
-		my $text = sprintf "%.2f", $newbpm;
-
-		$im->string(gdSmallFont, $left_pad - (length($text) * 9)-4, $y - 10, $text, $color[6]);
-
+		$im->string(gdSmallFont, $x, $y,sprintf("BPM %.2f -> %.2f", $bpm, $newbpm), $color[6]);
 		$stat{'min'} = $newbpm if ($newbpm < $stat{'min'});
 		$stat{'max'} = $newbpm if ($newbpm > $stat{'max'});
+		$bpm = $newbpm;
 	}else{
-		my $c = 1;
-		$c = 2 if ($channel % 2 == 1);        
-		$c = 3 if (($channel % 10 ) == 3);
-		if ($channel >= 0 && $channel <= 6) # tap note
+		my $c;
+		$c = 1 if($channel % 2 == 0); ## white notes
+		$c = 2 if($channel % 2 != 0); ## blue notes
+		$c = 3 if($channel == 3);     ## yellow note
+
+		if($n->{'long'} == 0) # tap note
 		{
 			$stat{'tap'}++;
 			my $x = $left_pad + ($channel * $note_width);
 			my $y = $height - ($beat_size * $n->{'beat'});
 			$im->filledRectangle($x, $y, $x+$note_width, $y-$note_height, $color[$c]);
-		}elsif($channel >= 10 && $channel <= 16) # long note
+		}elsif($n->{'long'} == 2) # start long note
 		{
 			$stat{'long'}++;
-			if (!defined($lch[$channel]))
-			{
-				$lch[$channel] = $n->{'beat'};
-			}else{
-				my $x = $left_pad + (($channel - 10) * $note_width);
-				my $y = $height - ($beat_size * $n->{'beat'}) - $note_height;
-				my $z = $height - ($beat_size * $lch[$channel]) - $note_height;
-				delete $lch[$channel];
-				$im->filledRectangle($x,$y,$x+$note_width,$z+$note_height, $color[20 + $c]);
-			}
+			$lch[$channel] = $n->{'beat'};
+		}else{ # end long note
+			my $x = $left_pad + (($channel - 10) * $note_width);
+			my $y = $height - ($beat_size * $n->{'beat'}) - $note_height;
+			my $z = $height - ($beat_size * $lch[$channel]) - $note_height;
+			delete $lch[$channel];
+			$im->filledRectangle($x, $y, $x+$note_width, $z+$note_height, $color[10 + $c]);
 		}
 	}
 }
@@ -253,9 +239,4 @@ sub unpack2hash
 	}
 	return $hash;
 }
-
-
-
-
-
 
