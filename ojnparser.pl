@@ -82,17 +82,18 @@ while(!eof DATA && tell DATA < $endpos)
 	{
 		for my $i(0 .. $length-1)
 		{
-			my @value;
+			my ($value, $unk, $long_note);
 			if($channel == 1)
 			{
 				read DATA, $data, 4;
-				$value[0] = unpack 'f', $data;
+				($value) = unpack 'f', $data;
 			}else{
 				read DATA, $data, 4;
-				@value = unpack 'sCC', $data;
+				($value, $unk, $long_note) = unpack 'sCC', $data;
 			}
+			
+			next if($value == 0);
 
-			next if($value[0] == 0);
 
 			my $beat = ($sub_beats * ($measure + ($i / $length)));
 			$total_sub_beats = $beat if ($beat > $total_sub_beats);
@@ -102,20 +103,20 @@ while(!eof DATA && tell DATA < $endpos)
 			{
 				$mychan = 'BZM';
 			}else{
-				$mychan = $map{$channel} + ($value[2] & 2 ? 10 : 0); # longnote ? 10 : 0
+				$mychan = $map{$channel} + ($long_note & 2 ? 10 : 0); # longnote ? 10 : 0
 			}
 
 			push @note, {
 			'channel' => $mychan,
 			'beat'    => $beat,
-			'value'   => $value[0],
+			'value'   => $value,
 			'rawchan' => $channel
 			};
-			printf STDERR "%03.2f -- chan(%02d) ".($beat / $sub_beats)."\n",$beat,$mychan;
+			
 		}
 	}else{
+		print STDERR "raw beat: $measure, channel: $channel, length: $length\n";
 		seek DATA, 4 * $length, 1; ## jumping what ??
-
 	}
 }
 $total_sub_beats = int($total_sub_beats+0.5);

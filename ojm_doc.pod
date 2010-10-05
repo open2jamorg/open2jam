@@ -1,6 +1,6 @@
 =head1
 
-OJM -- raw wav, riff container maybe.
+OJM -- raw wav, riff container maybe. ---- does this signature even exist ?
 
 OMC -- pure ogg vorbis ?
 
