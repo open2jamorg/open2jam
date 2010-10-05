@@ -9,9 +9,9 @@ my $filename = shift;
 
 my @lvll = ('[Ex]','[Nx]','[Hx]');
 
-my $beat_size = 100; # pixels
+my $beat_size = 400; # pixels
 
-my $sub_beats = 16; # sub beat demarcation
+my $sub_beats = 4; # sub beat demarcation
 
 my $left_pad = 100; # left side padding
 my $notelevel = 2; # 0,1,2 <-> E,N,H
@@ -39,31 +39,31 @@ binmode $OJN;
 my $data;
 read $OJN, $data, 300 or die $!;
 
-my $h = unpack2hash(join(' ',qw/
-l:$songid
-c8:@signature
-l:$genre
+my $h = unpack2hash(q/
+i:$songid
+Z8:$signature
+i:$genre
 f:$bpm
 s3:@level
-s:$unk_0
-l3:@unk2
-l3:@notecount
-l3:@time_related
-s7:@unk3
-s:$songid2
-s10:@unk_zeroes
-Z8:$unk_k
+i3:@unk_num
+c2:@unk_zero
+i3:@note_count
+i3:@unk_time
+i3:@package_count
+s2:@unk_id
+a20:$unk_oldgenre
+i:$bmp_size
+s2:@unk_a
 Z64:$title
 Z32:$artist
 Z32:$noter
-Z32:$musicfile
-l:$jpg
-l3:@time
-l4:@notepos
-/), $data);
+Z32:$ojm_file
+i:$cover_size
+i3:@time
+i4:@note_offset
+/, $data);
 
-
-my @notepos = @{$h->{'notepos'}};
+my @notepos = @{$h->{'note_offset'}};
 
 my $bpm = $h->{'bpm'};
 my ($artist,$title,$noter) = ($h->{'artist'},$h->{'title'},$h->{'noter'});
@@ -108,8 +108,6 @@ while(!eof $OJN && tell $OJN < $endpos)
 	}
 }
 
-$total_beats = int($total_beats+0.5); # round up
-
 my ($width,$height) = (($note_width * 7) + 2*$left_pad, ($total_beats * $beat_size) + $csize);
 
 my $im = GD::Image->new($width, $height);
@@ -148,7 +146,7 @@ for my $beat(0 .. $total_beats)
 	my $y  = $height - ($beat * $beat_size);
 
 	$im->line($left_pad, $y, $x2, $y, $color[5]);
-	$im->string(gdSmallFont, $left_pad + (7 * $note_width) + 4, $y - 10, sprintf("#%03d",$beat), $color[5]);
+	$im->string(gdSmallFont, $left_pad + (7 * $note_width) + 4, $y, sprintf("#%03d",$beat), $color[5]);
 
 	for my $sub_beat(1..$sub_beats-1)
 	{
@@ -221,22 +219,20 @@ sub unpack2hash
 {
 	my ($template, $source) = @_;
 	my $hash = {};
-	foreach(split / /,$template)
+	foreach(split ' ',$template)
 	{
 		my ($temp,$type,$var) = split /:(.)/;
 		if($type eq '@')
 		{
 			my @r = unpack $temp, $source;
 			$hash->{$var} = \@r;
-			substr $source, 0, length(pack $temp, @r), '';
 		}elsif($type eq '$')
 		{
 			my $r = unpack $temp, $source;
 			$hash->{$var} = $r;
-			substr $source, 0, length(pack $temp, $r), '';
 		}
 		else{ die "need context type\n" }
+		substr $source, 0, length(pack $temp), '';
 	}
 	return $hash;
 }
-
