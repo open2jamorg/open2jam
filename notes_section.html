@@ -8,11 +8,10 @@ so I will just call them events.</p>
 <p><strong>beat</strong>: Ever noticed those horizontal lines in between the notes during the music ? Those are the beats, and for all the notes before the first line we 
 call them beat 0, after the first we call them beat 1 and so on.</p>
 
-<p><strong>channel</strong>: This determine the package type.</p>
-
-<p><strong>package</strong>: These are the blocks that form a note section, each package contain one or more events inside a specifically beat, in a specifically channel.
-The notes section is divided in packages, the number of packages in each section is in the package_count variable from the header section.</p>
-
+<p><strong>package</strong>: These are the blocks that form a note section, each package contain one or more events inside. 
+Each package correspond to a specifically beat in a speciffically channel( see below).
+The number of packages in each section is in the package_count variable in the header section.</p>
+<br>
 Each package has a mini header as follows:
 <pre>struct package_header {
 	long beat;
@@ -21,8 +20,8 @@ Each package has a mini header as follows:
 };</pre>
 
 <p><strong>beat:</strong> This is the beat in which the package will appear.</p>
-<p><strong>channel</strong>: So far a got these events:
-<table><tr><th>channel</th><th>event</th></tr>
+<p><strong>channel</strong>: This determine the package type, so far a got these:
+<table><tr><th>channel</th><th>type</th></tr>
 <tr><td>1</td><td>BPM change</td></tr>
 <tr><td>2</td><td>note on 1st lane</td></tr>
 <tr><td>3</td><td>note on 2nd lane</td></tr>
@@ -39,13 +38,13 @@ looks like this values goes up to 21, but I don't know the meaning of these.
 <br>
 
 Each event has, as far as I know, 4 bytes, when the channel is 1(BPM change) these 4 bytes are a float with the new BPM.
-when the channel is a between 2..8(note), these 4 bytes are divided like this:
+When the channel is a between 2..8(note), these 4 bytes are divided like this:
 <pre>struct note_event {
 	short value;
 	char unk;
 	char note_type;
 };</pre>
-<p><strong>value</strong>: when value is 0 the event is ignored ( see below why), otherwise I am guessing its the OJM reference.</p>
+<p><strong>value</strong>: when value is 0 the event is ignored ( see below why), otherwise I am guessing its the OJM sample reference.</p>
 <p><strong>unk</strong>: It's usually 0, on V3 is has some values, but none on Red Sign, I'm clueless.</p>
 <p><strong>note_type</strong>: 0 when it's is a normal note, 2 when it is the start of a long note, and 3 at the end of a long note.</p>
 <br>
@@ -56,5 +55,5 @@ number of events. Example: if you got a package with 16 events, the 8th event wi
 
 <br><br>
 
-Well that's pretty much all, I still got found out how the speed affect the notes position, but I have a strong feeling it simple changes the beat size, 
+Well that's pretty much all, I still got to find out how the speed affect the notes position, but I'm almost sure it simple changes the beat size, 
 and the beat size is probably scaled by the screen size.

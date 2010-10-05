@@ -6,14 +6,13 @@ use GD;
 
 my $filename = shift;
 
-my $sub_beats = 6; # note distribution in the beat
-
-my $sub_beat_size = 50; # beat spacing size
-
 my @lvll = ('[Ex]','[Nx]','[Hx]');
 
+my $beat_size = 100; # pixels
 
-my $NOTEPAD = 100; # left side padding
+my $sub_beats = 16; # sub beat demarcation
+
+my $left_pad = 100; # left side padding
 my $notelevel = 2; # 0,1,2 <-> E,N,H
 my $note_height = 7; # vertical size of a note
 my $note_width = 45; # horizontal size of a note
@@ -22,7 +21,7 @@ my $csize = 200; # comments space size
 
 
 my %map  = (
-1 => 'BZM',
+1 => 'BPM',
 2 => 0,
 3 => 1,
 4 => 2,
@@ -72,15 +71,15 @@ my ($startpos,$endpos) = ($notepos[$notelevel],$notepos[$notelevel + 1]);
 seek DATA, $startpos, 0; # go to pos where lvl starts
 
 my @note;
-my $total_sub_beats = 0;
+my $total_beats = 0;
 while(!eof DATA && tell DATA < $endpos)
 {
 	read DATA, $data, 8;
-	my ($measure,$channel,$length) = unpack 'lss', $data;
+	my ($beat,$channel,$events_count) = unpack 'lss', $data;
 
 	if(defined $map{$channel})
 	{
-		for my $i(0 .. $length-1)
+		for my $i(0 .. $events_count-1)
 		{
 			my ($value, $unk, $long_note);
 			if($channel == 1)
@@ -91,37 +90,34 @@ while(!eof DATA && tell DATA < $endpos)
 				read DATA, $data, 4;
 				($value, $unk, $long_note) = unpack 'sCC', $data;
 			}
-			
 			next if($value == 0);
 
-
-			my $beat = ($sub_beats * ($measure + ($i / $length)));
-			$total_sub_beats = $beat if ($beat > $total_sub_beats);
+			my $sub_beat = ($i / $events_count);
+			$total_beats = $beat if ($beat > $total_beats);
 
 			my $mychan;
 			if($channel == 1)
 			{
-				$mychan = 'BZM';
+				$mychan = 'BPM';
 			}else{
 				$mychan = $map{$channel} + ($long_note & 2 ? 10 : 0); # longnote ? 10 : 0
 			}
 
 			push @note, {
 			'channel' => $mychan,
-			'beat'    => $beat,
+			'beat'    => $beat + $sub_beat,
 			'value'   => $value,
 			'rawchan' => $channel
 			};
-			
 		}
 	}else{
-		print STDERR "raw beat: $measure, channel: $channel, length: $length\n";
-		seek DATA, 4 * $length, 1; ## jumping what ??
+		print STDERR "raw beat: $beat, channel: $channel, events: $events_count\n";
+		seek DATA, 4 * $events_count, 1; ## jumping what ??
 	}
 }
-$total_sub_beats = int($total_sub_beats+0.5);
+$total_beats = int($total_beats+0.5); # round up
 
-my ($width,$height) = (($note_width * 7) + 2 * $NOTEPAD, ($total_sub_beats * $sub_beat_size) + $csize);
+my ($width,$height) = (($note_width * 7) + 2 * $left_pad, ($total_beats * $beat_size) + $csize);
 
 my $im = GD::Image->new($width, $height);
 
@@ -150,23 +146,26 @@ $color[33] = $im->colorAllocate(204,197,126);  # light yellow
 # vertical lines, delimiter the note space
 for my $i(0 .. 7)
 {
-	my $x = $NOTEPAD + ($i * $note_width);
+	my $x = $left_pad + ($i * $note_width);
 	$im->line($x, 0, $x, $height, $color[4]);
 }
-$im->line($NOTEPAD, 0, $NOTEPAD, $height, $color[5]); 
-$im->line($NOTEPAD + (7 * $note_width), 0, $NOTEPAD + (7 * $note_width), $height, $color[5]);
+$im->line($left_pad, 0, $left_pad, $height, $color[5]); 
+$im->line($left_pad + (7 * $note_width), 0, $left_pad + (7 * $note_width), $height, $color[5]);
 
 
-## horizontal lines
-for my $i(0 .. $total_sub_beats)
+## beat and sub_beat marker lines
+for my $beat(0 .. $total_beats)
 {
-	my $x2 = $NOTEPAD + (7 * $note_width);
-	my $y  = $height - ($sub_beat_size * $i);
-	$im->line($NOTEPAD, $y, $x2, $y, $color[4]);
-	if ($i % $sub_beats == 0) # beat mark
+	my $x2 = $left_pad + (7 * $note_width);
+	my $y  = $height - ($beat * $beat_size);
+
+	$im->line($left_pad, $y, $x2, $y, $color[5]);
+	$im->string(gdSmallFont, $left_pad + (7 * $note_width) + 4, $y - 10, sprintf("#%03d",$beat), $color[5]);
+
+	for my $sub_beat(1..$sub_beats-1)
 	{
-		$im->line($NOTEPAD, $y - 1, $x2, $y - 1, $color[5]);
-		$im->string(gdSmallFont, $NOTEPAD + (7 * $note_width) + 4, $y - 10, sprintf("#%03d",$i/$sub_beats), $color[5]);
+		$y  = $height - ($beat+($sub_beat/$sub_beats)) * $beat_size;
+		$im->line($left_pad, $y, $x2, $y, $color[4]);
 	}
 }
 
@@ -178,16 +177,16 @@ my %stat = (
     'max'  => $bpm
 );
 
-foreach my $v(@note)
+foreach my $n(@note)
 {
-	my $channel = $v->{'channel'};
-	if($channel eq 'BZM') # bpm changing ??
+	my $channel = $n->{'channel'};
+	if($channel eq 'BPM')
 	{
-		my $newbpm = $v->{'value'};
-		my $y = $height - ($sub_beat_size * $v->{'beat'}) - $note_height;
+		my $newbpm = $n->{'value'};
+		my $y = $height - ($beat_size * $n->{'beat'}) - $note_height;
 		my $text = sprintf "%.2f", $newbpm;
 
-		$im->string(gdSmallFont, $NOTEPAD - (length($text) * 9)-4, $y - 10, $text, $color[6]);
+		$im->string(gdSmallFont, $left_pad - (length($text) * 9)-4, $y - 10, $text, $color[6]);
 
 		$stat{'min'} = $newbpm if ($newbpm < $stat{'min'});
 		$stat{'max'} = $newbpm if ($newbpm > $stat{'max'});
@@ -198,19 +197,19 @@ foreach my $v(@note)
 		if ($channel >= 0 && $channel <= 6) # tap note
 		{
 			$stat{'tap'}++;
-			my $x = $NOTEPAD + ($channel * $note_width);
-			my $y = $height - ($sub_beat_size * $v->{'beat'});
+			my $x = $left_pad + ($channel * $note_width);
+			my $y = $height - ($beat_size * $n->{'beat'});
 			$im->filledRectangle($x, $y, $x+$note_width, $y-$note_height, $color[$c]);
 		}elsif($channel >= 10 && $channel <= 16) # long note
 		{
 			$stat{'long'}++;
 			if (!defined($lch[$channel]))
 			{
-				$lch[$channel] = $v->{'beat'};
+				$lch[$channel] = $n->{'beat'};
 			}else{
-				my $x = $NOTEPAD + (($channel - 10) * $note_width);
-				my $y = $height - ($sub_beat_size * $v->{'beat'}) - $note_height;
-				my $z = $height - ($sub_beat_size * $lch[$channel]) - $note_height;
+				my $x = $left_pad + (($channel - 10) * $note_width);
+				my $y = $height - ($beat_size * $n->{'beat'}) - $note_height;
+				my $z = $height - ($beat_size * $lch[$channel]) - $note_height;
 				delete $lch[$channel];
 				$im->filledRectangle($x,$y,$x+$note_width,$z+$note_height, $color[20 + $c]);
 			}
@@ -218,8 +217,8 @@ foreach my $v(@note)
 	}
 }
 
-
-my $y = 20;$im->string(gdSmallFont, 24, $y, "$lvll[$notelevel] $artist - $title", $color[0]);
+my 
+$y  = 20;$im->string(gdSmallFont, 24, $y, "$lvll[$notelevel] $artist - $title", $color[0]);
 $y += 20;  $im->string(gdSmallFont, 24, $y, $noter, $color[1]);
 $y += 15;
 
