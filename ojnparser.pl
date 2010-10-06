@@ -6,19 +6,18 @@ use Data::Dumper;
 
 
 my $filename = shift;
+my $notelevel = 2; # 0,1,2 <-> E,N,H, which note level to print
 
 my @lvll = ('[Ex]','[Nx]','[Hx]');
 
 my $beat_size = 400; # pixels
-
 my $sub_beats = 4; # sub beat demarcation
 
 my $left_pad = 100; # left side padding
-my $notelevel = 2; # 0,1,2 <-> E,N,H
+
 my $note_height = 7; # vertical size of a note
 my $note_width = 45; # horizontal size of a note
 my $csize = 200; # comments space size
-
 
 
 my %map  = (
@@ -122,9 +121,6 @@ $color[4]  = $im->colorAllocate( 50, 50, 50);  # dark gray
 $color[5]  = $im->colorAllocate(120,120,120);  # gray
 $color[6]  = $im->colorAllocate(255,150,150);  # pink
 $color[7]  = $im->colorAllocate(180,180,180);  # light gray
-$color[11] = $im->colorAllocate(248,243,247);  # white
-$color[12] = $im->colorAllocate(130,231,241);  # light cyan
-$color[13] = $im->colorAllocate(255,246,157);  # light yellow
 $color[11] = $im->colorAllocate(198,194,198);  # light gray
 $color[12] = $im->colorAllocate(104,185,193);  # cyan
 $color[13] = $im->colorAllocate(204,197,126);  # light yellow
@@ -181,22 +177,22 @@ foreach my $n(@note)
 		$c = 2 if($channel % 2 != 0); ## blue notes
 		$c = 3 if($channel == 3);     ## yellow note
 
+		my $x = $left_pad + ($channel * $note_width);
+
 		if($n->{'long'} == 0) # tap note
 		{
 			$stat{'tap'}++;
-			my $x = $left_pad + ($channel * $note_width);
 			my $y = $height - ($beat_size * $n->{'beat'});
-			$im->filledRectangle($x, $y, $x+$note_width, $y-$note_height, $color[$c]);
+			$im->filledRectangle($x, $y - $note_height, $x+$note_width, $y, $color[$c]);
 		}elsif($n->{'long'} == 2) # start long note
 		{
 			$stat{'long'}++;
 			$lch[$channel] = $n->{'beat'};
 		}else{ # end long note
-			my $x = $left_pad + (($channel - 10) * $note_width);
-			my $y = $height - ($beat_size * $n->{'beat'}) - $note_height;
-			my $z = $height - ($beat_size * $lch[$channel]) - $note_height;
+			my $y1 = $height - ($beat_size * $lch[$channel]);
+			my $y2 = $height - ($beat_size * $n->{'beat'});
+			$im->filledRectangle($x, $y2, $x+$note_width, $y1, $color[10 + $c]);
 			delete $lch[$channel];
-			$im->filledRectangle($x, $y, $x+$note_width, $z+$note_height, $color[10 + $c]);
 		}
 	}
 }
