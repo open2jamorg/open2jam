@@ -7,6 +7,7 @@ This post tries to describe the OJN format. This far from complete but we can al
 The OJN file is where all the notes are stored, including the meta-data of the music.
 It's basically divided in 3 parts: header, notes and cover section.
 
+The file content is read as little endian.
 =head2 Header
 
 The header section is where all the song meta-data and offsets is stored.
@@ -19,27 +20,27 @@ In C struct notation, this is how the header looks like:
 
 struct header {
 
-	int songid;
-	char signature[8];
-	int genre;
-	float bpm;
-	short level[3];
-	short unk_nums[6];
-	char unk_zero[2];
-	int note_count[3];
-	int unk_time[3];
-	int package_count[3];
-	short unk_id[2];
-	char unk_oldgenre[20];
-	int bmp_size;
-	int unk_a;
-	char title[64];
-	char artist[32];
-	char noter[32];
-	char ojm_file[32];
-	int cover_size;
-	int time[3];
-	int note_offset[4];
+	int32   songid;
+	char    signature[8];
+	int32   genre;
+	float32 bpm;
+	short16 level[3];
+	short16 unk_nums[6];
+	char    unk_zero[2];
+	int32   note_count[3];
+	int32   unk_time[3];
+	int32   package_count[3];
+	short16 unk_id[2];
+	char    unk_oldgenre[20];
+	int32   bmp_size;
+	int32   unk_a;
+	char    title[64];
+	char    artist[32];
+	char    noter[32];
+	char    ojm_file[32];
+	int32   cover_size;
+	int32   time[3];
+	int32   note_offset[4];
 };
 
 Variables with prefix 'unk_' are unknown at the time of this writing, so take what I say as a guess.

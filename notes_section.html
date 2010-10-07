@@ -14,9 +14,9 @@ The number of packages in each section is in the package_count variable in the h
 <br>
 Each package has a mini header as follows:
 <pre>struct package_header {
-	long beat;
-	short channel;
-	short events;
+	 long32 beat;
+	short16 channel;
+	short16 events;
 };</pre>
 
 <p><strong>beat:</strong> This is the beat in which the package will appear.</p>
