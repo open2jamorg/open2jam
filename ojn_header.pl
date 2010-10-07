@@ -49,21 +49,18 @@ sub unpack2hash
 {
 	my ($template, $source) = @_;
 	my $hash = {};
-	foreach(split / /,$template)
+	foreach(split ' ',$template)
 	{
 		my ($temp,$type,$var) = split /:(.)/;
 		if($type eq '@')
 		{
-			my @r = unpack $temp, $source;
-			$hash->{$var} = \@r;
-			substr $source, 0, length(pack $temp, @r), '';
+			@{$hash->{$var}} = unpack $temp, $source;
 		}elsif($type eq '$')
 		{
-			my $r = unpack $temp, $source;
-			$hash->{$var} = $r;
-			substr $source, 0, length(pack $temp, $r), '';
+			$hash->{$var} = unpack $temp, $source;
 		}
 		else{ die "need context type\n" }
+		substr $source, 0, length(pack $temp), '';
 	}
 	return $hash;
 }

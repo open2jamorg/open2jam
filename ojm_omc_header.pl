@@ -25,24 +25,21 @@ print Dumper $h;
 
 sub unpack2hash
 {
-        my ($template, $source) = @_;
-        my $hash = {};
-        foreach(split / /,$template)
-        {
-                my ($temp,$type,$var) = split /:(.)/;
-                if($type eq '@')
-                {
-                        my @r = unpack $temp, $source;
-                        $hash->{$var} = \@r;
-                        substr $source, 0, length(pack $temp, @r), '';
-                }elsif($type eq '$')
-                {
-                        my $r = unpack $temp, $source;
-                        $hash->{$var} = $r;
-                        substr $source, 0, length(pack $temp, $r), '';
-                }
-                else{ die "need context type\n" }
-        }
-        return $hash;
+	my ($template, $source) = @_;
+	my $hash = {};
+	foreach(split ' ',$template)
+	{
+		my ($temp,$type,$var) = split /:(.)/;
+		if($type eq '@')
+		{
+			@{$hash->{$var}} = unpack $temp, $source;
+		}elsif($type eq '$')
+		{
+			$hash->{$var} = unpack $temp, $source;
+		}
+		else{ die "need context type\n" }
+		substr $source, 0, length(pack $temp), '';
+	}
+	return $hash;
 }
 
