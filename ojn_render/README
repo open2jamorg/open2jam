@@ -1,0 +1,8 @@
+
+trying to implement a ojn notes renderer, ignoring ojm for the moment
+
+this depends on the lwjgl ( lwjgl.org )
+and gage timer ( java.dnsalias.com , but this link looks offline long ago, use http://web.archive.org/web/20071217090324/http://java.dnsalias.com/)
+
+render code base shameless copied from http://www.cokeandcode.com/spaceinvaderstutorial
+

@@ -100,7 +100,7 @@ while(!eof $OJN && tell $OJN < $endpos)
 			'value'   => $value,
 			'long'    => $long_note,
 			};
-# 			print STDERR "beat: $beat, ch: $channel, unk: $unk\n";
+			print STDERR "beat: $beat ".($i / $events_count)."\n";
 		}
 	}else{
 		seek $OJN, 4 * $events_count, 1; ## jumping what ??
