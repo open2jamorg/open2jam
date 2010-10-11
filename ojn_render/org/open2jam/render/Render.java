@@ -139,13 +139,7 @@ public class Render extends Canvas implements GameWindowCallback
 	 * @param argv The arguments that are passed into our game
 	 */
 	public static void main(String argv[]) {
-		int result = JOptionPane.showOptionDialog(null,"Java2D or OpenGL?","Java2D or OpenGL?",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE,null,new String[] {"Java2D","LWJGL"},null);
-		
-		if (result == 0) {
-			new Render(ResourceFactory.JAVA2D);
-		} else if (result == 1) {
-			new Render(ResourceFactory.OPENGL_LWJGL);
-		}
+		new Render(ResourceFactory.OPENGL_LWJGL);
 	}
 }
 
