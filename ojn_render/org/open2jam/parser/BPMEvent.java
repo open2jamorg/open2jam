@@ -2,11 +2,11 @@ package org.open2jam.parser;
 
 public class BPMEvent extends Event
 {
-	float bpm;
+	protected double bpm;
 
-	public BPMEvent(double beat, short channel, float bpm)
+	public BPMEvent(double measure, short channel, double bpm)
 	{
-		this.beat = beat;
+		this.measure = measure;
 		this.channel = channel;
 		this.bpm = bpm;
 	}

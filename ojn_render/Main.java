@@ -25,8 +25,7 @@ public class Main
 			urls.add(new File(CLASS_PATH).toURI().toURL());
 			for (File f : new File(JAR_PATH).listFiles())urls.add(f.toURI().toURL());
 
-			if(lib_path.exists())System.setProperty("java.library.path",LIB_PATH);
-			else System.err.println("Warning: native libraries not found ["+LIB_PATH+"]. Running on pure java.");
+			System.setProperty("java.library.path",LIB_PATH);
 
 			// feed your URLs to a URLClassLoader!
 			ClassLoader classloader =

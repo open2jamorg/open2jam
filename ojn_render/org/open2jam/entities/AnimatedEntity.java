@@ -7,6 +7,8 @@ import org.open2jam.render.SpriteID;
 import org.open2jam.render.Render;
 import org.open2jam.render.ResourceFactory;
 
+/** an entity with multiple frames.
+*** it loop over frames at a determined framespeed */
 public class AnimatedEntity extends Entity
 {
 	protected Sprite frames[];
@@ -16,6 +18,11 @@ public class AnimatedEntity extends Entity
 
 	protected double sub_frame;
 	protected double framespeed;
+
+	public AnimatedEntity(SpriteID refs[], double framespeed)
+	{
+		this(refs, 0, 0, framespeed);
+	}
 
 	public AnimatedEntity(SpriteID refs[], double x, double y, double framespeed)
 	{

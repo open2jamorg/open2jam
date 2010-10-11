@@ -2,15 +2,14 @@ package org.open2jam.parser;
 
 public class NoteEvent extends Event
 {
-	short value;
-	char unk;
+	protected short value;
 
-	public NoteEvent(double beat, short channel, 
-			short value, char unk)
+	public NoteEvent(double measure, short channel, short value)
 	{
-		this.beat = beat;
+		this.measure = measure;
 		this.channel = channel;
 		this.value = value;
-		this.unk = unk;
 	}
+
+	public short getValue() { return value; }
 }

@@ -20,6 +20,11 @@ public class Entity implements Cloneable
 	/** when a entity die the render removes it */
 	protected boolean alive = true;
 
+	public Entity(SpriteID ref)
+	{
+		this(ref,0,0);
+	}
+
 	public Entity(SpriteID ref, double x, double y)
 	{
 		this.sprite = ResourceFactory.get().getSprite(ref);
@@ -49,7 +54,7 @@ public class Entity implements Cloneable
 	 * 
 	 * @param dx The horizontal speed of this entity (pixels/sec)
 	 */
-	public void setHorizontalMovement(double dx) {
+	public void setXMove(double dx) {
 		this.dx = dx;
 	}
 
@@ -58,7 +63,7 @@ public class Entity implements Cloneable
 	 * 
 	 * @param dy The vertical speed of this entity (pixels/sec)
 	 */
-	public void setVerticalMovement(double dy) {
+	public void setYMove(double dy) {
 		this.dy = dy;
 	}
 	
@@ -67,7 +72,7 @@ public class Entity implements Cloneable
 	 * 
 	 * @return The horizontal speed of this entity (pixels/sec)
 	 */
-	public double getHorizontalMovement() {
+	public double getXMove() {
 		return dx;
 	}
 
@@ -76,7 +81,7 @@ public class Entity implements Cloneable
 	 * 
 	 * @return The vertical speed of this entity (pixels/sec)
 	 */
-	public double getVerticalMovement() {
+	public double getYMove() {
 		return dy;
 	}
 	
@@ -84,7 +89,7 @@ public class Entity implements Cloneable
 	 * Draw this entity to the graphics context provided
 	 */
 	public void draw() {
-		sprite.draw((int) bounds.x,(int) bounds.y);
+		sprite.draw((int) Math.round(bounds.x),(int) Math.round(bounds.y));
 	}
 	
 	/**

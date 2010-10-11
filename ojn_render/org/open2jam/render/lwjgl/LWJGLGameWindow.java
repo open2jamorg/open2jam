@@ -82,30 +82,22 @@ public class LWJGLGameWindow implements GameWindow {
 		height = y;
 	}
 	
-	/**
-	 * Sets the display mode for fullscreen mode
-	 */
+
 	private boolean setDisplayMode() {
 		try {
-			// get modes
-			DisplayMode[] dm = org.lwjgl.util.Display.getAvailableDisplayModes(
-					width, height, -1, -1, -1, -1, 60, 60);
+// 	java.awt.DisplayMode adm = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment()
+// 					.getDefaultScreenDevice().getDisplayMode();
+//  			DisplayMode dm = new DisplayMode(adm.getWidth(),adm.getHeight());
 
-			org.lwjgl.util.Display.setDisplayMode(dm, new String[] {
-					"width=" + width,
-					"height=" + height,
-					"freq=" + 60,
-					"bpp="
-							+ org.lwjgl.opengl.Display.getDisplayMode()
-									.getBitsPerPixel() });
 
+			DisplayMode dm[] = Display.getAvailableDisplayModes();
+			setResolution(dm[0].getWidth(),dm[0].getHeight());
+			Display.setDisplayMode(dm[0]);
+			Display.setFullscreen(true);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out
-					.println("Unable to enter fullscreen, continuing in windowed mode");
 		}
-
 		return false;
 	}
 	
@@ -114,12 +106,12 @@ public class LWJGLGameWindow implements GameWindow {
 	 * as fast as possible.
 	 */
 	public void startRendering() {
-		try {                
+		try {
 			setDisplayMode();
 			Display.create();
 			
 			// grab the mouse, dont want that hideous cursor when we're playing!
-			Mouse.setGrabbed(true);
+// 			Mouse.setGrabbed(true);
   
 			// enable textures since we're going to use these for our sprites
 			GL11.glEnable(GL11.GL_TEXTURE_2D);

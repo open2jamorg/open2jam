@@ -30,7 +30,7 @@ public class OJN
 	int time[];
 	int note_offset[];
 
-	List<EventList> notes_section;
+	List<Chart> notes_section;
 
 	ImageIcon cover_image;
 	ImageIcon mini_cover;
@@ -74,10 +74,10 @@ public class OJN
 	}
 	private void readNotes() throws Exception
 	{
-		notes_section = new ArrayList<EventList>(3);
-		notes_section.add(new EventList());
-		notes_section.add(new EventList());
-		notes_section.add(new EventList());
+		notes_section = new ArrayList<Chart>(3);
+		notes_section.add(new Chart());
+		notes_section.add(new Chart());
+		notes_section.add(new Chart());
 		readNoteBlock(0);
 		readNoteBlock(1);
 		readNoteBlock(2);
@@ -86,7 +86,6 @@ public class OJN
 	{
 		f.seek(note_offset[lvl]);
 		int endpos = note_offset[lvl+1];
-		int maxbeat = 0;
 
 		NoteEvent ln_buffer[] = new NoteEvent[7];
 		while(f.getFilePointer() < endpos)
@@ -94,29 +93,28 @@ public class OJN
 			int measure = f.readINT();
 			short channel = f.readSHORT();
 			int events_count = f.readSHORT();
-			if(measure > maxbeat)maxbeat = measure;
 			if(channel >= 1 && channel <= 8) // known channels until now
 			{
 				for(int i=0;i<events_count;i++)
 				{
-					double beat = measure + (i / events_count);
+					double sub_measure = measure + (i / events_count);
 					if(channel == 1) // BPM event
 					{
 						float bpm = f.readFLOAT();
 						if(bpm == 0)continue;
-						notes_section.get(lvl).add(new BPMEvent(beat,channel,bpm));
+						notes_section.get(lvl).add(new BPMEvent(sub_measure,channel,bpm));
 					}else{ // note event
 						short value = f.readSHORT();
 						char unk = (char)f.readBYTE();
 						char note_type = (char)f.readBYTE();
 						if(value == 0)continue; // ignore value=0 events
 
-						NoteEvent ne = new NoteEvent(beat,channel,value,unk);
+						NoteEvent ne = new NoteEvent(sub_measure,channel,value);
 
 						if(note_type == 2){ // long note start
 							ln_buffer[channel-2] = ne;
 						}else if(note_type == 3){ // long note end
-							LongNoteEvent lne = new LongNoteEvent(ln_buffer[channel-2], beat);
+							LongNoteEvent lne = new LongNoteEvent(ln_buffer[channel-2], sub_measure);
 							notes_section.get(lvl).add(lne);
 						}else{
 							notes_section.get(lvl).add(ne);
@@ -127,7 +125,7 @@ public class OJN
 				f.skipBytes(4*events_count); // skipping channels I don't known
 			}
 		}
-		notes_section.get(lvl).max_beat = maxbeat;
+		notes_section.get(lvl).finalize();
 	}
 	private void readCover() throws Exception
 	{

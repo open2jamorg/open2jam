@@ -15,7 +15,7 @@ public class EntityBuilder
 
 	Stack<Keyword> call_stack;
 	Stack<Map<String,String>> atts_stack;
-	Stack buffer;
+	Stack<Object> buffer;
 
 	Map<String,Entity> result;
 
@@ -25,7 +25,7 @@ public class EntityBuilder
 	{
 		call_stack = new Stack<Keyword>();
 		atts_stack = new Stack<Map<String,String>>();
-		buffer = new Stack();
+		buffer = new Stack<Object>();
 		result = new HashMap<String,Entity>();
 	}
 	
@@ -55,7 +55,7 @@ public class EntityBuilder
 			case Note:
 			int framespeed = Integer.parseInt(atts.get("framespeed"));
 			String name = "note"+atts.get("number");
-			SpriteID frames[] = (SpriteID[]) buffer.toArray(new SpriteID[0]);
+			SpriteID frames[] = buffer.toArray(new SpriteID[0]);
 			Entity e = new AnimatedEntity(frames, 0, 0, framespeed);
 			result.put(name,e);
 			buffer.clear();

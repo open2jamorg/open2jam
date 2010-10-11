@@ -1,7 +1,5 @@
 package org.open2jam.render;
 
-import org.open2jam.render.java2d.Java2DGameWindow;
-import org.open2jam.render.java2d.Java2DSpriteStore;
 import org.open2jam.render.lwjgl.LWJGLGameWindow;
 import org.open2jam.render.lwjgl.LWJGLSprite;
 
@@ -26,13 +24,11 @@ public class ResourceFactory {
 		return single;
 	}
 
-	/** A value to indicate that we should use Java 2D to render our game */
-	public static final int JAVA2D = 1;
 	/** A value to indicate that we should use OpenGL (LWJGL) to render our game */
-	public static final int OPENGL_LWJGL = 2;
+	public static final int OPENGL_LWJGL = 1;
 
 	/** The type of rendering that we are currently using */
-	private int renderingType = JAVA2D;
+	private int renderingType = OPENGL_LWJGL;
 	/** The window the game should use to render */
 	private GameWindow window;
 
@@ -51,7 +47,7 @@ public class ResourceFactory {
 	 */
 	public void setRenderingType(int renderingType) {
 		// If the rendering type is unrecognised tell the caller
-		if ((renderingType != JAVA2D) && (renderingType != OPENGL_LWJGL)) {
+		if (renderingType != OPENGL_LWJGL) {
 			// Note, we could create our own exception to be thrown here but it
 			// seems a little bit over the top for a simple message. In general
 			// RuntimeException should be subclassed and thrown, not thrown directly.
@@ -77,11 +73,6 @@ public class ResourceFactory {
 		// now
 		if (window == null) {
 			switch (renderingType) {
-				case JAVA2D:
-				{
-					window = new Java2DGameWindow();
-					break;
- 				}
 				case OPENGL_LWJGL:
 				{
 					window = new LWJGLGameWindow();
@@ -89,7 +80,6 @@ public class ResourceFactory {
 				}
 			}
 		}
-
 		return window;
 	}
 
@@ -104,12 +94,7 @@ public class ResourceFactory {
 		if (window == null) {
 			throw new RuntimeException("Attempt to retrieve sprite before game window was created");
 		}
-		
 		switch (renderingType) {
-// 			case JAVA2D:
-// 			{
-// 				return Java2DSpriteStore.get().getSprite((Java2DGameWindow) window,ref);
-// 			}
 			case OPENGL_LWJGL:
 			{
 				return new LWJGLSprite((LWJGLGameWindow) window,ref);

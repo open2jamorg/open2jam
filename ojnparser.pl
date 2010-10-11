@@ -38,29 +38,30 @@ binmode $OJN;
 my $data;
 read $OJN, $data, 300 or die $!;
 
-my $h = unpack2hash(q/
+my $h = unpack2hash(join(' ',qw/
 i:$songid
-Z8:$signature
+a4:$signature
+c4:@encoder_value
 i:$genre
 f:$bpm
-s3:@level
-i3:@unk_num
-c2:@unk_zero
+s4:@level
+i3:@event_count
 i3:@note_count
-i3:@unk_time
+i3:@measure_count
 i3:@package_count
-s2:@unk_id
+s:$unk_h1D
+s:$unk_songid
 a20:$unk_oldgenre
 i:$bmp_size
 s2:@unk_a
-Z64:$title
-Z32:$artist
+a64:$title
+a32:$artist
 Z32:$noter
 Z32:$ojm_file
 i:$cover_size
 i3:@time
 i4:@note_offset
-/, $data);
+/), $data);
 
 my @notepos = @{$h->{'note_offset'}};
 
@@ -100,7 +101,7 @@ while(!eof $OJN && tell $OJN < $endpos)
 			'value'   => $value,
 			'long'    => $long_note,
 			};
-			print STDERR "beat: $beat ".($i / $events_count)."\n";
+			print STDERR "unk $unk\n";
 		}
 	}else{
 		seek $OJN, 4 * $events_count, 1; ## jumping what ??

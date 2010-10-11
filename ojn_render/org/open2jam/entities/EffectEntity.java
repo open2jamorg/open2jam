@@ -4,7 +4,8 @@ import org.open2jam.render.SpriteID;
 import org.open2jam.render.Render;
 
 /** an EffectEntity is an animated entity which animates only once.
- ** after the animation it removes itself from the render 
+ ** after the first loop it declares itself dead, 
+ ** which in turn will trigger it's removal from the render
  */
 public class EffectEntity extends AnimatedEntity
 {

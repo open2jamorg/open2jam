@@ -24,7 +24,6 @@ public class SpriteID
 		if(file == null)throw new NullPointerException("SpriteID file can't be null !");
 		this.file = file;
 		this.slice = r;
-		System.out.println(r.x+", "+r.y+", "+r.width+", "+r.height);
 	}
 
 	public String getFile() { return file; }

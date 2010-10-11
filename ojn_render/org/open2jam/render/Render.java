@@ -5,6 +5,8 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import java.util.Map;
+import java.util.List;
+import java.util.Iterator;
 
 import org.open2jam.parser.ResourcesHandler;
 import org.open2jam.entities.*;
@@ -15,7 +17,7 @@ public class Render extends Canvas implements GameWindowCallback
 	private GameWindow window;
 
 	/** The time at which the last rendering looped started from the point of view of the game logic */
-	private long lastLoopTime = SystemTimer.getTime();
+	private long lastLoopTime;
 
 	/** The time since the last record of fps */
 	private long lastFpsTime = 0;
@@ -23,7 +25,11 @@ public class Render extends Canvas implements GameWindowCallback
 	/** The recorded fps */
 	private int fps;
 
-	private java.util.List<Entity> entities;
+	/** a list of list of entities.
+	 ** basically, each list is a layer of entities
+	 ** the layers are rendered in order
+	 ** so entities at layer X will always be renderd before layer X+1 */
+	private List<List<Entity>> entities_matrix;
 
 	private Entity key_0;
 
@@ -33,10 +39,9 @@ public class Render extends Canvas implements GameWindowCallback
 		ResourceFactory.get().setRenderingType(renderingType);
 		window = ResourceFactory.get().getGameWindow();
 		
-		window.setResolution(800,600);
 		window.setGameWindowCallback(this);
 		window.setTitle("Render");
-		
+	
 		window.startRendering();
 	}
 
@@ -46,7 +51,8 @@ public class Render extends Canvas implements GameWindowCallback
 	 */
 	public void initialise()
 	{
-		entities = new java.util.ArrayList<Entity>();
+		entities_matrix = new java.util.ArrayList<List<Entity>>();
+		entities_matrix.add(new java.util.ArrayList<Entity>()); // layer 0
 
 		EntityBuilder eb = new EntityBuilder();
 		try {
@@ -57,28 +63,30 @@ public class Render extends Canvas implements GameWindowCallback
 		} catch (Exception err) {
 			err.printStackTrace();
 		}
-		Map<String,Entity> entites_map = eb.getResult();
-		Entity e = entites_map.get("note0");
+		Map<String,Entity> entities_map = eb.getResult();
+		Entity e = entities_map.get("note0");
 		e.setX(50); e.setY(50);
-		entities.add(e);
-		e = entites_map.get("note1");
-		e.setX(100); e.setY(50);
-		entities.add(e);
-		e = entites_map.get("note2");
-		e.setX(150); e.setY(50);
-		entities.add(e);
-		e = entites_map.get("note3");
-		e.setX(200); e.setY(50);
-		entities.add(e);
-		e = entites_map.get("note4");
-		e.setX(250); e.setY(50);
-		entities.add(e);
-		e = entites_map.get("note5");
-		e.setX(300); e.setY(50);
-		entities.add(e);
-		e = entites_map.get("note6");
-		e.setX(350); e.setY(50);
-		entities.add(e);
+		entities_matrix.get(0).add(e);
+		e = entities_map.get("note1");
+		e.setX(79); e.setY(57);
+		entities_matrix.get(0).add(e);
+		e = entities_map.get("note2");
+		e.setX(102); e.setY(64);
+		entities_matrix.get(0).add(e);
+		e = entities_map.get("note3");
+		e.setX(131); e.setY(71);
+		entities_matrix.get(0).add(e);
+		e = entities_map.get("note4");
+		e.setX(164); e.setY(78);
+		entities_matrix.get(0).add(e);
+		e = entities_map.get("note5");
+		e.setX(193); e.setY(85);
+		entities_matrix.get(0).add(e);
+		e = entities_map.get("note6");
+		e.setX(216); e.setY(92);
+		entities_matrix.get(0).add(e);
+
+		lastLoopTime = SystemTimer.getTime();
 	}
 
 
@@ -105,22 +113,25 @@ public class Render extends Canvas implements GameWindowCallback
 			fps = 0;
 		}
 
-		// cycle round asking each entity to move itself
-		for (int i=0;i<entities.size();i++)entities.get(i).move(delta);
-		
-		// cycle round drawing all the entities we have in the game
-		for (int i=0;i<entities.size();i++)entities.get(i).draw();
-
+		Iterator<List<Entity>> i = entities_matrix.iterator();
+		while(i.hasNext()) // loop over layers
+		{
+			 // get entity iterator from layer
+			Iterator<Entity> j = i.next().iterator();
+			while(j.hasNext()) // loop over entities
+			{
+				Entity e = j.next();
+				e.move(delta); // move the entity
+				if(!e.isAlive())j.remove(); // if dead, remove from list
+				else e.draw(); // or draw itself on screen
+			}
+		}
 		
 		boolean skp = window.isKeyPressed(KeyEvent.VK_SPACE);
 
-		if(skp && entities.size() == 0){
-			entities.add(key_0.clone());
+		if(skp && entities_matrix.size() == 0){
+			entities_matrix.get(0).add(key_0.clone());
 		}
-	}
-
-	public boolean removeEntity(Entity e){
-		return entities.remove(e);
 	}
 
 	/**
