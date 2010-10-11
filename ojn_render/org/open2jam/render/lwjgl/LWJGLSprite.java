@@ -1,10 +1,9 @@
 package org.open2jam.render.lwjgl;
 
 import java.io.IOException;
-
 import org.lwjgl.opengl.GL11;
-
 import org.open2jam.render.Sprite;
+import org.open2jam.render.SpriteID;
 
 /**
  * Implementation of sprite that uses an OpenGL quad and a texture
@@ -22,6 +21,9 @@ public class LWJGLSprite implements Sprite {
   
 	/** The height in pixels of this sprite */
 	private int height;
+
+	/** the id which describes this sprite */
+	private SpriteID spriteID;
 	
 	/**
 	 * Create a new sprite from a specified image.
@@ -29,7 +31,7 @@ public class LWJGLSprite implements Sprite {
 	 * @param window The window in which the sprite will be displayed
 	 * @param ref A reference to the image on which this sprite should be based
 	 */
-	public LWJGLSprite(LWJGLGameWindow window,String ref) {
+	public LWJGLSprite(LWJGLGameWindow window,SpriteID ref) {
 		try {
 			texture = window.getTextureLoader().getTexture(ref);
 			
@@ -38,9 +40,14 @@ public class LWJGLSprite implements Sprite {
 		} catch (IOException e) {
 			// a tad abrupt, but our purposes if you can't find a 
 			// sprite's image you might as well give up.
-			System.err.println("Unable to load texture: "+ref);
+			System.err.println("Unable to load texture: "+ref.getFile());
 			System.exit(0);
 		}
+		this.spriteID = ref;
+	}
+
+	public SpriteID getID() {
+		return spriteID;
 	}
 	
 	/**

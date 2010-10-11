@@ -123,6 +123,8 @@ public class Java2DGameWindow extends Canvas implements GameWindow {
 			callback.initialise();
 		}
 		
+		java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(frame);
+		
 		// start the game loop
 		gameLoop();
 	}

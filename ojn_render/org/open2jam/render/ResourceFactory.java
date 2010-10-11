@@ -2,8 +2,6 @@ package org.open2jam.render;
 
 import org.open2jam.render.java2d.Java2DGameWindow;
 import org.open2jam.render.java2d.Java2DSpriteStore;
-import org.open2jam.render.jogl.JoglGameWindow;
-import org.open2jam.render.jogl.JoglSprite;
 import org.open2jam.render.lwjgl.LWJGLGameWindow;
 import org.open2jam.render.lwjgl.LWJGLSprite;
 
@@ -30,10 +28,8 @@ public class ResourceFactory {
 
 	/** A value to indicate that we should use Java 2D to render our game */
 	public static final int JAVA2D = 1;
-	/** A value to indicate that we should use OpenGL (JOGL) to render our game */
-	public static final int OPENGL_JOGL = 2;
 	/** A value to indicate that we should use OpenGL (LWJGL) to render our game */
-	public static final int OPENGL_LWJGL = 3;
+	public static final int OPENGL_LWJGL = 2;
 
 	/** The type of rendering that we are currently using */
 	private int renderingType = JAVA2D;
@@ -41,7 +37,7 @@ public class ResourceFactory {
 	private GameWindow window;
 
 	/** 
-       * The default contructor has been made private to prevent construction of 
+	 * The default contructor has been made private to prevent construction of 
 	 * this class anywhere externally. This is used to enforce the singleton 
 	 * pattern that this class attempts to follow
 	 */
@@ -49,14 +45,13 @@ public class ResourceFactory {
 	}
 
 	/** 
-	 * Set the rendering method that should be used. Note: This can only be done
-	 * before the first resource is accessed.
-	 *
+	 * Set the rendering method that should be used. 
+	 * This can only be done before the first resource is accessed.
  	 * @param renderingType The type of rendering to use
 	 */
 	public void setRenderingType(int renderingType) {
 		// If the rendering type is unrecognised tell the caller
-		if ((renderingType != JAVA2D) && (renderingType != OPENGL_JOGL) && (renderingType != OPENGL_LWJGL)) {
+		if ((renderingType != JAVA2D) && (renderingType != OPENGL_LWJGL)) {
 			// Note, we could create our own exception to be thrown here but it
 			// seems a little bit over the top for a simple message. In general
 			// RuntimeException should be subclassed and thrown, not thrown directly.
@@ -87,11 +82,6 @@ public class ResourceFactory {
 					window = new Java2DGameWindow();
 					break;
  				}
-				case OPENGL_JOGL:
-				{
-					window = new JoglGameWindow();
-					break;
-				}
 				case OPENGL_LWJGL:
 				{
 					window = new LWJGLGameWindow();
@@ -110,20 +100,16 @@ public class ResourceFactory {
 	 * @param ref A reference to the image to load
 	 * @return A sprite that can be drawn onto the current graphics context.
 	 */
-	public Sprite getSprite(String ref) {
+	public Sprite getSprite(SpriteID ref) {
 		if (window == null) {
 			throw new RuntimeException("Attempt to retrieve sprite before game window was created");
 		}
 		
 		switch (renderingType) {
-			case JAVA2D:
-			{
-				return Java2DSpriteStore.get().getSprite((Java2DGameWindow) window,ref);
-			}
-			case OPENGL_JOGL:
-			{
-				return new JoglSprite((JoglGameWindow) window,ref);
-			}
+// 			case JAVA2D:
+// 			{
+// 				return Java2DSpriteStore.get().getSprite((Java2DGameWindow) window,ref);
+// 			}
 			case OPENGL_LWJGL:
 			{
 				return new LWJGLSprite((LWJGLGameWindow) window,ref);
@@ -131,5 +117,12 @@ public class ResourceFactory {
 		}
 		
 		throw new RuntimeException("Unknown rendering type: "+renderingType);
+	}
+
+	public Sprite[] getSprites(SpriteID refs[])
+	{
+		Sprite array[] = new Sprite[refs.length];
+		for(int i=0;i<refs.length;i++)array[i] = getSprite(refs[i]);
+		return array;
 	}
 }

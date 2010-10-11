@@ -11,6 +11,8 @@ package org.open2jam.render;
  */
 public interface Sprite {
 
+	public SpriteID getID();
+
 	/**
 	 * Get the width of the drawn sprite
 	 * 

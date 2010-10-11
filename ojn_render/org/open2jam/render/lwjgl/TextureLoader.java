@@ -12,7 +12,6 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
@@ -21,7 +20,9 @@ import java.util.Hashtable;
 
 import javax.imageio.ImageIO;
 
-import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.*;
+import org.lwjgl.BufferUtils;
+import org.open2jam.render.SpriteID;
 
 /**
  * A utility class to load textures for JOGL. This source is based
@@ -35,10 +36,11 @@ import org.lwjgl.opengl.GL11;
  *
  * @author Kevin Glass
  * @author Brian Matzon
+ * @author chaosfox
  */
 public class TextureLoader {
     /** The table of textures that have been loaded in this loader */
-    private HashMap table = new HashMap();
+    private HashMap<SpriteID,Texture> table = new HashMap<SpriteID,Texture>();
 
     /** The colour model including alpha for the GL image */
     private ColorModel glAlphaColorModel;
@@ -86,20 +88,18 @@ public class TextureLoader {
      * @return The loaded texture
      * @throws IOException Indicates a failure to access the resource
      */
-    public Texture getTexture(String resourceName) throws IOException {
-        Texture tex = (Texture) table.get(resourceName);
+    public Texture getTexture(SpriteID resource) throws IOException {
+        Texture tex = table.get(resource);
         
-        if (tex != null) {
-            return tex;
-        }
+        if (tex != null)return tex;
         
-        tex = getTexture(resourceName,
+        tex = getTexture(resource,
                          GL11.GL_TEXTURE_2D, // target
                          GL11.GL_RGBA,     // dst pixel format
                          GL11.GL_LINEAR, // min filter (unused)
                          GL11.GL_LINEAR);
         
-        table.put(resourceName,tex);
+        table.put(resource,tex);
         
         return tex;
     }
@@ -116,12 +116,12 @@ public class TextureLoader {
      * @return The loaded texture
      * @throws IOException Indicates a failure to access the resource
      */
-    public Texture getTexture(String resourceName, 
+    public Texture getTexture(SpriteID resource, 
                               int target, 
                               int dstPixelFormat, 
                               int minFilter, 
                               int magFilter) throws IOException 
-    { 
+    {
         int srcPixelFormat = 0;
         
         // create the texture ID for this texture 
@@ -131,10 +131,22 @@ public class TextureLoader {
         // bind this texture 
         GL11.glBindTexture(target, textureID); 
  
-        BufferedImage bufferedImage = loadImage(resourceName); 
-        texture.setWidth(bufferedImage.getWidth());
-        texture.setHeight(bufferedImage.getHeight());
-        
+        BufferedImage bufferedImage = loadImage(resource);
+
+	java.awt.Rectangle slice = resource.getSlice();
+
+	if(slice != null) {
+		texture.setWidth(slice.width);
+		texture.setHeight(slice.height);
+		texture.setTextureHeight(get2Fold(slice.height));
+		texture.setTextureWidth(get2Fold(slice.width));
+        }else{
+		texture.setWidth(bufferedImage.getWidth());
+		texture.setHeight(bufferedImage.getHeight());
+
+		texture.setTextureHeight(get2Fold(bufferedImage.getHeight()));
+		texture.setTextureWidth(get2Fold(bufferedImage.getWidth()));
+	}
         if (bufferedImage.getColorModel().hasAlpha()) {
             srcPixelFormat = GL11.GL_RGBA;
         } else {
@@ -142,7 +154,7 @@ public class TextureLoader {
         }
 
         // convert that image into a byte buffer of texture data 
-        ByteBuffer textureBuffer = convertImageData(bufferedImage,texture); 
+        ByteBuffer textureBuffer = convertImageData(bufferedImage, slice); 
         
         if (target == GL11.GL_TEXTURE_2D) 
         { 
@@ -154,8 +166,8 @@ public class TextureLoader {
         GL11.glTexImage2D(target, 
                       0, 
                       dstPixelFormat, 
-                      get2Fold(bufferedImage.getWidth()), 
-                      get2Fold(bufferedImage.getHeight()), 
+                      texture.getImageWidth(), 
+                      texture.getImageHeight(),
                       0, 
                       srcPixelFormat, 
                       GL11.GL_UNSIGNED_BYTE, 
@@ -183,27 +195,24 @@ public class TextureLoader {
      *
      * @param bufferedImage The image to convert to a texture
      * @param texture The texture to store the data into
+     * @param slice specify only a part of the source image, can be null
      * @return A buffer containing the data
      */
-    private ByteBuffer convertImageData(BufferedImage bufferedImage,Texture texture) { 
+    private ByteBuffer convertImageData(BufferedImage bufferedImage, java.awt.Rectangle slice) {
         ByteBuffer imageBuffer = null; 
         WritableRaster raster;
         BufferedImage texImage;
-        
-        int texWidth = 2;
-        int texHeight = 2;
-        
-        // find the closest power of 2 for the width and height
-        // of the produced texture
-        while (texWidth < bufferedImage.getWidth()) {
-            texWidth *= 2;
-        }
-        while (texHeight < bufferedImage.getHeight()) {
-            texHeight *= 2;
-        }
-        
-        texture.setTextureHeight(texHeight);
-        texture.setTextureWidth(texWidth);
+
+	int srcx = 0, srcy = 0, texHeight, texWidth;
+	if(slice != null) {
+		srcx = slice.x;
+		srcy = slice.y;
+		texHeight = slice.height;
+		texWidth = slice.width;
+	}else{
+		texHeight = get2Fold(bufferedImage.getHeight());
+		texWidth = get2Fold(bufferedImage.getWidth());
+	}
         
         // create a raster that can be used by OpenGL as a source
         // for a texture
@@ -219,7 +228,9 @@ public class TextureLoader {
         Graphics g = texImage.getGraphics();
         g.setColor(new Color(0f,0f,0f,0f));
         g.fillRect(0,0,texWidth,texHeight);
-        g.drawImage(bufferedImage,0,0,null);
+	g.drawImage(bufferedImage,
+                0, 0, texWidth, texHeight,
+                srcx, srcy, srcx+texWidth, srcy+texHeight, null);
         
         // build a byte buffer from the temporary image 
         // that be used by OpenGL to produce a texture.
@@ -240,16 +251,15 @@ public class TextureLoader {
      * @return The loaded buffered image
      * @throws IOException Indicates a failure to find a resource
      */
-    private BufferedImage loadImage(String ref) throws IOException 
-    { 
-        URL url = TextureLoader.class.getClassLoader().getResource(ref);
+    private BufferedImage loadImage(SpriteID resource) throws IOException 
+    {
+        java.io.InputStream is = TextureLoader.class.getClassLoader().getResourceAsStream(resource.getFile());
         
-        if (url == null) {
-            throw new IOException("Cannot find: "+ref);
+        if (is == null) {
+            throw new IOException("Cannot find: "+resource.getFile());
         }
         
-        BufferedImage bufferedImage = ImageIO.read(new BufferedInputStream(getClass().getClassLoader().getResourceAsStream(ref))); 
- 
+        BufferedImage bufferedImage = ImageIO.read(new BufferedInputStream(is)); 
         return bufferedImage;
     }
     
@@ -265,5 +275,11 @@ public class TextureLoader {
       temp.order(ByteOrder.nativeOrder());
 
       return temp.asIntBuffer();
-    }    
+    }
+
+    /** verify if a number is a power of 2.
+     * just a helper function for getTexture3D */
+    protected static boolean isPowerOfTwo(int n) {  
+      return ((n & (n - 1)) == 0) && n > 0;  
+    }
 }

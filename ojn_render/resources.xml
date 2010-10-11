@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Resources>
+<Note number="0" framecount="3" framespeed="12">
+	<Frame x="225" y="142" w="28" h="7" file="main.png" />
+	<Frame x="225" y="150" w="28" h="7" file="main.png" />
+	<Frame x="225" y="158" w="28" h="7" file="main.png" />
+</Note>
+<Note number="1" framecount="3" framespeed="12">
+	<Frame x="254" y="142" w="22" h="7" file="main.png" />
+	<Frame x="254" y="150" w="22" h="7" file="main.png" />
+	<Frame x="254" y="158" w="22" h="7" file="main.png" />
+</Note>
+<Note number="2" framecount="3" framespeed="12">
+	<Frame x="225" y="142" w="28" h="7" file="main.png" />
+	<Frame x="225" y="150" w="28" h="7" file="main.png" />
+	<Frame x="225" y="158" w="28" h="7" file="main.png" />
+</Note>
+<Note number="3" framecount="3" framespeed="12">
+	<Frame x="277" y="142" w="32" h="7" file="main.png" />
+	<Frame x="277" y="150" w="32" h="7" file="main.png" />
+	<Frame x="277" y="158" w="32" h="7" file="main.png" />
+</Note>
+<Note number="4" framecount="3" framespeed="12">
+	<Frame x="225" y="142" w="28" h="7" file="main.png" />
+	<Frame x="225" y="150" w="28" h="7" file="main.png" />
+	<Frame x="225" y="158" w="28" h="7" file="main.png" />
+</Note>
+<Note number="5" framecount="3" framespeed="12">
+	<Frame x="254" y="142" w="22" h="7" file="main.png" />
+	<Frame x="254" y="150" w="22" h="7" file="main.png" />
+	<Frame x="254" y="158" w="22" h="7" file="main.png" />
+</Note>
+<Note number="6" framecount="3" framespeed="12">
+	<Frame x="225" y="142" w="28" h="7" file="main.png" />
+	<Frame x="225" y="150" w="28" h="7" file="main.png" />
+	<Frame x="225" y="158" w="28" h="7" file="main.png" />
+</Note>
+</Resources>

@@ -1,7 +1,5 @@
 package org.open2jam.render;
 
-import com.dnsalias.java.timer.AdvancedTimer;
-
 /**
  * A wrapper class that provides timing methods. This class
  * provides us with a central location where we can add
@@ -11,15 +9,24 @@ import com.dnsalias.java.timer.AdvancedTimer;
  * @author Kevin Glass
  */
 public class SystemTimer {
-	/** Our link into the GAGE timer library */
-	private static AdvancedTimer timer = new AdvancedTimer();
 	/** The number of "timer ticks" per second */
-	private static long timerTicksPerSecond;
-	
-	/** A little initialisation at startup, we're just going to get the GAGE timer going */
+	private static long timerTicksPerSecond = 1000000000L;// 10^9
+	private static long ticks = 0;
+	private static long start;
+
+	/**
+	* Starts the timer running. The number of ticks is reset to zero and the timer is synchronized with the
+	* leading edge of the wave.
+	*/
 	static {
-		timer.start();
-		timerTicksPerSecond = AdvancedTimer.getTicksPerSecond();
+		long time = System.nanoTime();
+		long prev_time = time;
+		
+		ticks = 0;
+		
+		//Synchronize our timer
+		while(time == prev_time)time = System.nanoTime();
+		start = System.nanoTime();
 	}
 	
 	/**
@@ -32,15 +39,35 @@ public class SystemTimer {
 		// multiply by 1000 so our end result is in milliseconds
 		// then divide by the number of ticks in a second giving
 		// us a nice clear time in milliseconds
-		return (timer.getClockTicks() * 1000) / timerTicksPerSecond;
+		return (getClockTicks() * 1000) / timerTicksPerSecond;
+	}
+
+	/**
+	* Returns the number of clock ticks since the timer was started. If the timer is stopped,
+	* the number of ticks will be frozen at the duration between when the clock was started and
+	* stopped.
+	*
+	* @return Number of ticks since the clock started.
+	*/
+	
+	public static long getClockTicks()
+	{
+		ticks = (System.nanoTime()-start);
+		return ticks;
 	}
 	
 	/**
-	 * Sleep for a fixed number of milliseconds. 
-	 * 
-	 * @param duration The amount of time in milliseconds to sleep for
-	 */
-	public static void sleep(long duration) {
-		timer.sleep((duration * timerTicksPerSecond) / 1000);
+	* Stops code execution for the specified number of clock ticks. To prevent the next
+	* tick from being lost, this is implemented as a hard loop that calls Thread.yield().
+	* Unless the calling thread is of extremely low priority, this should return almost
+	* immediately after the clock changes.
+	*
+	* @param ticks The number of ticks to wait before returning control
+	*/
+	
+	public static void sleep(long ticks)
+	{
+		long tick = getClockTicks();
+		while(getClockTicks() < tick+ticks) Thread.yield();
 	}
 }
