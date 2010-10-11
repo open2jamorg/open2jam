@@ -13,8 +13,9 @@ public class Chart
 {
 	protected List<Event> events = new ArrayList<Event>();
 
-	protected long max_measure;
-
+	/** the header of the source file */
+	protected ChartHeader header;
+	
 	public void add(Event e)
 	{
 		events.add(e);
@@ -26,9 +27,5 @@ public class Chart
 	{
 		java.util.Collections.sort(events); // will sort by measure
 		Event e = events.get(events.size()-1); // get last element
-		max_measure = (long) Math.ceil(e.getMeasure());
 	}
-
-
-	public long getMaxMeasure() { return max_measure; }
 }
