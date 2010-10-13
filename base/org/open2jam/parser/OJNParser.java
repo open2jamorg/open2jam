@@ -3,54 +3,25 @@ package org.open2jam.parser;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OJNParser implements ChartParser
+public class OJNParser
 {
 	private LEFile f = null;
-
-	protected int songid;
-	protected byte signature[];
-	protected byte encoder_value[];
-	protected int genre;
-	protected float bpm;
-	protected short level[];
-	protected int event_count[];
-	protected int note_count[];
-	protected int measure_count[];
-	protected int package_count[];
-	protected short unk_id[];
-	protected byte unk_oldgenre[];
-	protected int bmp_size;
-	protected short unk_a[];
-	protected byte title[];
-	protected byte artist[];
-	protected byte noter[];
-	protected byte ojm_file[];
-	protected int cover_size;
-	protected int time[];
-	protected int note_offset[];
-	protected java.awt.Image cover_image;
 
 	private static String genre_map[] = {"Ballad","Rock","Dance","Techno","Hip-hop",
 			"Soul/R&B","Jazz","Funk","Classical","Traditional","Etc"};
 
 	private Chart chart;
-	private ChartHeader header;
+	private OJNHeader header;
 
 	public ChartHeader parseFileHeader(String file, int rank)
 	{
 		try{
 			f = new LEFile(file,"r");
-			readHeader();
 
-			header = new ChartHeader(file, rank, "OJN");
-			header.level = level[rank];
-			header.title = bytes2string(title);
-			header.artist = bytes2string(artist);
-			header.genre = genre_map[genre>10?10:genre];
-			header.bpm = bpm;
-			header.noteCount = note_count[rank];
-			header.cover = cover_image;
-			header.duration = time[rank];
+			header = new OJNHeader();
+			header.source_file = file;
+			header.rank = rank;
+			readHeader();
 
 			f.close();
 		}catch(Exception e){ die(e); }
@@ -59,51 +30,64 @@ public class OJNParser implements ChartParser
 
 	private void readHeader() throws Exception
 	{
-		songid = f.readINT();
-		signature = f.readBYTE(4);
-		encoder_value = f.readBYTE(4);
-		genre = f.readINT();
-		bpm = f.readFLOAT();
-		level = f.readSHORT(4);
-		event_count = f.readINT(3);
-		note_count = f.readINT(3);
-		measure_count = f.readINT(3);
-		package_count = f.readINT(3);
-		unk_id = f.readSHORT(2);
-		unk_oldgenre = f.readBYTE(20);
-		bmp_size = f.readINT();
-		unk_a = f.readSHORT(2);
-		title = f.readBYTE(64);
-		artist = f.readBYTE(32);
-		noter = f.readBYTE(32);
-		ojm_file = f.readBYTE(32);
-		cover_size = f.readINT();
-		time = f.readINT(3);
-		note_offset = f.readINT(4);
+		int songid = f.readINT();
+		byte signature[] = f.readBYTE(4);
+		byte encoder_value[] = f.readBYTE(4);
+		int genre = f.readINT();
+		float bpm = f.readFLOAT();
+		short level[] = f.readSHORT(4);
+		int event_count[] = f.readINT(3);
+		int note_count[] = f.readINT(3);
+		int measure_count[] = f.readINT(3);
+		int package_count[] = f.readINT(3);
+		short unk_id[] = f.readSHORT(2);
+		byte unk_oldgenre[] = f.readBYTE(20);
+		int bmp_size = f.readINT();
+		short unk_a[] = f.readSHORT(2);
+		byte title[] = f.readBYTE(64);
+		byte artist[] = f.readBYTE(32);
+		byte noter[] = f.readBYTE(32);
+		byte ojm_file[] = f.readBYTE(32);
+		int cover_size = f.readINT();
+		int time[] = f.readINT(3);
+		int note_offsets[] = f.readINT(4);
 
-		f.seek(note_offset[3]);
+		f.seek(note_offsets[3]);
 		byte cv_data[] = new byte[cover_size];
 		f.read(cv_data,0,cover_size);
-		cover_image = new javax.swing.ImageIcon(cv_data).getImage();
+		java.awt.Image cover_image = new javax.swing.ImageIcon(cv_data).getImage();
+
+
+		header.level = level[header.rank];
+		header.title = bytes2string(title);
+		header.artist = bytes2string(artist);
+		header.genre = genre_map[genre>10?10:genre];
+		header.bpm = bpm;
+		header.note_count = note_count[header.rank];
+		header.cover = cover_image;
+		header.duration = time[header.rank];
+
+		//ojn specific fields
+		header.note_offsets = note_offsets;
 	}
 
-	public Chart parseFile(ChartHeader header)
+	public Chart parseFile(OJNHeader header)
 	{
 		this.header = header;
 
 		chart = new Chart(header);
 
 		try{
-			readNoteBlock(header.getSourceFile(), header.getRank());
+			readNoteBlock();
 		}catch(Exception e){ die(e); }
 		return chart;
 	}
 
-	private void readNoteBlock(String file, int rank) throws Exception
+	private void readNoteBlock() throws Exception
 	{
-		f = new LEFile(file, "r");
-		f.seek(note_offset[rank]);
-		int endpos = note_offset[rank+1];
+		f = new LEFile(header.getSourceFile(), "r");
+		f.seek(header.getNoteOffsets()[header.getRank()]);
+		int endpos = header.getNoteOffsets()[header.getRank()+1];
 
 		NoteEvent ln_buffer[] = new NoteEvent[7];
 		while(f.getFilePointer() < endpos)

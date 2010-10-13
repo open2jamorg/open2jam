@@ -124,12 +124,6 @@ public class Render extends Canvas implements GameWindowCallback
 				else e.draw(); // or draw itself on screen
 			}
 		}
-		
-		boolean skp = window.isKeyPressed(KeyEvent.VK_SPACE);
-
-		if(skp && entities_matrix.size() == 0){
-			entities_matrix.get(0).add(key_0.clone());
-		}
 	}
 
 	/**

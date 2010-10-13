@@ -21,24 +21,15 @@ public class OJNViewer implements ListSelectionListener
 
 	JLabel parent_dir;
 	JLabel title;
-	JLabel songid;
 	JLabel genre;
 	JLabel bpm;
 	JLabel level;
 	JLabel note_count;
 	JLabel artist;
-	JLabel noter;
-	JLabel ojm_file;
 	JLabel time;
-	JLabel note_offset;
-	JLabel cover_size;
-	JLabel signature;
-	JLabel package_count;
 	JLabel cover_image;
 
 	JLabel label_list[];
-
-	ChartParser cp = new OJNParser();
 
 	public OJNViewer(String dir)
 	{
@@ -60,20 +51,13 @@ public class OJNViewer implements ListSelectionListener
 		infopanel.setPreferredSize(new Dimension(500,400));
 		Font mono = new Font(Font.MONOSPACED,Font.PLAIN,14);
 
-		songid = new JLabel("SONGID:");
 		title = new JLabel("TITLE:");
 		genre = new JLabel("GENRE:");
 		bpm = new JLabel("BPM:");
 		level = new JLabel("LEVEL:");
 		note_count = new JLabel("NOTE COUNT:");
 		artist = new JLabel("ARTIST:");
-		noter = new JLabel("NOTER:");
-		ojm_file = new JLabel("OJM FILE:");
 		time = new JLabel("TIME:");
-		note_offset = new JLabel("NOTE OFFSET:");
-		cover_size = new JLabel("COVER SIZE:");
-		signature = new JLabel("SIGNATURE:");
-		package_count = new JLabel("PACKAGE_COUNT:");
 		cover_image = new JLabel();
 
 		JButton chdir = new JButton("Change DIR");
@@ -96,37 +80,23 @@ public class OJNViewer implements ListSelectionListener
 
 		parent_dir.setFont(mono);
 		title.setFont(mono);
-		songid.setFont(mono);
 		genre.setFont(mono);
 		bpm.setFont(mono);
 		level.setFont(mono);
 		note_count.setFont(mono);
 		artist.setFont(mono);
-		noter.setFont(mono);
-		ojm_file.setFont(mono);
 		time.setFont(mono);
-		note_offset.setFont(mono);
-		cover_size.setFont(mono);
-		signature.setFont(mono);
-		package_count.setFont(mono);
 
 
 		infopanel.add(parent_dir);
 		infopanel.add(chdir);
-		infopanel.add(songid);
 		infopanel.add(title);
 		infopanel.add(genre);
 		infopanel.add(bpm);
 		infopanel.add(level);
 		infopanel.add(note_count);
 		infopanel.add(artist);
-		infopanel.add(noter);
-		infopanel.add(ojm_file);
 		infopanel.add(time);
-		infopanel.add(note_offset);
-		infopanel.add(cover_size);
-		infopanel.add(signature);
-		infopanel.add(package_count);
 		infopanel.add(cover_image);
 
 		cover_image.addMouseListener( new MouseAdapter(){
@@ -146,22 +116,23 @@ public class OJNViewer implements ListSelectionListener
 
 	private void updateInfo()
 	{
-		h = cp.parseFileHeader(parent_dir.getText()+File.separatorChar+selected_file,0);
+		h = ChartParser.parseFileHeader(parent_dir.getText()+File.separatorChar+selected_file,0);
 
-		title.setText(        "TITLE:        "+h.title);
-		genre.setText(        "GENRE:        "+h.genre);
-		bpm.setText(          "BPM:          "+h.bpm);
-		level.setText(        "LEVEL:        "+h.level);
-		note_count.setText(   "NOTE COUNT:   "+h.noteCount);
-		artist.setText(       "ARTIST:       "+h.artist);
-		time.setText(         "TIME:         "+h.duration);
-		cover_image.setIcon(new ImageIcon(h.cover.getScaledInstance(200,200,java.awt.Image.SCALE_SMOOTH)));
+		title.setText(        "TITLE:        "+h.getTitle());
+		genre.setText(        "GENRE:        "+h.getGenre());
+		bpm.setText(          "BPM:          "+h.getBPM());
+		level.setText(        "LEVEL:        "+h.getLevel());
+		note_count.setText(   "NOTE COUNT:   "+h.getNoteCount());
+		artist.setText(       "ARTIST:       "+h.getArtist());
+		time.setText(         "TIME:         "+h.getDuration());
+		cover_image.setIcon(new ImageIcon(h.getCover().getScaledInstance(200,200,java.awt.Image.SCALE_SMOOTH)));
 	}
 
 
 	public void coverDialog()
 	{
-		JOptionPane.showMessageDialog(frame,null,null,JOptionPane.INFORMATION_MESSAGE,new ImageIcon(h.cover));
+		JOptionPane.showMessageDialog(frame,null,null,
+			JOptionPane.INFORMATION_MESSAGE,new ImageIcon(h.getCover()));
 	}
 	public void changeDir()
 	{
@@ -184,19 +155,6 @@ public class OJNViewer implements ListSelectionListener
 		else
 			return null;
 	}
-// 	private void showChart(String c)
-// 	{
-// 		int lvl = -1;
-// 		if(c.equals("e"))lvl = 0;
-// 		else if(c.equals("n"))lvl = 1;
-// 		else if(c.equals("h"))lvl = 2;
-// 		JDialog jd = new JDialog(frame,true);
-// 		JLabel chart = new JLabel();
-// 		chart.setIcon(new ImageIcon(h.cover));
-// 		jd.getContentPane().add(new JScrollPane(chart));
-// 		jd.setSize(600,400);
-// 		jd.setVisible(true);
-// 	}
 
 	private static FilenameFilter ojnfilter = new FilenameFilter(){
 				public boolean accept(File dir, String name){

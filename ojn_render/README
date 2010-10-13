@@ -1,8 +1,0 @@
-
-trying to implement a ojn notes renderer, ignoring ojm for the moment
-
-this depends on the lwjgl ( lwjgl.org )
-
-render code base shameless copied from http://www.cokeandcode.com/spaceinvaderstutorial
-sprites taken from o2mania
-
