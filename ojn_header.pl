@@ -26,7 +26,7 @@ sub pp_header
 	i3:@note_count
 	i3:@measure_count
 	i3:@package_count
-	s:$unk_h1D
+	s:$unk_1D
 	s:$unk_songid
 	a20:$unk_oldgenre
 	i:$bmp_size

@@ -1,42 +1,33 @@
 
+So far we know how the notes are displayed inside the measure but not how the measures are displayed as a whole,
+the notes position inside the measure is independent from the hispeed, 
+but the measure size( only height actually) is direct affected by the hispeed.
 
-speed - screen - measure
-.5x   -   480  -   192    800x600 -- original
-.5x   -   500  -   200    800x625 -- resized
+On o2jam, the native resolution is 800x600 but not all of those 600 pixels are used for the notes( we got the interface, etc),
+I found that the usable space, that is, the area where the notes falls, is 480 pixels and, at 1x hispeed, each measure is 384 pixels,
+the hispeed multipliers are direct applied at the measure size, so at 3x the measure is 1152 = 384*3.
 
- 1x   -   480  -   384    800x600 -- original
- 1x   -   500  -   400    800x625 -- resized
+We could stop here already, but I don't think 800x600 is good enough anymore, but we can't just use the absolute values,
+since it wouldn't be using the extra space at all then, and making the usable space bigger would give some sort of advantage.
 
-80%
-
-
-the measure bar actually is 3 pixel height, but only the center is considered the measure point,
-on 1x speed the measure is 384 pixel height(on a 800x600 resolution=> only 480 pixel are usable)
-
-600 screen -- 480 usable space ( 80%)
-480 usable space -- 384 measure size ( 80%)
-
-So far we know how the notes are displayed inside the measure but now how the measures are displayed
-inside as a whole, the notes position inside the measure is independent from the hispeed, all the hispeed
-does is changing the measure size( the height actually).
-On o2jam the native resolution is 800x600 but not all of those 600 pixels are used, I found that the exact
-space used for the notes falling is 480 pixels and, at 1x hispeed, the measure is 384 pixels,
-the multipliers are direct aplied at 384 so at 3x hispeed the measure is 1152 = 384*3.
-
-We could stop here already, but today I don't think 800x600 is good enough anymore, but we can't just make
-the screen bigger, that would make the view space bigger thus given an advantage of some sort.
-
-So to maintain the scale of the game at any resolution, I made some simple math :
+We need to maintain the scale of the usable space at any resolution, we need to use the ratio:
 
 480/600 = 0.8, so the usable space is 80% of the screen size !, and..
 384/480 = 0.8, coincidence or not, the measure at 1x is also 80%, but of the usable space.
 
-Following this we can scale the screen up any resolution, 
+then we can apply the hispeed multipliers at the ratio instead.
+e.g.: at 0.5x each measure is 40% of the usable space, and at 5x it is 400%(4 times) the usable space.
+
+Following this, we can scale the measures at any resolution, 
 example with 1024x768:
 
-768 * 0.8 = 614(.4 but truncated/rounded) pixels of usable space.
+768 * 0.8 = 614(.4) pixels of usable space.
 
 0.5x -> 614 * 0.4 = 245(.6) pixels of measure size.
-1x   -> 614 * 0.8 = 491(.1)  idem
+1x   -> 614 * 0.8 = 491(.2)  idem
 2x   -> 614 * 1.6 = 982(.4)  idem
 ... and so on.
+
+Note however that depending of the screen size the scale won't be perfect, 
+since we can only have whole numbers for pixels.
+

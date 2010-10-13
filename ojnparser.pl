@@ -4,23 +4,35 @@ use warnings;
 use GD;
 use Data::Dumper;
 
+#
+# ojnparser.pl - OJN Parser and PNG Render
+# this is the implementation-reference for the other modules
+#
+# this implementation only (purposely) differs from the original algorithm
+# in the graphics generated and in the note width variance
+#
 
 my $filename = shift;
-my $notelevel = 2; # 0,1,2 <-> E,N,H, which note level to print
+my $notelevel = 2; # 0,1,2 <-> Easy,Normal,Hard, which note rank to print
+my $speed = 1; # hi-speed
 
-my @lvll = ('[Ex]','[Nx]','[Hx]');
+# this is the space height the user can see at a time,
+# which is only defined here because the measure size is relative to this
+my $resolution_height  = 600;
+my $viewport = 0.8 * $resolution_height; # 80% of the resolution height
 
-my $beat_size = 400; # pixels
-my $sub_beats = 4; # sub beat demarcation
+my $measure_size = $viewport * 0.8 * $speed; # 80% of the viewport, times the speed
+my $sub_measures = 4; # sub measure demarcation
 
 my $left_pad = 100; # left side padding
 
 my $note_height = 7; # vertical size of a note
-my $note_width = 45; # horizontal size of a note
+my $note_width = 28; # horizontal size of a note
 my $csize = 200; # comments space size
 
 
-my %map  = (
+# map the channels to a easier to render conf
+my %channel_map  = (
 1 => 'BPM',
 2 => 0,
 3 => 1,
@@ -34,6 +46,8 @@ my %map  = (
 my $OJN;
 open $OJN, $filename or die $!;
 binmode $OJN;
+
+#### header parsing phase ####
 
 my $data;
 read $OJN, $data, 300 or die $!;
@@ -49,7 +63,7 @@ i3:@event_count
 i3:@note_count
 i3:@measure_count
 i3:@package_count
-s:$unk_h1D
+s:$unk_1D
 s:$unk_songid
 a20:$unk_oldgenre
 i:$bmp_size
@@ -63,6 +77,8 @@ i3:@time
 i4:@note_offset
 /), $data);
 
+$h->{$_} =~ s/\0//g for keys %$h;
+
 my @notepos = @{$h->{'note_offset'}};
 
 my $bpm = $h->{'bpm'};
@@ -72,15 +88,17 @@ my ($startpos,$endpos) = ($notepos[$notelevel],$notepos[$notelevel + 1]);
 
 seek $OJN, $startpos, 0; # go to pos where lvl starts
 
+#### note parsing phase ####
+
 my @note;
-my $total_beats = 0;
+my $total_measures = 0;
 while(!eof $OJN && tell $OJN < $endpos)
 {
 	read $OJN, $data, 8;
-	my ($beat,$channel,$events_count) = unpack 'lss', $data;
-	$total_beats = $beat if ($beat > $total_beats);
+	my ($measure,$channel,$events_count) = unpack 'lss', $data;
+	$total_measures = $measure if ($measure > $total_measures);
 
-	if(defined $map{$channel})
+	if(defined $channel_map{$channel})
 	{
 		for my $i(0 .. $events_count-1)
 		{
@@ -96,19 +114,20 @@ while(!eof $OJN && tell $OJN < $endpos)
 			next if($value == 0);
 
 			push @note, {
-			'channel' => $map{$channel},
-			'beat'    => $beat + ($i / $events_count),
+			'channel' => $channel_map{$channel},
+			'measure'    => $measure + ($i / $events_count),
 			'value'   => $value,
 			'long'    => $long_note,
 			};
-			print STDERR "unk $unk\n";
 		}
-	}else{
-		seek $OJN, 4 * $events_count, 1; ## jumping what ??
+	}else{ ## jumping undefined channels, here is probably auto-play notes
+		seek $OJN, 4 * $events_count, 1;
 	}
 }
 
-my ($width,$height) = (($note_width * 7) + 2*$left_pad, ($total_beats * $beat_size) + $csize);
+#### render phase ####
+
+my ($width,$height) = (($note_width * 7) + 2*$left_pad, ($total_measures * $measure_size) + $csize);
 
 my $im = GD::Image->new($width, $height);
 
@@ -136,24 +155,24 @@ for my $i(1 .. 6)
 }
 $im->line($x + $note_width, 0, $x + $note_width, $height, $color[5]);
 
-## beat and sub_beat marker lines
-for my $beat(0 .. $total_beats)
+## measure and sub_measure marker lines
+for my $measure(0 .. $total_measures)
 {
 	my $x2 = $left_pad + (7 * $note_width);
-	my $y  = $height - ($beat * $beat_size);
+	my $y  = $height - ($measure * $measure_size);
 
 	$im->line($left_pad, $y, $x2, $y, $color[5]);
-	$im->string(gdSmallFont, $left_pad + (7 * $note_width) + 4, $y, sprintf("#%03d",$beat), $color[5]);
+	$im->string(gdSmallFont, $left_pad + (7 * $note_width) + 4, $y, sprintf("#%03d",$measure), $color[5]);
 
-	for my $sub_beat(1..$sub_beats-1)
+	for my $sub_measure(1..$sub_measures-1)
 	{
-		$y  = $height - ($beat+($sub_beat/$sub_beats)) * $beat_size;
+		$y  = $height - ($measure+($sub_measure/$sub_measures)) * $measure_size;
 		$im->line($left_pad, $y, $x2, $y, $color[4]);
 	}
 }
 
 my @lch; # to store long notes
-my %stat = (
+my %stat = ( # gather some stats
     'tap'  => 0,
     'long' => 0,
     'min'  => $bpm,
@@ -167,8 +186,8 @@ foreach my $n(@note)
 	{
 		my $newbpm = $n->{'value'};
 		my $x = $left_pad + (7 * $note_width) + 4;
-		my $y = $height - ($beat_size * $n->{'beat'}) - $note_height;
-		$im->string(gdSmallFont, $x, $y,sprintf("BPM %.2f -> %.2f", $bpm, $newbpm), $color[6]);
+		my $y = $height - ($measure_size * $n->{'measure'});
+		$im->string(gdSmallFont, $x, $y,sprintf("BPM %.3f -> %.2f", $bpm, $newbpm), $color[6]);
 		$stat{'min'} = $newbpm if ($newbpm < $stat{'min'});
 		$stat{'max'} = $newbpm if ($newbpm > $stat{'max'});
 		$bpm = $newbpm;
@@ -179,34 +198,38 @@ foreach my $n(@note)
 		$c = 3 if($channel == 3);     ## yellow note
 
 		my $x = $left_pad + ($channel * $note_width);
+		my $y = $height - ($measure_size * $n->{'measure'}) - 1; # apparently it is always 1 pixel higher
 
 		if($n->{'long'} == 0) # tap note
 		{
 			$stat{'tap'}++;
-			my $y = $height - ($beat_size * $n->{'beat'});
 			$im->filledRectangle($x, $y - $note_height, $x+$note_width, $y, $color[$c]);
 		}elsif($n->{'long'} == 2) # start long note
 		{
 			$stat{'long'}++;
-			$lch[$channel] = $n->{'beat'};
+			$lch[$channel] = $n->{'measure'};
 		}else{ # end long note
-			my $y1 = $height - ($beat_size * $lch[$channel]);
-			my $y2 = $height - ($beat_size * $n->{'beat'});
-			$im->filledRectangle($x, $y2, $x+$note_width, $y1, $color[10 + $c]);
+			my $y_old = $height - ($measure_size * $lch[$channel]) - 1;
+			$im->filledRectangle($x, $y, $x+$note_width, $y_old, $color[10 + $c]);
 			delete $lch[$channel];
 		}
 	}
 }
 
+### add some metadata and statistics to the image
+
+my @lvl_str = map{"[$_$speed]"} ('Ex','Nx','Hx');
+my $str =  "$lvl_str[$notelevel] $artist - $title";
 my 
-$y  = 20;$im->string(gdSmallFont, 24, $y, "$lvll[$notelevel] $artist - $title", $color[0]);
-$y += 20;  $im->string(gdSmallFont, 24, $y, $noter, $color[1]);
+$y  = 20;$im->string(gdSmallFont, 24, $y, $str, $color[0]);
+$y += 20;$im->string(gdSmallFont, 24, $y, $noter, $color[1]);
 $y += 15;
 
-my $st = ' [' . sprintf("%.3d",$stat{'min'}) . '-' . sprintf("%.3d",$stat{'max'}) . ']';
-$y += 2; $im->string(gdSmallFont, 24, $y, " - Tap Notes:  " . $stat{'tap'},  $color[7]);
+
+my $bpm_text = sprintf('%.3f (%.3f ~ %.3f)',$h->{'bpm'},$stat{'min'},$stat{'max'});
+$y +=  2;$im->string(gdSmallFont, 24, $y, " - Tap Notes:  " . $stat{'tap'},  $color[7]);
 $y += 15;$im->string(gdSmallFont, 24, $y, " - Long Notes: " . $stat{'long'}, $color[7]);
-$y += 15;$im->string(gdSmallFont, 24, $y, " - BPM:        " . sprintf("%.3d",$bpm) . $st,  $color[7]);
+$y += 15;$im->string(gdSmallFont, 24, $y, " - BPM:        " . $bpm_text,  $color[7]);
 
 
 binmode STDOUT;
