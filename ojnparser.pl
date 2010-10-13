@@ -187,7 +187,7 @@ foreach my $n(@note)
 		my $newbpm = $n->{'value'};
 		my $x = $left_pad + (7 * $note_width) + 4;
 		my $y = $height - ($measure_size * $n->{'measure'});
-		$im->string(gdSmallFont, $x, $y,sprintf("BPM %.3f -> %.2f", $bpm, $newbpm), $color[6]);
+		$im->string(gdSmallFont, $x, $y,sprintf("BPM %.3f -> %.3f", $bpm, $newbpm), $color[6]);
 		$stat{'min'} = $newbpm if ($newbpm < $stat{'min'});
 		$stat{'max'} = $newbpm if ($newbpm > $stat{'max'});
 		$bpm = $newbpm;

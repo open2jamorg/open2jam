@@ -32,7 +32,7 @@ public class ChartParser
 	}
 
 	/** parse and return the whole Chart representation */
-	public Chart parseFile(ChartHeader h)
+	public static Chart parseFile(ChartHeader h)
 	{
 		if(h instanceof OJNHeader) {
 			return ojn_parser.parseFile((OJNHeader)h);

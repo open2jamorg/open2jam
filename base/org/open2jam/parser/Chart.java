@@ -17,7 +17,7 @@ public class Chart
 	protected ChartHeader header;
 
 	/** the number of measures in the chart */
-	protected long measures;
+	protected long measure_count;
 
 	public Chart(ChartHeader h)
 	{
@@ -34,5 +34,11 @@ public class Chart
 	public void finalize()
 	{
 		java.util.Collections.sort(events); // will sort by measure
+		Event e = events.get(events.size()-1); // last event
+		measure_count = (int) Math.ceil(e.getMeasure());
 	}
+
+	public long getMeasureCount() { return measure_count; }
+
+	public List<Event> getEvents() { return events; }
 }

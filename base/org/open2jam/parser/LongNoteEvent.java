@@ -2,17 +2,19 @@ package org.open2jam.parser;
 
 public class LongNoteEvent extends NoteEvent
 {
-	protected double end_beat;
+	protected double end_measure;
 
-	public LongNoteEvent(double measure, short channel, short value, double end_beat)
+	public LongNoteEvent(double measure, int channel, short value, double end_measure)
 	{
 		super(measure,channel,value);
-		this.end_beat = end_beat;
+		this.end_measure = end_measure;
 	}
 
-	public LongNoteEvent(NoteEvent ne, double end_beat)
+	public LongNoteEvent(NoteEvent ne, double end_measure)
 	{
 		super(ne.getMeasure(),ne.getChannel(),ne.getValue());
-		this.end_beat = end_beat;
+		this.end_measure = end_measure;
 	}
+
+	public double getEndMeasure() { return end_measure; }
 }

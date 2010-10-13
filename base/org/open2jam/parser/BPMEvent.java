@@ -10,4 +10,6 @@ public class BPMEvent extends Event
 		this.channel = channel;
 		this.bpm = bpm;
 	}
+
+	public double getBPM(){ return bpm; }
 }

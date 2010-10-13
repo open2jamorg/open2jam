@@ -3,8 +3,13 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.awt.Dimension;
 import java.awt.Font;
-import javax.swing.event.*;
-import java.awt.event.*;
+import java.awt.EventQueue;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
 
 import java.util.List;
 import java.util.TreeMap;
@@ -13,7 +18,7 @@ import org.open2jam.parser.*;
 
 public class OJNViewer implements ListSelectionListener
 {
-	JFrame frame;
+	final JFrame frame;
 	ChartHeader h;
 
 	JList list;
@@ -65,18 +70,12 @@ public class OJNViewer implements ListSelectionListener
 			public void actionPerformed(ActionEvent e){changeDir();}
 		});
 
-// 		JButton echart = new JButton("Ex"), 
-// 			nchart = new JButton("Nx"),
-// 			hchart = new JButton("Hx");
-// 		echart.setActionCommand("e");
-// 		nchart.setActionCommand("n");
-// 		hchart.setActionCommand("h");
-// 		ActionListener mkchart = new ActionListener(){
-// 			public void actionPerformed(ActionEvent e){showChart(e.getActionCommand());}
-// 		};
-// 		echart.addActionListener(mkchart);
-// 		nchart.addActionListener(mkchart);
-// 		hchart.addActionListener(mkchart);
+		JButton chart = new JButton("Make Chart");
+
+		ActionListener mkchart = new ActionListener(){
+			public void actionPerformed(ActionEvent e){saveChart();}
+		};
+		chart.addActionListener(mkchart);
 
 		parent_dir.setFont(mono);
 		title.setFont(mono);
@@ -97,6 +96,7 @@ public class OJNViewer implements ListSelectionListener
 		infopanel.add(note_count);
 		infopanel.add(artist);
 		infopanel.add(time);
+		infopanel.add(chart);
 		infopanel.add(cover_image);
 
 		cover_image.addMouseListener( new MouseAdapter(){
@@ -104,7 +104,11 @@ public class OJNViewer implements ListSelectionListener
 		});
 
 		frame.setSize(600,400);
-		frame.setVisible(true);
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				frame.setVisible(true);
+			}
+		});
 	}
 
 	public void valueChanged(ListSelectionEvent e)
@@ -116,7 +120,7 @@ public class OJNViewer implements ListSelectionListener
 
 	private void updateInfo()
 	{
-		h = ChartParser.parseFileHeader(parent_dir.getText()+File.separatorChar+selected_file,0);
+		h = ChartParser.parseFileHeader(parent_dir.getText()+File.separatorChar+selected_file,2);
 
 		title.setText(        "TITLE:        "+h.getTitle());
 		genre.setText(        "GENRE:        "+h.getGenre());
@@ -128,6 +132,19 @@ public class OJNViewer implements ListSelectionListener
 		cover_image.setIcon(new ImageIcon(h.getCover().getScaledInstance(200,200,java.awt.Image.SCALE_SMOOTH)));
 	}
 
+	private void saveChart()
+	{
+		java.awt.image.BufferedImage bi = ImageRender.renderChart(ChartParser.parseFile(h), 1, 4);
+		String s = parent_dir.getText()+File.separator+selected_file+".png";
+		boolean ok = false;
+		try{
+			ok = javax.imageio.ImageIO.write(bi, "png", new File(s));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		if(ok)JOptionPane.showMessageDialog(frame,"OK. Chart saved in "+s);
+		else JOptionPane.showMessageDialog(frame,"Error");
+	}
 
 	public void coverDialog()
 	{

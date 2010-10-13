@@ -3,7 +3,7 @@ package org.open2jam.parser;
 public abstract class Event implements Comparable<Event>
 {
 	protected double measure;
-	protected short channel;
+	protected int channel;
 
 	public int compareTo(Event e)
 	{
@@ -11,5 +11,5 @@ public abstract class Event implements Comparable<Event>
 	}
 
 	public double getMeasure() { return measure; }
-	public short getChannel() { return channel; }
+	public int getChannel() { return channel; }
 }

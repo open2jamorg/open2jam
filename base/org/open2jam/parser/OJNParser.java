@@ -97,7 +97,7 @@ public class OJNParser
 			int events_count = f.readSHORT();
 			if(channel >= 1 && channel <= 8) // known channels until now
 			{
-				for(int i=0;i<events_count;i++)
+				for(double i=0;i<events_count;i++)
 				{
 					double sub_measure = measure + (i / events_count);
 					if(channel == 1) // BPM event
@@ -111,7 +111,7 @@ public class OJNParser
 						char note_type = (char)f.readBYTE();
 						if(value == 0)continue; // ignore value=0 events
 
-						NoteEvent ne = new NoteEvent(sub_measure,channel,value);
+						NoteEvent ne = new NoteEvent(sub_measure,channel-2,value);
 
 						if(note_type == 2){ // long note start
 							ln_buffer[channel-2] = ne;
