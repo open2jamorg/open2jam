@@ -31,8 +31,6 @@ public class Render extends Canvas implements GameWindowCallback
 	 ** so entities at layer X will always be renderd before layer X+1 */
 	private List<List<Entity>> entities_matrix;
 
-	private Entity key_0;
-
 	public Render(int renderingType)
 	{
 		// create a window based on a chosen rendering method

@@ -55,9 +55,16 @@ public class EntityBuilder
 			case Note:
 			int framespeed = Integer.parseInt(atts.get("framespeed"));
 			String name = "note"+atts.get("number");
-			SpriteID frames[] = buffer.toArray(new SpriteID[0]);
-			Entity e = new AnimatedEntity(frames, 0, 0, framespeed);
+
+			int heads = Integer.parseInt(atts.get("headframes"));
+			int bodys = Integer.parseInt(atts.get("bodyframes"));
+
+			SpriteID head_frames[] = buffer.subList(0,head_frames).toArray(new SpriteID[0]);
+			SpriteID body_frames[] = buffer.subList(heads,heads+bodys).toArray(new SpriteID[0]);
+			Entity e = new NoteEntity(head_frames, framespeed);
+			Entity e2 = new LongNoteEntity(head_frames, body_frames, framespeed);
 			result.put(name,e);
+			result.put(name,e2);
 			buffer.clear();
 		}
 	}

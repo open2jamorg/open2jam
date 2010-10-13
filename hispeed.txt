@@ -1,0 +1,42 @@
+
+
+speed - screen - measure
+.5x   -   480  -   192    800x600 -- original
+.5x   -   500  -   200    800x625 -- resized
+
+ 1x   -   480  -   384    800x600 -- original
+ 1x   -   500  -   400    800x625 -- resized
+
+80%
+
+
+the measure bar actually is 3 pixel height, but only the center is considered the measure point,
+on 1x speed the measure is 384 pixel height(on a 800x600 resolution=> only 480 pixel are usable)
+
+600 screen -- 480 usable space ( 80%)
+480 usable space -- 384 measure size ( 80%)
+
+So far we know how the notes are displayed inside the measure but now how the measures are displayed
+inside as a whole, the notes position inside the measure is independent from the hispeed, all the hispeed
+does is changing the measure size( the height actually).
+On o2jam the native resolution is 800x600 but not all of those 600 pixels are used, I found that the exact
+space used for the notes falling is 480 pixels and, at 1x hispeed, the measure is 384 pixels,
+the multipliers are direct aplied at 384 so at 3x hispeed the measure is 1152 = 384*3.
+
+We could stop here already, but today I don't think 800x600 is good enough anymore, but we can't just make
+the screen bigger, that would make the view space bigger thus given an advantage of some sort.
+
+So to maintain the scale of the game at any resolution, I made some simple math :
+
+480/600 = 0.8, so the usable space is 80% of the screen size !, and..
+384/480 = 0.8, coincidence or not, the measure at 1x is also 80%, but of the usable space.
+
+Following this we can scale the screen up any resolution, 
+example with 1024x768:
+
+768 * 0.8 = 614(.4 but truncated/rounded) pixels of usable space.
+
+0.5x -> 614 * 0.4 = 245(.6) pixels of measure size.
+1x   -> 614 * 0.8 = 491(.1)  idem
+2x   -> 614 * 1.6 = 982(.4)  idem
+... and so on.

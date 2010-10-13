@@ -6,8 +6,8 @@ package org.open2jam.parser;
 public interface ChartParser
 {
 	/** parse and returns a ChartHeader object */
-	public static ChartHeader parseFileHeader(String file, int rank);
+	public ChartHeader parseFileHeader(String file, int rank);
 
-	/** parse and return the whole Chart representation, including header */
-	public static Chart parseFile(String file, int rank);
+	/** parse and return the whole Chart representation */
+	public Chart parseFile(ChartHeader h);
 }
