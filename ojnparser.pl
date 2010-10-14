@@ -98,6 +98,7 @@ while(!eof $OJN && tell $OJN < $endpos)
 	my ($measure,$channel,$events_count) = unpack 'lss', $data;
 	$total_measures = $measure if ($measure > $total_measures);
 
+	print STDERR "m: $measure, bb: $events_count\n";
 	if(defined $channel_map{$channel})
 	{
 		for my $i(0 .. $events_count-1)

@@ -13,6 +13,7 @@ import javax.swing.event.ListSelectionEvent;
 
 import java.util.List;
 import java.util.TreeMap;
+import java.util.HashMap;
 
 import org.open2jam.parser.*;
 
@@ -21,6 +22,7 @@ public class OJNViewer implements ListSelectionListener
 	final JFrame frame;
 	ChartHeader h;
 
+	HashMap<String,ChartHeader> label_map;
 	JList list;
 	String selected_file;
 
@@ -33,8 +35,6 @@ public class OJNViewer implements ListSelectionListener
 	JLabel artist;
 	JLabel time;
 	JLabel cover_image;
-
-	JLabel label_list[];
 
 	public OJNViewer(String dir)
 	{
@@ -120,8 +120,7 @@ public class OJNViewer implements ListSelectionListener
 
 	private void updateInfo()
 	{
-		h = ChartParser.parseFileHeader(parent_dir.getText()+File.separatorChar+selected_file,2);
-
+		h = label_map.get(selected_file);
 		title.setText(        "TITLE:        "+h.getTitle());
 		genre.setText(        "GENRE:        "+h.getGenre());
 		bpm.setText(          "BPM:          "+h.getBPM());
@@ -181,10 +180,17 @@ public class OJNViewer implements ListSelectionListener
 	{
 		String files[] = new File(parent_dir.getText()).list(ojnfilter);
 		String[] sf = sortOJNFiles(files);
+		label_map = new HashMap<String,ChartHeader>();
+		for(int i=0;i<sf.length;i++)
+		{
+			ChartHeader h = ChartParser.parseFileHeader(parent_dir.getText()+File.separatorChar+sf[i],2);
+			sf[i] = h.getTitle();
+			label_map.put(sf[i],h);
+		}
 		list.setListData(sf);
 	}
 
-	private String[] sortOJNFiles(String[] files)
+	private static String[] sortOJNFiles(String[] files)
 	{
 		TreeMap<Integer,String> h = new TreeMap<Integer,String>();
 		for(int i=0;i<files.length;i++)
@@ -197,14 +203,23 @@ public class OJNViewer implements ListSelectionListener
 
 	public static void main(String args[])
 	{
-		try {
-		for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-			if ("Nimbus".equals(info.getName())) {
-				UIManager.setLookAndFeel(info.getClassName());
-				break;
-			}
+// 		try {
+// 		for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+// 			if ("Nimbus".equals(info.getName())) {
+// 				UIManager.setLookAndFeel(info.getClassName());
+// 				break;
+// 			}
+// 		}
+// 		} catch (Exception e) {}
+// 		new OJNViewer(System.getProperty("user.dir"));
+
+		String files[] = new File("..").list(ojnfilter);
+		ChartHeader h;
+		java.awt.image.BufferedImage bi;
+		HashMap<Integer,ChartHeader> hhh = new HashMap<Integer,ChartHeader>();
+		for(int i=0;i<300*files.length;i++)
+		{
+			hhh.put(i,ChartParser.parseFileHeader(".."+File.separatorChar+files[i%files.length],2));
 		}
-		} catch (Exception e) {}
-		new OJNViewer(System.getProperty("user.dir"));
 	}
 }

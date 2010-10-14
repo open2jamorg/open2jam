@@ -9,7 +9,7 @@ binmode STDOUT;
 
 my $dump;
 read DATA, $dump, 80 or die $!; # header ?
-#print $dump;
+print $dump;
 while(!eof DATA)
 {
 	read DATA, $dump, 4 or die $!;

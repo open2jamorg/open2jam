@@ -37,18 +37,15 @@ public class ImageRender
 
 		int x = 0;
 		g.setColor(colors[3]);
-		for(int i=1;i<7;i++)
+		for(int i=0;i<6;i++)
 		{
 			x += note_width;
 			g.drawLine(x, 0, x, (int)Math.round(height));
 		}
 		g.setColor(colors[4]);
-		g.drawLine(0, 0, 0, (int)Math.round(height));
-		g.drawLine(x+note_width, 0, x + note_width, (int)Math.round(height));
-
 
 		// measure and sub_measure marker lines
-		x = 7 * note_width;
+		x = width;
 		double y;
 		for(int measure=0;measure<=chart.getMeasureCount();measure++)
 		{
@@ -56,18 +53,18 @@ public class ImageRender
 			g.drawLine(0, (int)Math.round(y), x, (int)Math.round(y));
 			g.drawString(String.format("#%03d",measure),x+4,(int)Math.round(y));
 
-			if(sub_measures>1){
-				g.setColor(colors[3]);
-				for(double sub_measure=1;sub_measure<sub_measures;sub_measure++)
-				{
-					y = height - (measure+(sub_measure/sub_measures)) * measure_size;
-					g.drawLine(0, (int)Math.round(y), x, (int)Math.round(y));
-				}
-				g.setColor(colors[4]);
+			g.setColor(colors[3]);
+			for(double sm=1;sm<sub_measures;sm++)
+			{
+				y = height - (measure+(sm/sub_measures)) * measure_size;
+				g.drawLine(0, (int)Math.round(y), x, (int)Math.round(y));
 			}
+			g.setColor(colors[4]);
 		}
 
-		double bpm = 100;
+		g.drawLine(0, 0, 0, (int)Math.round(height));
+		g.drawLine(x+note_width, 0, x + note_width, (int)Math.round(height));
+
 		int c;
 		for(Event e : chart.getEvents())
 		{
@@ -75,12 +72,11 @@ public class ImageRender
 			{
 				BPMEvent be = (BPMEvent) e;
 				double newbpm = be.getBPM();
-				x = (7 * note_width) + 4;
+				x = width + 4;
 				y = height - (measure_size * be.getMeasure());
 
 				g.setColor(colors[5]);
 				g.drawString(String.format("BPM %.3f",newbpm),x, (int)Math.round(y-100));
-				bpm = newbpm;
 			}else{
 				c = 0;
 				if(e.getChannel() % 2 == 0)c = 0;  // white notes
