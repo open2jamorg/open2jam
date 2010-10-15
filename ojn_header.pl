@@ -31,10 +31,10 @@ sub pp_header
 	a20:$unk_oldgenre
 	i:$bmp_size
 	s2:@unk_a
-	a64:$title
-	a32:$artist
-	a32:$noter
-	a32:@ojm_file
+	Z64:$title
+	Z32:$artist
+	Z32:$noter
+	Z32:$ojm_file
 	i:$cover_size
 	i3:@time
 	i4:@note_offset

@@ -11,8 +11,7 @@ read DATA, $header, 20 or die $!;
 
 
 my $h = unpack2hash(join(' ',qw/
-a3:$signature
-c:$a1
+a4:$signature
 s:$samples
 s:$musics
 I:$size

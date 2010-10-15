@@ -1,0 +1,37 @@
+
+
+
+M30 -- ogg "xor'ed" encrypt, samples are decrpyted by xor'ing 4bytes a time with 'nami' <6E 61 6D 69>
+
+the M30 has a header of 28 bytes:
+
+struct M30_header {
+	char signature[4]; // M30\0
+	char unk_fixed[8];
+	short sample_count;
+	char unk_fixed2[6];
+	int payload_size;
+	int unk_zero;
+};
+
+after that we have the samples data.
+each sample starts with a header of 52 bytes.
+
+struct M30_sample_header {
+	char sample_name[32];
+	int sample_size;
+	char unk_1[8];
+	int reference;
+	int unk_2;
+}
+
+after the header, there is ogg data, xor'ed with 'nami'.
+
+after that we got the next sample header, same as above..
+
+
+ -missing
+- the reference doen't quite match the ojn
+
+difference between WAV## and MOV###
+

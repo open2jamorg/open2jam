@@ -3,30 +3,60 @@ use warnings;
 use Data::Dumper;
 
 
-foreach(@ARGV)
+my $filename = shift;
+
+open DATA, $filename or die $!;
+
+my $header;
+read DATA, $header, 28 or die $!;
+
+my $h = unpack2hash(join(' ',qw/
+Z4:$signature
+c8:@unk_fixed
+s:$sample_count
+c6:@unk_fixed2
+i:$payload_size
+i:$unk_zero
+/), $header);
+
+print Dumper $h;
+
+open MP, ">t.ogg";
+my $buf;
+while(!eof DATA)
+# for (0)
 {
-	my $filename = $_;
-
-	open DATA, $filename or die $!;
-
-	my $header;
-	read DATA, $header, 80 or die $!;
-
-
-	my $h = unpack2hash(join(' ',qw/
-	Z3:$signature
-	S10:@unk
-	a37:$comments
-	S10:@unk2
+	read DATA, $header, 52 or die $!;
+	my $nh = unpack2hash(join(' ',qw/
+	a32:$sample_name
+	i:$sample_size
+	c8:@unk_1
+	i:$ref
+	i:$unk_2
 	/), $header);
-	next unless $h->{'signature'} eq 'M30';
 
-	print "file: $filename\n";
-	print Dumper $h;
+# 	print Dumper $nh;
+
+
+	read DATA, $buf, $nh->{'sample_size'};
+	$buf = nami_xor($buf);
+	print MP $buf;
 }
-# 80 or 144
-# 250192
-# size 250112 or 250048
+ 
+close MP;
+
+# 	next unless $h->{'signature'} eq 'M30';
+
+
+sub nami_xor
+{
+	my ($data) = @_;
+	my $nami = 'nami';
+	my $bytes = length $data;
+	my $mask = $nami x ($bytes/4);
+	$mask .= substr $nami, 0, ($bytes%4);
+	return $data ^ $mask;
+}
 
 sub unpack2hash
 {

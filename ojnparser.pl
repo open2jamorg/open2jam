@@ -98,7 +98,7 @@ while(!eof $OJN && tell $OJN < $endpos)
 	my ($measure,$channel,$events_count) = unpack 'lss', $data;
 	$total_measures = $measure if ($measure > $total_measures);
 
-	print STDERR "m: $measure, bb: $events_count\n";
+# 	print STDERR "c: $channel, m: $measure, bb: $events_count\n";# if($channel > 8);
 	if(defined $channel_map{$channel})
 	{
 		for my $i(0 .. $events_count-1)
@@ -120,9 +120,19 @@ while(!eof $OJN && tell $OJN < $endpos)
 			'value'   => $value,
 			'long'    => $long_note,
 			};
+
+			next unless defined $long_note;
+			print STDERR "$value m: $measure, c: $channel K\n";
 		}
 	}else{ ## jumping undefined channels, here is probably auto-play notes
-		seek $OJN, 4 * $events_count, 1;
+		#seek $OJN, 4 * $events_count, 1;
+		for my $i(0 .. $events_count-1)
+		{
+			read $OJN, $data, 4;
+			my ($value, $unk, $long_note) = unpack 'sCC', $data;
+			next if $value == 0;
+			print STDERR "$value m: $measure, c: $channel U\n";
+		}
 	}
 }
 

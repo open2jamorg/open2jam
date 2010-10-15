@@ -1,0 +1,9 @@
+
+
+measure 385 (x hi-speed) , bpm 240 == 1 measure per second
+
+speed = bpm/240 = x measures per second
+
+move_speed = measure * speed / 1000 = y pixels per millisecond
+
+
