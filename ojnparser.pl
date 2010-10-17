@@ -13,7 +13,7 @@ use Data::Dumper;
 #
 
 my $filename = shift;
-my $notelevel = 2; # 0,1,2 <-> Easy,Normal,Hard, which note rank to print
+my $notelevel = 0; # 0,1,2 <-> Easy,Normal,Hard, which note rank to print
 my $speed = 1; # hi-speed
 
 # this is the space height the user can see at a time,
@@ -24,27 +24,16 @@ my $viewport = 0.8 * $resolution_height; # 80% of the resolution height
 my $measure_size = $viewport * 0.8 * $speed; # 80% of the viewport, times the speed
 my $sub_measures = 4; # sub measure demarcation
 
-my $left_pad = 100; # left side padding
+my $left_pad = 40; # left side padding
+my $right_pad = 150; # right side padding
 
 my $note_height = 7; # vertical size of a note
 my $note_width = 28; # horizontal size of a note
 my $csize = 200; # comments space size
 
 
-# map the channels to a easier to render conf
-my %channel_map  = (
-1 => 'BPM',
-2 => 0,
-3 => 1,
-4 => 2,
-5 => 3,
-6 => 4,
-7 => 5,
-8 => 6
-);
 
-my $OJN;
-open $OJN, $filename or die $!;
+open my $OJN, $filename or die $!;
 binmode $OJN;
 
 #### header parsing phase ####
@@ -90,55 +79,56 @@ seek $OJN, $startpos, 0; # go to pos where lvl starts
 
 #### note parsing phase ####
 
-my @note;
-my $total_measures = 0;
+my @note_list;
 while(!eof $OJN && tell $OJN < $endpos)
 {
 	read $OJN, $data, 8;
 	my ($measure,$channel,$events_count) = unpack 'lss', $data;
-	$total_measures = $measure if ($measure > $total_measures);
 
-# 	print STDERR "c: $channel, m: $measure, bb: $events_count\n";# if($channel > 8);
-	if(defined $channel_map{$channel})
+	if($channel >= 0 && $channel < 9)
 	{
 		for my $i(0 .. $events_count-1)
 		{
-			my ($value, $unk, $long_note);
-			if($channel == 1)
+			read $OJN, $data, 4;
+
+			my ($value, $unk, $note_type);
+			if($channel == 0 || $channel == 1) # fractional measure or BPM change
 			{
-				read $OJN, $data, 4;
 				($value) = unpack 'f', $data;
 			}else{
-				read $OJN, $data, 4;
-				($value, $unk, $long_note) = unpack 'sCC', $data;
+				($value, $unk, $note_type) = unpack 'sCC', $data;
 			}
 			next if($value == 0);
 
-			push @note, {
-			'channel' => $channel_map{$channel},
-			'measure'    => $measure + ($i / $events_count),
+			push @note_list, {
+			'channel' => $channel,
+			'measure' => $measure,
+			'pos'     => $i / $events_count,
 			'value'   => $value,
-			'long'    => $long_note,
+			'type'    => $note_type,
 			};
-
-			next unless defined $long_note;
-			print STDERR "$value m: $measure, c: $channel K\n";
+			print STDERR "$value, channel: $channel\n" if $channel > 1;
 		}
-	}else{ ## jumping undefined channels, here is probably auto-play notes
-		#seek $OJN, 4 * $events_count, 1;
-		for my $i(0 .. $events_count-1)
+	}else{ ## jumping channels > 8, here is probably auto-play notes
+# 		seek $OJN, 4 * $events_count, 1;
+		for(1..$events_count)
 		{
 			read $OJN, $data, 4;
-			my ($value, $unk, $long_note) = unpack 'sCC', $data;
-			next if $value == 0;
-			print STDERR "$value m: $measure, c: $channel U\n";
+			my ($value, $unk) = unpack 'ss', $data;
+			printf STDERR "$value, $unk\n";
 		}
 	}
 }
 
+
+
+@note_list = sort{ $a->{'measure'} <=> $b->{'measure'} } @note_list;
+my $total_measures = $note_list[-1]->{'measure'};
+
+
 #### render phase ####
 
-my ($width,$height) = (($note_width * 7) + 2*$left_pad, ($total_measures * $measure_size) + $csize);
+my ($width,$height) = (($note_width * 7) + $left_pad + $right_pad, ($total_measures * $measure_size) + $csize);
 
 my $im = GD::Image->new($width, $height);
 
@@ -149,7 +139,7 @@ $color[1]  = $im->colorAllocate(241,241,243);  # white
 $color[2]  = $im->colorAllocate( 68,212,246);  # cyan
 $color[3]  = $im->colorAllocate(254,204, 83);  # yellow
 $color[4]  = $im->colorAllocate( 50, 50, 50);  # dark gray
-$color[5]  = $im->colorAllocate(120,120,120);  # gray
+$color[5]  = $im->colorAllocate(150,150,150);  # gray
 $color[6]  = $im->colorAllocate(255,150,150);  # pink
 $color[7]  = $im->colorAllocate(180,180,180);  # light gray
 $color[11] = $im->colorAllocate(198,194,198);  # light gray
@@ -161,26 +151,10 @@ my $x = $left_pad;
 $im->line($x, 0, $x, $height, $color[5]); 
 for my $i(1 .. 6)
 {
-	$x += $note_width;
+	$x += $note_width + 2;
 	$im->line($x, 0, $x, $height, $color[4]);
 }
-$im->line($x + $note_width, 0, $x + $note_width, $height, $color[5]);
-
-## measure and sub_measure marker lines
-for my $measure(0 .. $total_measures)
-{
-	my $x2 = $left_pad + (7 * $note_width);
-	my $y  = $height - ($measure * $measure_size);
-
-	$im->line($left_pad, $y, $x2, $y, $color[5]);
-	$im->string(gdSmallFont, $left_pad + (7 * $note_width) + 4, $y, sprintf("#%03d",$measure), $color[5]);
-
-	for my $sub_measure(1..$sub_measures-1)
-	{
-		$y  = $height - ($measure+($sub_measure/$sub_measures)) * $measure_size;
-		$im->line($left_pad, $y, $x2, $y, $color[4]);
-	}
-}
+$im->line($x + $note_width+2, 0, $x + $note_width+2, $height, $color[5]);
 
 my @lch; # to store long notes
 my %stat = ( # gather some stats
@@ -190,43 +164,68 @@ my %stat = ( # gather some stats
     'max'  => $bpm
 );
 
-foreach my $n(@note)
+
+my $buffer_offset = $height;
+my $this_measure_size;
+for my $m(0..$total_measures)
 {
-	my $channel = $n->{'channel'};
-	if($channel eq 'BPM')
+	$this_measure_size = $measure_size;
+	# measure marker
+	$im->line($left_pad, $buffer_offset, $left_pad + (7 * ($note_width+2)), $buffer_offset, $color[5]);
+	$im->string(gdSmallFont, $left_pad - 30, $buffer_offset-7, sprintf("#%03d",$m), $color[5]);
+
+	# gathering the notes of this measure
+	my @notes;
+	push @notes, shift @note_list while @note_list && $note_list[0]->{'measure'} == $m;
+
+	foreach my $n(@notes)
 	{
-		my $newbpm = $n->{'value'};
-		my $x = $left_pad + (7 * $note_width) + 4;
-		my $y = $height - ($measure_size * $n->{'measure'});
-		$im->string(gdSmallFont, $x, $y,sprintf("BPM %.3f -> %.3f", $bpm, $newbpm), $color[6]);
-		$stat{'min'} = $newbpm if ($newbpm < $stat{'min'});
-		$stat{'max'} = $newbpm if ($newbpm > $stat{'max'});
-		$bpm = $newbpm;
-	}else{
-		my $c;
-		$c = 1 if($channel % 2 == 0); ## white notes
-		$c = 2 if($channel % 2 != 0); ## blue notes
-		$c = 3 if($channel == 3);     ## yellow note
+		my $y = $buffer_offset - ($n->{'pos'} * $measure_size) - 1;
 
-		my $x = $left_pad + ($channel * $note_width);
-		my $y = $height - ($measure_size * $n->{'measure'}) - 1; # apparently it is always 1 pixel higher
+		if($n->{'channel'} == 0){ # fractional measure
+			$this_measure_size = $measure_size * $n->{'value'};
+		}
+		elsif($n->{'channel'} == 1){ # BPM changing
+			my $newbpm = $n->{'value'};
+			my $x = $left_pad + (7 * ($note_width+2));
+			$im->line($x, $y, $x+5, $y, $color[6]);
+			$im->string(gdSmallFont, $x+5, $y,sprintf("BPM %.1f -> %.1f", $bpm, $newbpm), $color[6]);
+			$stat{'min'} = $newbpm if ($newbpm < $stat{'min'});
+			$stat{'max'} = $newbpm if ($newbpm > $stat{'max'});
+			$bpm = $newbpm;
+		}
+		else{ # notes
+			my $c;
+			$c = 1 if($n->{'channel'} % 2 == 0); ## white notes
+			$c = 2 if($n->{'channel'} % 2 != 0); ## blue notes
+			$c = 3 if($n->{'channel'} == 5);     ## yellow note
 
-		if($n->{'long'} == 0) # tap note
-		{
-			$stat{'tap'}++;
-			$im->filledRectangle($x, $y - $note_height, $x+$note_width, $y, $color[$c]);
-		}elsif($n->{'long'} == 2) # start long note
-		{
-			$stat{'long'}++;
-			$lch[$channel] = $n->{'measure'};
-		}else{ # end long note
-			my $y_old = $height - ($measure_size * $lch[$channel]) - 1;
-			$im->filledRectangle($x, $y, $x+$note_width, $y_old, $color[10 + $c]);
-			delete $lch[$channel];
+			my $x = $left_pad + 1 + (($n->{'channel'}-2) * ($note_width+2));
+
+			if($n->{'type'} == 0) # tap note
+			{
+				$stat{'tap'}++;
+				$im->filledRectangle($x, $y - $note_height, $x+$note_width, $y, $color[$c]);
+			}
+			elsif($n->{'type'} == 2) # start long note
+			{
+				$stat{'long'}++;
+				$n->{'absolute_pos'} = $y;
+				$lch[$n->{'channel'}] = $n;
+			}
+			elsif($n->{'type'} == 3) # end long note
+			{
+				my $y_old = $lch[$n->{'channel'}]->{'absolute_pos'};
+				$im->filledRectangle($x, $y-$note_height, $x+$note_width, $y_old, $color[10 + $c]);
+				delete $lch[$n->{'channel'}];
+			}
+			else{
+				print STDERR $n->{'type'}."\n";
+			}
 		}
 	}
+	$buffer_offset -= $this_measure_size;
 }
-
 ### add some metadata and statistics to the image
 
 my @lvl_str = map{"[$_$speed]"} ('Ex','Nx','Hx');
@@ -237,7 +236,7 @@ $y += 20;$im->string(gdSmallFont, 24, $y, $noter, $color[1]);
 $y += 15;
 
 
-my $bpm_text = sprintf('%.3f (%.3f ~ %.3f)',$h->{'bpm'},$stat{'min'},$stat{'max'});
+my $bpm_text = sprintf('%.1f (%.1f ~ %.1f)',$h->{'bpm'},$stat{'min'},$stat{'max'});
 $y +=  2;$im->string(gdSmallFont, 24, $y, " - Tap Notes:  " . $stat{'tap'},  $color[7]);
 $y += 15;$im->string(gdSmallFont, 24, $y, " - Long Notes: " . $stat{'long'}, $color[7]);
 $y += 15;$im->string(gdSmallFont, 24, $y, " - BPM:        " . $bpm_text,  $color[7]);

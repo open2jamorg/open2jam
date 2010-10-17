@@ -33,7 +33,7 @@ sub pp_header
 	s2:@unk_a
 	Z64:$title
 	Z32:$artist
-	Z32:$noter
+	a32:$noter
 	Z32:$ojm_file
 	i:$cover_size
 	i3:@time

@@ -19,9 +19,10 @@ i:$payload_size
 i:$unk_zero
 /), $header);
 
+die "Not a M30 file\n" unless $h->{'signature'} eq "M30";
+
 print Dumper $h;
 
-open MP, ">t.ogg";
 my $buf;
 while(!eof DATA)
 # for (0)
@@ -30,22 +31,30 @@ while(!eof DATA)
 	my $nh = unpack2hash(join(' ',qw/
 	a32:$sample_name
 	i:$sample_size
-	c8:@unk_1
-	i:$ref
-	i:$unk_2
+	c5:@wut
+	s:$unk_test
+	c:$unk_wut
+	s:$ref
+	s:$unk_zero
+	c3:@wut2
+	c:$unk_counter
 	/), $header);
 
-# 	print Dumper $nh;
+	print Dumper $nh;
 
+# 	dump_ogg($nh->{'ref'},$nh->{'sample_size'});
+	seek DATA, $nh->{'sample_size'}, 1;
+}
 
-	read DATA, $buf, $nh->{'sample_size'};
+sub dump_ogg
+{
+	my ($ref,$sample_size) = @_;
+	open MP, ">sample_$ref.ogg";
+	read DATA, $buf, $sample_size;
 	$buf = nami_xor($buf);
 	print MP $buf;
+	close MP;
 }
- 
-close MP;
-
-# 	next unless $h->{'signature'} eq 'M30';
 
 
 sub nami_xor
