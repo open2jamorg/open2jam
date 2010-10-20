@@ -31,9 +31,10 @@ while(!eof DATA)
 	my $nh = unpack2hash(join(' ',qw/
 	a32:$sample_name
 	i:$sample_size
-	c5:@wut
-	s:$unk_test
-	c:$unk_wut
+	c:$unk_sample_type
+	c:$unk_off
+	s:$fixed_2
+	i:$unk_sample_type2
 	s:$ref
 	s:$unk_zero
 	c3:@wut2

@@ -84,38 +84,39 @@ while(!eof $OJN && tell $OJN < $endpos)
 {
 	read $OJN, $data, 8;
 	my ($measure,$channel,$events_count) = unpack 'lss', $data;
-
+	print STDERR "measure: $measure, channel: $channel\n";
 	if($channel >= 0 && $channel < 9)
 	{
 		for my $i(0 .. $events_count-1)
 		{
 			read $OJN, $data, 4;
 
-			my ($value, $unk, $note_type);
+			my ($value, $unk, $type);
 			if($channel == 0 || $channel == 1) # fractional measure or BPM change
 			{
 				($value) = unpack 'f', $data;
 			}else{
-				($value, $unk, $note_type) = unpack 'sCC', $data;
+				($value, $unk, $type) = unpack 'sCC', $data;
 			}
-			next if($value == 0);
+			next if $value == 0;
 
 			push @note_list, {
 			'channel' => $channel,
 			'measure' => $measure,
 			'pos'     => $i / $events_count,
 			'value'   => $value,
-			'type'    => $note_type,
+			'type'    => $type,
 			};
-			print STDERR "$value, channel: $channel\n" if $channel > 1;
+			print STDERR "$value, unk: $unk, type: $type\n" if $channel > 1;
 		}
 	}else{ ## jumping channels > 8, here is probably auto-play notes
 # 		seek $OJN, 4 * $events_count, 1;
 		for(1..$events_count)
 		{
 			read $OJN, $data, 4;
-			my ($value, $unk) = unpack 'ss', $data;
-			printf STDERR "$value, $unk\n";
+			my ($value, $unk, $type) = unpack 'sCC', $data;
+			next if $value == 0;
+			printf STDERR "$value, unk: $unk, type:$type\n";
 		}
 	}
 }
