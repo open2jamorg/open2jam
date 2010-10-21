@@ -4,4 +4,5 @@
 - implement a BMS parser
 - use the sprites from main.png on OJNViewer
 - find out how to extract the samples from OJM
+	- make a sampleloader which will be the bridge openAL and OJM's http://jogamp.org/joal-demos/www/devmaster/lesson8.html
 

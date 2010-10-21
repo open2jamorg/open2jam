@@ -43,8 +43,8 @@ while(!eof DATA)
 
 	print Dumper $nh;
 
-# 	dump_ogg($nh->{'ref'},$nh->{'sample_size'});
-	seek DATA, $nh->{'sample_size'}, 1;
+	dump_ogg($nh->{'ref'},$nh->{'sample_size'});
+# 	seek DATA, $nh->{'sample_size'}, 1;
 }
 
 sub dump_ogg
@@ -64,7 +64,7 @@ sub nami_xor
 	my $nami = 'nami';
 	my $bytes = length $data;
 	my $mask = $nami x ($bytes/4);
-	$mask .= substr $nami, 0, ($bytes%4);
+	$mask .= "\0" x ($bytes%4);
 	return $data ^ $mask;
 }
 
