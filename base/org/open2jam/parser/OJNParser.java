@@ -1,12 +1,16 @@
 package org.open2jam.parser;
 
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
 
 public class OJNParser
 {
-	private LERandomAccessFile f = null;
+	private ByteBuffer buffer = null;
+	private RandomAccessFile f = null;
 
 	private static String genre_map[] = {"Ballad","Rock","Dance","Techno","Hip-hop",
 			"Soul/R&B","Jazz","Funk","Classical","Traditional","Etc"};
@@ -18,7 +22,9 @@ public class OJNParser
 	{
 		header = new OJNHeader();
 		try{
-			f = new LERandomAccessFile(file,"r");
+			f = new RandomAccessFile(file,"r");
+			buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, 300);
+			buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
 			header.source_file = file;
 			header.rank = rank;
 			readHeader();
@@ -29,65 +35,65 @@ public class OJNParser
 
 	private void readHeader() throws Exception
 	{
-		int songid = f.readInt();
+		int songid = buffer.getInt();
 		byte signature[] = new byte[4];
-		f.read(signature);
+		buffer.get(signature);
 		byte encoder_value[] = new byte[4];
-		f.read(encoder_value);
-		int genre = f.readInt();
-		float bpm = f.readFloat();
+		buffer.get(encoder_value);
+		int genre = buffer.getInt();
+		float bpm = buffer.getFloat();
 		short level[] = new short[4];
-		level[0] = f.readShort();
-		level[1] = f.readShort();
-		level[2] = f.readShort();
-		level[3] = f.readShort();
+		level[0] = buffer.getShort();
+		level[1] = buffer.getShort();
+		level[2] = buffer.getShort();
+		level[3] = buffer.getShort();
 		int event_count[] = new int[3];
-		event_count[0] = f.readInt();
-		event_count[1] = f.readInt();
-		event_count[2] = f.readInt();
+		event_count[0] = buffer.getInt();
+		event_count[1] = buffer.getInt();
+		event_count[2] = buffer.getInt();
 		int note_count[] = new int[3];
-		note_count[0] = f.readInt();
-		note_count[1] = f.readInt();
-		note_count[2] = f.readInt();
+		note_count[0] = buffer.getInt();
+		note_count[1] = buffer.getInt();
+		note_count[2] = buffer.getInt();
 		int measure_count[] = new int[3];
-		measure_count[0] = f.readInt();
-		measure_count[1] = f.readInt();
-		measure_count[2] = f.readInt();
+		measure_count[0] = buffer.getInt();
+		measure_count[1] = buffer.getInt();
+		measure_count[2] = buffer.getInt();
 		int package_count[] = new int[3];
-		package_count[0] = f.readInt();
-		package_count[1] = f.readInt();
-		package_count[2] = f.readInt();
+		package_count[0] = buffer.getInt();
+		package_count[1] = buffer.getInt();
+		package_count[2] = buffer.getInt();
 		short unk_id[] = new short[2];
-		unk_id[0] = f.readShort();
-		unk_id[1] = f.readShort();
+		unk_id[0] = buffer.getShort();
+		unk_id[1] = buffer.getShort();
 		byte unk_oldgenre[] = new byte[20];
-		f.read(unk_oldgenre);
-		int bmp_size = f.readInt();
+		buffer.get(unk_oldgenre);
+		int bmp_size = buffer.getInt();
 		short unk_a[] = new short[2];
-		unk_a[0] = f.readShort();
-		unk_a[1] = f.readShort();
+		unk_a[0] = buffer.getShort();
+		unk_a[1] = buffer.getShort();
 		byte title[] = new byte[64];
-		f.read(title);
+		buffer.get(title);
 		byte artist[] = new byte[32];
-		f.read(artist);
+		buffer.get(artist);
 		byte noter[] = new byte[32];
-		f.read(noter);
+		buffer.get(noter);
 		byte ojm_file[] = new byte[32];
-		f.read(ojm_file);
-		int cover_size = f.readInt();
+		buffer.get(ojm_file);
+		int cover_size = buffer.getInt();
 		int time[] = new int[3];
-		time[0] = f.readInt();
-		time[1] = f.readInt();
-		time[2] = f.readInt();
+		time[0] = buffer.getInt();
+		time[1] = buffer.getInt();
+		time[2] = buffer.getInt();
 		int note_offsets[] = new int[4];
-		note_offsets[0] = f.readInt();
-		note_offsets[1] = f.readInt();
-		note_offsets[2] = f.readInt();
-		note_offsets[3] = f.readInt();
+		note_offsets[0] = buffer.getInt();
+		note_offsets[1] = buffer.getInt();
+		note_offsets[2] = buffer.getInt();
+		note_offsets[3] = buffer.getInt();
 
-		f.seek(note_offsets[3]);
+		buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, note_offsets[3], cover_size);
 		byte cv_data[] = new byte[cover_size];
-		f.read(cv_data);
+		buffer.get(cv_data);
 
 		java.awt.Image cover_image = Toolkit.getDefaultToolkit().createImage(cv_data);
 
@@ -109,54 +115,45 @@ public class OJNParser
 		this.header = header;
 		chart = new Chart(header);
 		try{
+			f = new RandomAccessFile(header.getSourceFile(), "r");
+
+			int start = header.getNoteOffsets()[header.getRank()];
+			int end = header.getNoteOffsets()[header.getRank()+1];
+
+			buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, start, end - start);
+			buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
 			readNoteBlock();
+			f.close();
 		}catch(Exception e){ die(e); }
 		return chart;
 	}
 
 	private void readNoteBlock() throws Exception
 	{
-		f = new LERandomAccessFile(header.getSourceFile(), "r");
-		f.seek(header.getNoteOffsets()[header.getRank()]);
-		int endpos = header.getNoteOffsets()[header.getRank()+1];
-
-		NoteEvent ln_buffer[] = new NoteEvent[7];
-		while(f.getFilePointer() < endpos)
+		while(buffer.hasRemaining())
 		{
-			int measure = f.readInt();
-			short channel = f.readShort();
-			int events_count = f.readShort();
-			if(channel > 0 && channel < 9) // 1~8 known channels until now
-			{
-				for(double i=0;i<events_count;i++)
-				{
-					double sub_measure = measure + (i / events_count);
-					if(channel == 1) // BPM event
-					{
-						float bpm = f.readFloat();
-						if(bpm == 0)continue;
-						chart.add(new BPMEvent(sub_measure,channel,bpm));
-					}else{ // note event
-						short value = f.readShort();
-						int unk = f.read();
-						int note_type = f.read();
-						if(value == 0)continue; // ignore value=0 events
+			int measure = buffer.getInt();
+			short channel = buffer.getShort();
+			int events_count = buffer.getShort();
 
-						if(note_type == 3){ // long note end
-							chart.add(new LongNoteEvent(ln_buffer[channel-2], sub_measure));
-						}else if(note_type == 2){
-							ln_buffer[channel-2] = new NoteEvent(sub_measure,channel-2,value);
-						}else{
-							chart.add(new NoteEvent(sub_measure,channel-2,value));
-						}
-					}
+			for(double i=0;i<events_count;i++)
+			{
+				double position = i / events_count;
+				if(channel == 0 || channel == 1) // fractional measure or BPM event
+				{
+					float v = buffer.getFloat();
+					if(v == 0)continue;
+					chart.add(new Event(channel,measure,position,v,0,0));
+				}else{ // note event
+					short value = buffer.getShort();
+					int unk = buffer.get();
+					int type = buffer.get();
+					if(value == 0)continue; // ignore value=0 events
+					chart.add(new Event(channel,measure,position,value,unk,type));
 				}
-			}else{
-				f.skipBytes(4*events_count); // skipping channels I don't known
 			}
 		}
 		chart.finalize();
-		f.close();
 	}
 
 	private static String bytes2string(byte[] ch)

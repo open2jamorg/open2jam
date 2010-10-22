@@ -1,0 +1,88 @@
+***** Notes Section *****
+Before diving into the notes section is important to define some terms:
+
+events: The notes section doesn't just contain the notes, it also has the bpm
+changes of the music (and other things that I got yet to found out), so I will
+just call them events.
+
+beat: Ever noticed those horizontal lines in between the notes during the music
+? Those are the beats, and for all the notes before the first line we call them
+beat 0, after the first we call them beat 1 and so on.
+
+package: These are the blocks that form a note section, each package contain
+one or more events inside. Each package correspond to a specifically beat in a
+speciffically channel( see below). The number of packages in each section is in
+the package_count variable in the header section.
+
+Each package has a mini header as follows:
+struct package_header {
+	 long32 beat;
+	short16 channel;
+	short16 events;
+};
+
+beat: This is the beat in which the package will appear.
+channel: This determine the package type, so far a got these:
+channel type
+0       fractional measure
+1       BPM change
+2       note on 1st lane
+3       note on 2nd lane
+4       note on 3rd lane
+5       note on 4th lane(middle button)
+6       note on 5th lane
+7       note on 6th lane
+8       note on 7th lane
+9 ~ ?   auto-play samples (?)
+
+Each event has, as far as I know, 4 bytes, when the channel is 0 or 1
+these 4 bytes are a float.
+
+channel 0: represents how much of the measure to use, that is a value of 0.75 would make 
+this measure only 75% the size of a normal measure( where the 'normal' size depends 
+on the screen resolution and the hi-speed).
+
+channel 1: is a BPM change, the number contains the new BPM to be used from that point on.
+
+channel 2 ~ 8: the 4 bytes are divided like this:
+struct note_event {
+	short value;
+	char unk;
+	char type;
+};
+value: when value is 0 the event is ignored ( see below why), 
+otherwise its the OJM sample reference(see below).
+
+unk: It's usually 0, on V3 is has some values, but none on Red Sign, I'm
+clueless.
+
+type: 0 when it's is a normal note, 2 when it is the start of a long note,
+and 3 at the end of a long note.
+
+channel 9 ~ ?: 
+These seems to be directions to auto-play samples, so far I think
+they are divided in the same way the notes are, value also reference a sample on
+the OJM, the OJM seems to have a distinct numbers for each sample but starts from 0,
+interesting enough, the range of numbers for value seems to be equal but +1, 
+also, in some songs, V3 for example, there are some with type = 4, and on the OJM
+there are repeated reference numbers for these, I'm guessing that when type = 0
+the value references a sample W###( as seen on notetool) and when type = 4 it's
+a M### sample, now what difference it makes using one over another ? I don't know.
+
+There also seems to have type = 2 and type = 3 for these channels, and in pairs like
+if it was a long note, but I don't know how that would change the way the sample is
+played.. perhaps the sample is looped over the interval ?. I don't know either.
+
+
+
+As you could see, each package can have more than one event, in these cases,
+the position of the event inside the beat is determined dividing the ocurrence
+by the number of events. Example: if you got a package with 16 events, the 8th
+event will be at the middle of the beat(8/16=0.5), that's probably why we have
+those 'ignored events'(value = 0), they are there for padding the real events
+in the right position inside the beat.
+
+
+Well that's pretty much all, I still got to find out how the speed affect the
+notes position, but I'm almost sure it simple changes the beat size, and the
+beat size is probably scaled by the screen size.

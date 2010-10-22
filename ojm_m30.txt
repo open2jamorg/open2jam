@@ -30,8 +30,7 @@ after the header, there is ogg data, xor'ed with 'nami'.
 after that we got the next sample header, same as above..
 
 
- -missing
-- the reference doen't quite match the ojn
-
-difference between WAV## and MOV###
-
+-missing
+ - the reference doen't quite match the ojn
+ - difference between W## and M###
+ - do we xor the last bytes if it's not multiple of 4 ?

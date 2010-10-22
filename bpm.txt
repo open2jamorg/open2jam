@@ -1,9 +1,11 @@
 
+constants:
+	measure is 385 at 1 hi-speed
+	measure speed is 1 per second at 240 bpm
 
-measure 385 (x hi-speed) , bpm 240 == 1 measure per second
 
-speed = bpm/240 = x measures per second
+measure at hispeed x = 385*x pixels
 
-move_speed = measure * speed / 1000 = y pixels per millisecond
+speed at bpm x = x/240 measures per second
 
 

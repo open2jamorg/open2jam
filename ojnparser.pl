@@ -13,7 +13,7 @@ use Data::Dumper;
 #
 
 my $filename = shift;
-my $notelevel = 0; # 0,1,2 <-> Easy,Normal,Hard, which note rank to print
+my $notelevel = 2; # 0,1,2 <-> Easy,Normal,Hard, which note rank to print
 my $speed = 1; # hi-speed
 
 # this is the space height the user can see at a time,
@@ -83,23 +83,21 @@ my @note_list;
 while(!eof $OJN && tell $OJN < $endpos)
 {
 	read $OJN, $data, 8;
-	my ($measure,$channel,$events_count) = unpack 'lss', $data;
-	print STDERR "measure: $measure, channel: $channel\n";
-	if($channel >= 0 && $channel < 9)
+	my ($measure,$channel,$events_count) = unpack 'iss', $data;
+	for my $i(0 .. $events_count-1)
 	{
-		for my $i(0 .. $events_count-1)
+		read $OJN, $data, 4;
+
+		my ($value, $unk, $type);
+		if($channel == 0 || $channel == 1) # fractional measure or BPM change
 		{
-			read $OJN, $data, 4;
+			($value) = unpack 'f', $data;
+		}else{
+			($value, $unk, $type) = unpack 'sCC', $data;
+		}
+		next if $value == 0;
 
-			my ($value, $unk, $type);
-			if($channel == 0 || $channel == 1) # fractional measure or BPM change
-			{
-				($value) = unpack 'f', $data;
-			}else{
-				($value, $unk, $type) = unpack 'sCC', $data;
-			}
-			next if $value == 0;
-
+		if($channel >= 0 && $channel < 9){
 			push @note_list, {
 			'channel' => $channel,
 			'measure' => $measure,
@@ -107,21 +105,12 @@ while(!eof $OJN && tell $OJN < $endpos)
 			'value'   => $value,
 			'type'    => $type,
 			};
-			print STDERR "$value, unk: $unk, type: $type\n" if $channel > 1;
 		}
-	}else{ ## jumping channels > 8, here is probably auto-play notes
-# 		seek $OJN, 4 * $events_count, 1;
-		for(1..$events_count)
-		{
-			read $OJN, $data, 4;
-			my ($value, $unk, $type) = unpack 'sCC', $data;
-			next if $value == 0;
-			printf STDERR "$value, unk: $unk, type:$type\n";
-		}
+		printf STDERR "%4d ch:%2d unk:%3d type: %1d\n",$value,$channel,$unk,$type if $channel > 1;
 	}
 }
 
-
+# die Dumper \@note_list;
 
 @note_list = sort{ $a->{'measure'} <=> $b->{'measure'} } @note_list;
 my $total_measures = $note_list[-1]->{'measure'};
@@ -195,7 +184,8 @@ for my $m(0..$total_measures)
 			$stat{'max'} = $newbpm if ($newbpm > $stat{'max'});
 			$bpm = $newbpm;
 		}
-		else{ # notes
+		elsif($n->{'channel'} > 1 && $n->{'channel'} < 9)  # notes
+		{
 			my $c;
 			$c = 1 if($n->{'channel'} % 2 == 0); ## white notes
 			$c = 2 if($n->{'channel'} % 2 != 0); ## blue notes
@@ -224,6 +214,7 @@ for my $m(0..$total_measures)
 				print STDERR $n->{'type'}."\n";
 			}
 		}
+		else {} # auto-play ?
 	}
 	$buffer_offset -= $this_measure_size;
 }
