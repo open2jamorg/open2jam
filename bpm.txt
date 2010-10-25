@@ -1,11 +1,13 @@
 
 constants:
-	measure is 385 at 1 hi-speed
-	measure speed is 1 per second at 240 bpm
+	measure length is 385 pixels at 1x hi-speed
+	note speed is 1 measure per second at 240 bpm
+
+then:
+measure length at hispeed x = 385*x pixels
+
+note speed at bpm x = x/240 measures per second
 
 
-measure at hispeed x = 385*x pixels
-
-speed at bpm x = x/240 measures per second
-
-
+* when we say 'x measures per second' that means the note
+is going to take x seconds to pass through the measure length.

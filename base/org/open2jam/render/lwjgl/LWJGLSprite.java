@@ -82,7 +82,7 @@ public class LWJGLSprite implements Sprite {
 		texture.bind();
     
 		// translate to the right location and prepare to draw
-		GL11.glTranslatef(x, y, 0);		
+		GL11.glTranslatef(x, y, 0);
 		GL11.glColor3f(1,1,1);
 		
 		// draw a quad textured to match the sprite

@@ -91,15 +91,15 @@ public class SampleLoader
 		IntBuffer buffer = BufferUtils.createIntBuffer(1);
 		AL10.alGenBuffers(buffer);
 
-		checkOpenALError();
-
 		try{
+			checkOpenALError();
+
 			boolean mono = (in.getFormat() == OggInputStream.FORMAT_MONO16);
 			int format = (mono ? AL10.AL_FORMAT_MONO16 : AL10.AL_FORMAT_STEREO16);
 
 			ByteArrayOutputStream out = new ByteArrayOutputStream(tmp_buffer.length);
 
-			while (true) {
+			while(true) {
 				int r = in.read(tmp_buffer);
 				if (r == -1) break;
 				out.write(tmp_buffer,0,r);
@@ -110,12 +110,12 @@ public class SampleLoader
 
 			AL10.alBufferData(buffer.get(0), format, b, in.getRate());
 
+			checkOpenALError();
+
 		}catch(Exception e)
 		{
 			die(e);
 		}
-
-		checkOpenALError();
 
 		sample_buffer.add(buffer.get(0));
 		return buffer.get(0);
@@ -177,15 +177,17 @@ public class SampleLoader
 		int result = AL10.alGetError();
 		if(result == AL10.AL_NO_ERROR)return;
 
+		String err;
 		switch (result)
 		{
-			case AL10.AL_NO_ERROR:throw new RuntimeException("AL_NO_ERROR");
-			case AL10.AL_INVALID_NAME:throw new RuntimeException("AL_INVALID_NAME");
-			case AL10.AL_INVALID_ENUM:throw new RuntimeException("AL_INVALID_ENUM");
-			case AL10.AL_INVALID_VALUE:throw new RuntimeException("AL_INVALID_VALUE");
-			case AL10.AL_INVALID_OPERATION:throw new RuntimeException("AL_INVALID_OPERATION");
-			case AL10.AL_OUT_OF_MEMORY:throw new RuntimeException("AL_OUT_OF_MEMORY");
-			default:throw new RuntimeException("No such error code");
+			case AL10.AL_NO_ERROR:err = "AL_NO_ERROR";
+			case AL10.AL_INVALID_NAME:err = "AL_INVALID_NAME";
+			case AL10.AL_INVALID_ENUM:err = "AL_INVALID_ENUM";
+			case AL10.AL_INVALID_VALUE:err = "AL_INVALID_VALUE";
+			case AL10.AL_INVALID_OPERATION:err = "AL_INVALID_OPERATION";
+			case AL10.AL_OUT_OF_MEMORY:err = "AL_OUT_OF_MEMORY";
+			default:err = "unknown error!";
 		}
+		throw new RuntimeException("OpenAL Error: "+err);
 	}
 }

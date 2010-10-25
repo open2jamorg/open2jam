@@ -18,9 +18,7 @@ import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Hashtable;
 
-import javax.imageio.ImageIO;
-
-import org.lwjgl.opengl.*;
+// import org.lwjgl.opengl.*;
 import org.lwjgl.BufferUtils;
 import org.open2jam.render.SpriteID;
 
@@ -143,7 +141,6 @@ public class TextureLoader {
         }else{
 		texture.setWidth(bufferedImage.getWidth());
 		texture.setHeight(bufferedImage.getHeight());
-
 		texture.setTextureHeight(get2Fold(bufferedImage.getHeight()));
 		texture.setTextureWidth(get2Fold(bufferedImage.getWidth()));
 	}
@@ -166,8 +163,8 @@ public class TextureLoader {
         GL11.glTexImage2D(target, 
                       0, 
                       dstPixelFormat, 
-                      texture.getImageWidth(), 
-                      texture.getImageHeight(),
+                      texture.setTextureWidth(), 
+                      texture.setTextureHeight(),
                       0, 
                       srcPixelFormat, 
                       GL11.GL_UNSIGNED_BYTE, 
@@ -190,78 +187,92 @@ public class TextureLoader {
         return ret;
     } 
     
-    /**
-     * Convert the buffered image to a texture
-     *
-     * @param bufferedImage The image to convert to a texture
-     * @param texture The texture to store the data into
-     * @param slice specify only a part of the source image, can be null
-     * @return A buffer containing the data
-     */
-    private ByteBuffer convertImageData(BufferedImage bufferedImage, java.awt.Rectangle slice) {
-        ByteBuffer imageBuffer = null; 
-        WritableRaster raster;
-        BufferedImage texImage;
+	/**
+	* Convert the buffered image to a texture
+	*
+	* @param bufferedImage The image to convert to a texture
+	* @param texture The texture to store the data into
+	* @param slice specify only a part of the source image, can be null
+	* @return A buffer containing the data
+	*/
+	private ByteBuffer convertImageData(BufferedImage bufferedImage, java.awt.Rectangle slice)
+	{
+		ByteBuffer imageBuffer = null; 
+		WritableRaster raster;
+		BufferedImage texImage;
 
-	int srcx = 0, srcy = 0, texHeight, texWidth;
-	if(slice != null) {
-		srcx = slice.x;
-		srcy = slice.y;
-		texHeight = slice.height;
-		texWidth = slice.width;
-	}else{
-		texHeight = get2Fold(bufferedImage.getHeight());
-		texWidth = get2Fold(bufferedImage.getWidth());
+		int srcx, srcy, srcw, srch;
+		if(slice != null) {
+			srcx = slice.x;
+			srcy = slice.y;
+			srcw = slice.width;
+			srch = slice.height;
+		}else{
+			srcx = 0;
+			srcy = 0;
+			srcw = bufferedImage.getWidth();
+			srch = bufferedImage.getHeight();
+		}
+		int texWidth = get2Fold(srcw);
+		int texHeight = get2Fold(srch);
+
+		// create a raster that can be used by OpenGL as a source
+		// for a texture
+		if (bufferedImage.getColorModel().hasAlpha()) {
+			raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,texWidth,texHeight,4,null);
+			texImage = new BufferedImage(glAlphaColorModel,raster,false,new Hashtable());
+		} else {
+			raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,texWidth,texHeight,3,null);
+			texImage = new BufferedImage(glColorModel,raster,false,new Hashtable());
+		}
+		
+		// copy the source image into the produced image
+		Graphics g = texImage.getGraphics();
+		g.setColor(new Color(0f,0f,0f,0f));
+		g.fillRect(0,0,texWidth,texHeight);
+		g.drawImage(bufferedImage,
+				0, 0,
+				srcw, srch,
+				srcx, srcy,
+				srcx+srcw, srcy+srch,
+			null);
+		
+		// build a byte buffer from the temporary image 
+		// that be used by OpenGL to produce a texture.
+		byte[] data = ((DataBufferByte) texImage.getRaster().getDataBuffer()).getData(); 
+
+		imageBuffer = ByteBuffer.allocateDirect(data.length); 
+		imageBuffer.order(ByteOrder.nativeOrder()); 
+		imageBuffer.put(data, 0, data.length); 
+		imageBuffer.flip();
+
+		return imageBuffer; 
 	}
-        
-        // create a raster that can be used by OpenGL as a source
-        // for a texture
-        if (bufferedImage.getColorModel().hasAlpha()) {
-            raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,texWidth,texHeight,4,null);
-            texImage = new BufferedImage(glAlphaColorModel,raster,false,new Hashtable());
-        } else {
-            raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,texWidth,texHeight,3,null);
-            texImage = new BufferedImage(glColorModel,raster,false,new Hashtable());
-        }
-            
-        // copy the source image into the produced image
-        Graphics g = texImage.getGraphics();
-        g.setColor(new Color(0f,0f,0f,0f));
-        g.fillRect(0,0,texWidth,texHeight);
-	g.drawImage(bufferedImage,
-                0, 0, texWidth, texHeight,
-                srcx, srcy, srcx+texWidth, srcy+texHeight, null);
-        
-        // build a byte buffer from the temporary image 
-        // that be used by OpenGL to produce a texture.
-        byte[] data = ((DataBufferByte) texImage.getRaster().getDataBuffer()).getData(); 
-
-        imageBuffer = ByteBuffer.allocateDirect(data.length); 
-        imageBuffer.order(ByteOrder.nativeOrder()); 
-        imageBuffer.put(data, 0, data.length); 
-        imageBuffer.flip();
-        
-        return imageBuffer; 
-    } 
     
-    /** 
-     * Load a given resource as a buffered image
-     * 
-     * @param ref The location of the resource to load
-     * @return The loaded buffered image
-     * @throws IOException Indicates a failure to find a resource
-     */
-    private BufferedImage loadImage(SpriteID resource) throws IOException 
-    {
-        java.io.InputStream is = TextureLoader.class.getClassLoader().getResourceAsStream(resource.getFile());
-        
-        if (is == null) {
-            throw new IOException("Cannot find: "+resource.getFile());
-        }
-        
-        BufferedImage bufferedImage = ImageIO.read(new BufferedInputStream(is)); 
-        return bufferedImage;
-    }
+	/** 
+	* Load a given resource as a buffered image
+	* 
+	* @param ref The location of the resource to load
+	* @return The loaded buffered image
+	* @throws IOException Indicates a failure to find a resource
+	*/
+	private BufferedImage loadImage(SpriteID resource) throws IOException 
+	{
+		java.net.URL url = TextureLoader.class.getClassLoader().getResource(resource.getFile());
+		
+		if (url == null)throw new IOException("Cannot find: "+resource.getFile());
+
+		//BufferedImage bufferedImage = ImageIO.read(new BufferedInputStream(is)); 
+		// due to an issue with ImageIO and mixed signed code
+		// we are now using good oldfashioned ImageIcon to load
+		// images and the paint it on top of a new BufferedImage
+		Image img = new ImageIcon(url).getImage();
+		BufferedImage bufferedImage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_RGB);
+		Graphics g = bufferedImage.getGraphics();
+		g.drawImage(img, 0, 0, null);
+		g.dispose();
+		return bufferedImage;
+	}
     
     /**
      * Creates an integer buffer to hold specified ints

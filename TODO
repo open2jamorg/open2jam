@@ -1,3 +1,5 @@
+- fix the file loading, resources.xml and the images should be loaded from inside the jar
+
 - fix the TextureLoader, it's re-scaling the textures
 
 - add the other sprites in the Render
