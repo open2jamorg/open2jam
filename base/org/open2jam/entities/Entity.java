@@ -22,12 +22,12 @@ public class Entity implements Cloneable
 
 	public Entity(SpriteID ref)
 	{
-		this(ref,0,0);
+		this(ResourceFactory.get().getSprite(ref),0,0);
 	}
 
-	public Entity(SpriteID ref, double x, double y)
+	public Entity(Sprite sp, double x, double y)
 	{
-		this.sprite = ResourceFactory.get().getSprite(ref);
+		this.sprite = sp;
 		bounds = new Rectangle2D.Double(x,y,sprite.getWidth(),sprite.getHeight());
 	}
 
@@ -93,10 +93,10 @@ public class Entity implements Cloneable
 	}
 	
 	/**
-	 * Do the logic associated with this entity. This method
-	 * will be called periodically based on game events
+	 * judgment time.
+	 * this will be called once, when it hits judgment.
 	 */
-	public void doLogic() {}
+	public void judgment() {}
 	
 	/**
 	 * Get the x location of this entity
@@ -135,6 +135,6 @@ public class Entity implements Cloneable
 	/** theres nothing that needs to be deep copied on Entity */
 	public Entity clone()
 	{
-		return new Entity(sprite.getID(), bounds.x, bounds.y);
+		return new Entity(sprite, bounds.x, bounds.y);
 	}
 }

@@ -12,22 +12,22 @@ import org.open2jam.render.ResourceFactory;
 public class AnimatedEntity extends Entity
 {
 	protected Sprite frames[];
-	protected SpriteID[] frames_id;
 
 	protected int nextFrame;
 
 	protected double sub_frame;
 	protected double framespeed;
 
+	protected AnimatedEntity() {}
+
 	public AnimatedEntity(SpriteID refs[], double framespeed)
 	{
-		this(refs, 0, 0, framespeed);
+		this(ResourceFactory.get().getSprites(refs), 0, 0, framespeed);
 	}
 
-	public AnimatedEntity(SpriteID refs[], double x, double y, double framespeed)
+	public AnimatedEntity(Sprite frames[], double x, double y, double framespeed)
 	{
-		this.frames_id = refs;
-		this.frames = ResourceFactory.get().getSprites(refs);
+		this.frames = frames;
 		this.framespeed = framespeed;
 		nextFrame = 0;
 		this.sprite = frames[0];
@@ -56,6 +56,6 @@ public class AnimatedEntity extends Entity
 	/** the constructor cares about deep copy of frames[] */
 	public AnimatedEntity clone()
 	{
-		return new AnimatedEntity(frames_id, bounds.x, bounds.y, framespeed);
+		return new AnimatedEntity(frames, bounds.x, bounds.y, framespeed);
 	}
 }

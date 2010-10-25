@@ -6,12 +6,14 @@ import java.util.List;
 
 import org.open2jam.render.lwjgl.SampleLoader;
 
+import org.lwjgl.openal.AL10;
+
 public class OJMParser
 {
 	private static RandomAccessFile f = null;
 	private static ByteBuffer buffer = null;
 
-	public static List<SampleRef> parseFile(String file)
+	public static List<SampleID> parseFile(String file)
 	{
 		try{
 			f = new RandomAccessFile(file,"r");
@@ -32,7 +34,7 @@ public class OJMParser
 		return null;
 	}
 
-	private static List<SampleRef> parseM30() throws Exception
+	private static List<SampleID> parseM30() throws Exception
 	{
 		buffer = f.getChannel().map(java.nio.channels.FileChannel.MapMode.READ_ONLY, 4, 28);
 		buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
@@ -49,7 +51,8 @@ public class OJMParser
 		buffer = f.getChannel().map(java.nio.channels.FileChannel.MapMode.READ_ONLY, 28, payload_size);
 		buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
 
-		List<SampleRef> samples = new java.util.ArrayList<SampleRef>();
+		List<SampleID> samples = new java.util.ArrayList<SampleID>();
+
 
 		for(int i=0; i<sample_count; i++)
 		{
@@ -70,11 +73,24 @@ public class OJMParser
 			buffer.get(sample_data);
 			nami_xor(sample_data);
 
-			SampleRef s = new SampleRef(ref, unk_sample_type);
+			System.out.println(ref);
 
-			SampleLoader.loadBuffer(s,
+// 			java.io.FileOutputStream f = new java.io.FileOutputStream(new java.io.File("dump"+unk_sample_type+"_"+ref));
+// 
+// 			java.io.ByteArrayInputStream is = new java.io.ByteArrayInputStream(sample_data);
+// 			int b;
+// 			while(is.available()!=0)
+// 			{
+// 				f.write(is.read());
+// 			}
+// 			f.close();
+
+			
+
+			int id = SampleLoader.newBuffer(
 				new OggInputStream(new java.io.ByteArrayInputStream(sample_data))
 			);
+			SampleID s = new SampleID(ref, unk_sample_type, id);
 			samples.add(s);
 		}
 		f.close();
@@ -84,7 +100,13 @@ public class OJMParser
 	private static byte[] nami = new byte[]{0x6E, 0x61, 0x6D, 0x69};
 	private static void nami_xor(byte[] array)
 	{
-		for(int i=0;i<array.length;i++)array[i] ^= nami[i%4];
+		for(int i=0;i+3<array.length;i+=4)
+		{
+			array[i+0] ^= nami[0];
+			array[i+1] ^= nami[1];
+			array[i+2] ^= nami[2];
+			array[i+3] ^= nami[3];
+		}
 	}
 
 	private static void die(Exception e)
@@ -97,8 +119,27 @@ public class OJMParser
 		System.exit(1);
 	}
 
-	public static void main(String args[])
+	public static void main(String args[]) throws Exception
 	{
-		parseFile(args[0]);
+		List<SampleID> list = parseFile(args[0]);
+
+		int source = SampleLoader.newSource();
+
+		int play;
+		for(SampleID s : list){
+			System.out.println(s);
+
+			SampleLoader.bindSource(source, s.getBuffer());
+			AL10.alSourcePlay(source);
+
+			do{
+				play = AL10.alGetSourcei(source, AL10.AL_SOURCE_STATE);
+			}while(play == AL10.AL_PLAYING);
+		}
+
+		
+// 		int result;
+// 		if ((result = AL10.alGetError()) != AL10.AL_NO_ERROR)
+// 			System.out.println(SampleLoader.getALErrorString(result));
 	}
 }

@@ -23,6 +23,8 @@ public interface GameWindow {
 	 * @param y The new y resolution of the display
 	 */
 	public void setResolution(int x,int y);
+
+	public int getResolutionHeight();
 	
 	/**
 	 * Start the game window rendering the display

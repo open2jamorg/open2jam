@@ -13,10 +13,36 @@ import org.open2jam.parser.Chart;
 public class NoteEntity extends AnimatedEntity
 {
 
-	public NoteEntity(SpriteID refs[], double framespeed)
+	public NoteEntity(SpriteID[] refs, double framespeed)
 	{
 		super(refs,framespeed);
 	}
 
-	
+	protected NoteEntity(Sprite[] frames, double framespeed)
+	{
+		super(frames, 0, 0, framespeed);
+	}
+
+	protected Render render;
+
+	public void setRender(Render r)
+	{
+		this.render = r;
+	}
+
+	public void move(long delta)
+	{
+		setYMove((render.getBPM()/240) * render.getMeasureSize());
+		super.move(delta);
+	}
+
+	public void judgment()
+	{
+		alive = false;
+	}
+
+	public NoteEntity clone()
+	{
+		return new NoteEntity(frames, framespeed);
+	}
 }

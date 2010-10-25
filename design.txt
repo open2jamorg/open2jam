@@ -1,0 +1,42 @@
+
+We have a list of events, each event has a measure position,
+
+we have the bpm, and the hi-speed
+
+a constant EVENTS_TO_BUFFER, which tells us how much events we should buffer
+
+the measure_size, defined as 385*x pixels where x is the hi-speed.
+
+a variable last_measure , records which was the last measure.
+
+a variable last_measure_offset records where the last measure ends in the chart.
+
+a variable fractional_measure which is 1 unless in the measure where the channel 0 is used.
+
+each frame we do this:
+
+	get the time elapsed since last frame: delta  in milliseconds( or nanoseconds ?)
+
+	if (EVENTS_IN_BUFFER < EVENTS_TO_BUFFER) get all events from last_measure+1 in the list of events.
+	else exit
+
+	the absolute position(height) of the event is defined as:
+
+		absolute_height = last_measure_offset + (note_position * measure_size) + 1
+
+	events are made into entities and translated to the screen
+
+		screen_height = viewport_height - absolute_height
+		screen_width = #TODO#
+
+	entities position is updated with delta.
+
+		y_move = ((bpm/240) * measure_size) * (delta/1000)
+
+
+	draw the entities on the screen area
+
+	last_measure++
+
+	last_measure_offset += measure_size * fractional_measure
+end frame

@@ -81,6 +81,8 @@ public class LWJGLGameWindow implements GameWindow {
 		width = x;
 		height = y;
 	}
+
+	public int getResolutionHeight(){ return height; }
 	
 
 	private boolean setDisplayMode() {
@@ -92,9 +94,9 @@ public class LWJGLGameWindow implements GameWindow {
 
 			DisplayMode dm[] = Display.getAvailableDisplayModes();
 			for(DisplayMode d : dm)System.out.println(d);
-			setResolution(dm[0].getWidth(),dm[0].getHeight());
-			Display.setDisplayMode(dm[0]);
-			Display.setFullscreen(true);
+			setResolution(dm[7].getWidth(),dm[7].getHeight());
+			Display.setDisplayMode(dm[7]);
+// 			Display.setFullscreen(true);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -1,10 +1,13 @@
-- find out how to extract the samples from OJM
-	- verify if the samples are being extracted correcly
-	- make OJM and OMC parsers
+- fix the TextureLoader, it's re-scaling the textures
 
+- add the other sprites in the Render
+
+- find a way to add interface to the screen( nifty gui maybe ?)
+
+- find out how to extract the samples from OJM and OMC
+- whats the difference between W### and M### on notetool ?
 - test notetool output
-- test the hi-speed modifier, see if its equal to o2jam
-- find how BPM plays it's part
+- test the hi-speed modifier
+- test the BPM modifier
 - implement a BMS parser
-- use the sprites from main.png on OJNViewer
 

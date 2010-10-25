@@ -64,7 +64,7 @@ public class EntityBuilder
 			Entity e = new NoteEntity(head_frames, framespeed);
 			Entity e2 = new LongNoteEntity(head_frames, body_frames, framespeed);
 			result.put(name,e);
-			result.put(name,e2);
+			result.put("long_"+name,e2);
 			buffer.clear();
 		}
 	}

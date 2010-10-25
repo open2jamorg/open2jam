@@ -1,5 +1,7 @@
 package org.open2jam.render.lwjgl;
 
+import javax.sound.sampled.*;
+
 import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
@@ -7,7 +9,6 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.channels.FileChannel;
 
-import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -16,7 +17,7 @@ import org.lwjgl.util.WaveData;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
 
-import org.open2jam.parser.SampleRef;
+import org.open2jam.parser.OggInputStream;
 
 /**
   this class is the bridge between OpenAL and the app.
@@ -24,11 +25,8 @@ import org.open2jam.parser.SampleRef;
 */
 public class SampleLoader
 {
-	private static HashMap<SampleRef,Integer> sample_buffer = new HashMap<SampleRef,Integer>();
+	private static ArrayList<Integer> sample_buffer = new ArrayList<Integer>();
 	private static ArrayList<Integer> source_buffer = new ArrayList<Integer>();
-
-	private static FloatBuffer sourcePos = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });
-	private static FloatBuffer sourceVel = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });
 
 
 	// we need to initialize the OpenAL context
@@ -39,31 +37,41 @@ public class SampleLoader
 			die(e);
 		}
 		AL10.alGetError();
+		FloatBuffer listenerPos = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });
+		FloatBuffer listenerVel = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });
+		FloatBuffer listenerOri = BufferUtils.createFloatBuffer(6).put(new float[] { 0.0f, 0.0f, -1.0f,  0.0f, 1.0f, 0.0f });
+
+		listenerPos.flip();
+		listenerVel.flip();
+		listenerOri.flip();
+
+		AL10.alListener(AL10.AL_POSITION,    listenerPos);
+		AL10.alListener(AL10.AL_VELOCITY,    listenerVel);
+		AL10.alListener(AL10.AL_ORIENTATION, listenerOri);
 	}
 
-	public static int loadSource(SampleRef s)
+	public static int newSource()
 	{
 		IntBuffer source = BufferUtils.createIntBuffer(1);
-		Integer buffer;
-		int result;
-
-		// Get the files buffer id (load it if necessary).
-		buffer = sample_buffer.get(s);
-		if(buffer == null)throw new RuntimeException("sample not loaded");
-
+		
 		// Generate a source.
 		AL10.alGenSources(source);
 
-		if ((result = AL10.alGetError()) != AL10.AL_NO_ERROR)
-			throw new RuntimeException(getALErrorString(result));
+		checkOpenALError();
+
+		FloatBuffer sourcePos = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });
+		FloatBuffer sourceVel = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });
+
+		sourcePos.flip();
+		sourceVel.flip();
 
 		// Setup the source properties.
-		AL10.alSourcei(source.get(0), AL10.AL_BUFFER,   buffer     );
+// 		AL10.alSourcei(source.get(0), AL10.AL_BUFFER,   buffer     );
 		AL10.alSourcef(source.get(0), AL10.AL_PITCH,    1.0f       );
 		AL10.alSourcef(source.get(0), AL10.AL_GAIN,     1.0f       );
 		AL10.alSource (source.get(0), AL10.AL_POSITION, sourcePos  );
 		AL10.alSource (source.get(0), AL10.AL_VELOCITY, sourceVel  );
-		AL10.alSourcei(source.get(0), AL10.AL_LOOPING,AL10.AL_FALSE);
+		AL10.alSourcei(source.get(0), AL10.AL_LOOPING,  AL10.AL_FALSE  );
 
 		// Save the source id.
 		source_buffer.add(source.get(0));
@@ -72,30 +80,61 @@ public class SampleLoader
 		return source.get(0);
 	}
 
-	public static int loadBuffer(SampleRef s, InputStream i)
+	public static void bindSource(int source, int buffer)
 	{
-		int result;
-		IntBuffer buffer = BufferUtils.createIntBuffer(1);
+		AL10.alSourcei(source, AL10.AL_BUFFER,buffer);
+	}
 
+	private static byte[] tmp_buffer = new byte[1024];
+	public static int newBuffer(OggInputStream in)
+	{
+		IntBuffer buffer = BufferUtils.createIntBuffer(1);
 		AL10.alGenBuffers(buffer);
 
-		if ((result = AL10.alGetError()) != AL10.AL_NO_ERROR)
-			throw new RuntimeException(getALErrorString(result));
+		checkOpenALError();
 
-		WaveData waveFile = WaveData.create(i);
-		if (waveFile != null) {
-			AL10.alBufferData(buffer.get(0), waveFile.format, waveFile.data, waveFile.samplerate);
-			waveFile.dispose();
-		} else {
-			die(new Exception("wavedata error"));
+		try{
+			boolean mono = (in.getFormat() == OggInputStream.FORMAT_MONO16);
+			int format = (mono ? AL10.AL_FORMAT_MONO16 : AL10.AL_FORMAT_STEREO16);
+
+			ByteArrayOutputStream out = new ByteArrayOutputStream(tmp_buffer.length);
+
+			while (true) {
+				int r = in.read(tmp_buffer);
+				if (r == -1) break;
+				out.write(tmp_buffer,0,r);
+			}
+			ByteBuffer b = ByteBuffer.allocateDirect(out.size());
+			b.put(out.toByteArray());
+			b.flip();
+
+			AL10.alBufferData(buffer.get(0), format, b, in.getRate());
+
+		}catch(Exception e)
+		{
+			die(e);
 		}
 
-		// Do another error check and return.
-		if ((result = AL10.alGetError()) != AL10.AL_NO_ERROR)
-			throw new RuntimeException(getALErrorString(result));
+		checkOpenALError();
 
-		sample_buffer.put(s, buffer.get(0));
+		sample_buffer.add(buffer.get(0));
 		return buffer.get(0);
+	}
+
+// 	public static void killSource(int s)
+// 	{
+// 		IntBuffer scratch = BufferUtils.createIntBuffer(1);
+// 		scratch.put(0, s.getSource());
+// 		AL10.alDeleteSources(scratch);
+// 		source_buffer.remove(s);
+// 	}
+
+	public static void killBuffer(int s)
+	{
+		IntBuffer scratch = BufferUtils.createIntBuffer(1);
+		scratch.put(0, s);
+		AL10.alDeleteBuffers(scratch);
+		source_buffer.remove(source_buffer.indexOf(s));
 	}
 
 	/**
@@ -105,7 +144,7 @@ public class SampleLoader
 	public static void killData()
 	{
 		IntBuffer scratch = BufferUtils.createIntBuffer(1);
-		for (Iterator<Integer> iter = sample_buffer.values().iterator(); iter.hasNext();) {
+		for (Iterator<Integer> iter = sample_buffer.iterator(); iter.hasNext();) {
 			scratch.put(0, iter.next());
 			AL10.alDeleteBuffers(scratch);
 		}
@@ -133,22 +172,20 @@ public class SampleLoader
 	* 1) Identify the error code.
 	* 2) Return the error as a string.
 	*/
-	public static String getALErrorString(int err) {
-		switch (err) {
-		case AL10.AL_NO_ERROR:
-			return "AL_NO_ERROR";
-		case AL10.AL_INVALID_NAME:
-			return "AL_INVALID_NAME";
-		case AL10.AL_INVALID_ENUM:
-			return "AL_INVALID_ENUM";
-		case AL10.AL_INVALID_VALUE:
-			return "AL_INVALID_VALUE";
-		case AL10.AL_INVALID_OPERATION:
-			return "AL_INVALID_OPERATION";
-		case AL10.AL_OUT_OF_MEMORY:
-			return "AL_OUT_OF_MEMORY";
-		default:
-			return "No such error code";
+	public static void checkOpenALError()
+	{
+		int result = AL10.alGetError();
+		if(result == AL10.AL_NO_ERROR)return;
+
+		switch (result)
+		{
+			case AL10.AL_NO_ERROR:throw new RuntimeException("AL_NO_ERROR");
+			case AL10.AL_INVALID_NAME:throw new RuntimeException("AL_INVALID_NAME");
+			case AL10.AL_INVALID_ENUM:throw new RuntimeException("AL_INVALID_ENUM");
+			case AL10.AL_INVALID_VALUE:throw new RuntimeException("AL_INVALID_VALUE");
+			case AL10.AL_INVALID_OPERATION:throw new RuntimeException("AL_INVALID_OPERATION");
+			case AL10.AL_OUT_OF_MEMORY:throw new RuntimeException("AL_OUT_OF_MEMORY");
+			default:throw new RuntimeException("No such error code");
 		}
 	}
 }

@@ -28,6 +28,6 @@ public class Event implements Comparable<Event>
 	public int getChannel() { return channel; }
 	public int getMeasure() { return measure; }
 	public double getPosition() { return position; }
-
+	public int getType() { return type; }
 	public double getValue() { return value; }
 }

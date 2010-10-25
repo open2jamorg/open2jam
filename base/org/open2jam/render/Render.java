@@ -11,6 +11,10 @@ import java.util.Iterator;
 import org.open2jam.parser.ResourcesHandler;
 import org.open2jam.entities.*;
 
+import org.open2jam.parser.ChartParser;
+import org.open2jam.parser.Chart;
+import org.open2jam.parser.Event;
+
 public class Render extends Canvas implements GameWindowCallback
 {
 	/** The window that is being used to render the game */
@@ -31,8 +35,23 @@ public class Render extends Canvas implements GameWindowCallback
 	 ** so entities at layer X will always be renderd before layer X+1 */
 	private List<List<Entity>> entities_matrix;
 
-	public Render(int renderingType)
+	// map of entities to use, not directly, by cloning into the matrix
+	Map<String,Entity> entities_map;
+
+	// the chart being rendered
+	Chart chart;
+
+	double bpm;
+
+	double hispeed = 0.5;
+
+	private double viewport;
+	private double measure_size;
+
+	public Render(int renderingType, Chart c)
 	{
+		this.chart = c;
+		bpm = c.getHeader().getBPM();
 		// create a window based on a chosen rendering method
 		ResourceFactory.get().setRenderingType(renderingType);
 		window = ResourceFactory.get().getGameWindow();
@@ -49,6 +68,9 @@ public class Render extends Canvas implements GameWindowCallback
 	 */
 	public void initialise()
 	{
+		viewport = 0.8 * window.getResolutionHeight();
+		measure_size = 0.8 * hispeed * viewport;
+
 		entities_matrix = new java.util.ArrayList<List<Entity>>();
 		entities_matrix.add(new java.util.ArrayList<Entity>()); // layer 0
 
@@ -61,28 +83,9 @@ public class Render extends Canvas implements GameWindowCallback
 		} catch (Exception err) {
 			err.printStackTrace();
 		}
-		Map<String,Entity> entities_map = eb.getResult();
-		Entity e = entities_map.get("note0");
-		e.setX(50); e.setY(50);
-		entities_matrix.get(0).add(e);
-		e = entities_map.get("note1");
-		e.setX(79); e.setY(57);
-		entities_matrix.get(0).add(e);
-		e = entities_map.get("note2");
-		e.setX(102); e.setY(64);
-		entities_matrix.get(0).add(e);
-		e = entities_map.get("note3");
-		e.setX(131); e.setY(71);
-		entities_matrix.get(0).add(e);
-		e = entities_map.get("note4");
-		e.setX(164); e.setY(78);
-		entities_matrix.get(0).add(e);
-		e = entities_map.get("note5");
-		e.setX(193); e.setY(85);
-		entities_matrix.get(0).add(e);
-		e = entities_map.get("note6");
-		e.setX(216); e.setY(92);
-		entities_matrix.get(0).add(e);
+		entities_map = eb.getResult();
+
+		update_note_buffer(6000); // warm up
 
 		lastLoopTime = SystemTimer.getTime();
 	}
@@ -111,6 +114,8 @@ public class Render extends Canvas implements GameWindowCallback
 			fps = 0;
 		}
 
+		update_note_buffer(delta);
+
 		Iterator<List<Entity>> i = entities_matrix.iterator();
 		while(i.hasNext()) // loop over layers
 		{
@@ -120,10 +125,86 @@ public class Render extends Canvas implements GameWindowCallback
 			{
 				Entity e = j.next();
 				e.move(delta); // move the entity
+
+				if(e.getY() + e.getHeight() > viewport)e.judgment();
+
 				if(!e.isAlive())j.remove(); // if dead, remove from list
 				else e.draw(); // or draw itself on screen
 			}
 		}
+	}
+
+	public void setBPM(double e){ this.bpm = e;}
+	public double getBPM(){ return bpm; }
+	public double getMeasureSize(){ return measure_size; }
+	public double getViewPort() { return viewport; }
+
+	private final int EVENTS_TO_BUFFER = 200;
+	private int EVENTS_IN_BUFFER = 0;
+	private int last_measure = -1;
+	private int last_measure_offset = 0;
+	
+	private double fractional_measure = 1;
+
+	private double measure_passed = 0;
+
+
+	private LongNoteEntity[] ln_buffer = new LongNoteEntity[7];
+
+	private void update_note_buffer(long delta)
+	{
+		measure_passed += ((bpm/240) * measure_size) * ((double)delta/1000);
+		if(measure_passed < 1)return;
+		measure_passed = 0;
+	
+		List<Event> events = new java.util.ArrayList<Event>();
+		while(chart.getEvents().size()>0 && chart.getEvents().get(0).getMeasure() == last_measure+1)
+		{
+			events.add( chart.getEvents().remove(0) );
+		}
+
+		fractional_measure = 1;
+
+		for(Event e : events)
+		{
+			if(e.getChannel() > 8)continue;
+
+			if(e.getChannel() == 0){
+				fractional_measure = e.getValue();
+				continue;
+			}
+			if(e.getChannel() == 1){
+				double abs_height = last_measure_offset + (e.getPosition() * measure_size) + 1;
+				entities_matrix.get(0).add(new BPMEntity(this,e.getValue(),viewport - abs_height));
+				continue;
+			}
+			
+			double abs_height = last_measure_offset + (e.getPosition() * measure_size);
+
+			if(e.getType() == 0){
+				NoteEntity ne = (NoteEntity) entities_map.get("note"+(e.getChannel()-2)).clone();
+
+				ne.setX(2 + e.getChannel() * 32); 
+				ne.setY(viewport - abs_height);
+				ne.setRender(this);
+
+				entities_matrix.get(0).add(ne);
+			}
+			else if(e.getType() == 2){
+				LongNoteEntity ne = (LongNoteEntity) entities_map.get("long_note"+(e.getChannel()-2)).clone();
+				ne.setX(2 + e.getChannel() * 32);
+				ne.setY(viewport - abs_height);
+				ne.setRender(this);
+				ln_buffer[e.getChannel()-2] = ne;
+				entities_matrix.get(0).add(ne);
+			}
+			else if(e.getType() == 3){
+				ln_buffer[e.getChannel()-2].setHeight(viewport - abs_height - ln_buffer[e.getChannel()-2].getY());
+				ln_buffer[e.getChannel()-2] = null;
+			}
+		}
+		last_measure++;
+		last_measure_offset += measure_size * fractional_measure;
 	}
 
 	/**
@@ -142,7 +223,8 @@ public class Render extends Canvas implements GameWindowCallback
 	 * @param argv The arguments that are passed into our game
 	 */
 	public static void main(String argv[]) {
-		new Render(ResourceFactory.OPENGL_LWJGL);
+		Chart c = ChartParser.parseFile(ChartParser.parseFileHeader(argv[0], 2));
+		new Render(ResourceFactory.OPENGL_LWJGL, c);
 	}
 }
 

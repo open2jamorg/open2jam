@@ -41,4 +41,6 @@ public class Chart
 	public long getMeasureCount() { return measure_count; }
 
 	public List<Event> getEvents() { return events; }
+
+	public ChartHeader getHeader() { return header; }
 }

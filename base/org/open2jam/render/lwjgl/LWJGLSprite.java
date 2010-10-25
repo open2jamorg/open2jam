@@ -83,19 +83,19 @@ public class LWJGLSprite implements Sprite {
     
 		// translate to the right location and prepare to draw
 		GL11.glTranslatef(x, y, 0);		
-    	GL11.glColor3f(1,1,1);
+		GL11.glColor3f(1,1,1);
 		
 		// draw a quad textured to match the sprite
-    	GL11.glBegin(GL11.GL_QUADS);
+		GL11.glBegin(GL11.GL_QUADS);
 		{
-	      GL11.glTexCoord2f(0, 0);
-	      GL11.glVertex2f(0, 0);
-	      GL11.glTexCoord2f(0, texture.getHeight());
-	      GL11.glVertex2f(0, height);
-	      GL11.glTexCoord2f(texture.getWidth(), texture.getHeight());
-	      GL11.glVertex2f(width,height);
-	      GL11.glTexCoord2f(texture.getWidth(), 0);
-	      GL11.glVertex2f(width,0);
+			GL11.glTexCoord2f(0, 0);
+			GL11.glVertex2f(0, 0);
+			GL11.glTexCoord2f(0, texture.getHeight());
+			GL11.glVertex2f(0, height);
+			GL11.glTexCoord2f(texture.getWidth(), texture.getHeight());
+			GL11.glVertex2f(width,height);
+			GL11.glTexCoord2f(texture.getWidth(), 0);
+			GL11.glVertex2f(width,0);
 		}
 		GL11.glEnd();
 		
