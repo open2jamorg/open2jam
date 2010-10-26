@@ -100,7 +100,6 @@ public class ResourceFactory {
 				return new LWJGLSprite((LWJGLGameWindow) window,ref);
 			}
 		}
-		
 		throw new RuntimeException("Unknown rendering type: "+renderingType);
 	}
 

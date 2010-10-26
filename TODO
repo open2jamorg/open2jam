@@ -1,10 +1,6 @@
-- add other sprites in the Render( like the measure mark)
-
-- EntityBuilder is broken, we really need a SpriteBuilder, no need for clone()'s
-
-- fix the file loading, resources.xml and the images should be loaded from inside the jar
-
 - find a way to add interface to the screen( nifty gui maybe ?)
+
+- resources.xml and the images should be loaded from inside the jar
 
 - find out how to extract the samples from OJM and OMC
 - whats the difference between W### and M### on notetool ?

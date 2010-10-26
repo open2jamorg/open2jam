@@ -1,9 +1,6 @@
 package org.open2jam.entities;
 
-import org.open2jam.render.SpriteID;
-import org.open2jam.render.Sprite;
-import org.open2jam.render.Render;
-import org.open2jam.render.ResourceFactory;
+import org.open2jam.render.SpriteList;
 
 /** an EffectEntity is an animated entity which animates only once.
  ** after the first loop it declares itself dead, 
@@ -11,17 +8,12 @@ import org.open2jam.render.ResourceFactory;
  */
 public class EffectEntity extends AnimatedEntity
 {
+	/** keeps the last frame used. */
 	protected int lastFrame;
 
-	public EffectEntity(SpriteID[] refs, double x, double y, double framespeed)
+	public EffectEntity(SpriteList refs, double x, double y)
 	{
-		this(ResourceFactory.get().getSprites(refs), x, y, framespeed);
-	}
-
-	public EffectEntity(Sprite[] sprites, double x, double y, double framespeed)
-	{
-		super(sprites, x, y, framespeed);
-		lastFrame = 0;
+		super(refs, x, y);
 	}
 
 	public void move(long delta)
@@ -29,10 +21,5 @@ public class EffectEntity extends AnimatedEntity
 		super.move(delta);
 		if(nextFrame < lastFrame)alive = false; // we already looped over, now we die
 		else lastFrame = nextFrame;
-	}
-	
-	public EffectEntity clone()
-	{
-		return new EffectEntity(frames, bounds.x, bounds.y, framespeed);
 	}
 }

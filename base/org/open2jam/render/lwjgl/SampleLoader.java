@@ -158,16 +158,6 @@ public class SampleLoader
 		source_buffer.clear();
 	}
 
-	private static void die(Exception e)
-	{
-		final java.io.Writer r = new java.io.StringWriter();
-		final java.io.PrintWriter pw = new java.io.PrintWriter(r);
-		e.printStackTrace(pw);
-		javax.swing.JOptionPane.showMessageDialog(null, r.toString(), "Fatal Error", 
-			javax.swing.JOptionPane.ERROR_MESSAGE);
-		System.exit(1);
-	}
-
 	/**
 	* 1) Identify the error code.
 	* 2) Return the error as a string.
@@ -189,5 +179,15 @@ public class SampleLoader
 			default:err = "unknown error!";
 		}
 		throw new RuntimeException("OpenAL Error: "+err);
+	}
+
+	public static void die(Exception e)
+	{
+		final java.io.Writer r = new java.io.StringWriter();
+		final java.io.PrintWriter pw = new java.io.PrintWriter(r);
+		e.printStackTrace(pw);
+		javax.swing.JOptionPane.showMessageDialog(null, r.toString(), "Fatal Error", 
+			javax.swing.JOptionPane.ERROR_MESSAGE);
+		System.exit(1);
 	}
 }

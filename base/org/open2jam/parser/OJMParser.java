@@ -19,7 +19,6 @@ public class OJMParser
 			f = new RandomAccessFile(file,"r");
 			byte[] sig = new byte[4];
 			f.read(sig);
-
 			String signature = new String(sig);
 			if(signature.equals("M30\0")) {
 				return parseM30();
@@ -73,20 +72,6 @@ public class OJMParser
 			buffer.get(sample_data);
 			nami_xor(sample_data);
 
-			System.out.println(ref);
-
-// 			java.io.FileOutputStream f = new java.io.FileOutputStream(new java.io.File("dump"+unk_sample_type+"_"+ref));
-// 
-// 			java.io.ByteArrayInputStream is = new java.io.ByteArrayInputStream(sample_data);
-// 			int b;
-// 			while(is.available()!=0)
-// 			{
-// 				f.write(is.read());
-// 			}
-// 			f.close();
-
-			
-
 			int id = SampleLoader.newBuffer(
 				new OggInputStream(new java.io.ByteArrayInputStream(sample_data))
 			);
@@ -136,10 +121,5 @@ public class OJMParser
 				play = AL10.alGetSourcei(source, AL10.AL_SOURCE_STATE);
 			}while(play == AL10.AL_PLAYING);
 		}
-
-		
-// 		int result;
-// 		if ((result = AL10.alGetError()) != AL10.AL_NO_ERROR)
-// 			System.out.println(SampleLoader.getALErrorString(result));
 	}
 }

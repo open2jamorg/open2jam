@@ -1,13 +1,11 @@
 package org.open2jam.parser;
 
-import java.util.HashMap;
-
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.Attributes;
+import java.util.HashMap;
 
-import org.open2jam.render.SpriteID;
-import org.open2jam.render.EntityBuilder;
+import org.open2jam.render.SpriteBuilder;
 
 public class ResourcesHandler extends DefaultHandler
 {
@@ -15,9 +13,9 @@ public class ResourcesHandler extends DefaultHandler
 	private Locator locator;
 
 	/** our work is to just defer the nodes to this */
-	private EntityBuilder ef;
+	private SpriteBuilder ef;
 
-	public ResourcesHandler(EntityBuilder ef)
+	public ResourcesHandler(SpriteBuilder ef)
 	{
 		this.ef = ef;
 	}

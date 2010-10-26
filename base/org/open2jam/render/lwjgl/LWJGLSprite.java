@@ -102,5 +102,13 @@ public class LWJGLSprite implements Sprite {
 		// restore the model view matrix to prevent contamination
 		GL11.glPopMatrix();
 	}
-	
+
+	/** draw the sprite.
+	** the same as draw(int,int)
+	** but attempts to draw at the closest point
+	*/
+	public void draw(double x, double y)
+	{
+		this.draw((int)Math.round(x),(int)Math.round(y));
+	}
 }

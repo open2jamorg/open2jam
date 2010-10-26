@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty>
+  <screen id="start" controller="org.open2jam.render.InterfaceController">
+    <layer id="layer" >
+        <text width="" height="" text="Hello World!" />
+    </layer>
+  </screen>
+</nifty>

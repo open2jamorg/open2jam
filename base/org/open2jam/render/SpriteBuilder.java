@@ -4,29 +4,26 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Stack;
 
-import org.open2jam.entities.*;
-import org.open2jam.render.SpriteID;
-
-public class EntityBuilder
+public class SpriteBuilder
 {
 	private enum Keyword {
-		Resources, Note, Frame
+		Resources, spritelist, sprite
 	}
 
 	Stack<Keyword> call_stack;
 	Stack<Map<String,String>> atts_stack;
-	Stack<Object> buffer;
 
-	Map<String,Entity> result;
+	Stack<Sprite> buffer;
+	HashMap<String,SpriteList> result;
 
 	private static String FILE_PATH_PREFIX = "sprites"+java.io.File.separator;
 
-	public EntityBuilder()
+	public SpriteBuilder()
 	{
 		call_stack = new Stack<Keyword>();
 		atts_stack = new Stack<Map<String,String>>();
-		buffer = new Stack<Object>();
-		result = new HashMap<String,Entity>();
+		buffer = new Stack<Sprite>();
+		result = new HashMap<String,SpriteList>();
 	}
 	
 	public void parseStart(String s, Map<String,String> atts)
@@ -42,34 +39,28 @@ public class EntityBuilder
 		Map<String,String> atts = atts_stack.pop();
 		switch(k)
 		{
-			case Frame:
+			case sprite:
 			int x = Integer.parseInt(atts.get("x"));
 			int y = Integer.parseInt(atts.get("y"));
 			int w = Integer.parseInt(atts.get("w"));
 			int h = Integer.parseInt(atts.get("h"));
 			java.awt.Rectangle slice = new java.awt.Rectangle(x,y,w,h);
 			SpriteID s = new SpriteID(FILE_PATH_PREFIX+atts.get("file"),slice);
-			buffer.push(s);
+			buffer.push(ResourceFactory.get().getSprite(s));
 			break;
 
-			case Note:
+			case spritelist:
 			int framespeed = Integer.parseInt(atts.get("framespeed"));
-			String name = "note"+atts.get("number");
+			String id = atts.get("id");
 
-			int heads = Integer.parseInt(atts.get("headframes"));
-			int bodys = Integer.parseInt(atts.get("bodyframes"));
-
-			SpriteID head_frames[] = buffer.subList(0,heads).toArray(new SpriteID[0]);
-			SpriteID body_frames[] = buffer.subList(heads,heads+bodys).toArray(new SpriteID[0]);
-			Entity e = new NoteEntity(head_frames, framespeed);
-			Entity e2 = new LongNoteEntity(head_frames, body_frames, framespeed);
-			result.put(name,e);
-			result.put("long_"+name,e2);
+			SpriteList sl = new SpriteList(framespeed);
+			sl.addAll(buffer);
 			buffer.clear();
+			result.put(id,sl);
 		}
 	}
 
-	public Map<String,Entity> getResult()
+	public HashMap<String,SpriteList> getResult()
 	{
 		return result;
 	}

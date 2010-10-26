@@ -22,7 +22,7 @@ public class BPMEntity extends Entity
 
 	public void move(long delta)
 	{
-		setYMove((render.getBPM()/240) * render.getMeasureSize());
+		setYMove(render.getNoteSpeed());
 		super.move(delta);
 	}
 

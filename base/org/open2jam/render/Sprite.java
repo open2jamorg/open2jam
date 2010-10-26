@@ -34,4 +34,10 @@ public interface Sprite {
 	 * @param y The y location at which to draw the sprite
 	 */
 	public void draw(int x,int y);
+
+	/** draw the sprite.
+	** the same as draw(int,int)
+	** but attempts to draw at the closest point
+	*/
+	public void draw(double x, double y);
 }

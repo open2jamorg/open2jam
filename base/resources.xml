@@ -1,63 +1,77 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Resources>
-<Note number="0" headframes="3" bodyframes="3" framespeed="12">
-	<Frame x="225" y="142" w="28" h="7" file="main.png" />
-	<Frame x="225" y="150" w="28" h="7" file="main.png" />
-	<Frame x="225" y="158" w="28" h="7" file="main.png" />
-	<Frame x="225" y="143" w="28" h="5" file="main.png" />
-	<Frame x="225" y="151" w="28" h="5" file="main.png" />
-	<Frame x="225" y="159" w="28" h="5" file="main.png" />
-</Note>
-<Note number="1" headframes="3" bodyframes="3" framespeed="12">
-	<Frame x="254" y="142" w="22" h="7" file="main.png" />
-	<Frame x="254" y="150" w="22" h="7" file="main.png" />
-	<Frame x="254" y="158" w="22" h="7" file="main.png" />
-	<Frame x="254" y="143" w="22" h="5" file="main.png" />
-	<Frame x="254" y="151" w="22" h="5" file="main.png" />
-	<Frame x="254" y="159" w="22" h="5" file="main.png" />
-</Note>
-<Note number="2" headframes="3" bodyframes="3" framespeed="12">
-	<Frame x="225" y="142" w="28" h="7" file="main.png" />
-	<Frame x="225" y="150" w="28" h="7" file="main.png" />
-	<Frame x="225" y="158" w="28" h="7" file="main.png" />
-	<Frame x="225" y="143" w="28" h="5" file="main.png" />
-	<Frame x="225" y="151" w="28" h="5" file="main.png" />
-	<Frame x="225" y="159" w="28" h="5" file="main.png" />
-</Note>
-<Note number="3" headframes="3" bodyframes="3" framespeed="12">
-	<Frame x="277" y="142" w="32" h="7" file="main.png" />
-	<Frame x="277" y="150" w="32" h="7" file="main.png" />
-	<Frame x="277" y="158" w="32" h="7" file="main.png" />
-	<Frame x="277" y="143" w="32" h="5" file="main.png" />
-	<Frame x="277" y="151" w="32" h="5" file="main.png" />
-	<Frame x="277" y="159" w="32" h="5" file="main.png" />
-</Note>
-<Note number="4" headframes="3" bodyframes="3" framespeed="12">
-	<Frame x="225" y="142" w="28" h="7" file="main.png" />
-	<Frame x="225" y="150" w="28" h="7" file="main.png" />
-	<Frame x="225" y="158" w="28" h="7" file="main.png" />
-	<Frame x="225" y="143" w="28" h="5" file="main.png" />
-	<Frame x="225" y="151" w="28" h="5" file="main.png" />
-	<Frame x="225" y="159" w="28" h="5" file="main.png" />
-</Note>
-<Note number="5" headframes="3" bodyframes="3" framespeed="12">
-	<Frame x="254" y="142" w="22" h="7" file="main.png" />
-	<Frame x="254" y="150" w="22" h="7" file="main.png" />
-	<Frame x="254" y="158" w="22" h="7" file="main.png" />
-	<Frame x="254" y="143" w="22" h="5" file="main.png" />
-	<Frame x="254" y="151" w="22" h="5" file="main.png" />
-	<Frame x="254" y="159" w="22" h="5" file="main.png" />
-</Note>
-<Note number="6" headframes="3" bodyframes="3" framespeed="12">
-	<Frame x="225" y="142" w="28" h="7" file="main.png" />
-	<Frame x="225" y="150" w="28" h="7" file="main.png" />
-	<Frame x="225" y="158" w="28" h="7" file="main.png" />
-	<Frame x="225" y="143" w="28" h="5" file="main.png" />
-	<Frame x="225" y="151" w="28" h="5" file="main.png" />
-	<Frame x="225" y="159" w="28" h="5" file="main.png" />
-</Note>
-<MeasureBar frames="2" framespeed="5">
-	<Frame x="225" y="134" w="188" h="3" file="main.png" />
-	<Frame x="225" y="138" w="188" h="3" file="main.png" />
-</MeasureBar>
+<spritelist id="note_head0" frames="3" framespeed="12">
+	<sprite x="225" y="142" w="28" h="7" file="main.png" />
+	<sprite x="225" y="150" w="28" h="7" file="main.png" />
+	<sprite x="225" y="158" w="28" h="7" file="main.png" />
+</spritelist>
+<spritelist id="note_body0" frames="3" framespeed="12">
+	<sprite x="225" y="143" w="28" h="5" file="main.png" />
+	<sprite x="225" y="151" w="28" h="5" file="main.png" />
+	<sprite x="225" y="159" w="28" h="5" file="main.png" />
+</spritelist>
+<spritelist id="note_head1" framespeed="12">
+	<sprite x="254" y="142" w="22" h="7" file="main.png" />
+	<sprite x="254" y="150" w="22" h="7" file="main.png" />
+	<sprite x="254" y="158" w="22" h="7" file="main.png" />
+</spritelist>
+<spritelist id="note_body1" framespeed="12">
+	<sprite x="254" y="143" w="22" h="5" file="main.png" />
+	<sprite x="254" y="151" w="22" h="5" file="main.png" />
+	<sprite x="254" y="159" w="22" h="5" file="main.png" />
+</spritelist>
+<spritelist id="note_head2" framespeed="12">
+	<sprite x="225" y="142" w="28" h="7" file="main.png" />
+	<sprite x="225" y="150" w="28" h="7" file="main.png" />
+	<sprite x="225" y="158" w="28" h="7" file="main.png" />
+</spritelist>
+<spritelist id="note_body2" framespeed="12">
+	<sprite x="225" y="143" w="28" h="5" file="main.png" />
+	<sprite x="225" y="151" w="28" h="5" file="main.png" />
+	<sprite x="225" y="159" w="28" h="5" file="main.png" />
+</spritelist>
+<spritelist id="note_head3" framespeed="12">
+	<sprite x="277" y="142" w="32" h="7" file="main.png" />
+	<sprite x="277" y="150" w="32" h="7" file="main.png" />
+	<sprite x="277" y="158" w="32" h="7" file="main.png" />
+</spritelist>
+<spritelist id="note_body3" framespeed="12">
+	<sprite x="277" y="143" w="32" h="5" file="main.png" />
+	<sprite x="277" y="151" w="32" h="5" file="main.png" />
+	<sprite x="277" y="159" w="32" h="5" file="main.png" />
+</spritelist>
+<spritelist id="note_head4" framespeed="12">
+	<sprite x="225" y="142" w="28" h="7" file="main.png" />
+	<sprite x="225" y="150" w="28" h="7" file="main.png" />
+	<sprite x="225" y="158" w="28" h="7" file="main.png" />
+</spritelist>
+<spritelist id="note_body4" framespeed="12">
+	<sprite x="225" y="143" w="28" h="5" file="main.png" />
+	<sprite x="225" y="151" w="28" h="5" file="main.png" />
+	<sprite x="225" y="159" w="28" h="5" file="main.png" />
+</spritelist>
+<spritelist id="note_head5" framespeed="12">
+	<sprite x="254" y="142" w="22" h="7" file="main.png" />
+	<sprite x="254" y="150" w="22" h="7" file="main.png" />
+	<sprite x="254" y="158" w="22" h="7" file="main.png" />
+</spritelist>
+<spritelist id="note_body5" framespeed="12">
+	<sprite x="254" y="143" w="22" h="5" file="main.png" />
+	<sprite x="254" y="151" w="22" h="5" file="main.png" />
+	<sprite x="254" y="159" w="22" h="5" file="main.png" />
+</spritelist>
+<spritelist id="note_head6" framespeed="12">
+	<sprite x="225" y="142" w="28" h="7" file="main.png" />
+	<sprite x="225" y="150" w="28" h="7" file="main.png" />
+	<sprite x="225" y="158" w="28" h="7" file="main.png" />
+</spritelist>
+<spritelist id="note_body6" framespeed="12">
+	<sprite x="225" y="143" w="28" h="5" file="main.png" />
+	<sprite x="225" y="151" w="28" h="5" file="main.png" />
+	<sprite x="225" y="159" w="28" h="5" file="main.png" />
+</spritelist>
+<spritelist id="measure_mark" framespeed="5">
+	<sprite x="225" y="134" w="188" h="3" file="main.png" />
+	<sprite x="225" y="138" w="188" h="3" file="main.png" />
+</spritelist>
 </Resources>

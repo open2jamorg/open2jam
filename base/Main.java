@@ -22,10 +22,19 @@ public class Main
 			
 			// add the classes dir and each jar in lib to a List of URLs.
 			List<URL> urls = new ArrayList<URL>();
-			urls.add(new File(CLASS_PATH).toURI().toURL());
+			urls.add(
+			Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().toURL()
+			);
 			for (File f : new File(JAR_PATH).listFiles())urls.add(f.toURI().toURL());
 
 			System.setProperty("java.library.path",LIB_PATH);
+
+			// we need to reset sys_paths to force java look for it again
+			// because we changed java.library.path at runtime
+			java.lang.reflect.Field field = ClassLoader.class.getDeclaredField("sys_paths");
+			field.setAccessible(true);
+			field.set(ClassLoader.class, null);
+			field.setAccessible(false);
 
 			// feed your URLs to a URLClassLoader!
 			ClassLoader classloader =
@@ -36,13 +45,6 @@ public class Main
 			Class<?> mainClass = classloader.loadClass(MAIN_CLASS);
 			Class<?> thisClass = args.getClass();
 			Method main = mainClass.getMethod("main",new Class[]{thisClass});
-
-			// we need to reset sys_paths to force java look for it again
-			// because we changed java.library.path at runtime
-			java.lang.reflect.Field field = ClassLoader.class.getDeclaredField("sys_paths");
-			field.setAccessible(true);
-			field.set(ClassLoader.class, null);
-			field.setAccessible(false);
 			
 			// well-behaved Java packages work relative to the
 			// context classloader.  Others don't (like commons-logging)
