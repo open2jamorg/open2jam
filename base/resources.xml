@@ -56,4 +56,8 @@
 	<Frame x="225" y="151" w="28" h="5" file="main.png" />
 	<Frame x="225" y="159" w="28" h="5" file="main.png" />
 </Note>
+<MeasureBar frames="2" framespeed="5">
+	<Frame x="225" y="134" w="188" h="3" file="main.png" />
+	<Frame x="225" y="138" w="188" h="3" file="main.png" />
+</MeasureBar>
 </Resources>

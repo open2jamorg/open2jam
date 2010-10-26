@@ -1,4 +1,6 @@
-- add the other sprites in the Render
+- add other sprites in the Render( like the measure mark)
+
+- EntityBuilder is broken, we really need a SpriteBuilder, no need for clone()'s
 
 - fix the file loading, resources.xml and the images should be loaded from inside the jar
 
