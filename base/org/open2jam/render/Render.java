@@ -43,7 +43,7 @@ public class Render extends Canvas implements GameWindowCallback
 
 	double bpm;
 
-	double hispeed = 0.5;
+	double hispeed = 4;
 
 	private double viewport;
 	private double measure_size;
@@ -51,7 +51,6 @@ public class Render extends Canvas implements GameWindowCallback
 	public Render(int renderingType, Chart c)
 	{
 		this.chart = c;
-		bpm = c.getHeader().getBPM();
 		// create a window based on a chosen rendering method
 		ResourceFactory.get().setRenderingType(renderingType);
 		window = ResourceFactory.get().getGameWindow();
@@ -70,6 +69,7 @@ public class Render extends Canvas implements GameWindowCallback
 	{
 		viewport = 0.8 * window.getResolutionHeight();
 		measure_size = 0.8 * hispeed * viewport;
+		setBPM(chart.getHeader().getBPM());
 
 		entities_matrix = new java.util.ArrayList<List<Entity>>();
 		entities_matrix.add(new java.util.ArrayList<Entity>()); // layer 0
@@ -85,7 +85,7 @@ public class Render extends Canvas implements GameWindowCallback
 		}
 		entities_map = eb.getResult();
 
-		update_note_buffer(6000); // warm up
+		update_note_buffer(60000000); // warm up
 
 		lastLoopTime = SystemTimer.getTime();
 	}
@@ -132,19 +132,27 @@ public class Render extends Canvas implements GameWindowCallback
 				else e.draw(); // or draw itself on screen
 			}
 		}
+		System.out.println(entities_matrix.get(0).size());
 	}
 
-	public void setBPM(double e){ this.bpm = e;}
+	public void setBPM(double e)
+	{ 
+		this.bpm = e;
+		note_speed = (bpm/240) * measure_size;
+	}
 	public double getBPM(){ return bpm; }
 	public double getMeasureSize(){ return measure_size; }
 	public double getViewPort() { return viewport; }
 
-	private final int EVENTS_TO_BUFFER = 200;
-	private int EVENTS_IN_BUFFER = 0;
+	public double getNoteSpeed(){ return note_speed; }
+
+	private int buffered_measures = 0;
+
 	private int last_measure = -1;
 	private int last_measure_offset = 0;
 	
 	private double fractional_measure = 1;
+	private double note_speed = (bpm/240) * measure_size;
 
 	private double measure_passed = 0;
 
@@ -153,8 +161,8 @@ public class Render extends Canvas implements GameWindowCallback
 
 	private void update_note_buffer(long delta)
 	{
-		measure_passed += ((bpm/240) * measure_size) * ((double)delta/1000);
-		if(measure_passed < 1)return;
+		measure_passed += (note_speed * delta)/1000;
+		if(measure_passed < measure_size/5)return;
 		measure_passed = 0;
 	
 		List<Event> events = new java.util.ArrayList<Event>();

@@ -32,7 +32,7 @@ public class NoteEntity extends AnimatedEntity
 
 	public void move(long delta)
 	{
-		setYMove((render.getBPM()/240) * render.getMeasureSize());
+		setYMove(render.getNoteSpeed());
 		super.move(delta);
 	}
 

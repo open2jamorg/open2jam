@@ -18,7 +18,7 @@ import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Hashtable;
 
-// import org.lwjgl.opengl.*;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.BufferUtils;
 import org.open2jam.render.SpriteID;
 
@@ -133,17 +133,21 @@ public class TextureLoader {
 
 	java.awt.Rectangle slice = resource.getSlice();
 
+	int texw, texh;
 	if(slice != null) {
 		texture.setWidth(slice.width);
 		texture.setHeight(slice.height);
-		texture.setTextureHeight(get2Fold(slice.height));
-		texture.setTextureWidth(get2Fold(slice.width));
+		texw = get2Fold(slice.width);
+		texh = get2Fold(slice.height);
         }else{
 		texture.setWidth(bufferedImage.getWidth());
 		texture.setHeight(bufferedImage.getHeight());
-		texture.setTextureHeight(get2Fold(bufferedImage.getHeight()));
-		texture.setTextureWidth(get2Fold(bufferedImage.getWidth()));
+		texw = get2Fold(bufferedImage.getWidth());
+		texh = get2Fold(bufferedImage.getHeight());
 	}
+	texture.setTextureWidth(texw);
+	texture.setTextureHeight(texh);
+
         if (bufferedImage.getColorModel().hasAlpha()) {
             srcPixelFormat = GL11.GL_RGBA;
         } else {
@@ -163,8 +167,8 @@ public class TextureLoader {
         GL11.glTexImage2D(target, 
                       0, 
                       dstPixelFormat, 
-                      texture.setTextureWidth(), 
-                      texture.setTextureHeight(),
+                      texw, 
+                      texh,
                       0, 
                       srcPixelFormat, 
                       GL11.GL_UNSIGNED_BYTE, 
@@ -266,7 +270,7 @@ public class TextureLoader {
 		// due to an issue with ImageIO and mixed signed code
 		// we are now using good oldfashioned ImageIcon to load
 		// images and the paint it on top of a new BufferedImage
-		Image img = new ImageIcon(url).getImage();
+		java.awt.Image img = new javax.swing.ImageIcon(url).getImage();
 		BufferedImage bufferedImage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_RGB);
 		Graphics g = bufferedImage.getGraphics();
 		g.drawImage(img, 0, 0, null);
