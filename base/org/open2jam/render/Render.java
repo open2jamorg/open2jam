@@ -45,7 +45,7 @@ public class Render extends Canvas implements GameWindowCallback
 	private double bpm;
 
 	/** the hispeed */
-	private final double hispeed = 4;
+	private final double hispeed = 1;
 
 	/** the vertical space of the entities */
 	private double viewport;
@@ -138,7 +138,7 @@ public class Render extends Canvas implements GameWindowCallback
 				else e.draw(); // or draw itself on screen
 			}
 		}
-		System.out.println(entities_matrix.get(0).size());
+// 		System.out.println(last_measure_offset);
 	}
 
 	public void setBPM(double e)
@@ -158,7 +158,7 @@ public class Render extends Canvas implements GameWindowCallback
 
 	public double getNoteSpeed(){ return note_speed; }
 
-	private final int measure_buffer = 10;
+	private final int measure_buffer = 60;
 	private int buffered_measures = 0;
 
 	private int last_measure = -1;
@@ -182,7 +182,11 @@ public class Render extends Canvas implements GameWindowCallback
 		}
 
 		SpriteList sl = sprite_map.get("measure_mark");
-		entities_matrix.get(0).add(new MeasureEntity(sl, 2, viewport - last_measure_offset));
+		MeasureEntity me = new MeasureEntity(sl, 64, viewport - last_measure_offset);
+		me.setRender(this);
+		entities_matrix.get(0).add(me);
+
+// 		System.out.println(events.size());
 
 		fractional_measure = 1;
 
@@ -193,6 +197,7 @@ public class Render extends Canvas implements GameWindowCallback
 			{
 				case 0:
 				fractional_measure = e.getValue();
+				System.out.println(e.getValue());
 				break;
 
 				case 1:
@@ -203,14 +208,14 @@ public class Render extends Canvas implements GameWindowCallback
 				case 5:case 6:case 7:case 8:
 				if(e.getType() == 0){
 					sl = sprite_map.get("note_head"+(e.getChannel()-2));
-					NoteEntity ne = new NoteEntity(sl, 2 + e.getChannel() * 32, viewport - abs_height);
+					NoteEntity ne = new NoteEntity(sl,e.getChannel() * 32, viewport - abs_height);
 					ne.setRender(this);
 					entities_matrix.get(0).add(ne);
 				}
 				else if(e.getType() == 2){
 					SpriteList s_head = sprite_map.get("note_head"+(e.getChannel()-2));
 					SpriteList s_body = sprite_map.get("note_body"+(e.getChannel()-2));
-					LongNoteEntity ne = new LongNoteEntity(s_head, s_body, 2 + e.getChannel() * 32,viewport - abs_height);
+					LongNoteEntity ne = new LongNoteEntity(s_head, s_body,e.getChannel() * 32,viewport - abs_height);
 					ne.setRender(this);
 					ln_buffer[e.getChannel()-2] = ne;
 					entities_matrix.get(0).add(ne);
