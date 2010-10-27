@@ -94,9 +94,9 @@ public class LWJGLGameWindow implements GameWindow {
 
 			DisplayMode dm[] = Display.getAvailableDisplayModes();
 			for(DisplayMode d : dm)System.out.println(d);
-			setResolution(dm[7].getWidth(),dm[7].getHeight());
-			Display.setDisplayMode(dm[7]);
-// 			Display.setFullscreen(true);
+			setResolution(dm[0].getWidth(),dm[0].getHeight());
+			Display.setDisplayMode(dm[0]);
+			Display.setFullscreen(true);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -171,7 +171,7 @@ public class LWJGLGameWindow implements GameWindow {
 			break;
 		}    
 		
-		return org.lwjgl.input.Keyboard.isKeyDown(keyCode);
+		return Keyboard.isKeyDown(keyCode);
 	}
   
 	/**

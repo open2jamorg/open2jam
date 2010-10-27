@@ -5,15 +5,11 @@ import org.open2jam.render.Render;
 
 public class MeasureEntity extends AnimatedEntity
 {
-	public MeasureEntity(SpriteList sl, double x, double y)
-	{
-		super(sl, x, y);
-	}
-
 	protected Render render;
 
-	public void setRender(Render r)
+	public MeasureEntity(Render r, SpriteList sl, double x, double y)
 	{
+		super(sl, x, y);
 		this.render = r;
 	}
 

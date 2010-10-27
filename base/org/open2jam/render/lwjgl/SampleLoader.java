@@ -170,12 +170,12 @@ public class SampleLoader
 		String err;
 		switch (result)
 		{
-			case AL10.AL_NO_ERROR:err = "AL_NO_ERROR";
-			case AL10.AL_INVALID_NAME:err = "AL_INVALID_NAME";
-			case AL10.AL_INVALID_ENUM:err = "AL_INVALID_ENUM";
-			case AL10.AL_INVALID_VALUE:err = "AL_INVALID_VALUE";
-			case AL10.AL_INVALID_OPERATION:err = "AL_INVALID_OPERATION";
-			case AL10.AL_OUT_OF_MEMORY:err = "AL_OUT_OF_MEMORY";
+			case AL10.AL_NO_ERROR:err = "AL_NO_ERROR";break;
+			case AL10.AL_INVALID_NAME:err = "AL_INVALID_NAME";break;
+			case AL10.AL_INVALID_ENUM:err = "AL_INVALID_ENUM";break;
+			case AL10.AL_INVALID_VALUE:err = "AL_INVALID_VALUE";break;
+			case AL10.AL_INVALID_OPERATION:err = "AL_INVALID_OPERATION";break;
+			case AL10.AL_OUT_OF_MEMORY:err = "AL_OUT_OF_MEMORY";break;
 			default:err = "unknown error!";
 		}
 		throw new RuntimeException("OpenAL Error: "+err);

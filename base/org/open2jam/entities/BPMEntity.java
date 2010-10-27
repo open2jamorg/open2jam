@@ -17,7 +17,7 @@ public class BPMEntity extends Entity
 	{
 		this.render = r;
 		this.bpm = bpm;
-		bounds = new Rectangle2D.Double(0,y,1,1);
+		bounds = new Rectangle2D.Double(0,y,0,0);
 	}
 
 	public void move(long delta)

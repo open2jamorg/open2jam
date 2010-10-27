@@ -6,3 +6,9 @@ version numbers are just the minimum requeriment, unless otherwise noted.
 
 - lwjgl 2.5 ,  lwjgl.org ( BSD License)
 - jorbis 0.0.17 , www.jcraft.com/jorbis ( GNU LGPL)
+
+--- in implementation
+
+- nifty
+- xpp3
+

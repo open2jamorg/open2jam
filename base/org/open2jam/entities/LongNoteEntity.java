@@ -9,9 +9,9 @@ public class LongNoteEntity extends NoteEntity
 
 	protected boolean stop_defined = false;
 
-	public LongNoteEntity(SpriteList head_refs, SpriteList body_refs, double x, double y)
+	public LongNoteEntity(Render r, SpriteList head_refs, SpriteList body_refs, double x, double y)
 	{
-		super(head_refs,x,y);
+		super(r,head_refs,x,y);
 		this.body_frames = body_refs;
 		bounds.height = 0;
 	}
@@ -27,10 +27,9 @@ public class LongNoteEntity extends NoteEntity
 
 		double p = bounds.y - frames.get(nextFrame).getHeight();
 
-		for(; p > bounds.height+bounds.y; p-=body_frames.get(nextFrame).getHeight())
+		for(; p > bounds.y+bounds.height; p-=body_frames.get(nextFrame).getHeight())
 			body_frames.get(nextFrame).draw(bounds.x,p);
 
-		p -= frames.get(nextFrame).getHeight();
-		frames.get(nextFrame).draw(bounds.x,p);
+		frames.get(nextFrame).draw(bounds.x,bounds.y+bounds.height);
 	}
 }

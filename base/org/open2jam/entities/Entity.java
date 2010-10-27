@@ -7,11 +7,12 @@ public class Entity
 {
 	protected Sprite sprite;
 
-	/** The current speed of this entity horizontally (pixels/sec) */
+	/** The current speed of this entity horizontally (pixels/millisecs) */
 	protected double dx;
-	/** The current speed of this entity vertically (pixels/sec) */
+	/** The current speed of this entity vertically (pixels/millisecs) */
 	protected double dy;
 
+	/** this object stores the position(x,y) and dimensions (width,height) */
 	protected Rectangle2D.Double bounds;
 
 	/** when a entity die the render removes it */
@@ -42,8 +43,8 @@ public class Entity
 	 */
 	public void move(long delta) {
 		// update the location of the entity based on move speeds
-		bounds.x += (delta * dx) / 1000;
-		bounds.y += (delta * dy) / 1000;
+		bounds.x += delta * dx;
+		bounds.y += delta * dy;
 	}
 	
 	/**
@@ -71,28 +72,6 @@ public class Entity
 	 */
 	public void judgment() {}
 	
-
-	public void setX(double x) {
-		bounds.x = x;
-	}
-
-	public void setY(double y) {
-		bounds.y = y;
-	}
-
-	public double getY() {
-		return bounds.y;
-	}
-
-	public double getX() {
-		return bounds.x;
-	}
-
-	public double getHeight() {
-		return bounds.height;
-	}
-
-	public double getWidth() {
-		return bounds.width;
-	}
+	/** return the rectangle object representing the bounds */
+	public Rectangle2D.Double getBounds(){ return bounds; }
 }

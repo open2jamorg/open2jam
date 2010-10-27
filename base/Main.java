@@ -18,6 +18,8 @@ public class Main
 	{
 		LIB_PATH += File.separator + getOS();
 		try{
+			trySetLAF();
+
 			File lib_path = new File(LIB_PATH);
 			
 			// add the classes dir and each jar in lib to a List of URLs.
@@ -61,6 +63,19 @@ public class Main
 				javax.swing.JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
 		}
+	}
+
+	private static void trySetLAF()
+	{
+		try {
+			for(javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels())
+			{
+				if("Nimbus".equals(info.getName())){
+					javax.swing.UIManager.setLookAndFeel(info.getClassName());
+					break;
+				}
+			}
+		} catch (Exception e) {}
 	}
 
 	public static String getOS()
