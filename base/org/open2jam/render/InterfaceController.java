@@ -20,7 +20,7 @@ public class InterfaceController implements ScreenController
 		new NullSoundDevice(),
 		new LwjglInputSystem(),
 		new TimeProvider());
-		nifty.fromXml("interface.xml","start");
+		nifty.fromXml("interface.xml","main");
 	}
 
 	public final void bind(final Nifty newNifty, final Screen newScreen) {

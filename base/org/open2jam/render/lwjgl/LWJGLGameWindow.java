@@ -96,7 +96,7 @@ public class LWJGLGameWindow implements GameWindow {
 			for(DisplayMode d : dm)System.out.println(d);
 			setResolution(dm[0].getWidth(),dm[0].getHeight());
 			Display.setDisplayMode(dm[0]);
-			Display.setFullscreen(true);
+			//Display.setFullscreen(true);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -50,7 +50,7 @@ public class Render extends Canvas implements GameWindowCallback
 	private double bpm;
 
 	/** the hispeed */
-	private final double hispeed = 1;
+	private final double hispeed = 4;
 
 	/** the vertical space of the entities */
 	private double viewport;

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <nifty>
-  <screen id="start" controller="org.open2jam.render.InterfaceController">
-    <layer id="layer" >
-      <panel>
-        <label id="fps_label" font="verdana-24-shadow.fnt" width="" height="" text="0" align="right" valign="top" />
+  <screen id="main" controller="org.open2jam.render.InterfaceController">
+    <layer id="layer" childLayout="center" backgroundColor="#0000">
+      <panel childLayout="horizontal" backgroundColor="#0f0" width="100px" height="100px" align="right" valign="top">
+        <text id="fps_label" font="/home/fox/open2jam/base/DejaVuSans-12.fnt" backgroundColor="#f00" color="#00f" width="60px" height="60px" text="TEST" align="center" />
       </panel>
     </layer>
   </screen>
