@@ -5,13 +5,14 @@ package org.open2jam.render;
 **/
 public class SpriteList extends java.util.ArrayList<Sprite>
 {
-	private int framespeed;
+	/** the frame change speed in milliseconds */
+	private double framespeed;
 
-	public SpriteList(int fs)
+	public SpriteList(double fs)
 	{
 		super();
 		this.framespeed = fs;
 	}
 
-	public int getFrameSpeed(){ return framespeed; }
+	public double getFrameSpeed(){ return framespeed; }
 }

@@ -35,7 +35,7 @@ public class AnimatedEntity extends Entity
 	public void move(long delta)
 	{
 		super.move(delta);
-		sub_frame += delta * frames.getFrameSpeed()/1000;
+		sub_frame += delta * frames.getFrameSpeed();
 		int over = (int) sub_frame;
 		nextFrame += over;
 		sub_frame -= over;

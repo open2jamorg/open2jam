@@ -23,13 +23,12 @@ public class LongNoteEntity extends NoteEntity
 
 	public void draw()
 	{
-// 		System.out.println(frames.get(nextFrame).getHeight());
 		frames.get(nextFrame).draw(bounds.x,bounds.y);
 
-		double p = bounds.y - body_frames.get(nextFrame).getHeight();
-
-		for(; p > bounds.y+bounds.height; p-=body_frames.get(nextFrame).getHeight())
-			body_frames.get(nextFrame).draw(bounds.x,p);
+		for(double p = bounds.y - body_frames.get(nextFrame).getHeight();
+			p > 0 && p > bounds.y+bounds.height;
+			p-=body_frames.get(nextFrame).getHeight())
+				body_frames.get(nextFrame).draw(bounds.x,p);
 
 		frames.get(nextFrame).draw(bounds.x,bounds.y+bounds.height);
 	}

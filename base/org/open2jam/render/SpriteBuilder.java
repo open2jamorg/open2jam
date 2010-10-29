@@ -16,7 +16,7 @@ public class SpriteBuilder
 	Stack<Sprite> buffer;
 	HashMap<String,SpriteList> result;
 
-	private static String FILE_PATH_PREFIX = "sprites"+java.io.File.separator;
+	private static String FILE_PATH_PREFIX = "resources"+java.io.File.separator;
 
 	public SpriteBuilder()
 	{
@@ -50,9 +50,9 @@ public class SpriteBuilder
 			break;
 
 			case spritelist:
-			int framespeed = Integer.parseInt(atts.get("framespeed"));
+			double framespeed = Integer.parseInt(atts.get("framespeed"));
+			framespeed /= 1000; // spritelist need framespeed in milliseconds
 			String id = atts.get("id");
-
 			SpriteList sl = new SpriteList(framespeed);
 			sl.addAll(buffer);
 			buffer.clear();

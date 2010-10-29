@@ -1,67 +1,30 @@
 
-
 import java.io.File;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.open2jam.parser.Chart;
+import org.open2jam.parser.ChartParser;
+import org.open2jam.render.Render;
 
 public class Main
 {
-	static String JAR_PATH = "lib"+File.separator+"jar";
-	static String LIB_PATH = "lib"+File.separator+"native";
-	static String CLASS_PATH = ".";
-	static String MAIN_CLASS = "org.open2jam.render.Render";
+	static final String LIB_PATH = 
+		System.getProperty("user.dir") + File.separator + 
+		"lib" + File.separator + 
+		"native" + File.separator + 
+		getOS();
 
 	public static void main(String []args)
 	{
-		LIB_PATH += File.separator + getOS();
 		try{
 			trySetLAF();
 
-			File lib_path = new File(LIB_PATH);
-			
-			// add the classes dir and each jar in lib to a List of URLs.
-			List<URL> urls = new ArrayList<URL>();
-			urls.add(
-			Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().toURL()
-			);
-			for (File f : new File(JAR_PATH).listFiles())urls.add(f.toURI().toURL());
+			System.setProperty("org.lwjgl.librarypath", LIB_PATH);
 
-			System.setProperty("java.library.path",LIB_PATH);
+			Chart c = ChartParser.parseFile(ChartParser.parseFileHeader(args[0],2));
+			new Render(c,1);
 
-			// we need to reset sys_paths to force java look for it again
-			// because we changed java.library.path at runtime
-			java.lang.reflect.Field field = ClassLoader.class.getDeclaredField("sys_paths");
-			field.setAccessible(true);
-			field.set(ClassLoader.class, null);
-			field.setAccessible(false);
-
-			// feed your URLs to a URLClassLoader!
-			ClassLoader classloader =
-				new URLClassLoader(urls.toArray(new URL[0]),
-					ClassLoader.getSystemClassLoader().getParent());
-
-			// relative to that classloader, find the main class
-			Class<?> mainClass = classloader.loadClass(MAIN_CLASS);
-			Class<?> thisClass = args.getClass();
-			Method main = mainClass.getMethod("main",new Class[]{thisClass});
-			
-			// well-behaved Java packages work relative to the
-			// context classloader.  Others don't (like commons-logging)
-			Thread.currentThread().setContextClassLoader(classloader);
-
-			// pass the args as the "real" args to your main
-			main.invoke(null, new Object[] { args });
-
-		}catch(Throwable t){
-			final java.io.Writer r = new java.io.StringWriter();
-			final java.io.PrintWriter pw = new java.io.PrintWriter(r);
-			t.printStackTrace(pw);
-			javax.swing.JOptionPane.showMessageDialog(null, r.toString(), "Fatal Error", 
-				javax.swing.JOptionPane.ERROR_MESSAGE);
-			System.exit(1);
+		}catch(Exception e){
+			die(e);
 		}
 	}
 
@@ -92,6 +55,15 @@ public class Main
 		}else{
 			return os;
 		}
+	}
+
+	public static void die(Exception e)
+	{
+		final java.io.Writer r = new java.io.StringWriter();
+		e.printStackTrace(new java.io.PrintWriter(r));
+		javax.swing.JOptionPane.showMessageDialog(null, r.toString(), "Fatal Error", 
+			javax.swing.JOptionPane.ERROR_MESSAGE);
+		System.exit(1);
 	}
 }
 

@@ -11,7 +11,6 @@ import java.util.Iterator;
 
 import org.open2jam.entities.*;
 import org.open2jam.parser.ResourcesHandler;
-import org.open2jam.parser.ChartParser;
 import org.open2jam.parser.Chart;
 import org.open2jam.parser.Event;
 
@@ -48,7 +47,7 @@ public class Render extends Canvas implements GameWindowCallback
 	private double bpm;
 
 	/** the hispeed */
-	private final double hispeed = 0.5;
+	private final double hispeed;
 
 	/** the vertical space of the entities */
 	private double viewport;
@@ -60,7 +59,7 @@ public class Render extends Canvas implements GameWindowCallback
 	private final int measure_buffer = 6;
 
 	/** entity limit to buffer per frame */
-	private final int buffer_per_frame = 40;
+	private final int buffer_per_frame = 10;
 
 	private final int screen_x_offset = 30;
 
@@ -73,11 +72,11 @@ public class Render extends Canvas implements GameWindowCallback
 	/** the vertical speed of entities pixels/milliseconds */
 	private double note_speed;
 
-	public Render(int renderingType, Chart c)
+	public Render(Chart c, int hispeed)
 	{
 		this.chart = c;
-		// create a window based on a chosen rendering method
-		ResourceFactory.get().setRenderingType(renderingType);
+		this.hispeed = hispeed;
+		ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
 		window = ResourceFactory.get().getGameWindow();
 		
 		window.setGameWindowCallback(this);
@@ -103,7 +102,7 @@ public class Render extends Canvas implements GameWindowCallback
 		SpriteBuilder sb = new SpriteBuilder();
 		try {
 			javax.xml.parsers.SAXParserFactory.newInstance().newSAXParser().parse(
-				Render.class.getClassLoader().getResourceAsStream("resources.xml"),
+				Render.class.getClassLoader().getResourceAsStream("resources/resources.xml"),
 				new ResourcesHandler(sb)
 			);
 		} catch (Exception e) {
@@ -180,17 +179,17 @@ public class Render extends Canvas implements GameWindowCallback
 	}
 
 	/** returns the note speed in pixels/millisecs */
-	public double getNoteSpeed(){ return note_speed; }
+	public double getNoteSpeed() { return note_speed; }
 
-	public double getBPM(){ return bpm; }
-	public double getMeasureSize(){ return measure_size; }
+	public double getBPM() { return bpm; }
+	public double getMeasureSize() { return measure_size; }
 	public double getViewPort() { return viewport; }
 	
 
 	private int buffered_measures = 0;
 
-	private int this_measure = -1;
-	private int measure_offset = 0;
+	private int buffer_measure = -1;
+	private double buffer_offset = 0;
 	private boolean measure_change = true;
 	
 	private double fractional_measure = 1;
@@ -201,17 +200,17 @@ public class Render extends Canvas implements GameWindowCallback
 	**/
 	private void update_note_buffer(long delta)
 	{
-		measure_offset += buffer_speed * delta;
+		buffer_offset -= buffer_speed * delta;
 		if(buffered_measures > measure_buffer)return;
 
 		if(measure_change) // this is a new measure
 		{
-			this_measure++;
-			measure_offset += measure_size * fractional_measure;
+			buffer_measure++;
+			buffer_offset += measure_size * fractional_measure;
 			entities_matrix.get(0).add(
 				new MeasureEntity(this, 
 				sprite_map.get("measure_mark"), 
-				screen_x_offset, viewport - measure_offset)
+				screen_x_offset, viewport - buffer_offset)
 			);
 			fractional_measure = 1;
 			measure_change = false;
@@ -222,14 +221,14 @@ public class Render extends Canvas implements GameWindowCallback
 		while(c.hasNext() && counter++ < buffer_per_frame)
 		{
 			Event e = c.next();
-			if(e.getMeasure() > this_measure) // this is the start of a new measure
+			if(e.getMeasure() > buffer_measure) // this is the start of a new measure
 			{                                 // we can't buffer that yet so let's stop here
 				measure_change = true;
 				buffered_measures++;
 				break;
 			}
 
-			double abs_height = measure_offset + (e.getPosition() * measure_size);
+			double abs_height = buffer_offset + (e.getPosition() * measure_size);
 			switch(e.getChannel())
 			{
 				case 0:
@@ -282,12 +281,6 @@ public class Render extends Canvas implements GameWindowCallback
 		javax.swing.JOptionPane.showMessageDialog(null, r.toString(), "Fatal Error", 
 			javax.swing.JOptionPane.ERROR_MESSAGE);
 		System.exit(1);
-	}
-
-	public static void main(String argv[]) {
-		if(argv.length < 1)die(new RuntimeException("Need file to read !"));
-		Chart c = ChartParser.parseFile(ChartParser.parseFileHeader(argv[0], 2));
-		new Render(ResourceFactory.OPENGL_LWJGL, c);
 	}
 }
 
