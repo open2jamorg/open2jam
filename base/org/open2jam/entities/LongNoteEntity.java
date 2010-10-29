@@ -23,9 +23,10 @@ public class LongNoteEntity extends NoteEntity
 
 	public void draw()
 	{
+// 		System.out.println(frames.get(nextFrame).getHeight());
 		frames.get(nextFrame).draw(bounds.x,bounds.y);
 
-		double p = bounds.y - frames.get(nextFrame).getHeight();
+		double p = bounds.y - body_frames.get(nextFrame).getHeight();
 
 		for(; p > bounds.y+bounds.height; p-=body_frames.get(nextFrame).getHeight())
 			body_frames.get(nextFrame).draw(bounds.x,p);

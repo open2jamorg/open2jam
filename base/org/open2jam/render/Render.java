@@ -20,8 +20,6 @@ public class Render extends Canvas implements GameWindowCallback
 	/** The window that is being used to render the game */
 	private GameWindow window;
 
-	private InterfaceController ic;
-
 	/** The time at which the last rendering looped started from the point of view of the game logic */
 	private long lastLoopTime;
 
@@ -50,7 +48,7 @@ public class Render extends Canvas implements GameWindowCallback
 	private double bpm;
 
 	/** the hispeed */
-	private final double hispeed = 4;
+	private final double hispeed = 0.5;
 
 	/** the vertical space of the entities */
 	private double viewport;
@@ -59,10 +57,10 @@ public class Render extends Canvas implements GameWindowCallback
 	private double measure_size;
 
 	/** the size of the note buffer */
-	private final int measure_buffer = 10;
+	private final int measure_buffer = 6;
 
 	/** entity limit to buffer per frame */
-	private final int buffer_per_frame = 10;
+	private final int buffer_per_frame = 40;
 
 	private final int screen_x_offset = 30;
 
@@ -97,9 +95,7 @@ public class Render extends Canvas implements GameWindowCallback
 		viewport = 0.8 * window.getResolutionHeight();
 		measure_size = 0.8 * hispeed * viewport;
 		setBPM(chart.getHeader().getBPM());
-
-		ic = new InterfaceController();
-		ic.newNifty();
+		buffer_speed = ((bpm/240) * measure_size) / 1000;
 
 		entities_matrix = new ArrayList<List<Entity>>();
 		entities_matrix.add(new ArrayList<Entity>()); // layer 0
@@ -124,7 +120,7 @@ public class Render extends Canvas implements GameWindowCallback
 		}
 
 		 // load up an initial buffer
-		while(buffered_measures < measure_buffer)update_note_buffer();
+		while(buffered_measures < measure_buffer)update_note_buffer(0);
 
 		lastLoopTime = SystemTimer.getTime();
 	}
@@ -152,9 +148,7 @@ public class Render extends Canvas implements GameWindowCallback
 			fps = 0;
 		}
 
-		ic.render();
-
-		update_note_buffer();
+		update_note_buffer(delta);
 
 		Iterator<List<Entity>> i = entities_matrix.iterator();
 		while(i.hasNext()) // loop over layers
@@ -200,12 +194,14 @@ public class Render extends Canvas implements GameWindowCallback
 	private boolean measure_change = true;
 	
 	private double fractional_measure = 1;
+	private double buffer_speed;
 
 	/** update the note layer of the entities_matrix.
 	*** note buffering is equally distributed between the frames
 	**/
-	private void update_note_buffer()
+	private void update_note_buffer(long delta)
 	{
+		measure_offset += buffer_speed * delta;
 		if(buffered_measures > measure_buffer)return;
 
 		if(measure_change) // this is a new measure
@@ -242,6 +238,7 @@ public class Render extends Canvas implements GameWindowCallback
 
 				case 1:
 				entities_matrix.get(0).add(new BPMEntity(this,e.getValue(),viewport - abs_height));
+				buffer_speed = ((e.getValue()/240) * measure_size) / 1000;
 				break;
 
 				case 2:case 3:case 4:
