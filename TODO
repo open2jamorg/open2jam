@@ -1,13 +1,13 @@
 - rescale textures if the resolution isn't 800x600
 
-- find a way to add interface to the screen( nifty gui maybe ?)
+- use mapped textures, instead of spliting the image
 
-- resources.xml and the images should be loaded from inside the jar
+- make a way to load textures from awt.Image's
 
 - find out how to extract the samples from OJM and OMC
+
 - whats the difference between W### and M### on notetool ?
-- test notetool output
 - test the hi-speed modifier
 - test the BPM modifier
 - implement a BMS parser
-
+- test notetool output

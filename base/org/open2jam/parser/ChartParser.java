@@ -17,7 +17,7 @@ public class ChartParser
 	private static OJNParser ojn_parser = new OJNParser();
 
 	/** parse and returns a ChartHeader object */
-	public static ChartHeader parseFileHeader(String file, int rank)
+	public static ChartHeader parseFileHeader(String file)
 	{
 		String ext_str = file.toUpperCase().substring(file.lastIndexOf('.')+1);
 		Formats ext = Formats.UNKNOWN;
@@ -26,16 +26,16 @@ public class ChartParser
 		}catch(Exception e){}
 		switch(ext)
 		{
-			case OJN: return ojn_parser.parseFileHeader(file,rank);
+			case OJN: return ojn_parser.parseFileHeader(file);
 		}
 		throw new RuntimeException("File format ["+ext_str+"] not supported");
 	}
 
 	/** parse and return the whole Chart representation */
-	public static Chart parseFile(ChartHeader h)
+	public static Chart parseFile(ChartHeader h, int rank)
 	{
 		if(h instanceof OJNHeader) {
-			return ojn_parser.parseFile((OJNHeader)h);
+			return ojn_parser.parseFile((OJNHeader)h, rank);
 		}
 		throw new RuntimeException("File format ["+h.getSourceType()+"] not supported");
 	}

@@ -1,13 +1,15 @@
-package org.open2jam.entities;
+package org.open2jam.render.entities;
 
 import org.open2jam.render.SpriteList;
 import org.open2jam.render.Render;
 
-public class MeasureEntity extends AnimatedEntity
+/** a NoteEntity is a animated entity which moves down.
+**/
+public class NoteEntity extends AnimatedEntity
 {
 	protected Render render;
 
-	public MeasureEntity(Render r, SpriteList sl, double x, double y)
+	public NoteEntity(Render r, SpriteList sl, double x, double y)
 	{
 		super(sl, x, y);
 		this.render = r;
@@ -22,6 +24,5 @@ public class MeasureEntity extends AnimatedEntity
 	public void judgment()
 	{
 		alive = false;
-		render.measureEnd();
 	}
 }

@@ -3,11 +3,6 @@ package org.open2jam.parser;
 
 public class OJNHeader implements ChartHeader
 {
-	/** the rank of the song.
-	*** 0 - easy, 1 - normal, 2 - hard */
-	protected int rank;
-	public int getRank() { return rank; }
-
 	/** the internal format of this header */
 	public ChartParser.Formats getSourceType() { return ChartParser.Formats.OJN; }
 
@@ -18,8 +13,8 @@ public class OJNHeader implements ChartHeader
 	/** an integer representing difficulty.
 	*** this is the internal difficult level of the song
 	*** for that rank **/
-	protected int level;
-	public int getLevel(){ return level; }
+	protected short[] level;
+	public int getLevel(int rank){ return level[rank]; }
 
 	protected String title;
 	public String getTitle() { return title; }
@@ -35,12 +30,12 @@ public class OJNHeader implements ChartHeader
 	public double getBPM() { return bpm; }
 
 	/** the number of notes in the song */
-	protected int note_count;
-	public int getNoteCount() { return note_count; }
+	protected int[] note_count;
+	public int getNoteCount(int rank) { return note_count[rank]; }
 
 	/** the duration in seconds */
-	protected int duration;
-	public int getDuration() { return duration; }
+	protected int[] duration;
+	public int getDuration(int rank) { return duration[rank]; }
 
 	/** a image cover, representing the song */
 	protected java.awt.Image cover;

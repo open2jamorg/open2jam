@@ -1,6 +1,8 @@
 package org.open2jam.render.lwjgl;
 
 import java.awt.event.KeyEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -38,6 +40,8 @@ public class LWJGLGameWindow implements GameWindow {
   
 	/** Title of window, we get it before our window is ready, so store it till needed */
 	private String title;
+        private int sync_cap;
+        private boolean do_sync;
 	
 	/**
 	 * Create a new game window that will use OpenGL to 
@@ -77,30 +81,15 @@ public class LWJGLGameWindow implements GameWindow {
 	 * @param x The width of the game display area
 	 * @param y The height of the game display area
 	 */
-	public void setResolution(int x, int y) {
-		width = x;
-		height = y;
-	}
+	public void setDisplay(DisplayMode dm, boolean vsync, boolean fs) throws Exception{
+            Display.setDisplayMode(dm);
+            Display.setVSyncEnabled(vsync);
+            Display.setFullscreen(fs);
+            width = dm.getWidth();
+            height = dm.getHeight();
+        }
 
 	public int getResolutionHeight(){ return height; }
-	
-
-	private boolean setDisplayMode() {
-		try {
-// 	java.awt.DisplayMode adm = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment()
-// 					.getDefaultScreenDevice().getDisplayMode();
-//  			DisplayMode dm = new DisplayMode(adm.getWidth(),adm.getHeight());
-
-			DisplayMode dm = new DisplayMode(800, 600);
-			setResolution(dm.getWidth(),dm.getHeight());
-			Display.setDisplayMode(dm);
-			//Display.setFullscreen(true);
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
 	
 	/**
 	 * Start the rendering process. This method will cause the display to redraw
@@ -108,7 +97,7 @@ public class LWJGLGameWindow implements GameWindow {
 	 */
 	public void startRendering() {
 		try {
-			setDisplayMode();
+			//setDisplayMode();
 			Display.create();
 			
 			// grab the mouse, dont want that hideous cursor when we're playing!
@@ -134,6 +123,7 @@ public class LWJGLGameWindow implements GameWindow {
 			callback.windowClosed();
 		}
     
+		if(callback == null)throw new RuntimeException(" Need callback to start rendering !");
 		gameLoop();
 	}
 
@@ -177,25 +167,36 @@ public class LWJGLGameWindow implements GameWindow {
 	 * and requesting that the callback update its screen.
 	 */
 	private void gameLoop() {
-		while (gameRunning) {
-			// clear screen
-			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-			GL11.glMatrixMode(GL11.GL_MODELVIEW);
-			GL11.glLoadIdentity();
-			
-			// let subsystem paint
-			if (callback != null) {
-				callback.frameRendering();
-			}
-			
-			// update window contents
-			Display.update();
-			
-			if(Display.isCloseRequested() || Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
-				gameRunning = false;
-				Display.destroy();
-				callback.windowClosed();
-			}
-		}
-	}  
+            gameRunning = true;
+            while (gameRunning) {
+                    // clear screen
+                    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+                    GL11.glMatrixMode(GL11.GL_MODELVIEW);
+                    GL11.glLoadIdentity();
+
+                    // let subsystem paint
+                    callback.frameRendering();
+
+                    if(do_sync)Display.sync(sync_cap);
+
+                    // update window contents
+                    Display.update();
+
+                    if(Display.isCloseRequested() || Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
+                            gameRunning = false;
+                            Display.destroy();
+                            callback.windowClosed();
+                    }
+            }
+            Display.destroy();
+	}
+
+    public void setSync(boolean set, int cap) {
+        do_sync = set;
+        sync_cap = cap;
+    }
+
+    public void destroy() {
+        gameRunning = false;
+    }
 }

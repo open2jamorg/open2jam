@@ -1,9 +1,8 @@
+package org.open2jam.gui;
 
 import java.io.File;
+import javax.swing.UIManager;
 
-import org.open2jam.parser.Chart;
-import org.open2jam.parser.ChartParser;
-import org.open2jam.render.Render;
 
 public class Main
 {
@@ -20,8 +19,11 @@ public class Main
 
 			System.setProperty("org.lwjgl.librarypath", LIB_PATH);
 
-			Chart c = ChartParser.parseFile(ChartParser.parseFileHeader(args[0],2));
-			new Render(c,1);
+                        java.awt.EventQueue.invokeLater(new Runnable() {
+                            public void run() {
+                                 new Interface().setVisible(true);
+                            }
+                        });
 
 		}catch(Exception e){
 			die(e);
@@ -31,13 +33,14 @@ public class Main
 	private static void trySetLAF()
 	{
 		try {
-			for(javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels())
+			for(UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels())
 			{
 				if("Nimbus".equals(info.getName())){
-					javax.swing.UIManager.setLookAndFeel(info.getClassName());
-					break;
+					UIManager.setLookAndFeel(info.getClassName());
+					return;
 				}
 			}
+                        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {}
 	}
 

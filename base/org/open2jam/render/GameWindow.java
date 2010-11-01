@@ -1,5 +1,7 @@
 package org.open2jam.render;
 
+import org.lwjgl.opengl.DisplayMode;
+
 /**
  * The window in which the game will be displayed. This interface exposes just
  * enough to allow the game logic to interact with, while still maintaining an
@@ -22,7 +24,8 @@ public interface GameWindow {
 	 * @param x The new x resolution of the display
 	 * @param y The new y resolution of the display
 	 */
-	public void setResolution(int x,int y);
+        public void setDisplay(DisplayMode dm, boolean vsync, boolean fs) throws Exception;
+        public void setSync(boolean set_sync, int cap);
 
 	public int getResolutionHeight();
 	
@@ -47,4 +50,6 @@ public interface GameWindow {
 	 * @return True if the particular key is pressed
 	 */
 	public boolean isKeyPressed(int keyCode);
+
+        public void destroy();
 }

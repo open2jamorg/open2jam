@@ -1,4 +1,4 @@
-package org.open2jam.entities;
+package org.open2jam.render.entities;
 
 import org.open2jam.render.SpriteList;
 

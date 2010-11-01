@@ -3,6 +3,7 @@ package org.open2jam.render;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Stack;
+import java.net.URL;
 
 public class SpriteBuilder
 {
@@ -16,7 +17,7 @@ public class SpriteBuilder
 	Stack<Sprite> buffer;
 	HashMap<String,SpriteList> result;
 
-	private static String FILE_PATH_PREFIX = "resources"+java.io.File.separator;
+	private static String FILE_PATH_PREFIX = "/resources/";
 
 	public SpriteBuilder()
 	{
@@ -45,7 +46,11 @@ public class SpriteBuilder
 			int w = Integer.parseInt(atts.get("w"));
 			int h = Integer.parseInt(atts.get("h"));
 			java.awt.Rectangle slice = new java.awt.Rectangle(x,y,w,h);
-			SpriteID s = new SpriteID(FILE_PATH_PREFIX+atts.get("file"),slice);
+
+			URL url = SpriteBuilder.class.getResource(FILE_PATH_PREFIX+atts.get("file"));
+			if (url == null)throw new RuntimeException("Cannot find resource: "+FILE_PATH_PREFIX+atts.get("file"));
+
+			SpriteID s = new SpriteID(url,slice);
 			buffer.push(ResourceFactory.get().getSprite(s));
 			break;
 

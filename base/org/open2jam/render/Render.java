@@ -1,20 +1,21 @@
 package org.open2jam.render;
 
-import java.awt.Canvas;
-import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import javax.swing.JOptionPane;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import org.lwjgl.opengl.DisplayMode;
 
-import org.open2jam.entities.*;
 import org.open2jam.parser.ResourcesHandler;
 import org.open2jam.parser.Chart;
 import org.open2jam.parser.Event;
+import org.open2jam.render.entities.BPMEntity;
+import org.open2jam.render.entities.Entity;
+import org.open2jam.render.entities.LongNoteEntity;
+import org.open2jam.render.entities.MeasureEntity;
+import org.open2jam.render.entities.NoteEntity;
 
-public class Render extends Canvas implements GameWindowCallback
+public class Render implements GameWindowCallback
 {
 	/** The window that is being used to render the game */
 	private GameWindow window;
@@ -56,14 +57,14 @@ public class Render extends Canvas implements GameWindowCallback
 	private double measure_size;
 
 	/** the size of the note buffer */
-	private final int measure_buffer = 6;
+	private final int measure_buffer = 3;
 
 	/** entity limit to buffer per frame */
 	private final int buffer_per_frame = 10;
 
 	private final int screen_x_offset = 30;
 
-	/** prebuilt offset of the notes horizontal pos */
+	/** pre-built offset of the notes horizontal pos */
 	private int[] notes_x_offset = new int[NUM_KEYS];
 
 	/** long note buffer */
@@ -72,37 +73,50 @@ public class Render extends Canvas implements GameWindowCallback
 	/** the vertical speed of entities pixels/milliseconds */
 	private double note_speed;
 
-	public Render(Chart c, int hispeed)
+	/** the screen offset of the buffer */
+	private double buffer_offset;
+
+        static{
+            ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
+        }
+
+	public Render(Chart c, double hispeed)
 	{
 		this.chart = c;
 		this.hispeed = hispeed;
-		ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
 		window = ResourceFactory.get().getGameWindow();
-		
-		window.setGameWindowCallback(this);
-		window.setTitle("Render");
-	
-		window.startRendering();
 	}
+        
+        public void setDisplay(DisplayMode dm, boolean vsync, boolean fs, boolean do_sync, int sync_cap) throws Exception{
+            window.setDisplay(dm,vsync,fs);
+            window.setSync(do_sync, sync_cap);
+        }
+
+        public void startRendering(){
+            window.setGameWindowCallback(this);
+            window.setTitle("Render");
+            window.startRendering();
+        }
 
 	/**
-	 * Intialise the common elements for the game.
+	 * initialize the common elements for the game.
 	 * this is called by the window render
 	 */
 	public void initialise()
 	{
 		viewport = 0.8 * window.getResolutionHeight();
 		measure_size = 0.8 * hispeed * viewport;
+		buffer_offset = viewport;
 		setBPM(chart.getHeader().getBPM());
-		buffer_speed = ((bpm/240) * measure_size) / 1000;
 
 		entities_matrix = new ArrayList<List<Entity>>();
-		entities_matrix.add(new ArrayList<Entity>()); // layer 0
+		entities_matrix.add(new ArrayList<Entity>()); // layer 0 -- measure marks
+		entities_matrix.add(new ArrayList<Entity>()); // layer 1 -- notes
 
 		SpriteBuilder sb = new SpriteBuilder();
 		try {
 			javax.xml.parsers.SAXParserFactory.newInstance().newSAXParser().parse(
-				Render.class.getClassLoader().getResourceAsStream("resources/resources.xml"),
+				Render.class.getResourceAsStream("/resources/resources.xml"),
 				new ResourcesHandler(sb)
 			);
 		} catch (Exception e) {
@@ -118,7 +132,7 @@ public class Render extends Canvas implements GameWindowCallback
 			off += sprite_map.get("note_head"+i).get(0).getWidth();
 		}
 
-		 // load up an initial buffer
+		 // load up initial buffer
 		while(buffered_measures < measure_buffer)update_note_buffer(0);
 
 		lastLoopTime = SystemTimer.getTime();
@@ -164,6 +178,10 @@ public class Render extends Canvas implements GameWindowCallback
 				else e.draw(); // or draw itself on screen
 			}
 		}
+                if(chart.getEvents().isEmpty() && entities_matrix.get(1).isEmpty()){
+                    window.destroy();
+                    return;
+                }
 	}
 
 	public void setBPM(double e)
@@ -189,28 +207,27 @@ public class Render extends Canvas implements GameWindowCallback
 	private int buffered_measures = 0;
 
 	private int buffer_measure = -1;
-	private double buffer_offset = 0;
+
 	private boolean measure_change = true;
 	
 	private double fractional_measure = 1;
-	private double buffer_speed;
 
 	/** update the note layer of the entities_matrix.
 	*** note buffering is equally distributed between the frames
 	**/
 	private void update_note_buffer(long delta)
 	{
-		buffer_offset -= buffer_speed * delta;
+		buffer_offset += note_speed * delta;
 		if(buffered_measures > measure_buffer)return;
 
 		if(measure_change) // this is a new measure
 		{
 			buffer_measure++;
-			buffer_offset += measure_size * fractional_measure;
+			buffer_offset -= measure_size * fractional_measure;
 			entities_matrix.get(0).add(
-				new MeasureEntity(this, 
-				sprite_map.get("measure_mark"), 
-				screen_x_offset, viewport - buffer_offset)
+				new MeasureEntity(this,
+				sprite_map.get("measure_mark"),
+				screen_x_offset, buffer_offset+6)
 			);
 			fractional_measure = 1;
 			measure_change = false;
@@ -228,7 +245,7 @@ public class Render extends Canvas implements GameWindowCallback
 				break;
 			}
 
-			double abs_height = buffer_offset + (e.getPosition() * measure_size);
+			double abs_height = buffer_offset - (e.getPosition() * measure_size);
 			switch(e.getChannel())
 			{
 				case 0:
@@ -236,30 +253,30 @@ public class Render extends Canvas implements GameWindowCallback
 				break;
 
 				case 1:
-				entities_matrix.get(0).add(new BPMEntity(this,e.getValue(),viewport - abs_height));
-				buffer_speed = ((e.getValue()/240) * measure_size) / 1000;
+				entities_matrix.get(0).add(new BPMEntity(this,e.getValue(),abs_height));
 				break;
 
 				case 2:case 3:case 4:
 				case 5:case 6:case 7:case 8:
 				int note_number = e.getChannel()-2;
 				if(e.getType() == 0){
-					entities_matrix.get(0).add(
+					entities_matrix.get(1).add(
 						new NoteEntity(this, sprite_map.get("note_head"+note_number),
 						notes_x_offset[note_number],
-						viewport - abs_height));
+						abs_height));
 				}
 				else if(e.getType() == 2){
 					ln_buffer[note_number] = 
 						new LongNoteEntity(this,
 						sprite_map.get("note_head"+note_number),
 						sprite_map.get("note_body"+note_number), 
-						notes_x_offset[note_number],viewport - abs_height);
-					entities_matrix.get(0).add(ln_buffer[note_number]);
+						notes_x_offset[note_number],
+						abs_height);
+					entities_matrix.get(1).add(ln_buffer[note_number]);
 				}
 				else if(e.getType() == 3){
 					ln_buffer[note_number].
-					setHeight(viewport-abs_height-ln_buffer[note_number].getBounds().getY());
+					setHeight(abs_height-ln_buffer[note_number].getBounds().getY());
 					ln_buffer[note_number] = null;
 				}
 			}
@@ -271,7 +288,7 @@ public class Render extends Canvas implements GameWindowCallback
 	 * Notifcation that the game window has been closed
 	 */
 	public void windowClosed() {
-		System.exit(0);
+		
 	}
 
 	public static void die(Exception e)

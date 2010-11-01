@@ -1,4 +1,4 @@
-package org.open2jam.entities;
+package org.open2jam.render.entities;
 
 import org.open2jam.render.SpriteList;
 import org.open2jam.render.Render;
@@ -26,7 +26,7 @@ public class LongNoteEntity extends NoteEntity
 		frames.get(nextFrame).draw(bounds.x,bounds.y);
 
 		for(double p = bounds.y - body_frames.get(nextFrame).getHeight();
-			p > 0 && p > bounds.y+bounds.height;
+			p > -5 && p > bounds.y+bounds.height;
 			p-=body_frames.get(nextFrame).getHeight())
 				body_frames.get(nextFrame).draw(bounds.x,p);
 

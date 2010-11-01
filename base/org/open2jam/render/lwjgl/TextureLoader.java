@@ -262,15 +262,11 @@ public class TextureLoader {
 	*/
 	private BufferedImage loadImage(SpriteID resource) throws IOException 
 	{
-		java.net.URL url = TextureLoader.class.getClassLoader().getResource(resource.getFile());
-		
-		if (url == null)throw new IOException("Cannot find: "+resource.getFile());
-
 		//BufferedImage bufferedImage = ImageIO.read(new BufferedInputStream(is)); 
 		// due to an issue with ImageIO and mixed signed code
 		// we are now using good oldfashioned ImageIcon to load
 		// images and the paint it on top of a new BufferedImage
-		java.awt.Image img = new javax.swing.ImageIcon(url).getImage();
+		java.awt.Image img = new javax.swing.ImageIcon(resource.getURL()).getImage();
 		BufferedImage bufferedImage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_RGB);
 		Graphics g = bufferedImage.getGraphics();
 		g.drawImage(img, 0, 0, null);

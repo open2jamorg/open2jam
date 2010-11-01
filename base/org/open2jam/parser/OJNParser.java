@@ -4,8 +4,6 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.awt.Toolkit;
-import java.util.ArrayList;
-import java.util.List;
 
 public class OJNParser
 {
@@ -18,7 +16,7 @@ public class OJNParser
 	private Chart chart;
 	private OJNHeader header;
 
-	public ChartHeader parseFileHeader(String file, int rank)
+	public ChartHeader parseFileHeader(String file)
 	{
 		header = new OJNHeader();
 		try{
@@ -26,8 +24,8 @@ public class OJNParser
 			buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, 300);
 			buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
 			header.source_file = file;
-			header.rank = rank;
 			readHeader();
+                        buffer = null;
 			f.close();
 		}catch(Exception e){ die(e); }
 		return header;
@@ -91,34 +89,37 @@ public class OJNParser
 		note_offsets[2] = buffer.getInt();
 		note_offsets[3] = buffer.getInt();
 
-		buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, note_offsets[3], cover_size);
-		byte cv_data[] = new byte[cover_size];
-		buffer.get(cv_data);
+                try{
+                    buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, note_offsets[3], cover_size);
+                    byte cv_data[] = new byte[cover_size];
+                    buffer.get(cv_data);
 
-		java.awt.Image cover_image = Toolkit.getDefaultToolkit().createImage(cv_data);
+                    java.awt.Image cover_image = Toolkit.getDefaultToolkit().createImage(cv_data);
+                    header.cover = cover_image;
+                }catch(Exception e){}
 
-		header.level = level[header.rank];
+		header.level = level;
 		header.title = bytes2string(title);
 		header.artist = bytes2string(artist);
 		header.genre = genre_map[(genre<0||genre>10)?10:genre];
 		header.bpm = bpm;
-		header.note_count = note_count[header.rank];
-		header.cover = cover_image;
-		header.duration = time[header.rank];
+		header.note_count = note_count;
+		
+		header.duration = time;
 
 		//ojn specific fields
 		header.note_offsets = note_offsets;
 	}
 
-	public Chart parseFile(OJNHeader header)
+	public Chart parseFile(OJNHeader header, int rank)
 	{
 		this.header = header;
 		chart = new Chart(header);
 		try{
 			f = new RandomAccessFile(header.getSourceFile(), "r");
 
-			int start = header.getNoteOffsets()[header.getRank()];
-			int end = header.getNoteOffsets()[header.getRank()+1];
+			int start = header.getNoteOffsets()[rank];
+			int end = header.getNoteOffsets()[rank+1];
 
 			buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, start, end - start);
 			buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);

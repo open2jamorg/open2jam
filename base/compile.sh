@@ -10,7 +10,7 @@ rm -f o2j.jar
 
 
 # make manifest
-find lib/jar -name '*.jar' | xargs echo "Class-Path:" > $MANIFEST
+find lib -name '*.jar' | xargs echo "Class-Path:" > $MANIFEST
 
 
 # compile everything
@@ -19,11 +19,14 @@ do
 	ls $d/*.java &>/dev/null
 	if [ $? == 0 ]
 	then 
-		javac -cp :lib/jar/* $d/*.java
-		[ $? != 0 ] && ( echo "javac error. compilation aborted." exit 1)
+		javac -cp :lib/* $d/*.java
+		if [ $? != 0 ]
+		then
+			echo "javac error. compilation aborted."
+			exit 1
+		fi
 	fi
 done
-javac Main.java
 
 
 # find classes
@@ -31,7 +34,7 @@ find $CP -name '*.class' > $CLASSES
 
 
 # make jar
-jar vcfem o2j.jar Main $MANIFEST Main.class @$CLASSES resources
+jar vcfem o2j.jar org.open2jam.gui.Main $MANIFEST @$CLASSES resources
 
 
 # remove tmp files
