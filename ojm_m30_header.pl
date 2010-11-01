@@ -43,8 +43,8 @@ while(!eof DATA)
 
 	print Dumper $nh;
 
-	dump_ogg($nh->{'ref'},$nh->{'sample_size'});
-# 	seek DATA, $nh->{'sample_size'}, 1;
+# 	dump_ogg($nh->{'ref'},$nh->{'sample_size'});
+	seek DATA, $nh->{'sample_size'}, 1;
 }
 
 sub dump_ogg

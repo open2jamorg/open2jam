@@ -1,12 +1,9 @@
 package org.open2jam.render;
 
 /**
- * A wrapper class that provides timing methods. This class
- * provides us with a central location where we can add
- * our current timing implementation. Initially, we're going to
- * rely on the GAGE timer. (@see http://java.dnsalias.com)
+ * A wrapper class that provides timing methods.
  * 
- * @author Kevin Glass
+ * @author fox
  */
 public class SystemTimer {
 	/** The number of "timer ticks" per second */
@@ -65,9 +62,10 @@ public class SystemTimer {
 	* @param ticks The number of ticks to wait before returning control
 	*/
 	
-	public static void sleep(long ticks)
+	public static void sleep(int ticks)
 	{
-		long tick = getClockTicks();
-		while(getClockTicks() < tick+ticks) Thread.yield();
+		try{
+			Thread.sleep(0L, ticks);
+		}catch(InterruptedException e){}
 	}
 }

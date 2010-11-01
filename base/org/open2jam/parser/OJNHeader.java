@@ -25,6 +25,12 @@ public class OJNHeader implements ChartHeader
 	protected String genre;
 	public String getGenre() { return genre; }
 
+	protected String noter;
+	public String getNoter(){ return noter; }
+
+	protected String sample_file;
+	public String getSampleFile(){ return sample_file; }
+
 	/** the bpm as specified is the header */
 	protected double bpm;
 	public double getBPM() { return bpm; }

@@ -30,6 +30,7 @@ import org.open2jam.parser.Chart;
 import org.open2jam.parser.ChartHeader;
 import org.open2jam.parser.ChartParser;
 import org.open2jam.render.Render;
+import java.net.URL;
 
 /**
  *

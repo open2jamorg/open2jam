@@ -59,9 +59,7 @@ public class Render implements GameWindowCallback
 	/** the size of the note buffer */
 	private final int measure_buffer = 3;
 
-	/** entity limit to buffer per frame */
-	private final int buffer_per_frame = 10;
-
+	/** horizontal distance from the left side of screen */
 	private final int screen_x_offset = 30;
 
 	/** pre-built offset of the notes horizontal pos */
@@ -133,7 +131,7 @@ public class Render implements GameWindowCallback
 		}
 
 		 // load up initial buffer
-		while(buffered_measures < measure_buffer)update_note_buffer(0);
+		update_note_buffer(0);
 
 		lastLoopTime = SystemTimer.getTime();
 	}
@@ -144,7 +142,7 @@ public class Render implements GameWindowCallback
 	 */
 	public void frameRendering()
 	{
-		SystemTimer.sleep(lastLoopTime+10-SystemTimer.getTime());
+// 		SystemTimer.sleep(10);
 		
 		// work out how long its been since the last update, this
 		// will be used to calculate how far the entities should
@@ -190,21 +188,13 @@ public class Render implements GameWindowCallback
 		note_speed = ((bpm/240) * measure_size) / 1000;
 	}
 
-	/** callback for the measure judgment */
-	public void measureEnd()
-	{
-		buffered_measures--;
-	}
-
 	/** returns the note speed in pixels/millisecs */
 	public double getNoteSpeed() { return note_speed; }
 
 	public double getBPM() { return bpm; }
 	public double getMeasureSize() { return measure_size; }
 	public double getViewPort() { return viewport; }
-	
 
-	private int buffered_measures = 0;
 
 	private int buffer_measure = -1;
 
@@ -212,37 +202,30 @@ public class Render implements GameWindowCallback
 	
 	private double fractional_measure = 1;
 
+	private final int buffer_upper_bound = -5;
+
 	/** update the note layer of the entities_matrix.
 	*** note buffering is equally distributed between the frames
 	**/
 	private void update_note_buffer(long delta)
 	{
 		buffer_offset += note_speed * delta;
-		if(buffered_measures > measure_buffer)return;
-
-		if(measure_change) // this is a new measure
-		{
-			buffer_measure++;
-			buffer_offset -= measure_size * fractional_measure;
-			entities_matrix.get(0).add(
-				new MeasureEntity(this,
-				sprite_map.get("measure_mark"),
-				screen_x_offset, buffer_offset+6)
-			);
-			fractional_measure = 1;
-			measure_change = false;
-		}
-
-		int counter = 0; // how much events we processed in this call
 		Iterator<Event> c = chart.getEvents().iterator();
-		while(c.hasNext() && counter++ < buffer_per_frame)
+		while(c.hasNext() && buffer_offset < buffer_upper_bound)
 		{
+			System.out.println(buffer_offset);
 			Event e = c.next();
-			if(e.getMeasure() > buffer_measure) // this is the start of a new measure
-			{                                 // we can't buffer that yet so let's stop here
-				measure_change = true;
-				buffered_measures++;
-				break;
+			while(e.getMeasure() > buffer_measure) // this is the start of a new measure
+			{
+				buffer_offset -= measure_size * fractional_measure;
+				entities_matrix.get(0).add(
+					new MeasureEntity(this,
+					sprite_map.get("measure_mark"),
+					screen_x_offset, buffer_offset+6)
+				);
+				buffer_measure++;
+				fractional_measure = 1;
+				if(buffer_offset < buffer_upper_bound)return; // we got enough already
 			}
 
 			double abs_height = buffer_offset - (e.getPosition() * measure_size);
@@ -279,6 +262,12 @@ public class Render implements GameWindowCallback
 					setHeight(abs_height-ln_buffer[note_number].getBounds().getY());
 					ln_buffer[note_number] = null;
 				}
+				break;
+// 				default:
+// 				if(e.getType() == 0){ // normal auto-play, M30 type == 5
+// 				}
+// 				else if(e.getType() == 4){ // long auto-play, M30 type == 0
+// 				}
 			}
 			c.remove(); // once the event is in the buffer we remove it from the list
 		}

@@ -27,12 +27,13 @@ public class ChartModelLoader extends SwingWorker<ChartTableModel,ChartHeader> {
 
     protected ChartTableModel doInBackground() throws Exception {
         table_model.clear();
-        int perc = files.length / 100;
+        double perc = files.length / 100.0d;
         for(int i=0;i<files.length;i++)
         {
             publish(ChartParser.parseFileHeader(files[i].getAbsolutePath()));
-            if(i%perc == 0)setProgress(i/perc);
+            if(i%perc == 0)setProgress((int)(i/perc));
         }
+        setProgress(100);
         return table_model;
     }
 

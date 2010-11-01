@@ -106,7 +106,8 @@ while(!eof $OJN && tell $OJN < $endpos)
 			'type'    => $type,
 			};
 		}
-		printf STDERR "%4d ch:%2d unk:%3d type: %1d\n",$value,$channel,$unk,$type if $channel > 1;
+		next if $channel < 9;
+		printf STDERR "%4d ch:%2d unk:%3d type: %1d\n",$value,$channel,$unk,$type;
 	}
 }
 

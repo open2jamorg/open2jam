@@ -89,14 +89,14 @@ public class OJNParser
 		note_offsets[2] = buffer.getInt();
 		note_offsets[3] = buffer.getInt();
 
-                try{
-                    buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, note_offsets[3], cover_size);
-                    byte cv_data[] = new byte[cover_size];
-                    buffer.get(cv_data);
+		try{
+			buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, note_offsets[3], cover_size);
+			byte cv_data[] = new byte[cover_size];
+			buffer.get(cv_data);
 
-                    java.awt.Image cover_image = Toolkit.getDefaultToolkit().createImage(cv_data);
-                    header.cover = cover_image;
-                }catch(Exception e){}
+			java.awt.Image cover_image = Toolkit.getDefaultToolkit().createImage(cv_data);
+			header.cover = cover_image;
+		}catch(Exception e){}
 
 		header.level = level;
 		header.title = bytes2string(title);
@@ -104,8 +104,9 @@ public class OJNParser
 		header.genre = genre_map[(genre<0||genre>10)?10:genre];
 		header.bpm = bpm;
 		header.note_count = note_count;
-		
+		header.noter = bytes2string(noter);
 		header.duration = time;
+		header.sample_file = bytes2string(ojm_file);
 
 		//ojn specific fields
 		header.note_offsets = note_offsets;

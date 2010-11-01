@@ -22,6 +22,8 @@ public interface ChartHeader
 	public String getTitle();
 	public String getArtist();
 	public String getGenre();
+	public String getNoter();
+	public String getSampleFile();
 
 	/** a bpm representing the whole song.
 	*** doesn't need to be exact, just for info */

@@ -1,13 +1,11 @@
-- rescale textures if the resolution isn't 800x600
-
-- use mapped textures, instead of spliting the image
-
-- make a way to load textures from awt.Image's
+- implement a BMS parser
 
 - find out how to extract the samples from OJM and OMC
+
+- rescale textures if the resolution isn't 800x600
 
 - whats the difference between W### and M### on notetool ?
 - test the hi-speed modifier
 - test the BPM modifier
-- implement a BMS parser
 - test notetool output
+- make a way to load textures from awt.Image's

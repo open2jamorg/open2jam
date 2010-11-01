@@ -22,6 +22,5 @@ public class MeasureEntity extends AnimatedEntity
 	public void judgment()
 	{
 		alive = false;
-		render.measureEnd();
 	}
 }

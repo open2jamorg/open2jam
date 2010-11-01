@@ -15,6 +15,9 @@ import org.open2jam.render.SpriteID;
 public class LWJGLSprite implements Sprite {
 	/** The texture that stores the image for this sprite */
 	private Texture texture;
+
+	/** the position inside the texture of the sprite */
+	private int x, y;
   
 	/** The width in pixels of this sprite */
 	private int width;
@@ -24,6 +27,15 @@ public class LWJGLSprite implements Sprite {
 
 	/** the id which describes this sprite */
 	private SpriteID spriteID;
+
+	/** t: top, b: bottom, l: left, r: right */
+	private float tr_x, tr_y;
+	private float br_x, br_y;
+	private float bl_x, bl_y;
+	private float tl_x, tl_y;
+
+	/** the coordinates for the texture */
+	private float u, v, w, z;
 	
 	/**
 	 * Create a new sprite from a specified image.
@@ -33,10 +45,25 @@ public class LWJGLSprite implements Sprite {
 	 */
 	public LWJGLSprite(LWJGLGameWindow window,SpriteID ref) {
 		try {
-			texture = window.getTextureLoader().getTexture(ref);
-			
-			width = texture.getImageWidth();
-			height = texture.getImageHeight();
+			texture = window.getTextureLoader().getTexture(ref.getURL());
+
+			if(ref.getSlice() == null){
+				x = 0;
+				y = 0;
+				width = texture.getWidth();
+				height = texture.getHeight();
+			}else{
+				x = ref.getSlice().x;
+				y = ref.getSlice().y;
+				width = ref.getSlice().width;
+				height = ref.getSlice().height;
+			}
+			u = ((float)x/texture.getWidth()); // top-left x
+			v = ((float)y/texture.getHeight()); // top-left y
+
+			w = ((float)(x+width)/texture.getWidth()); // bottom-right x
+			z = ((float)(y+height)/texture.getHeight()); // bottom-right y
+
 		} catch (IOException e) {
 			// a tad abrupt, but our purposes if you can't find a 
 			// sprite's image you might as well give up.
@@ -56,7 +83,7 @@ public class LWJGLSprite implements Sprite {
 	 * @return The width of this sprite in pixels
 	 */
 	public int getWidth() {
-		return texture.getImageWidth();
+		return width;
 	}
 
 	/**
@@ -65,16 +92,16 @@ public class LWJGLSprite implements Sprite {
 	 * @return The height of this sprite in pixels
 	 */
 	public int getHeight() {
-		return texture.getImageHeight();
+		return height;
 	}
 
 	/**
 	 * Draw the sprite at the specified location
 	 * 
-	 * @param x The x location at which to draw this sprite
-	 * @param y The y location at which to draw this sprite
+	 * @param px The x location at which to draw this sprite
+	 * @param py The y location at which to draw this sprite
 	 */
-	public void draw(int x, int y) {
+	public void draw(int px, int py) {
 		// store the current model matrix
 		GL11.glPushMatrix();
 		
@@ -82,19 +109,22 @@ public class LWJGLSprite implements Sprite {
 		texture.bind();
     
 		// translate to the right location and prepare to draw
-		GL11.glTranslatef(x, y, 0);
+		GL11.glTranslatef(px, py, 0);
 		GL11.glColor3f(1,1,1);
 		
 		// draw a quad textured to match the sprite
 		GL11.glBegin(GL11.GL_QUADS);
 		{
-			GL11.glTexCoord2f(0, 0);
+			GL11.glTexCoord2f(u, v);
 			GL11.glVertex2f(0, 0);
-			GL11.glTexCoord2f(0, texture.getHeight());
+
+			GL11.glTexCoord2f(u, z);
 			GL11.glVertex2f(0, height);
-			GL11.glTexCoord2f(texture.getWidth(), texture.getHeight());
+
+			GL11.glTexCoord2f(w, z);
 			GL11.glVertex2f(width,height);
-			GL11.glTexCoord2f(texture.getWidth(), 0);
+
+			GL11.glTexCoord2f(w, v);
 			GL11.glVertex2f(width,0);
 		}
 		GL11.glEnd();
@@ -102,6 +132,8 @@ public class LWJGLSprite implements Sprite {
 		// restore the model view matrix to prevent contamination
 		GL11.glPopMatrix();
 	}
+
+
 
 	/** draw the sprite.
 	** the same as draw(int,int)
