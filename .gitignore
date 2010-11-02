@@ -1,4 +1,4 @@
 *.class
 *~
-base/lib
-base/org/swinggl
+base/dist
+base/build
