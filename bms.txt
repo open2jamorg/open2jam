@@ -1,0 +1,132 @@
+a bms ( actually bme file which is the "extended" syntax, but I will just say bms for simplicity), 
+file have basically 2 types of lines, command lines #<word> <something> and data lines #<numbers> <numbers>
+
+the commands can contain metadata, or directions on how to interpret the data.
+
+values types:
+<integer> - a whole number
+<string> - any sequence of characters
+<real> - a real number
+<XX> - 2 characters ranging from 00 to ZZ
+<hex> - hexadecimal number, range from 00 to FF
+
+commands:
+
+#PLAYER <integer>
+	this number refers to the type of chart:
+	1: single player
+	2: 2 players
+	3: double play( 14 keys)
+	4: ????
+
+#GENRE <string>
+	the genre of the song in string
+
+#TITLE <string>
+	the title in string
+
+#ARTIST <string>
+	the artist in string
+
+#BPM <integer> OR #BPM<XX> <real>
+	the integer version indicates starting bpm for the song
+	the real version is assigned to the XX code, used on channel 8.
+
+#MIDFILE <string>
+	a midi file to auto-play
+
+#PLAYLEVEL <integer>
+	the level of the song
+
+#RANK <integer>
+	the difficult level
+	0: very hard
+	1: hard
+	2: normal
+	3: easy
+
+#VOLWAV <integer>
+	volume of sound playing in percentage ( ??? )
+
+#WAV<XX> <string>
+	the string refers to a sound file to be assigned to the XX code
+	the XX code can then be used in the channels to refer to the sound file
+
+#BMP<XX> <string>
+	refers to a image file, assigned to the XX code, will be displayed
+	when the notes are played over it. channels 4, 6, 7 (????)
+
+#STAGEFILE <string>
+	an image to be displayed before the song starts
+
+#VIDEOFILE <string>
+	a video file to be played during the song (?????)
+
+#STOP<XX> <integer>
+	stop time( a rest ?), the integer is relative to the measure, <integer>/192 * measure_size ( ??? ) 
+	
+#LNTYPE <integer>
+	defines which type of long notes to use, there are 2 types ( can be used simultaneous ????)
+	both types use channels 5x and 6x instead of normal note channels
+	1: one XX code to defined long note start, followed by 00, and a XX code to define an end
+	2: the XX code that defines the start is repeated as necessary, e.g: AAAAAAAAAAAABBB..
+
+#LNOBJ <XX>
+	another way to use long notes, ( how this works ????)
+
+#EXTCHR ???????????????
+
+
+------------------------------------------
+
+channels:
+1: auto-play sample
+	samples here are always played when reach judgment
+
+2: time signature of measure
+	specify a fractional measure with a <real>
+	e.g.: #00302:0.5 -- the measure 3 will be half the normal measure size
+
+3: BPM change
+	this specify the bpm on the measure in <hex>
+
+4: BGA
+
+5: ????
+
+6: Poor/Miss BGA
+
+7: BGA layer
+
+8: extended BPM
+	used in the same way as channel 3 but refers to a <real>
+	assigned on the #BPM command
+
+9: stop something.. (what ?)
+
+10: ????
+
+11,12,13,14,15,18,19: note keys
+	the note keys, <XX> codes indicate a note and at the same time
+	a specify a sound to play, defined in the #WAV command
+
+16: scratch ( not used on o2jam )
+
+17: ????
+
+20: ????
+
+21,22,23,24,25,28,29: player 2 note keys ( not used on o2jam )
+	same as channels 11~19 but for #PLAYER 2
+
+26: player 2 scratch ( not used on o2jam )
+
+27: ????
+
+5x: long notes (LNTYPE) notes for player 1
+	same as channels 11~19
+
+6x: long notes (LNTYPE) notes for player 2 ( not used on o2jam )
+	same as channels 21~29
+
+

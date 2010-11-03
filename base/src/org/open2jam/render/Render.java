@@ -71,6 +71,8 @@ public class Render implements GameWindowCallback
 	/** the screen offset of the buffer */
 	private double buffer_offset;
 
+        private Iterator<Event> buffer_iterator;
+
         static{
             ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
         }
@@ -127,7 +129,8 @@ public class Render implements GameWindowCallback
 			off += sprite_map.get("note_head"+i).get(0).getWidth();
 		}
 
-		 // load up initial buffer
+                // load up initial buffer
+                buffer_iterator = chart.getEvents().iterator();
 		update_note_buffer(0);
 
 		lastLoopTime = SystemTimer.getTime();
@@ -205,10 +208,9 @@ public class Render implements GameWindowCallback
 	private void update_note_buffer(long delta)
 	{
 		buffer_offset += note_speed * delta;
-		Iterator<Event> c = chart.getEvents().iterator();
-		while(c.hasNext() && buffer_offset > buffer_upper_bound)
+		while(buffer_iterator.hasNext() && buffer_offset > buffer_upper_bound)
 		{
-			Event e = c.next();
+			Event e = buffer_iterator.next();
 			while(e.getMeasure() > buffer_measure) // this is the start of a new measure
 			{
 				buffer_offset -= measure_size * fractional_measure;
@@ -219,7 +221,6 @@ public class Render implements GameWindowCallback
 				);
 				buffer_measure++;
 				fractional_measure = 1;
-				if(buffer_offset < buffer_upper_bound)return; // we got enough already
 			}
 
 			double abs_height = buffer_offset - (e.getPosition() * measure_size);
@@ -262,7 +263,6 @@ public class Render implements GameWindowCallback
 // 				else if(e.getType() == 4){ // long auto-play, M30 type == 0
 // 				}
 			}
-			c.remove(); // once the event is in the buffer we remove it from the list
 		}
 	}
 

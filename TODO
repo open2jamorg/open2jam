@@ -1,11 +1,14 @@
 - implement a BMS parser
 
+- make the Render play the samples
+
 - find out how to extract the samples from OJM and OMC
 
 - rescale textures if the resolution isn't 800x600
 
-- whats the difference between W### and M### on notetool ?
-- test the hi-speed modifier
 - test the BPM modifier
+
 - test notetool output
-- make a way to load textures from awt.Image's
+
+- make a ChartWriter
+

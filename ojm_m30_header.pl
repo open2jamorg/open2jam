@@ -29,7 +29,7 @@ while(!eof DATA)
 {
 	read DATA, $header, 52 or die $!;
 	my $nh = unpack2hash(join(' ',qw/
-	a32:$sample_name
+	Z32:$sample_name
 	i:$sample_size
 	c:$unk_sample_type
 	c:$unk_off

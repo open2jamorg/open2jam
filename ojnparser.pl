@@ -106,8 +106,8 @@ while(!eof $OJN && tell $OJN < $endpos)
 			'type'    => $type,
 			};
 		}
-		next if $channel < 9;
-		printf STDERR "%4d ch:%2d unk:%3d type: %1d\n",$value,$channel,$unk,$type;
+		next unless defined $type && ($type == 2 || $type == 3);
+		printf STDERR "%4d ch:%2d unk:%3d type: %1d $measure %f\n",$value,$channel,$unk,$type,($i/$events_count);
 	}
 }
 
