@@ -17,17 +17,14 @@ public class ChartParser
 	/** the names of the extensions supported.
 	*** UNKNOWN is a special one, for when no extension matches.
 	**/
-	public enum Formats { OJN, UNKNOWN };
+	public enum Formats { OJN, BMS, UNKNOWN };
 
 	/** parse and returns a ChartHeader object */
 	public static ChartHeader parseFileHeader(File file)
 	{
-                String path = file.getAbsolutePath();
-		Formats ext = parseType(file);
-		switch(ext)
-		{
-			case OJN: return OJNParser.parseFileHeader(path);
-		}
+		if(OJNParser.canRead(file))return OJNParser.parseFileHeader(file);
+		if(BMSParser.canRead(file))return BMSParser.parseFileHeader(file);
+
 		throw new RuntimeException("File ["+file+"] not supported");
 	}
 
@@ -40,32 +37,14 @@ public class ChartParser
 		throw new RuntimeException("File format ["+h.getSourceType()+"] not supported");
 	}
 
-        /** given a dir, this method returns supported files under it */
-        public static List<File> findFiles(File dir) {
-            File[] files = dir.listFiles();
-            ArrayList<File> fs = new ArrayList<File>();
-            for(File f : files)
-            {
-                Formats e = parseType(f);
-                if(e != Formats.UNKNOWN)fs.add(f);
-            }
-            return fs;
-        }
-
-        public static Formats parseType(File f)
-        {
-            try{
-                if(!f.isDirectory()){
-                    byte[] signature = new byte[4];
-                    FileInputStream fis = new FileInputStream(f);
-                    fis.read(signature);
-                    fis.close();
-
-                    if(OJNParser.canRead(f))return Formats.OJN;
-                }
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-            return Formats.UNKNOWN;
-        }
+	/** given a dir, this method returns supported files under it */
+	public static List<File> findFiles(File dir) {
+		File[] files = dir.listFiles();
+		ArrayList<File> fs = new ArrayList<File>();
+		for(File f : files)
+		{
+			if(OJNParser.canRead(f) || BMSParser.canRead(f))fs.add(f);
+		}
+		return fs;
+	}
 }

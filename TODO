@@ -1,3 +1,5 @@
+- generalize the Chart spec
+
 - implement a BMS parser
 
 - make the Render play the samples

@@ -43,14 +43,14 @@ while(!eof DATA)
 
 	print Dumper $nh;
 
-# 	dump_ogg($nh->{'ref'},$nh->{'sample_size'});
+# 	dump_ogg($nh->{'sample_name'},$nh->{'sample_size'});
 	seek DATA, $nh->{'sample_size'}, 1;
 }
 
 sub dump_ogg
 {
 	my ($ref,$sample_size) = @_;
-	open MP, ">sample_$ref.ogg";
+	open MP, ">$ref.ogg";
 	read DATA, $buf, $sample_size;
 	$buf = nami_xor($buf);
 	print MP $buf;

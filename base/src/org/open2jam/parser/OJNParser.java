@@ -30,11 +30,11 @@ public class OJNParser
             return false;
         }
 
-	public static ChartHeader parseFileHeader(String file)
+	public static ChartHeader parseFileHeader(File file)
 	{
 		OJNHeader header = new OJNHeader();
 		try{
-			RandomAccessFile f = new RandomAccessFile(file,"r");
+			RandomAccessFile f = new RandomAccessFile(file.getAbsolutePath(),"r");
                         byte[] sig = new byte[4];
                         f.read(sig); // jump songid
                         f.read(sig);
@@ -43,7 +43,7 @@ public class OJNParser
 
 			ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, 300);
 			buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
-			header.source_file = file;
+			header.source = file;
 			readHeader(header, buffer, f);
                         buffer = null;
 			f.close();
@@ -134,9 +134,9 @@ public class OJNParser
 
 	public static Chart parseFile(OJNHeader header, int rank)
 	{
-		Chart chart = new Chart(header);
+		Chart chart = new Chart(header, rank);
 		try{
-			RandomAccessFile f = new RandomAccessFile(header.getSourceFile(), "r");
+			RandomAccessFile f = new RandomAccessFile(header.getSource().getAbsolutePath(), "r");
 
 			int start = header.getNoteOffsets()[rank];
 			int end = header.getNoteOffsets()[rank+1];
@@ -164,13 +164,14 @@ public class OJNParser
 				{
 					float v = buffer.getFloat();
 					if(v == 0)continue;
-					chart.add(new Event(channel,measure,position,v,0,0));
+					chart.add(new Event(channel,measure,position,v,Event.Flag.NONE));
 				}else{ // note event
 					short value = buffer.getShort();
 					int unk = buffer.get();
 					int type = buffer.get();
 					if(value == 0)continue; // ignore value=0 events
-					chart.add(new Event(channel,measure,position,value,unk,type));
+					Event.Flag f = (type==2)?Event.Flag.HOLD:Event.Flag.RELEASE;
+					chart.add(new Event(channel,measure,position,value*(unk+1),f));
 				}
 			}
 		}

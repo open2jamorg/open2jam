@@ -2,7 +2,7 @@ package org.open2jam.parser;
 
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
-import java.util.List;
+import java.util.HashMap;
 
 import org.open2jam.render.lwjgl.SampleLoader;
 
@@ -10,7 +10,7 @@ import org.lwjgl.openal.AL10;
 
 public class OJMParser
 {
-	public static List<SampleID> parseFile(String file)
+	public static HashMap<Integer,Integer> parseFile(String file)
 	{
 		try{
 			RandomAccessFile f = new RandomAccessFile(file,"r");
@@ -30,7 +30,7 @@ public class OJMParser
 		return null;
 	}
 
-	private static List<SampleID> parseM30(RandomAccessFile f) throws Exception
+	private static HashMap<Integer,Integer> parseM30(RandomAccessFile f) throws Exception
 	{
 		ByteBuffer buffer = f.getChannel().map(java.nio.channels.FileChannel.MapMode.READ_ONLY, 4, 28);
 		buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
@@ -47,7 +47,7 @@ public class OJMParser
 		buffer = f.getChannel().map(java.nio.channels.FileChannel.MapMode.READ_ONLY, 28, payload_size);
 		buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
 
-		List<SampleID> samples = new java.util.ArrayList<SampleID>();
+		HashMap<Integer,Integer> samples = new HashMap<Integer,Integer>();
 
 
 		for(int i=0; i<sample_count; i++)
@@ -72,8 +72,7 @@ public class OJMParser
 			int id = SampleLoader.newBuffer(
 				new OggInputStream(new java.io.ByteArrayInputStream(sample_data))
 			);
-			SampleID s = new SampleID(ref, unk_sample_type, id);
-			samples.add(s);
+			samples.put(ref * (unk_sample_type+1), id);
 		}
 		f.close();
 		return samples;
@@ -103,15 +102,13 @@ public class OJMParser
 
 	public static void main(String args[]) throws Exception
 	{
-		List<SampleID> list = parseFile(args[0]);
+		HashMap<Integer,Integer> samples = parseFile(args[0]);
 
 		int source = SampleLoader.newSource();
 
 		int play;
-		for(SampleID s : list){
-			System.out.println(s);
-
-			SampleLoader.bindSource(source, s.getBuffer());
+		for(Integer s : samples.values()){
+			SampleLoader.bindSource(source, s);
 			AL10.alSourcePlay(source);
 
 			do{

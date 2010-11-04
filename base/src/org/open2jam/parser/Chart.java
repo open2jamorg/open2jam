@@ -12,13 +12,15 @@ import java.util.ArrayList;
 public class Chart
 {
 	protected List<Event> events = new ArrayList<Event>();
+	int rank;
 
 	/** the header of the source file */
 	protected ChartHeader header;
 
-	public Chart(ChartHeader h)
+	public Chart(ChartHeader h, int rank)
 	{
 		this.header = h;
+		this.rank = rank;
 	}
 	
 	public void add(Event e)
@@ -36,4 +38,6 @@ public class Chart
 	public List<Event> getEvents() { return events; }
 
 	public ChartHeader getHeader() { return header; }
+
+	public int getRank() { return rank; }
 }

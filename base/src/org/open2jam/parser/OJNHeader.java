@@ -1,5 +1,7 @@
 package org.open2jam.parser;
 
+import java.io.File;
+import java.util.Map;
 
 public class OJNHeader implements ChartHeader
 {
@@ -7,14 +9,16 @@ public class OJNHeader implements ChartHeader
 	public ChartParser.Formats getSourceType() { return ChartParser.Formats.OJN; }
 
 	/** full path to the source file of this header */
-	protected String source_file;
-	public String getSourceFile() { return source_file; }
+	protected File source;
+	public File getSource() { return source; }
 
 	/** an integer representing difficulty.
 	*** this is the internal difficult level of the song
 	*** for that rank **/
 	protected short[] level;
 	public int getLevel(int rank){ return level[rank]; }
+
+	public int getMaxRank(){ return 2; }
 
 	protected String title;
 	public String getTitle() { return title; }
@@ -29,11 +33,11 @@ public class OJNHeader implements ChartHeader
 	public String getNoter(){ return noter; }
 
 	protected String sample_file;
-	public String getSampleFile(){ return sample_file; }
+	public Map<Integer,Integer> getSamples(int rank){ return OJMParser.parseFile(sample_file); }
 
 	/** the bpm as specified is the header */
 	protected double bpm;
-	public double getBPM() { return bpm; }
+	public double getBPM(int rank) { return bpm; }
 
 	/** the number of notes in the song */
 	protected int[] note_count;

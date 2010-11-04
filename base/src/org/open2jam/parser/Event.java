@@ -2,22 +2,24 @@ package org.open2jam.parser;
 
 public class Event implements Comparable<Event>
 {
+// 	public enum Channel { };
+	public enum Flag { NONE, HOLD, RELEASE };
+
 	private int channel;
 	private int measure;
 	private double position;
 	
 	private double value;
 	private int unk;
-	private int type;
+	private Flag flag;
 
 	public Event(int channel, int measure, double position,
-			double value, int unk, int type) {
+			double value, Flag flag) {
 		this.channel = channel;
 		this.measure = measure;
 		this.position = position;
 		this.value = value;
-		this.unk = unk;
-		this.type = type;
+		this.flag = flag;
 	}
 
 	public int compareTo(Event e)
@@ -28,6 +30,6 @@ public class Event implements Comparable<Event>
 	public int getChannel() { return channel; }
 	public int getMeasure() { return measure; }
 	public double getPosition() { return position; }
-	public int getType() { return type; }
+	public Flag getFlag() { return flag; }
 	public double getValue() { return value; }
 }

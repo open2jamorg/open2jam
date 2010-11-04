@@ -13,11 +13,16 @@ read DATA, $header, 20 or die $!;
 my $h = unpack2hash(join(' ',qw/
 a4:$signature
 s:$samples
-s:$musics
-I:$size
-I:$music_pos
-I:$end_pos
+s:$sum_count
+i:$size
+i:$sum_pos
+I:$filesize
 /), $header);
+
+
+# each sample has header of 36 bytes
+# Z32:$sample_name
+# i:$sample_size
 
 
 print Dumper $h;

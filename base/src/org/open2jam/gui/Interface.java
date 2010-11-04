@@ -645,7 +645,7 @@ public class Interface extends javax.swing.JFrame
         lbl_title.setText(selected_header.getTitle());
         lbl_genre.setText(selected_header.getGenre());
         lbl_level.setText(selected_header.getLevel(rank)+"");
-        lbl_bpm.setText(selected_header.getBPM()+"");
+        lbl_bpm.setText(selected_header.getBPM(rank)+"");
         lbl_notes.setText(selected_header.getNoteCount(rank)+"");
         int d = selected_header.getDuration(rank);
 

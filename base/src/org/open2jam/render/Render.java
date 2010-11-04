@@ -104,7 +104,7 @@ public class Render implements GameWindowCallback
 		viewport = 0.8 * window.getResolutionHeight();
 		measure_size = 0.8 * hispeed * viewport;
 		buffer_offset = viewport;
-		setBPM(chart.getHeader().getBPM());
+		setBPM(chart.getHeader().getBPM(chart.getRank()));
 
 		entities_matrix = new ArrayList<List<Entity>>();
 		entities_matrix.add(new ArrayList<Entity>()); // layer 0 -- measure marks
@@ -237,13 +237,13 @@ public class Render implements GameWindowCallback
 				case 2:case 3:case 4:
 				case 5:case 6:case 7:case 8:
 				int note_number = e.getChannel()-2;
-				if(e.getType() == 0){
+				if(e.getFlag() == Event.Flag.NONE){
 					entities_matrix.get(1).add(
 						new NoteEntity(this, sprite_map.get("note_head"+note_number),
 						notes_x_offset[note_number],
 						abs_height));
 				}
-				else if(e.getType() == 2){
+				else if(e.getFlag() == Event.Flag.HOLD){
 					ln_buffer[note_number] = 
 						new LongNoteEntity(this,
 						sprite_map.get("note_head"+note_number),
@@ -252,16 +252,11 @@ public class Render implements GameWindowCallback
 						abs_height);
 					entities_matrix.get(1).add(ln_buffer[note_number]);
 				}
-				else if(e.getType() == 3){
+				else if(e.getFlag() == Event.Flag.RELEASE){
 					ln_buffer[note_number].setEndY(abs_height);
 					ln_buffer[note_number] = null;
 				}
 				break;
-// 				default:
-// 				if(e.getType() == 0){ // normal auto-play, M30 type == 5
-// 				}
-// 				else if(e.getType() == 4){ // long auto-play, M30 type == 0
-// 				}
 			}
 		}
 	}
