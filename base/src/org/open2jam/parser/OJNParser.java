@@ -16,6 +16,7 @@ public class OJNParser
 
         public static boolean canRead(File f)
         {
+            if(f.isDirectory())return false;
             try{
                 FileInputStream fis = new FileInputStream(f);
                 byte[] sig = new byte[4];
@@ -111,11 +112,14 @@ public class OJNParser
 
 		try{
 			buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, note_offsets[3], cover_size);
-			byte cv_data[] = new byte[cover_size];
-			buffer.get(cv_data);
-
-			java.awt.Image cover_image = Toolkit.getDefaultToolkit().createImage(cv_data);
-			header.cover = cover_image;
+			byte[] cv_data;
+			if(buffer.hasArray()){
+				cv_data = buffer.array();
+			}else{
+				cv_data = new byte[cover_size];
+				buffer.get(cv_data);
+			}
+			header.cover = Toolkit.getDefaultToolkit().createImage(cv_data);
 		}catch(Exception e){}
 
 		header.level = level;
@@ -155,7 +159,7 @@ public class OJNParser
 		{
 			int measure = buffer.getInt();
 			short channel = buffer.getShort();
-			int events_count = buffer.getShort();
+			short events_count = buffer.getShort();
 
 			for(double i=0;i<events_count;i++)
 			{
@@ -171,15 +175,15 @@ public class OJNParser
 					int type = buffer.get();
 					if(value == 0)continue; // ignore value=0 events
 
-                                        if(type == 0){
-                                            chart.add(new Event(channel,measure,position,value*(unk+1),Event.Flag.NONE));
-                                        }
-                                        else if(type == 2)
-                                        {
-                                            chart.add(new Event(channel,measure,position,value*(unk+1),Event.Flag.HOLD));
-                                        }else if(type == 3){
-                                            chart.add(new Event(channel,measure,position,value*(unk+1),Event.Flag.RELEASE));
-                                        }
+					if(type == 0){
+						chart.add(new Event(channel,measure,position,value*(unk+1),Event.Flag.NONE));
+					}
+					else if(type == 2){
+						chart.add(new Event(channel,measure,position,value*(unk+1),Event.Flag.HOLD));
+					}
+					else if(type == 3){
+						chart.add(new Event(channel,measure,position,value*(unk+1),Event.Flag.RELEASE));
+					}
 				}
 			}
 		}

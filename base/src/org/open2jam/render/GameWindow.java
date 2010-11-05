@@ -25,7 +25,6 @@ public interface GameWindow {
 	 * @param y The new y resolution of the display
 	 */
         public void setDisplay(DisplayMode dm, boolean vsync, boolean fs) throws Exception;
-        public void setSync(boolean set_sync, int cap);
 
 	public int getResolutionHeight();
 	

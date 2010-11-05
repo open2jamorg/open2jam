@@ -84,9 +84,8 @@ public class Render implements GameWindowCallback
 		window = ResourceFactory.get().getGameWindow();
 	}
         
-        public void setDisplay(DisplayMode dm, boolean vsync, boolean fs, boolean do_sync, int sync_cap) throws Exception{
+        public void setDisplay(DisplayMode dm, boolean vsync, boolean fs) throws Exception{
             window.setDisplay(dm,vsync,fs);
-            window.setSync(do_sync, sync_cap);
         }
 
         public void startRendering(){
@@ -131,7 +130,7 @@ public class Render implements GameWindowCallback
 
                 // load up initial buffer
                 buffer_iterator = chart.getEvents().iterator();
-		update_note_buffer(0);
+		update_note_buffer();
 
 		lastLoopTime = SystemTimer.getTime();
 	}
@@ -142,7 +141,7 @@ public class Render implements GameWindowCallback
 	 */
 	public void frameRendering()
 	{
-// 		SystemTimer.sleep(10);
+		//SystemTimer.sleep(10);
 		
 		// work out how long its been since the last update, this
 		// will be used to calculate how far the entities should
@@ -159,7 +158,7 @@ public class Render implements GameWindowCallback
 			fps = 0;
 		}
 
-		update_note_buffer(delta);
+		update_note_buffer();
 
 		Iterator<List<Entity>> i = entities_matrix.iterator();
 		while(i.hasNext()) // loop over layers
@@ -176,17 +175,19 @@ public class Render implements GameWindowCallback
 				else e.draw(); // or draw itself on screen
 			}
 		}
-                if(!buffer_iterator.hasNext() && entities_matrix.get(1).isEmpty()){
-                    window.destroy();
-                    return;
-                }
+		buffer_offset += note_speed * delta; // walk with the buffer
+
+		if(!buffer_iterator.hasNext() && entities_matrix.get(1).isEmpty()){
+			window.destroy();
+			return;
+		}
 	}
 
 	public void setBPM(double e)
 	{
 		this.bpm = e;
-		note_speed = ((bpm/240) * measure_size) / 1000;
-	}
+		note_speed = ((bpm/240) * measure_size) / 1000.0d;
+ 	}
 
 	/** returns the note speed in pixels/milliseconds */
 	public double getNoteSpeed() { return note_speed; }
@@ -205,9 +206,8 @@ public class Render implements GameWindowCallback
 	/** update the note layer of the entities_matrix.
 	*** note buffering is equally distributed between the frames
 	**/
-	private void update_note_buffer(long delta)
+	private void update_note_buffer()
 	{
-		buffer_offset += note_speed * delta;
 		while(buffer_iterator.hasNext() && buffer_offset > buffer_upper_bound)
 		{
 			Event e = buffer_iterator.next();
@@ -253,12 +253,12 @@ public class Render implements GameWindowCallback
 					entities_matrix.get(1).add(ln_buffer[note_number]);
 				}
 				else if(e.getFlag() == Event.Flag.RELEASE){
-                                    if(ln_buffer[note_number] == null){
-                                            System.err.println("Attempted to RELEASE note "+note_number);
-                                    }else{
-                                            ln_buffer[note_number].setEndY(abs_height);
-                                            ln_buffer[note_number] = null;
-                                    }
+					if(ln_buffer[note_number] == null){
+						System.out.println("Attempted to RELEASE note "+note_number);
+					}else{
+						ln_buffer[note_number].setEndY(abs_height);
+						ln_buffer[note_number] = null;
+					}
 				}
 				break;
 			}

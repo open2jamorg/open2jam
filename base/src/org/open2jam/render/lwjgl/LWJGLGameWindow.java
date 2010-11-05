@@ -37,8 +37,6 @@ public class LWJGLGameWindow implements GameWindow {
   
 	/** Title of window, we get it before our window is ready, so store it till needed */
 	private String title;
-        private int sync_cap;
-        private boolean do_sync;
 	
 	/**
 	 * Create a new game window that will use OpenGL to 
@@ -174,8 +172,6 @@ public class LWJGLGameWindow implements GameWindow {
                     // let subsystem paint
                     callback.frameRendering();
 
-                    if(do_sync)Display.sync(sync_cap);
-
                     // update window contents
                     Display.update();
 
@@ -187,11 +183,6 @@ public class LWJGLGameWindow implements GameWindow {
             }
             Display.destroy();
 	}
-
-    public void setSync(boolean set, int cap) {
-        do_sync = set;
-        sync_cap = cap;
-    }
 
     public void destroy() {
         gameRunning = false;

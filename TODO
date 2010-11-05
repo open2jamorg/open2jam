@@ -6,6 +6,8 @@
 
 - find out how to extract the samples from OJM and OMC
 
+- simplify the image loading process
+
 - rescale textures if the resolution isn't 800x600
 
 - test the BPM modifier
@@ -14,3 +16,4 @@
 
 - make a ChartWriter
 
+- try rationals on Entity.getPosition() and see if precision get's better

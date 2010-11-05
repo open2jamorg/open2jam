@@ -85,9 +85,7 @@ public class Interface extends javax.swing.JFrame
         jr_rank_hard = new javax.swing.JRadioButton();
         combo_displays = new javax.swing.JComboBox();
         txt_res_height = new javax.swing.JTextField();
-        txt_cap_fps = new javax.swing.JTextField();
         txt_res_width = new javax.swing.JTextField();
-        jc_cap_fps = new javax.swing.JCheckBox();
         jc_vsync = new javax.swing.JCheckBox();
         lbl_rank = new javax.swing.JLabel();
         lbl_display = new javax.swing.JLabel();
@@ -238,18 +236,8 @@ public class Interface extends javax.swing.JFrame
         txt_res_height.setText("600");
         txt_res_height.setEnabled(false);
 
-        txt_cap_fps.setText("60");
-        txt_cap_fps.setEnabled(false);
-
         txt_res_width.setText("800");
         txt_res_width.setEnabled(false);
-
-        jc_cap_fps.setText("Cap fps @");
-        jc_cap_fps.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                cap_clicked(evt);
-            }
-        });
 
         jc_vsync.setText("Use VSync");
 
@@ -322,18 +310,20 @@ public class Interface extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(load_progress, 0, 0, Short.MAX_VALUE))
                     .addComponent(lbl_dir)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_settingLayout.createSequentialGroup()
+                    .addGroup(panel_settingLayout.createSequentialGroup()
+                        .addComponent(lbl_hispeed)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(js_hispeed)
+                        .addGap(102, 102, 102))
+                    .addGroup(panel_settingLayout.createSequentialGroup()
                         .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lbl_display)
                             .addComponent(combo_displays, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jc_full_screen)
                             .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panel_settingLayout.createSequentialGroup()
                                     .addComponent(jc_vsync)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jc_cap_fps)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txt_cap_fps, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jc_full_screen))
                                 .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panel_settingLayout.createSequentialGroup()
                                     .addComponent(jc_custom_size)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -342,12 +332,7 @@ public class Interface extends javax.swing.JFrame
                                     .addComponent(lbl_res_x)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(txt_res_height))))
-                        .addContainerGap())
-                    .addGroup(panel_settingLayout.createSequentialGroup()
-                        .addComponent(lbl_hispeed)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(js_hispeed)
-                        .addGap(102, 102, 102))))
+                        .addContainerGap(32, Short.MAX_VALUE))))
         );
         panel_settingLayout.setVerticalGroup(
             panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -382,11 +367,8 @@ public class Interface extends javax.swing.JFrame
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jc_vsync)
-                    .addComponent(jc_cap_fps)
-                    .addComponent(txt_cap_fps, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jc_full_screen)
-                .addGap(20, 20, 20))
+                    .addComponent(jc_full_screen))
+                .addGap(53, 53, 53))
         );
 
         table_songlist.setAutoCreateRowSorter(true);
@@ -437,15 +419,6 @@ public class Interface extends javax.swing.JFrame
             combo_displays.setEnabled(true);
         }
     }//GEN-LAST:event_custom_size_clicked
-
-    private void cap_clicked(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cap_clicked
-
-        if (evt.getStateChange() == ItemEvent.SELECTED){
-            txt_cap_fps.setEnabled(true);
-        }else{
-            txt_cap_fps.setEnabled(false);
-        }
-    }//GEN-LAST:event_cap_clicked
 
     private void bt_choose_dirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_choose_dirActionPerformed
 
@@ -511,21 +484,13 @@ public class Interface extends javax.swing.JFrame
         }
         final boolean vsync = jc_vsync.isSelected();
         final boolean fs = jc_full_screen.isSelected();
-        final boolean do_sync = jc_cap_fps.isSelected();
-        final int sync_cap;
-        if(do_sync){
-            sync_cap = Integer.parseInt(txt_cap_fps.getText());
-        }
-        else{
-            sync_cap = 0;
-        }
 
        Thread t = new Thread(){
             @Override
             public void run(){
                 Render r = new Render(c, hispeed);
                 try {
-                    r.setDisplay(dm, vsync, fs, do_sync,sync_cap);
+                    r.setDisplay(dm, vsync, fs);
                 } catch (Exception ex) {
                     Main.die(ex);
                 }
@@ -546,7 +511,6 @@ public class Interface extends javax.swing.JFrame
     private javax.swing.JButton bt_choose_dir;
     private javax.swing.JButton bt_play;
     private javax.swing.JComboBox combo_displays;
-    private javax.swing.JCheckBox jc_cap_fps;
     private javax.swing.JCheckBox jc_custom_size;
     private javax.swing.JCheckBox jc_full_screen;
     private javax.swing.JCheckBox jc_vsync;
@@ -580,7 +544,6 @@ public class Interface extends javax.swing.JFrame
     private javax.swing.ButtonGroup rank_group;
     private javax.swing.JScrollPane table_scroll;
     private javax.swing.JTable table_songlist;
-    private javax.swing.JTextField txt_cap_fps;
     private javax.swing.JTextField txt_res_height;
     private javax.swing.JTextField txt_res_width;
     // End of variables declaration//GEN-END:variables

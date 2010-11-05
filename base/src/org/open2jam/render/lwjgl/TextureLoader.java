@@ -142,7 +142,7 @@ public class TextureLoader {
         // convert that image into a byte buffer of texture data 
         ByteBuffer textureBuffer = convertImageData(bufferedImage); 
         
-        if (target == GL11.GL_TEXTURE_2D) 
+        if (target == GL11.GL_TEXTURE_2D)
         {
             GL11.glTexParameteri(target, GL11.GL_TEXTURE_MIN_FILTER, minFilter); 
             GL11.glTexParameteri(target, GL11.GL_TEXTURE_MAG_FILTER, magFilter); 
