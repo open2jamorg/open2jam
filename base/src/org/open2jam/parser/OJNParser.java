@@ -170,8 +170,16 @@ public class OJNParser
 					int unk = buffer.get();
 					int type = buffer.get();
 					if(value == 0)continue; // ignore value=0 events
-					Event.Flag f = (type==2)?Event.Flag.HOLD:Event.Flag.RELEASE;
-					chart.add(new Event(channel,measure,position,value*(unk+1),f));
+
+                                        if(type == 0){
+                                            chart.add(new Event(channel,measure,position,value*(unk+1),Event.Flag.NONE));
+                                        }
+                                        else if(type == 2)
+                                        {
+                                            chart.add(new Event(channel,measure,position,value*(unk+1),Event.Flag.HOLD));
+                                        }else if(type == 3){
+                                            chart.add(new Event(channel,measure,position,value*(unk+1),Event.Flag.RELEASE));
+                                        }
 				}
 			}
 		}

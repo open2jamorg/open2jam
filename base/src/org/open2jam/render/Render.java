@@ -176,7 +176,7 @@ public class Render implements GameWindowCallback
 				else e.draw(); // or draw itself on screen
 			}
 		}
-                if(chart.getEvents().isEmpty() && entities_matrix.get(1).isEmpty()){
+                if(!buffer_iterator.hasNext() && entities_matrix.get(1).isEmpty()){
                     window.destroy();
                     return;
                 }
@@ -217,7 +217,7 @@ public class Render implements GameWindowCallback
 				entities_matrix.get(0).add(
 					new MeasureEntity(this,
 					sprite_map.get("measure_mark"),
-					screen_x_offset, buffer_offset+6)
+					screen_x_offset, buffer_offset)
 				);
 				buffer_measure++;
 				fractional_measure = 1;
@@ -253,8 +253,12 @@ public class Render implements GameWindowCallback
 					entities_matrix.get(1).add(ln_buffer[note_number]);
 				}
 				else if(e.getFlag() == Event.Flag.RELEASE){
-					ln_buffer[note_number].setEndY(abs_height);
-					ln_buffer[note_number] = null;
+                                    if(ln_buffer[note_number] == null){
+                                            System.err.println("Attempted to RELEASE note "+note_number);
+                                    }else{
+                                            ln_buffer[note_number].setEndY(abs_height);
+                                            ln_buffer[note_number] = null;
+                                    }
 				}
 				break;
 			}

@@ -34,20 +34,13 @@ public class LongNoteEntity extends NoteEntity
 	{
 		frames.get(nextFrame).draw(bounds.x,bounds.y);
 
-		if(end_y == null){
-			double p = bounds.y - frames.get(nextFrame).getHeight();
-			while(p > -5){
-				body_frames.get(nextFrame).draw(bounds.x, p);
-				p -= body_frames.get(nextFrame).getHeight();
-			}
-		}
-		else{
-			double p = bounds.y - frames.get(nextFrame).getHeight();
-			while(p > end_y){
-				body_frames.get(nextFrame).draw(bounds.x, p);
-				p -= body_frames.get(nextFrame).getHeight();
-			}
-			frames.get(nextFrame).draw(bounds.x,bounds.y-bounds.height);
-		}
+                double end = (end_y == null) ? -5 : end_y;
+
+                double p = bounds.y - body_frames.get(nextFrame).getHeight();
+                while(p > end){
+                        body_frames.get(nextFrame).draw(bounds.x, p);
+                        p -= body_frames.get(nextFrame).getHeight();
+                }
+                frames.get(nextFrame).draw(bounds.x,bounds.y-bounds.height);
 	}
 }
