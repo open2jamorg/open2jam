@@ -12,9 +12,11 @@ read DATA, $header, 28 or die $!;
 
 my $h = unpack2hash(join(' ',qw/
 Z4:$signature
-c8:@unk_fixed
+c4:@unk_fixed
+c:$nami_encoded
+c3:@unk_fixed2
 s:$sample_count
-c6:@unk_fixed2
+c6:@unk_fixed3
 i:$payload_size
 i:$unk_zero
 /), $header);
@@ -22,7 +24,7 @@ i:$unk_zero
 die "Not a M30 file\n" unless $h->{'signature'} eq "M30";
 
 print Dumper $h;
-
+# die;
 my $buf;
 while(!eof DATA)
 # for (0)
@@ -43,8 +45,8 @@ while(!eof DATA)
 
 	print Dumper $nh;
 
-# 	dump_ogg($nh->{'sample_name'},$nh->{'sample_size'});
-	seek DATA, $nh->{'sample_size'}, 1;
+	dump_ogg($nh->{'sample_name'},$nh->{'sample_size'});
+# 	seek DATA, $nh->{'sample_size'}, 1;
 }
 
 sub dump_ogg

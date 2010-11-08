@@ -28,13 +28,6 @@ public class Chart
 		events.add(e);
 	}
 
-	/** this method should be called when the parser finishes
-	*** adding events to this chart */
-	public void finalize()
-	{
-		java.util.Collections.sort(events); // will sort by measure
-	}
-
 	public List<Event> getEvents() { return events; }
 
 	public ChartHeader getHeader() { return header; }

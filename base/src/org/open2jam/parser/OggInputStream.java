@@ -87,14 +87,14 @@ public class OggInputStream extends FilterInputStream {
 	/**
 	 * Creates an OggInputStream that decompressed the specified ogg file.
 	 */
-	public OggInputStream(InputStream input) {
+	public OggInputStream(InputStream input) throws Exception {
 		super(input);
 		try {
 			initVorbis();
 			_index = new int[info.channels];
 		} catch (Exception e) {
-			e.printStackTrace();
-			eos = true;
+                        eos = true;
+			throw e;
 		}
 	}
 

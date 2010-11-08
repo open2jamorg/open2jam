@@ -1,9 +1,6 @@
 package org.open2jam.parser;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 /** this is the main parser class.
 *** it has methods to find out the type of file
@@ -25,7 +22,7 @@ public class ChartParser
 		if(OJNParser.canRead(file))return OJNParser.parseFileHeader(file);
 		if(BMSParser.canRead(file))return BMSParser.parseFileHeader(file);
 
-		throw new RuntimeException("File ["+file+"] not supported");
+		throw new UnsupportedOperationException("File ["+file+"] not supported");
 	}
 
 	/** parse and return the whole Chart representation */
@@ -34,17 +31,6 @@ public class ChartParser
 		if(h instanceof OJNHeader) {
 			return OJNParser.parseFile((OJNHeader)h, rank);
 		}
-		throw new RuntimeException("File format ["+h.getSourceType()+"] not supported");
-	}
-
-	/** given a dir, this method returns supported files under it */
-	public static List<File> findFiles(File dir) {
-		File[] files = dir.listFiles();
-		ArrayList<File> fs = new ArrayList<File>();
-		for(File f : files)
-		{
-			if(OJNParser.canRead(f) || BMSParser.canRead(f))fs.add(f);
-		}
-		return fs;
+		throw new UnsupportedOperationException("File format ["+h.getSourceType()+"] not supported");
 	}
 }

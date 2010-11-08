@@ -7,6 +7,7 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import org.open2jam.Util;
 
 public class OJNParser
 {
@@ -45,14 +46,14 @@ public class OJNParser
 			ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, 300);
 			buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
 			header.source = file;
-			readHeader(header, buffer, f);
+			readHeader(header, buffer, f, file.getParentFile());
                         buffer = null;
 			f.close();
-		}catch(IOException e){ die(e); }
+		}catch(IOException e){ Util.die(e); }
 		return header;
 	}
 
-	private static void readHeader(OJNHeader header, ByteBuffer buffer, RandomAccessFile f) throws BadFileException
+	private static void readHeader(OJNHeader header, ByteBuffer buffer, RandomAccessFile f, File parent) throws BadFileException
 	{
 		int songid = buffer.getInt();
 		byte signature[] = new byte[4];
@@ -130,7 +131,7 @@ public class OJNParser
 		header.note_count = note_count;
 		header.noter = bytes2string(noter);
 		header.duration = time;
-		header.sample_file = bytes2string(ojm_file);
+		header.sample_file = new File(parent, bytes2string(ojm_file));
 
 		//ojn specific fields
 		header.note_offsets = note_offsets;
@@ -149,45 +150,66 @@ public class OJNParser
 			buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
 			readNoteBlock(chart, buffer);
 			f.close();
-		}catch(Exception e){ die(e); }
+		}catch(Exception e){ Util.die(e); }
 		return chart;
 	}
 
 	private static void readNoteBlock(Chart chart, ByteBuffer buffer) throws Exception
 	{
-		while(buffer.hasRemaining())
-		{
-			int measure = buffer.getInt();
-			short channel = buffer.getShort();
-			short events_count = buffer.getShort();
+            while(buffer.hasRemaining())
+            {
+                int measure = buffer.getInt();
+                short channel_number = buffer.getShort();
+                short events_count = buffer.getShort();
 
-			for(double i=0;i<events_count;i++)
-			{
-				double position = i / events_count;
-				if(channel == 0 || channel == 1) // fractional measure or BPM event
-				{
-					float v = buffer.getFloat();
-					if(v == 0)continue;
-					chart.add(new Event(channel,measure,position,v,Event.Flag.NONE));
-				}else{ // note event
-					short value = buffer.getShort();
-					int unk = buffer.get();
-					int type = buffer.get();
-					if(value == 0)continue; // ignore value=0 events
+                Event.Channel channel;
+                switch(channel_number)
+                {
+                    case 0:channel = Event.Channel.TIME_SIGNATURE;break;
+                    case 1:channel = Event.Channel.BPM_CHANGE;break;
+                    case 2:channel = Event.Channel.NOTE_1;break;
+                    case 3:channel = Event.Channel.NOTE_2;break;
+                    case 4:channel = Event.Channel.NOTE_3;break;
+                    case 5:channel = Event.Channel.NOTE_4;break;
+                    case 6:channel = Event.Channel.NOTE_5;break;
+                    case 7:channel = Event.Channel.NOTE_6;break;
+                    case 8:channel = Event.Channel.NOTE_7;break;
+                    default:
+                    channel = Event.Channel.AUTO_PLAY;
+                }
 
-					if(type == 0){
-						chart.add(new Event(channel,measure,position,value*(unk+1),Event.Flag.NONE));
-					}
-					else if(type == 2){
-						chart.add(new Event(channel,measure,position,value*(unk+1),Event.Flag.HOLD));
-					}
-					else if(type == 3){
-						chart.add(new Event(channel,measure,position,value*(unk+1),Event.Flag.RELEASE));
-					}
-				}
-			}
-		}
-		chart.finalize();
+                for(double i=0;i<events_count;i++)
+                {
+                    double position = i / events_count;
+                    if(channel == Event.Channel.BPM_CHANGE || channel == Event.Channel.TIME_SIGNATURE) // fractional measure or BPM event
+                    {
+                        float v = buffer.getFloat();
+                        if(v == 0)continue;
+
+                        chart.add(new Event(channel,measure,position,v,Event.Flag.NONE));
+                    }else{ // note event
+                        short value = buffer.getShort();
+                        int unk = buffer.get();
+                        int type = buffer.get();
+                        if(value == 0)continue; // ignore value=0 events
+
+                        value--;
+                        if(type == 0){
+                                chart.add(new Event(channel,measure,position,value,Event.Flag.NONE));
+                        }
+                        else if(type == 2){
+                            chart.add(new Event(channel,measure,position,value,Event.Flag.HOLD));
+                        }
+                        else if(type == 3){
+                            chart.add(new Event(channel,measure,position,value,Event.Flag.RELEASE));
+                        }
+                        else if(type == 4){ // M### auto-play
+                            chart.add(new Event(channel,measure,position,1000+value,Event.Flag.RELEASE));
+                        }
+                    }
+                }
+            }
+            java.util.Collections.sort(chart.events);
 	}
 
 	private static String bytes2string(byte[] ch)
@@ -195,17 +217,7 @@ public class OJNParser
 		int i; for(i=0;i<ch.length&&ch[i]!=0;i++); // find \0 terminator
 		try{
 			return new String(ch,0,i);
-		}catch(Exception e){die(e);}
+		}catch(Exception e){Util.die(e);}
 		return null;
-	}
-
-	private static void die(Exception e)
-	{
-		final java.io.Writer r = new java.io.StringWriter();
-		final java.io.PrintWriter pw = new java.io.PrintWriter(r);
-		e.printStackTrace(pw);
-		javax.swing.JOptionPane.showMessageDialog(null, r.toString(), "Fatal Error", 
-			javax.swing.JOptionPane.ERROR_MESSAGE);
-		System.exit(1);
 	}
 }

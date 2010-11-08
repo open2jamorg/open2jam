@@ -32,7 +32,7 @@ public class OJNHeader implements ChartHeader
 	protected String noter;
 	public String getNoter(){ return noter; }
 
-	protected String sample_file;
+	protected File sample_file;
 	public Map<Integer,Integer> getSamples(int rank){ return OJMParser.parseFile(sample_file); }
 
 	/** the bpm as specified is the header */

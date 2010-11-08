@@ -9,10 +9,13 @@ public class NoteEntity extends AnimatedEntity
 {
 	protected Render render;
 
-	public NoteEntity(Render r, SpriteList sl, double x, double y)
+        protected int sample_value;
+
+	public NoteEntity(Render r, SpriteList sl, double x, double y, int sample_value)
 	{
 		super(sl, x, y);
 		this.render = r;
+                this.sample_value = sample_value;
 	}
 
 	public void move(long delta)
@@ -23,6 +26,7 @@ public class NoteEntity extends AnimatedEntity
 
 	public void judgment()
 	{
+                render.queueSample(sample_value);
 		alive = false;
 	}
 }

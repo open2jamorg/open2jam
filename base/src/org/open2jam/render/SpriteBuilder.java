@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Stack;
 import java.net.URL;
+import org.open2jam.Util;
 
 public class SpriteBuilder
 {
@@ -75,9 +76,7 @@ public class SpriteBuilder
 		try{
 			return Keyword.valueOf(s);
 		}catch(IllegalArgumentException e){
-			javax.swing.JOptionPane.showMessageDialog(null, "Unknown keyword ["+s+"] in resources.xml.", "Fatal Error", 
-			javax.swing.JOptionPane.ERROR_MESSAGE);
-			System.exit(1);
+                        Util.die(new Exception("Unknown keyword ["+s+"] in resources.xml."));
 		}
 		return null;
 	}

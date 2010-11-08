@@ -2,6 +2,7 @@ package org.open2jam.gui;
 
 import java.io.File;
 import javax.swing.UIManager;
+import org.open2jam.Util;
 
 
 public class Main
@@ -26,7 +27,7 @@ public class Main
                         });
 
 		}catch(Exception e){
-			die(e);
+			Util.die(e);
 		}
 	}
 
@@ -58,15 +59,6 @@ public class Main
 		}else{
 			return os;
 		}
-	}
-
-	public static void die(Exception e)
-	{
-		final java.io.Writer r = new java.io.StringWriter();
-		e.printStackTrace(new java.io.PrintWriter(r));
-		javax.swing.JOptionPane.showMessageDialog(null, r.toString(), "Fatal Error", 
-			javax.swing.JOptionPane.ERROR_MESSAGE);
-		System.exit(1);
 	}
 }
 

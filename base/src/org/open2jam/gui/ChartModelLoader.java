@@ -6,6 +6,7 @@
 package org.open2jam.gui;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.SwingWorker;
 import org.open2jam.parser.ChartHeader;
@@ -18,19 +19,22 @@ import org.open2jam.parser.ChartParser;
 public class ChartModelLoader extends SwingWorker<ChartTableModel,ChartHeader> {
 
     private ChartTableModel table_model;
-    private List<File> files;
+    private File dir;
 
-    public ChartModelLoader(ChartTableModel table_model, List<File> files){
+    public ChartModelLoader(ChartTableModel table_model, File dir){
         this.table_model = table_model;
-        this.files = files;
+        this.dir = dir;
     }
 
-    protected ChartTableModel doInBackground() throws Exception {
+    protected ChartTableModel doInBackground() {
+        List<File> files = Arrays.asList(dir.listFiles());
         table_model.clear();
         double perc = files.size() / 100.0d;
         for(int i=0;i<files.size();i++)
         {
-            publish(ChartParser.parseFileHeader(files.get(i)));
+            try{
+                publish(ChartParser.parseFileHeader(files.get(i)));
+            }catch(UnsupportedOperationException e){}
             setProgress((int)(i/perc));
         }
         setProgress(100);
@@ -38,10 +42,10 @@ public class ChartModelLoader extends SwingWorker<ChartTableModel,ChartHeader> {
     }
 
 
+    @Override
      protected void process(List<ChartHeader> chunks) {
          for (ChartHeader row : chunks) {
              table_model.addRow(row);
          }
      }
-
 }

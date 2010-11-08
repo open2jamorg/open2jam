@@ -15,16 +15,19 @@ import java.awt.event.ItemEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.FilenameFilter;
-import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableRowSorter;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.open2jam.Util;
 import org.open2jam.parser.Chart;
 import org.open2jam.parser.ChartHeader;
 import org.open2jam.parser.ChartParser;
@@ -44,6 +47,7 @@ public class Interface extends javax.swing.JFrame
     private int rank = 0;
     private ChartHeader selected_header;
     private int last_model_idx;
+    private final TableRowSorter table_sorter;
 
     /** Creates new form Interface */
     public Interface() {
@@ -51,6 +55,13 @@ public class Interface extends javax.swing.JFrame
         initComponents();
         this.setLocationRelativeTo(null);
         load_progress.setVisible(false);
+        table_sorter = (TableRowSorter) table_songlist.getRowSorter();
+        txt_filter.getDocument().addDocumentListener(new DocumentListener() {
+
+            public void insertUpdate(DocumentEvent e) {updateFilter();}
+            public void removeUpdate(DocumentEvent e) {updateFilter();}
+            public void changedUpdate(DocumentEvent e) {updateFilter();}
+        });
     }
 
     /** This method is called from within the constructor to
@@ -100,9 +111,10 @@ public class Interface extends javax.swing.JFrame
         js_hispeed = new javax.swing.JSpinner();
         table_scroll = new javax.swing.JScrollPane();
         table_songlist = new javax.swing.JTable();
+        txt_filter = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setResizable(false);
 
         lbl_title.setText("content");
 
@@ -170,17 +182,17 @@ public class Interface extends javax.swing.JFrame
                             .addComponent(lbl_time1))
                         .addGap(18, 18, 18)
                         .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lbl_level)
-                            .addComponent(lbl_notes)
-                            .addComponent(lbl_time)
-                            .addComponent(lbl_genre)
-                            .addComponent(lbl_bpm)
-                            .addComponent(lbl_artist)
-                            .addComponent(lbl_title)))
+                            .addComponent(lbl_level, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                            .addComponent(lbl_notes, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                            .addComponent(lbl_time, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                            .addComponent(lbl_genre, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                            .addComponent(lbl_bpm, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                            .addComponent(lbl_artist, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                            .addComponent(lbl_title, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)))
                     .addGroup(panel_infoLayout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(lbl_cover, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(76, Short.MAX_VALUE))
+                .addContainerGap())
         );
         panel_infoLayout.setVerticalGroup(
             panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -216,10 +228,10 @@ public class Interface extends javax.swing.JFrame
                     .addComponent(lbl_time1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(bt_play)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        lbl_dir.setText("Song dir:");
+        lbl_dir.setText("choose a dir..");
 
         rank_group.add(jr_rank_hard);
         jr_rank_hard.setText("Hard");
@@ -332,7 +344,7 @@ public class Interface extends javax.swing.JFrame
                                     .addComponent(lbl_res_x)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(txt_res_height))))
-                        .addContainerGap(32, Short.MAX_VALUE))))
+                        .addContainerGap(33, Short.MAX_VALUE))))
         );
         panel_settingLayout.setVerticalGroup(
             panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -368,7 +380,7 @@ public class Interface extends javax.swing.JFrame
                 .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jc_vsync)
                     .addComponent(jc_full_screen))
-                .addGap(53, 53, 53))
+                .addGap(29, 29, 29))
         );
 
         table_songlist.setAutoCreateRowSorter(true);
@@ -377,14 +389,23 @@ public class Interface extends javax.swing.JFrame
         table_songlist.getSelectionModel().addListSelectionListener(this);
         table_scroll.setViewportView(table_songlist);
 
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel1.setText("Render Preview 2");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel1)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(table_scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 437, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
+                    .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panel_info, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -394,11 +415,14 @@ public class Interface extends javax.swing.JFrame
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(panel_setting, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE)
-                    .addComponent(panel_info, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE)
+                    .addComponent(panel_info, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
-                        .addGap(29, 29, 29)))
+                        .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txt_filter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1)))
+                    .addComponent(panel_setting, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -485,25 +509,13 @@ public class Interface extends javax.swing.JFrame
         final boolean vsync = jc_vsync.isSelected();
         final boolean fs = jc_full_screen.isSelected();
 
-       Thread t = new Thread(){
-            @Override
-            public void run(){
-                Render r = new Render(c, hispeed);
-                try {
-                    r.setDisplay(dm, vsync, fs);
-                } catch (Exception ex) {
-                    Main.die(ex);
-                }
-                r.startRendering();
-            }
-        };
-        t.start();
-        this.setEnabled(false);
+        Render r = new Render(c, hispeed);
         try {
-            t.join();
-        } catch (InterruptedException ex) {}
-        this.setEnabled(true);
-
+            r.setDisplay(dm, vsync, fs);
+        } catch (Exception ex) {
+            Util.die(ex);
+        }
+        r.startRendering();
     }//GEN-LAST:event_bt_playActionPerformed
 
 
@@ -511,6 +523,7 @@ public class Interface extends javax.swing.JFrame
     private javax.swing.JButton bt_choose_dir;
     private javax.swing.JButton bt_play;
     private javax.swing.JComboBox combo_displays;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JCheckBox jc_custom_size;
     private javax.swing.JCheckBox jc_full_screen;
     private javax.swing.JCheckBox jc_vsync;
@@ -544,6 +557,7 @@ public class Interface extends javax.swing.JFrame
     private javax.swing.ButtonGroup rank_group;
     private javax.swing.JScrollPane table_scroll;
     private javax.swing.JTable table_songlist;
+    private javax.swing.JTextField txt_filter;
     private javax.swing.JTextField txt_res_height;
     private javax.swing.JTextField txt_res_width;
     // End of variables declaration//GEN-END:variables
@@ -553,25 +567,17 @@ public class Interface extends javax.swing.JFrame
         try {
             display_modes = Display.getAvailableDisplayModes();
         } catch (LWJGLException ex) {
-            Main.die(ex);
+            Util.die(ex);
         }
         model_songlist = new ChartTableModel();
     }
 
-    private static FilenameFilter ojnfilter = new FilenameFilter(){
-	public boolean accept(File dir, String name){
-        	return name.toLowerCase().endsWith(".ojn");
-	}};
-
     private void updateSelection() {
         lbl_dir.setText(cwd);
         bt_choose_dir.setEnabled(false);
-        load_progress.setString("Finding Files..");
-        load_progress.setVisible(true);
-        List<File> files = ChartParser.findFiles(new File(cwd));
         load_progress.setValue(0);
-        load_progress.setString(null);
-        task = new ChartModelLoader(model_songlist, files);
+        load_progress.setVisible(true);
+        task = new ChartModelLoader(model_songlist, new File(cwd));
         task.addPropertyChangeListener(this);
         task.execute();
     }
@@ -586,6 +592,15 @@ public class Interface extends javax.swing.JFrame
                 bt_choose_dir.setEnabled(true);
                 load_progress.setVisible(false);
             }
+        }
+    }
+
+    public void updateFilter() {
+        try {
+            if(txt_filter.getText().length() == 0)table_sorter.setRowFilter(null);
+            table_sorter.setRowFilter(RowFilter.regexFilter("(?i)"+txt_filter.getText()));
+        } catch (java.util.regex.PatternSyntaxException ex) {
+            return;
         }
     }
 
@@ -605,7 +620,7 @@ public class Interface extends javax.swing.JFrame
 
     private void updateInfo() {
         lbl_artist.setText(selected_header.getArtist());
-        lbl_title.setText(selected_header.getTitle());
+        lbl_title.setText(selected_header.getTitle()+" ("+selected_header.getSource().getName()+")");
         lbl_genre.setText(selected_header.getGenre());
         lbl_level.setText(selected_header.getLevel(rank)+"");
         lbl_bpm.setText(selected_header.getBPM(rank)+"");

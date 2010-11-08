@@ -1,16 +1,17 @@
 package org.open2jam.parser;
 
+import java.io.File;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 
-import org.open2jam.render.lwjgl.SampleLoader;
+import org.open2jam.render.lwjgl.SoundManager;
+import org.open2jam.Util;
 
-import org.lwjgl.openal.AL10;
 
 public class OJMParser
 {
-	public static HashMap<Integer,Integer> parseFile(String file)
+	public static HashMap<Integer,Integer> parseFile(File file)
 	{
 		try{
 			RandomAccessFile f = new RandomAccessFile(file,"r");
@@ -22,12 +23,12 @@ public class OJMParser
 			}
 			else {
 				f.close();
-				throw new RuntimeException("["+signature+"] not supported");
+				throw new UnsupportedOperationException("["+signature+"] not supported");
 			}
 		}catch(Exception e) {
-			die(e);
+			Util.warn(e);
 		}
-		return null;
+		return new HashMap<Integer,Integer>();
 	}
 
 	private static HashMap<Integer,Integer> parseM30(RandomAccessFile f) throws Exception
@@ -36,11 +37,14 @@ public class OJMParser
 		buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
 
 		// header
-		byte[] unk_fixed = new byte[8];
+		byte[] unk_fixed = new byte[4];
 		buffer.get(unk_fixed);
+                byte nami_encoded = buffer.get();
+                byte[] unk_fixed2 = new byte[3];
+                buffer.get(unk_fixed2);
 		short sample_count = buffer.getShort();
-		byte[] unk_fixed2 = new byte[6];
-		buffer.get(unk_fixed2);
+		byte[] unk_fixed3 = new byte[6];
+		buffer.get(unk_fixed3);
 		int payload_size = buffer.getInt();
 		int unk_zero2 = buffer.getInt();
 
@@ -52,6 +56,10 @@ public class OJMParser
 
 		for(int i=0; i<sample_count; i++)
 		{
+                        if(buffer.remaining() < 52){
+                            Util.warn("Wrong number of samples on OJM header");
+                            break;
+                        }
 			byte[] sample_name = new byte[32];
 			buffer.get(sample_name);
 			int sample_size = buffer.getInt();
@@ -67,12 +75,19 @@ public class OJMParser
 
 			byte[] sample_data = new byte[sample_size];
 			buffer.get(sample_data);
-			nami_xor(sample_data);
+			if(nami_encoded > 0)nami_xor(sample_data);
 
-			int id = SampleLoader.newBuffer(
+			int id = SoundManager.newBuffer(
 				new OggInputStream(new java.io.ByteArrayInputStream(sample_data))
 			);
-			samples.put(ref * (unk_sample_type+1), id);
+                        int value = ref;
+                        if(unk_sample_type == 0){
+                                value = 1000 + ref;
+                        }
+                        else if(unk_sample_type != 5){
+                            System.out.println("! WARNING ! unknown sample id type ["+unk_sample_type+"]");
+                        }
+			samples.put(value, id);
 		}
 		f.close();
 		return samples;
@@ -90,30 +105,4 @@ public class OJMParser
 		}
 	}
 
-	private static void die(Exception e)
-	{
-		final java.io.Writer r = new java.io.StringWriter();
-		final java.io.PrintWriter pw = new java.io.PrintWriter(r);
-		e.printStackTrace(pw);
-		javax.swing.JOptionPane.showMessageDialog(null, r.toString(), "Fatal Error", 
-			javax.swing.JOptionPane.ERROR_MESSAGE);
-		System.exit(1);
-	}
-
-	public static void main(String args[]) throws Exception
-	{
-		HashMap<Integer,Integer> samples = parseFile(args[0]);
-
-		int source = SampleLoader.newSource();
-
-		int play;
-		for(Integer s : samples.values()){
-			SampleLoader.bindSource(source, s);
-			AL10.alSourcePlay(source);
-
-			do{
-				play = AL10.alGetSourcei(source, AL10.AL_SOURCE_STATE);
-			}while(play == AL10.AL_PLAYING);
-		}
-	}
 }

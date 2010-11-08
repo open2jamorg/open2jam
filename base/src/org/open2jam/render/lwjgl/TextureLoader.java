@@ -15,8 +15,9 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.net.URL;
+import java.util.Properties;
+import javax.imageio.ImageIO;
 
 import org.lwjgl.opengl.GL11;
 
@@ -120,27 +121,27 @@ public class TextureLoader {
     {
         int srcPixelFormat = 0;
 
-        BufferedImage bufferedImage = loadImage(resource);
+        BufferedImage image = loadImage(resource);
 
-	int texw = get2Fold(bufferedImage.getWidth());
-	int texh = get2Fold(bufferedImage.getHeight());
+	int texw = get2Fold(image.getWidth(null));
+	int texh = get2Fold(image.getHeight(null));
         
         // create the texture ID for this texture 
         int textureID = createTextureID(); 
         Texture texture = new Texture(target,textureID, texw, texh); 
         
         // bind this texture 
-        GL11.glBindTexture(target, textureID); 
+        GL11.glBindTexture(target, textureID);
 
 
-        if (bufferedImage.getColorModel().hasAlpha()) {
+        if (image.getColorModel().hasAlpha()) {
             srcPixelFormat = GL11.GL_RGBA;
         } else {
             srcPixelFormat = GL11.GL_RGB;
         }
 
         // convert that image into a byte buffer of texture data 
-        ByteBuffer textureBuffer = convertImageData(bufferedImage); 
+        ByteBuffer textureBuffer = convertImageData(image);
         
         if (target == GL11.GL_TEXTURE_2D)
         {
@@ -184,36 +185,34 @@ public class TextureLoader {
 	* @param slice specify only a part of the source image, can be null
 	* @return A buffer containing the data
 	*/
-	private ByteBuffer convertImageData(BufferedImage bufferedImage)
+	private ByteBuffer convertImageData(BufferedImage image)
 	{
 		ByteBuffer imageBuffer = null; 
 		WritableRaster raster;
 		BufferedImage texImage;
 
-		int srcx, srcy, srcw, srch;
-		srcx = 0;
-		srcy = 0;
-		srcw = bufferedImage.getWidth();
-		srch = bufferedImage.getHeight();
+		int srcw, srch;
+		srcw = image.getWidth(null);
+		srch = image.getHeight(null);
 
 		int texWidth = get2Fold(srcw);
 		int texHeight = get2Fold(srch);
 
 		// create a raster that can be used by OpenGL as a source
 		// for a texture
-		if (bufferedImage.getColorModel().hasAlpha()) {
+		if (image.getColorModel().hasAlpha()) {
 			raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,texWidth,texHeight,4,null);
-			texImage = new BufferedImage(glAlphaColorModel,raster,false,new Hashtable());
+			texImage = new BufferedImage(glAlphaColorModel,raster,false,new Properties());
 		} else {
 			raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,texWidth,texHeight,3,null);
-			texImage = new BufferedImage(glColorModel,raster,false,new Hashtable());
+			texImage = new BufferedImage(glColorModel,raster,false,new Properties());
 		}
 		
 		// copy the source image into the produced image
 		Graphics g = texImage.getGraphics();
 		g.setColor(new Color(0f,0f,0f,0f));
 		g.fillRect(0,0,texWidth,texHeight);
-		g.drawImage(bufferedImage,0,0,null);
+		g.drawImage(image,0,0,null);
 		
 		// build a byte buffer from the temporary image 
 		// that be used by OpenGL to produce a texture.
@@ -230,22 +229,12 @@ public class TextureLoader {
 	/** 
 	* Load a given resource as a buffered image
 	* 
-	* @param ref The location of the resource to load
-	* @return The loaded buffered image
-	* @throws IOException Indicates a failure to find a resource
+	* @param url The location of the resource to load
+	* @return The loaded image
 	*/
-	private BufferedImage loadImage(URL url) throws IOException 
+	private BufferedImage loadImage(URL url) throws IOException
 	{
-		//BufferedImage bufferedImage = ImageIO.read(new BufferedInputStream(is)); 
-		// due to an issue with ImageIO and mixed signed code
-		// we are now using good oldfashioned ImageIcon to load
-		// images and the paint it on top of a new BufferedImage
-		java.awt.Image img = new javax.swing.ImageIcon(url).getImage();
-		BufferedImage bufferedImage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_RGB);
-		Graphics g = bufferedImage.getGraphics();
-		g.drawImage(img, 0, 0, null);
-		g.dispose();
-		return bufferedImage;
+		return ImageIO.read(url);
 	}
     
     /**

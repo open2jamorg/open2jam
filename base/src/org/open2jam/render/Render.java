@@ -3,7 +3,9 @@ package org.open2jam.render;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.Iterator;
+import org.lwjgl.openal.OpenALException;
 import org.lwjgl.opengl.DisplayMode;
 
 import org.open2jam.parser.ResourcesHandler;
@@ -14,6 +16,9 @@ import org.open2jam.render.entities.Entity;
 import org.open2jam.render.entities.LongNoteEntity;
 import org.open2jam.render.entities.MeasureEntity;
 import org.open2jam.render.entities.NoteEntity;
+import org.open2jam.render.entities.SampleEntity;
+import org.open2jam.render.lwjgl.SoundManager;
+import org.open2jam.Util;
 
 public class Render implements GameWindowCallback
 {
@@ -60,10 +65,10 @@ public class Render implements GameWindowCallback
 	private final int screen_x_offset = 30;
 
 	/** pre-built offset of the notes horizontal position */
-	private int[] notes_x_offset = new int[NUM_KEYS];
+	private EnumMap<Event.Channel,Integer> channel_x_offset;
 
 	/** long note buffer */
-	private LongNoteEntity[] ln_buffer = new LongNoteEntity[NUM_KEYS];
+	private EnumMap<Event.Channel,LongNoteEntity> ln_buffer;
 
 	/** the vertical speed of entities pixels/milliseconds */
 	private double note_speed;
@@ -73,9 +78,17 @@ public class Render implements GameWindowCallback
 
         private Iterator<Event> buffer_iterator;
 
+        /** maps the Event value to OpenGL sample ID's */
+        private Map<Integer, Integer> samples;
+
+        /** store the sources being played */
+        private List<Integer> sound_sources;
+        private List<Integer> sound_sources_playing;
+
         static{
             ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
         }
+
 
 	public Render(Chart c, double hispeed)
 	{
@@ -116,21 +129,36 @@ public class Render implements GameWindowCallback
 				new ResourcesHandler(sb)
 			);
 		} catch (Exception e) {
-			die(e);
+			Util.die(e);
 		}
 		sprite_map = sb.getResult();
 
+                // build long note buffer
+                ln_buffer = new EnumMap<Event.Channel,LongNoteEntity>(Event.Channel.class);
+
 		// build the notes horizontal offset
+                channel_x_offset = new EnumMap<Event.Channel,Integer>(Event.Channel.class);
 		int off = screen_x_offset;
-		for(int i=0;i<NUM_KEYS;i++)
+		for(Event.Channel c : Event.note_channels)
 		{
-			notes_x_offset[i] = off;
-			off += sprite_map.get("note_head"+i).get(0).getWidth();
+			channel_x_offset.put(c, off);
+			off += sprite_map.get("HEAD_"+c).get(0).getWidth();
 		}
 
                 // load up initial buffer
                 buffer_iterator = chart.getEvents().iterator();
 		update_note_buffer();
+
+                // create sound sources
+                sound_sources = new ArrayList<Integer>();
+                sound_sources_playing = new ArrayList<Integer>();
+
+                try{
+                   for(int i=0;i<32;i++)sound_sources.add(SoundManager.newSource()); // creates 32 sources
+                }catch(OpenALException e){Util.warn("Couldn't create enough sources(32)");}
+
+                // get the chart sound samples
+                samples = chart.getHeader().getSamples(chart.getRank());
 
 		lastLoopTime = SystemTimer.getTime();
 	}
@@ -158,6 +186,7 @@ public class Render implements GameWindowCallback
 			fps = 0;
 		}
 
+                check_sources();
 		update_note_buffer();
 
 		Iterator<List<Entity>> i = entities_matrix.iterator();
@@ -170,15 +199,16 @@ public class Render implements GameWindowCallback
 				Entity e = j.next();
 				e.move(delta); // move the entity
 
-				if(e.getBounds().getY() - e.getBounds().getHeight() > viewport)e.judgment();
+				if(e.getBounds().getY() > viewport)e.judgment();
 				if(!e.isAlive())j.remove(); // if dead, remove from list
 				else e.draw(); // or draw itself on screen
 			}
 		}
 		buffer_offset += note_speed * delta; // walk with the buffer
 
-		if(!buffer_iterator.hasNext() && entities_matrix.get(1).isEmpty()){
+		if(!buffer_iterator.hasNext() && entities_matrix.get(1).isEmpty() && sound_sources_playing.isEmpty()){
 			window.destroy();
+                        windowClosed();
 			return;
 		}
 	}
@@ -217,7 +247,7 @@ public class Render implements GameWindowCallback
 				entities_matrix.get(0).add(
 					new MeasureEntity(this,
 					sprite_map.get("measure_mark"),
-					screen_x_offset, buffer_offset)
+					screen_x_offset, buffer_offset+6)
 				);
 				buffer_measure++;
 				fractional_measure = 1;
@@ -226,41 +256,48 @@ public class Render implements GameWindowCallback
 			double abs_height = buffer_offset - (e.getPosition() * measure_size);
 			switch(e.getChannel())
 			{
-				case 0:
+                                case TIME_SIGNATURE:
 				fractional_measure = e.getValue();
 				break;
 
-				case 1:
+				case BPM_CHANGE:
 				entities_matrix.get(0).add(new BPMEntity(this,e.getValue(),abs_height));
 				break;
 
-				case 2:case 3:case 4:
-				case 5:case 6:case 7:case 8:
-				int note_number = e.getChannel()-2;
+                                case NOTE_1:case NOTE_2:
+                                case NOTE_3:case NOTE_4:
+                                case NOTE_5:case NOTE_6:case NOTE_7:
 				if(e.getFlag() == Event.Flag.NONE){
 					entities_matrix.get(1).add(
-						new NoteEntity(this, sprite_map.get("note_head"+note_number),
-						notes_x_offset[note_number],
-						abs_height));
+						new NoteEntity(this, sprite_map.get("HEAD_"+e.getChannel()),
+						channel_x_offset.get(e.getChannel()),
+						abs_height,
+                                                (int)e.getValue()
+                                                ));
 				}
 				else if(e.getFlag() == Event.Flag.HOLD){
-					ln_buffer[note_number] = 
+					ln_buffer.put(e.getChannel(),
 						new LongNoteEntity(this,
-						sprite_map.get("note_head"+note_number),
-						sprite_map.get("note_body"+note_number), 
-						notes_x_offset[note_number],
-						abs_height);
-					entities_matrix.get(1).add(ln_buffer[note_number]);
+						sprite_map.get("HEAD_"+e.getChannel()),
+						sprite_map.get("BODY_"+e.getChannel()),
+						channel_x_offset.get(e.getChannel()),
+						abs_height,
+                                                (int)e.getValue()
+                                                ));
+					entities_matrix.get(1).add(ln_buffer.get(e.getChannel()));
 				}
 				else if(e.getFlag() == Event.Flag.RELEASE){
-					if(ln_buffer[note_number] == null){
-						System.out.println("Attempted to RELEASE note "+note_number);
+					if(ln_buffer.get(e.getChannel()) == null){
+						System.out.println("Attempted to RELEASE note "+e.getChannel());
 					}else{
-						ln_buffer[note_number].setEndY(abs_height);
-						ln_buffer[note_number] = null;
+						ln_buffer.get(e.getChannel()).setEndY(abs_height);
+						ln_buffer.remove(e.getChannel());
 					}
 				}
 				break;
+                                case AUTO_PLAY:
+                                entities_matrix.get(0).add(new SampleEntity(this,(int)e.getValue(),abs_height));
+                                break;
 			}
 		}
 	}
@@ -269,16 +306,29 @@ public class Render implements GameWindowCallback
 	 * Notification that the game window has been closed
 	 */
 	public void windowClosed() {
-		
+		SoundManager.killData();
 	}
 
-	public static void die(Exception e)
-	{
-		final java.io.Writer r = new java.io.StringWriter();
-		e.printStackTrace(new java.io.PrintWriter(r));
-		javax.swing.JOptionPane.showMessageDialog(null, r.toString(), "Fatal Error", 
-			javax.swing.JOptionPane.ERROR_MESSAGE);
-		System.exit(1);
-	}
+
+    public void queueSample(int sample_value)
+    {
+        Integer buffer = samples.get(sample_value);
+        if(buffer == null)return;
+        Integer source = sound_sources.remove(0);
+        SoundManager.play(source, buffer);
+        sound_sources_playing.add(source);
+    }
+
+    private void check_sources() {
+        Iterator<Integer> it = sound_sources_playing.iterator();
+        while(it.hasNext())
+        {
+            Integer i = it.next();
+            if(!SoundManager.isPlaying(i)){
+                it.remove();
+                sound_sources.add(i);
+            }
+        }
+    }
 }
 
