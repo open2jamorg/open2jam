@@ -14,21 +14,21 @@ public class Event implements Comparable<Event>
             NOTE_7,
             AUTO_PLAY;
 
-        @Override
+            @Override
             public String toString(){
                 switch(this){
-                    case NOTE_1:return "NOTE_1";
-                    case NOTE_2:return "NOTE_2";
-                    case NOTE_3:return "NOTE_3";
-                    case NOTE_4:return "NOTE_4";
-                    case NOTE_5:return "NOTE_5";
-                    case NOTE_6:return "NOTE_6";
-                    case NOTE_7:return "NOTE_7";
-                    case TIME_SIGNATURE:return "TIME_SIGNATURE";
-                    case BPM_CHANGE:return "BPM_CHANGE";
-                }
-                return super.toString();
-            }
+	            case NOTE_1:return "NOTE_1";
+	            case NOTE_2:return "NOTE_2";
+	            case NOTE_3:return "NOTE_3";
+	            case NOTE_4:return "NOTE_4";
+	            case NOTE_5:return "NOTE_5";
+	            case NOTE_6:return "NOTE_6";
+	            case NOTE_7:return "NOTE_7";
+	            case TIME_SIGNATURE:return "TIME_SIGNATURE";
+	            case BPM_CHANGE:return "BPM_CHANGE";
+	        }
+	        return super.toString();
+	    }
         };
 
         public static Channel[] note_channels = new Event.Channel[]{

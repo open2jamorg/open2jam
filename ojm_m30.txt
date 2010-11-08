@@ -2,17 +2,22 @@
 
 
 M30 -- ogg "xor'ed" encrypt, samples are decrpyted by xor'ing 4bytes a time with 'nami' <6E 61 6D 69>
+some versions of M30 don't xor at all, see below.
 
 the M30 has a header of 28 bytes:
 
 struct M30_header {
 	char signature[4]; // M30\0
-	char unk_fixed[8];
+	char unk_fixed[4];
+	char nami_encoded;
+	char unK_fixed2[3];
 	short sample_count;
-	char unk_fixed2[6];
+	char unk_fixed3[6];
 	int payload_size;
 	int unk_zero;
 };
+
+* nami_encoded variable have the value 16 for the xor'ed samples, and 0 for plain samples( no need to xor or anything)
 
 after that we have the samples data.
 each sample starts with a header of 52 bytes.
@@ -25,7 +30,7 @@ struct M30_sample_header {
 	int unk_2;
 }
 
-after the header, there is ogg data, xor'ed with 'nami'.
+after the header, there is ogg data, xor'ed with 'nami' or pure ogg data.
 
 after that we got the next sample header, same as above..
 

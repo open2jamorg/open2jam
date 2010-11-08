@@ -1,10 +1,12 @@
 package org.open2jam.render;
 
+import java.util.ArrayDeque;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import org.lwjgl.openal.OpenALException;
 import org.lwjgl.opengl.DisplayMode;
 
@@ -82,8 +84,9 @@ public class Render implements GameWindowCallback
         private Map<Integer, Integer> samples;
 
         /** store the sources being played */
-        private List<Integer> sound_sources;
-        private List<Integer> sound_sources_playing;
+        private final int MAX_SOURCES = 32;
+        private ArrayDeque<Integer> source_queue;
+        private LinkedList<Integer> sources_playing;
 
         static{
             ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
@@ -150,12 +153,12 @@ public class Render implements GameWindowCallback
 		update_note_buffer();
 
                 // create sound sources
-                sound_sources = new ArrayList<Integer>();
-                sound_sources_playing = new ArrayList<Integer>();
+                source_queue = new ArrayDeque<Integer>(MAX_SOURCES);
+                sources_playing = new LinkedList<Integer>();
 
                 try{
-                   for(int i=0;i<32;i++)sound_sources.add(SoundManager.newSource()); // creates 32 sources
-                }catch(OpenALException e){Util.warn("Couldn't create enough sources(32)");}
+                   for(int i=0;i<MAX_SOURCES;i++)source_queue.push(SoundManager.newSource()); // creates 32 sources
+                }catch(OpenALException e){Util.warn("Couldn't create enough sources("+MAX_SOURCES+")");}
 
                 // get the chart sound samples
                 samples = chart.getHeader().getSamples(chart.getRank());
@@ -206,7 +209,7 @@ public class Render implements GameWindowCallback
 		}
 		buffer_offset += note_speed * delta; // walk with the buffer
 
-		if(!buffer_iterator.hasNext() && entities_matrix.get(1).isEmpty() && sound_sources_playing.isEmpty()){
+		if(!buffer_iterator.hasNext() && entities_matrix.get(1).isEmpty() && sources_playing.isEmpty()){
 			window.destroy();
                         windowClosed();
 			return;
@@ -264,16 +267,16 @@ public class Render implements GameWindowCallback
 				entities_matrix.get(0).add(new BPMEntity(this,e.getValue(),abs_height));
 				break;
 
-                                case NOTE_1:case NOTE_2:
-                                case NOTE_3:case NOTE_4:
-                                case NOTE_5:case NOTE_6:case NOTE_7:
+				case NOTE_1:case NOTE_2:
+				case NOTE_3:case NOTE_4:
+				case NOTE_5:case NOTE_6:case NOTE_7:
 				if(e.getFlag() == Event.Flag.NONE){
 					entities_matrix.get(1).add(
 						new NoteEntity(this, sprite_map.get("HEAD_"+e.getChannel()),
 						channel_x_offset.get(e.getChannel()),
 						abs_height,
-                                                (int)e.getValue()
-                                                ));
+						(int)e.getValue()
+						));
 				}
 				else if(e.getFlag() == Event.Flag.HOLD){
 					ln_buffer.put(e.getChannel(),
@@ -282,8 +285,8 @@ public class Render implements GameWindowCallback
 						sprite_map.get("BODY_"+e.getChannel()),
 						channel_x_offset.get(e.getChannel()),
 						abs_height,
-                                                (int)e.getValue()
-                                                ));
+						(int)e.getValue()
+						));
 					entities_matrix.get(1).add(ln_buffer.get(e.getChannel()));
 				}
 				else if(e.getFlag() == Event.Flag.RELEASE){
@@ -295,9 +298,9 @@ public class Render implements GameWindowCallback
 					}
 				}
 				break;
-                                case AUTO_PLAY:
-                                entities_matrix.get(0).add(new SampleEntity(this,(int)e.getValue(),abs_height));
-                                break;
+				case AUTO_PLAY:
+				entities_matrix.get(0).add(new SampleEntity(this,(int)e.getValue(),abs_height));
+				break;
 			}
 		}
 	}
@@ -314,19 +317,19 @@ public class Render implements GameWindowCallback
     {
         Integer buffer = samples.get(sample_value);
         if(buffer == null)return;
-        Integer source = sound_sources.remove(0);
+        Integer source = source_queue.pop();
         SoundManager.play(source, buffer);
-        sound_sources_playing.add(source);
+        sources_playing.push(source);
     }
 
     private void check_sources() {
-        Iterator<Integer> it = sound_sources_playing.iterator();
+        Iterator<Integer> it = sources_playing.iterator();
         while(it.hasNext())
         {
             Integer i = it.next();
             if(!SoundManager.isPlaying(i)){
                 it.remove();
-                sound_sources.add(i);
+                source_queue.push(i);
             }
         }
     }

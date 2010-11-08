@@ -1,9 +1,5 @@
 package org.open2jam.gui;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /*
  * Interface.java
@@ -12,9 +8,9 @@ package org.open2jam.gui;
  */
 
 import java.awt.event.ItemEvent;
+import java.io.File;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -24,15 +20,16 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableRowSorter;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
+
 import org.open2jam.Util;
 import org.open2jam.parser.Chart;
 import org.open2jam.parser.ChartHeader;
 import org.open2jam.parser.ChartParser;
 import org.open2jam.render.Render;
 
+import org.lwjgl.LWJGLException;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
 /**
  *
  * @author fox
@@ -598,7 +595,7 @@ public class Interface extends javax.swing.JFrame
     public void updateFilter() {
         try {
             if(txt_filter.getText().length() == 0)table_sorter.setRowFilter(null);
-            table_sorter.setRowFilter(RowFilter.regexFilter("(?i)"+txt_filter.getText()));
+            else table_sorter.setRowFilter(RowFilter.regexFilter("(?i)"+txt_filter.getText()));
         } catch (java.util.regex.PatternSyntaxException ex) {
             return;
         }

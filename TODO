@@ -1,19 +1,12 @@
-- generalize the Chart spec
-
-- implement a BMS parser
-
-- make the Render play the samples
+- test long notes in BMS songs
 
 - find out how to extract the samples from OJM and OMC
-
-- simplify the image loading process
 
 - rescale textures if the resolution isn't 800x600
 
 - test the BPM modifier
 
-- test notetool output
-
 - make a ChartWriter
 
-- try rationals on Entity.getPosition() and see if precision get's better
+- add MP3 support (javazoom's javalayer probably) -- is this really needed ?
+

@@ -26,11 +26,14 @@ public class ChartParser
 	}
 
 	/** parse and return the whole Chart representation */
-	public static Chart parseFile(ChartHeader h, int rank)
+        public static Chart parseFile(ChartHeader h, int rank)
 	{
-		if(h instanceof OJNHeader) {
-			return OJNParser.parseFile((OJNHeader)h, rank);
-		}
+                if(h instanceof BMSHeader){
+                    return BMSParser.parseFile((BMSHeader) h,rank);
+                }
+                if(h instanceof OJNHeader){
+                    return OJNParser.parseFile((OJNHeader) h,rank);
+                }
 		throw new UnsupportedOperationException("File format ["+h.getSourceType()+"] not supported");
 	}
 }

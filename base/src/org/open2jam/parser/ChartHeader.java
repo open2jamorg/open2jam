@@ -46,4 +46,5 @@ public interface ChartHeader
 
 	/** a image cover, representing the song */
 	public java.awt.Image getCover();
+
 }

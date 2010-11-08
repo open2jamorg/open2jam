@@ -2,7 +2,7 @@ dependencies for this project
 
 version numbers are just the minimum requeriment, unless otherwise noted. 
 
-- java 1.5
+- java 1.6
 
 - lwjgl 2.5 ,  lwjgl.org ( BSD License)
 - jorbis 0.0.17 , www.jcraft.com/jorbis ( GNU LGPL)

@@ -14,7 +14,7 @@ public class Util
 {
     public static void die(Exception e)
     {
-        warn(e, "Dead:" + e.toString());
+        warn(e, "Dead: ["+e.toString()+"]");
         System.exit(1);
     }
 
@@ -23,16 +23,25 @@ public class Util
 
     public static void warn(Exception e, String title)
     {
-        e.printStackTrace();
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        e.printStackTrace(pw);
-        warn(sw.toString(), title);
+        String s = getStackTrace(e);
+        log(s);
+        warn(s, title);
     }
 
     public static void warn(String string, String title) {
         JDialog d = new JOptionPane( string, JOptionPane.ERROR_MESSAGE).createDialog(null, title);
         d.setAlwaysOnTop(true);
         d.setVisible(true);
+    }
+
+    public static void log(Exception e) { e.printStackTrace(); }
+
+    public static void log(String s) { System.err.println(s); }
+
+    public static String getStackTrace(Exception e) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        return sw.toString();
     }
 }

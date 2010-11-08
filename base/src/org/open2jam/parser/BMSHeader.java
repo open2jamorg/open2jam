@@ -8,6 +8,8 @@ import org.open2jam.parser.ChartParser.Formats;
 public class BMSHeader implements ChartHeader
 {
 
+    protected int lntype;
+
     public Formats getSourceType() { return Formats.BMS; }
 
     protected File source;
@@ -37,7 +39,7 @@ public class BMSHeader implements ChartHeader
         return genre;
     }
 
-    protected Map<Integer, String> sample_names;
+    protected Map<Integer, File> sample_files;
     public Map<Integer,Integer> getSamples(int rank) {
         return BMSParser.loadSamples(this, rank);
     }
@@ -47,13 +49,9 @@ public class BMSHeader implements ChartHeader
         return bpm[rank];
     }
 
-    public int getNoteCount(int rank) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    public int getNoteCount(int rank) { return 0; }
 
-    public int getDuration(int rank) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    public int getDuration(int rank) { return 0; }
 
     public Image getCover() {
         throw new UnsupportedOperationException("Not supported yet.");

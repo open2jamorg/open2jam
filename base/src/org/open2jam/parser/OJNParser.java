@@ -32,7 +32,7 @@ public class OJNParser
             return false;
         }
 
-	public static ChartHeader parseFileHeader(File file)
+	public static OJNHeader parseFileHeader(File file)
 	{
 		OJNHeader header = new OJNHeader();
 		try{
