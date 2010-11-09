@@ -5,7 +5,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.awt.Toolkit;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,53 +13,50 @@ import org.open2jam.Util;
 
 public class OJNParser
 {
-
-	private static String genre_map[] = {"Ballad","Rock","Dance","Techno","Hip-hop",
+	private static final String genre_map[] = {"Ballad","Rock","Dance","Techno","Hip-hop",
 			"Soul/R&B","Jazz","Funk","Classical","Traditional","Etc"};
 
-        public static boolean canRead(File f)
+	/** the signature that appears at offset 4, "ojn\0" in little endian */
+	private static final int OJN_SIGNATURE = 0x006E6A6F;
+
+        public static boolean canRead(File file)
         {
-            if(f.isDirectory())return false;
+            if(file.isDirectory())return false;
             try{
-                FileInputStream fis = new FileInputStream(f);
-                byte[] sig = new byte[4];
-                fis.read(sig); // jump songid
-                fis.read(sig);
-                fis.close();
-                String s = new String(sig);
-                return s.equals("ojn\0");
+                RandomAccessFile f = new RandomAccessFile(file.getAbsolutePath(),"r");
+                ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 4, 8);
+                buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
+                int signature = buffer.getInt();
+                f.close();
+                System.out.println(signature+"");
+                return (signature == OJN_SIGNATURE);
             }catch(IOException e){
-                e.printStackTrace();
+                Util.log(e);
             }
             return false;
         }
 
 	public static OJNChart parseFile(File file)
 	{
-		OJNChart header = new OJNChart();
+		OJNChart chart = new OJNChart();
 		try{
 			RandomAccessFile f = new RandomAccessFile(file.getAbsolutePath(),"r");
-                        byte[] sig = new byte[4];
-                        f.read(sig); // jump songid
-                        f.read(sig);
-                        String s = new String(sig);
-                        if(!s.equals("ojn\0"))throw new BadFileException("Not a OJN file");
-
 			ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, 300);
 			buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
-			header.source = file;
-			readHeader(header, buffer, f, file.getParentFile());
+			chart.source = file;
+			readHeader(chart, buffer, f, file.getParentFile());
                         buffer = null;
 			f.close();
 		}catch(IOException e){ Util.die(e); }
-		return header;
+		return chart;
 	}
 
-	private static void readHeader(OJNChart header, ByteBuffer buffer, RandomAccessFile f, File parent) throws BadFileException
+	private static void readHeader(OJNChart chart, ByteBuffer buffer, RandomAccessFile f, File parent) throws BadFileException
 	{
 		int songid = buffer.getInt();
-		byte signature[] = new byte[4];
-		buffer.get(signature);
+		int signature = buffer.getInt();
+		if(signature != OJN_SIGNATURE)throw new BadFileException("Not a OJN file");
+
 		byte encoder_value[] = new byte[4];
 		buffer.get(encoder_value);
 		int genre = buffer.getInt();
@@ -123,31 +119,31 @@ public class OJNParser
 				cv_data = new byte[cover_size];
 				buffer.get(cv_data);
 			}
-			header.cover = Toolkit.getDefaultToolkit().createImage(cv_data);
-		}catch(Exception e){}
+			chart.cover = Toolkit.getDefaultToolkit().createImage(cv_data);
+		}catch(Exception e){Util.log(e);}
 
-		header.level = level;
-		header.title = bytes2string(title);
-		header.artist = bytes2string(artist);
-		header.genre = genre_map[(genre<0||genre>10)?10:genre];
-		header.bpm = bpm;
-		header.note_count = note_count;
-		header.noter = bytes2string(noter);
-		header.duration = time;
-		header.sample_file = new File(parent, bytes2string(ojm_file));
+		chart.level = level;
+		chart.title = bytes2string(title);
+		chart.artist = bytes2string(artist);
+		chart.genre = genre_map[(genre<0||genre>10)?10:genre];
+		chart.bpm = bpm;
+		chart.note_count = note_count;
+		chart.noter = bytes2string(noter);
+		chart.duration = time;
+		chart.sample_file = new File(parent, bytes2string(ojm_file));
 
 		//ojn specific fields
-		header.note_offsets = note_offsets;
+		chart.note_offsets = note_offsets;
 	}
 
-	public static List<Event> parseChart(OJNChart header, int rank)
+	public static List<Event> parseChart(OJNChart chart, int rank)
 	{
 		ArrayList<Event> event_list = new ArrayList<Event>();
 		try{
-			RandomAccessFile f = new RandomAccessFile(header.getSource().getAbsolutePath(), "r");
+			RandomAccessFile f = new RandomAccessFile(chart.getSource().getAbsolutePath(), "r");
 
-			int start = header.getNoteOffsets()[rank];
-			int end = header.getNoteOffsets()[rank+1];
+			int start = chart.getNoteOffsets()[rank];
+			int end = chart.getNoteOffsets()[rank+1];
 
 			ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, start, end - start);
 			buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);

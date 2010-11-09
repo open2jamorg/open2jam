@@ -20,8 +20,7 @@ import org.open2jam.render.lwjgl.SoundManager;
 
 public class BMSParser
 {
-
-	private static FileFilter bms_filter = new FileFilter(){
+	private static final FileFilter bms_filter = new FileFilter(){
 		public boolean accept(File f){
 			String s = f.getName().toLowerCase();
 			return (!f.isDirectory()) && (s.endsWith(".bms") || s.endsWith(".bme"));
@@ -38,32 +37,31 @@ public class BMSParser
 
 	public static BMSChart parseFile(File file)
 	{
-		BMSChart header = new BMSChart();
+		BMSChart chart = new BMSChart();
 
-		header.source = file;
-		header.bms = file.listFiles(bms_filter);
-		header.level = new int[header.bms.length];
-		header.bpm = new int[header.bms.length];
+		chart.source = file;
+		chart.bms = file.listFiles(bms_filter);
+		chart.level = new int[chart.bms.length];
+		chart.bpm = new int[chart.bms.length];
 		
-		Integer[] ranks = new Integer[header.bms.length];
-		int got = 0;
-		for(int i=0;i<header.bms.length;i++)
+		chart.rank_map = new HashMap<Integer, Integer>();
+		for(int i=0;i<chart.bms.length;i++)
 		{
 			try{
-				Integer rank = parseBMSHeader(header.bms[i], header, i);
-				ranks[got] = rank;
-				got++;
+				Integer rank = parseBMSHeader(chart.bms[i], chart, i);
+				if(rank == null)rank = 3;
+				chart.rank_map.put(3-rank, i);
 			}catch(UnsupportedOperationException e){continue;}
 		}
-		return header;
+		return chart;
 	}
 
-	private static Integer parseBMSHeader(File f, BMSChart header, int idx) throws BadFileException
+	private static Integer parseBMSHeader(File f, BMSChart chart, int idx) throws BadFileException
 	{
 		BufferedReader r = null;
 		try{
 			r = new BufferedReader(new FileReader(f));
-		}catch(FileNotFoundException e){}
+		}catch(FileNotFoundException e){Util.warn(e);return null;}
 
 		int playlevel = 0;
 		Integer rank = null;
@@ -121,7 +119,7 @@ public class BMSParser
 					throw new UnsupportedOperationException("LNOBJ Not supported yet.");
 				}
                                 if(cmd.equals("#STAGEFILE")){
-                                        header.image_cover = new File(f.getParent(),st.nextToken("").trim());
+                                        chart.image_cover = new File(f.getParent(),st.nextToken("").trim());
 				}
 				if(cmd.startsWith("#WAV")){
 					int id = Integer.parseInt(cmd.replaceFirst("#WAV",""), 36);
@@ -133,23 +131,23 @@ public class BMSParser
 		}
 		}catch(IOException e){Util.log(e);}
 
-		header.level[idx] = playlevel;
-		header.title = title;
-		header.artist = artist;
-		header.genre = genre;
-		header.bpm[idx] = bpm;
-		header.sample_files = sample_files;
-		header.lntype = lntype;
+		chart.level[idx] = playlevel;
+		chart.title = title;
+		chart.artist = artist;
+		chart.genre = genre;
+		chart.bpm[idx] = bpm;
+		chart.sample_files = sample_files;
+		chart.lntype = lntype;
 		return rank;
 	}
 
-	public static List<Event> parseChart(BMSChart header, int rank)
+	public static List<Event> parseChart(BMSChart chart, int rank)
 	{
                 ArrayList<Event> event_list = new ArrayList<Event>();
 		BufferedReader r = null;
 		String line = null;
 		try{
-			r = new BufferedReader(new FileReader(header.bms[rank]));
+			r = new BufferedReader(new FileReader(chart.bms[rank]));
 		}catch(FileNotFoundException e){Util.log(e);}
 
 		HashMap<Integer, Double> bpm_map = new HashMap<Integer, Double>();
@@ -224,7 +222,7 @@ public class BMSParser
 				if(channel > 50){
 					Boolean b = ln_buffer.get(channel);
 					if(b != null && b == true){
-						if(header.lntype == 2){
+						if(chart.lntype == 2){
 							if(value == 0){
 							event_list.add(new Event(ec, measure, p, value, Event.Flag.RELEASE));
 							ln_buffer.put(channel, false);

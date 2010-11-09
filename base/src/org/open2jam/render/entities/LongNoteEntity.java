@@ -2,20 +2,23 @@ package org.open2jam.render.entities;
 
 import org.open2jam.render.SpriteList;
 import org.open2jam.render.Render;
+import org.open2jam.render.Sprite;
 
 public class LongNoteEntity extends NoteEntity
 {
 	protected SpriteList body_frames;
+	protected Sprite body_sprite;
 
 	protected Double end_y = null;
 
         boolean played = false;
 
-	public LongNoteEntity(Render r, SpriteList head_refs, SpriteList body_refs, double x, double y, int sample_value)
+	public LongNoteEntity(Render r, SpriteList head_frames, SpriteList body_frames, double x, double y, int sample_value)
 	{
-		super(r,head_refs,x,y,sample_value);
-		this.body_frames = body_refs;
+		super(r,head_frames,x,y,sample_value);
+		this.body_frames = body_frames;
 		bounds.height = 0;
+		body_sprite = body_frames.get(0);
 	}
 
 	public void setEndY(double ey)
@@ -24,29 +27,30 @@ public class LongNoteEntity extends NoteEntity
 		bounds.height = bounds.y - end_y;
 	}
 
-    @Override
+	@Override
 	public void move(long delta)
 	{
 		super.move(delta);
+		body_sprite = body_frames.get(nextFrame);
 		if(end_y != null)end_y += delta * dy;
 	}
 
-    @Override
+	@Override
 	public void draw()
 	{
-		frames.get(nextFrame).draw(bounds.x,bounds.y);
+		sprite.draw(bounds.x,bounds.y);
 
-                double end = (end_y == null) ? -10 : end_y;
+		double end = (end_y == null) ? -10 : end_y;
 
-                double p = bounds.y - body_frames.get(nextFrame).getHeight();
-                while(p > end){
-                        body_frames.get(nextFrame).draw(bounds.x, p);
-                        p -= body_frames.get(nextFrame).getHeight();
-                }
-                frames.get(nextFrame).draw(bounds.x,end);
+		double p = bounds.y - body_sprite.getHeight();
+		while(p > end){
+			body_sprite.draw(bounds.x, p);
+			p -= body_sprite.getHeight();
+		}
+		sprite.draw(bounds.x,end);
 	}
 
-    @Override
+	@Override
     	public void judgment()
 	{
             if(!played){

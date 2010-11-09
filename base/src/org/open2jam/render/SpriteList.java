@@ -1,9 +1,10 @@
 package org.open2jam.render;
 
+import java.util.ArrayList;
 /** SpriteList is a container for sprites.
 *** list of sprites with a framespeed attribute.
 **/
-public class SpriteList extends java.util.ArrayList<Sprite>
+public class SpriteList extends ArrayList<Sprite>
 {
 	/** the frame change speed in milliseconds */
 	private double framespeed;

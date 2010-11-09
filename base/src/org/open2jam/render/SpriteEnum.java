@@ -1,0 +1,22 @@
+package org.open2jam.render;
+
+public enum SpriteEnum
+{
+	HEAD_NOTE_1,
+	HEAD_NOTE_2,
+	HEAD_NOTE_3,
+	HEAD_NOTE_4,
+	HEAD_NOTE_5,
+	HEAD_NOTE_6,
+	HEAD_NOTE_7,
+	BODY_NOTE_1,
+	BODY_NOTE_2,
+	BODY_NOTE_3,
+	BODY_NOTE_4,
+	BODY_NOTE_5,
+	BODY_NOTE_6,
+	BODY_NOTE_7,
+	MEASURE_MARK,
+	JUDGMENT_LINE;
+
+}

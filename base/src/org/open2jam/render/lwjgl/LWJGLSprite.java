@@ -108,26 +108,24 @@ public class LWJGLSprite implements Sprite {
 		
 		// draw a quad textured to match the sprite
 		GL11.glBegin(GL11.GL_QUADS);
-		{
-			GL11.glTexCoord2f(u, v);
-			GL11.glVertex2f(0, 0);
 
-			GL11.glTexCoord2f(u, z);
-			GL11.glVertex2f(0, height);
+		GL11.glTexCoord2f(u, v);
+		GL11.glVertex2f(0, 0);
 
-			GL11.glTexCoord2f(w, z);
-			GL11.glVertex2f(width,height);
+		GL11.glTexCoord2f(u, z);
+		GL11.glVertex2f(0, height);
 
-			GL11.glTexCoord2f(w, v);
-			GL11.glVertex2f(width,0);
-		}
+		GL11.glTexCoord2f(w, z);
+		GL11.glVertex2f(width,height);
+
+		GL11.glTexCoord2f(w, v);
+		GL11.glVertex2f(width,0);
+
 		GL11.glEnd();
 		
 		// restore the model view matrix to prevent contamination
 		GL11.glPopMatrix();
 	}
-
-
 
 	/** draw the sprite.
 	** the same as draw(int,int)

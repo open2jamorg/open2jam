@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
+import java.io.ByteArrayInputStream;
 
 import org.open2jam.render.lwjgl.SoundManager;
 import org.open2jam.Util;
@@ -11,6 +12,9 @@ import org.open2jam.Util;
 
 public class OJMParser
 {
+	/** the xor mask used in the M30 format */
+	private static final byte[] nami = new byte[]{0x6E, 0x61, 0x6D, 0x69};
+
 	public static HashMap<Integer,Integer> parseFile(File file)
 	{
 		try{
@@ -56,6 +60,7 @@ public class OJMParser
 
 		for(int i=0; i<sample_count; i++)
 		{
+			// reached the end of the file before the samples_count
                         if(buffer.remaining() < 52){
                             Util.log("Wrong number of samples on OJM header");
                             break;
@@ -78,7 +83,7 @@ public class OJMParser
 			if(nami_encoded > 0)nami_xor(sample_data);
 
 			int id = SoundManager.newBuffer(
-				new OggInputStream(new java.io.ByteArrayInputStream(sample_data))
+				new OggInputStream(new ByteArrayInputStream(sample_data))
 			);
                         int value = ref;
                         if(unk_sample_type == 0){
@@ -93,7 +98,6 @@ public class OJMParser
 		return samples;
 	}
 
-	private static byte[] nami = new byte[]{0x6E, 0x61, 0x6D, 0x69};
 	private static void nami_xor(byte[] array)
 	{
 		for(int i=0;i+3<array.length;i+=4)

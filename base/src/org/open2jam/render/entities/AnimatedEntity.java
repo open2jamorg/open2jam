@@ -32,6 +32,7 @@ public class AnimatedEntity extends Entity
 	}
 
 	/** move the entity and change frame if necessary **/
+    @Override
 	public void move(long delta)
 	{
 		super.move(delta);

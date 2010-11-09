@@ -12,12 +12,14 @@ public class BMSChart implements Chart
 {
     protected int lntype;
 
+    protected Map<Integer, Integer> rank_map;
+
     protected File source;
     protected File[] bms;
     public File getSource() { return source; }
 
     protected int[] level;
-    public int getLevel(int rank) { return level[rank]; }
+    public int getLevel(int rank) { return level[rank_map.get(rank)]; }
 
     protected int max_rank;
     public int getMaxRank() {
@@ -41,12 +43,12 @@ public class BMSChart implements Chart
 
     protected Map<Integer, File> sample_files;
     public Map<Integer,Integer> getSamples(int rank) {
-        return BMSParser.loadSamples(this, rank);
+        return BMSParser.loadSamples(this, rank_map.get(rank));
     }
 
     protected int[] bpm;
     public double getBPM(int rank) {
-        return bpm[rank];
+        return bpm[rank_map.get(rank)];
     }
 
     public int getNoteCount(int rank) { return 0; }
@@ -64,6 +66,6 @@ public class BMSChart implements Chart
     public String getNoter() { return ""; }
 
     public List<Event> getEvents(int rank) {
-        return BMSParser.parseChart(this, rank);
+        return BMSParser.parseChart(this, rank_map.get(rank));
     }
 }

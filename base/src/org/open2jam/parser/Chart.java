@@ -3,12 +3,13 @@ package org.open2jam.parser;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
-/** this encapsulates only the header of a file.
+import java.awt.Image;
+/** this encapsulates a song chart.
 *** in case there's more than one rank(difficulty)
 *** for the song, the rank integer follows this pattern:
 *** 0 - easy, 1 - normal, 2 - hard, 3 - very hard, ... 
 *** there's no upper bound.
-**/ 
+**/
 public interface Chart
 {
 	/** the File object to the source file of this header */
@@ -43,7 +44,7 @@ public interface Chart
 	public int getDuration(int rank);
 
 	/** a image cover, representing the song */
-	public java.awt.Image getCover();
+	public Image getCover();
 
         /** this should return the list of events from this chart at this rank */
         public List<Event> getEvents(int rank);

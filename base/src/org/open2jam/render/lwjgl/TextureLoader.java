@@ -9,7 +9,6 @@ import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -76,7 +75,7 @@ public class TextureLoader {
        IntBuffer tmp = createIntBuffer(1); 
        GL11.glGenTextures(tmp); 
        return tmp.get(0);
-    } 
+    }
     
     /**
      * Load a texture
@@ -90,7 +89,7 @@ public class TextureLoader {
         
         if (tex != null)return tex;
         
-        tex = getTexture(resource,
+        tex = createTexture(resource,
                          GL11.GL_TEXTURE_2D, // target
                          GL11.GL_RGBA,     // dst pixel format
                          GL11.GL_LINEAR, // min filter (unused)
@@ -113,7 +112,7 @@ public class TextureLoader {
      * @return The loaded texture
      * @throws IOException Indicates a failure to access the resource
      */
-    public Texture getTexture(URL resource, 
+    public Texture createTexture(URL resource, 
                               int target, 
                               int dstPixelFormat, 
                               int minFilter, 
@@ -123,8 +122,8 @@ public class TextureLoader {
 
         BufferedImage image = loadImage(resource);
 
-	int texw = get2Fold(image.getWidth(null));
-	int texh = get2Fold(image.getHeight(null));
+	int texw = getNextPOT(image.getWidth(null));
+	int texh = getNextPOT(image.getHeight(null));
         
         // create the texture ID for this texture 
         int textureID = createTextureID(); 
@@ -169,13 +168,13 @@ public class TextureLoader {
      * @param fold The target number
      * @return The power of 2
      */
-    private int get2Fold(int fold) {
+    private int getNextPOT(int fold) {
         int ret = 2;
         while (ret < fold) {
             ret *= 2;
         }
         return ret;
-    } 
+    }
     
 	/**
 	* Convert the buffered image to a texture
@@ -187,25 +186,21 @@ public class TextureLoader {
 	*/
 	private ByteBuffer convertImageData(BufferedImage image)
 	{
-		ByteBuffer imageBuffer = null; 
-		WritableRaster raster;
-		BufferedImage texImage;
-
-		int srcw, srch;
-		srcw = image.getWidth(null);
-		srch = image.getHeight(null);
-
-		int texWidth = get2Fold(srcw);
-		int texHeight = get2Fold(srch);
+		int texWidth = getNextPOT(image.getWidth(null));
+		int texHeight = getNextPOT(image.getHeight(null));
 
 		// create a raster that can be used by OpenGL as a source
 		// for a texture
+		BufferedImage texImage;
 		if (image.getColorModel().hasAlpha()) {
-			raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,texWidth,texHeight,4,null);
-			texImage = new BufferedImage(glAlphaColorModel,raster,false,new Properties());
-		} else {
-			raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,texWidth,texHeight,3,null);
-			texImage = new BufferedImage(glColorModel,raster,false,new Properties());
+			texImage = new BufferedImage(glAlphaColorModel,
+			Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,texWidth,texHeight,4,null),
+			false,new Properties());
+		}
+		else {
+			texImage = new BufferedImage(glColorModel,
+			Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,texWidth,texHeight,3,null),
+			false,new Properties());
 		}
 		
 		// copy the source image into the produced image
@@ -218,10 +213,11 @@ public class TextureLoader {
 		// that be used by OpenGL to produce a texture.
 		byte[] data = ((DataBufferByte) texImage.getRaster().getDataBuffer()).getData(); 
 
-		imageBuffer = ByteBuffer.allocateDirect(data.length); 
+		ByteBuffer imageBuffer = imageBuffer = ByteBuffer.allocateDirect(data.length); 
 		imageBuffer.order(ByteOrder.nativeOrder()); 
 		imageBuffer.put(data, 0, data.length); 
 		imageBuffer.flip();
+		g.dispose();
 
 		return imageBuffer; 
 	}
@@ -249,11 +245,5 @@ public class TextureLoader {
       temp.order(ByteOrder.nativeOrder());
 
       return temp.asIntBuffer();
-    }
-
-    /** verify if a number is a power of 2.
-     * just a helper function for getTexture3D */
-    protected static boolean isPowerOfTwo(int n) {  
-      return ((n & (n - 1)) == 0) && n > 0;  
     }
 }

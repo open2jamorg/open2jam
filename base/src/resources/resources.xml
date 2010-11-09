@@ -70,8 +70,12 @@
 	<sprite x="225" y="151" w="28" h="5" file="main.png" />
 	<sprite x="225" y="159" w="28" h="5" file="main.png" />
 </spritelist>
-<spritelist id="measure_mark" framespeed="5">
+<spritelist id="MEASURE_MARK" framespeed="5">
 	<sprite x="225" y="134" w="188" h="3" file="main.png" />
 	<sprite x="225" y="138" w="188" h="3" file="main.png" />
+</spritelist>
+<spritelist id="JUDGMENT_LINE" framespeed="5">
+	<sprite x="224" y="1" w="191" h="64" file="main.png" />
+	<sprite x="224" y="66" w="191" h="64" file="main.png" />
 </spritelist>
 </Resources>

@@ -403,7 +403,7 @@ public class OggInputStream extends FilterInputStream {
 		// check the endianes of the computer.
 		final boolean bigEndian = ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;
 		
-		if (block.synthesis(packet) == 0) { 
+		if (block.synthesis(packet) == 0) {
 			// test for success!
 			dspState.synthesis_blockin(block);
 		}
