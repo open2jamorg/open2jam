@@ -252,7 +252,7 @@ public class Render implements GameWindowCallback
 				buffer_offset -= measure_size * fractional_measure;
 				entities_matrix.get(0).add(
 					new MeasureEntity(this,
-					sprite_map.get("measure_mark"),
+					sprite_map.get("MEASURE_MARK"),
 					screen_x_offset, buffer_offset+6)
 				);
 				buffer_measure++;
