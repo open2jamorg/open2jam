@@ -23,7 +23,7 @@ import javax.swing.table.TableRowSorter;
 
 import org.open2jam.Util;
 import org.open2jam.parser.Chart;
-import org.open2jam.parser.ChartHeader;
+import org.open2jam.parser.Chart;
 import org.open2jam.parser.ChartParser;
 import org.open2jam.render.Render;
 
@@ -42,7 +42,7 @@ public class Interface extends javax.swing.JFrame
     private DisplayMode[] display_modes;
     private ChartModelLoader task;
     private int rank = 0;
-    private ChartHeader selected_header;
+    private Chart selected_header;
     private int last_model_idx;
     private final TableRowSorter table_sorter;
 
@@ -225,7 +225,7 @@ public class Interface extends javax.swing.JFrame
                     .addComponent(lbl_time1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(bt_play)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(7, Short.MAX_VALUE))
         );
 
         lbl_dir.setText("choose a dir..");
@@ -322,7 +322,7 @@ public class Interface extends javax.swing.JFrame
                     .addGroup(panel_settingLayout.createSequentialGroup()
                         .addComponent(lbl_hispeed)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(js_hispeed)
+                        .addComponent(js_hispeed, javax.swing.GroupLayout.DEFAULT_SIZE, 66, Short.MAX_VALUE)
                         .addGap(102, 102, 102))
                     .addGroup(panel_settingLayout.createSequentialGroup()
                         .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -387,7 +387,7 @@ public class Interface extends javax.swing.JFrame
         table_scroll.setViewportView(table_songlist);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel1.setText("Render Preview 2");
+        jLabel1.setText("Source");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -486,7 +486,6 @@ public class Interface extends javax.swing.JFrame
 
     private void bt_playActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_playActionPerformed
 
-        final Chart c = ChartParser.parseFile(selected_header, rank);
         final double hispeed = (Double) js_hispeed.getValue();
 
         final DisplayMode dm;
@@ -506,7 +505,7 @@ public class Interface extends javax.swing.JFrame
         final boolean vsync = jc_vsync.isSelected();
         final boolean fs = jc_full_screen.isSelected();
 
-        Render r = new Render(c, hispeed);
+        Render r = new Render(selected_header, rank, hispeed);
         try {
             r.setDisplay(dm, vsync, fs);
         } catch (Exception ex) {

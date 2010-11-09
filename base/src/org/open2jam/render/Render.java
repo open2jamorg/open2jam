@@ -54,6 +54,9 @@ public class Render implements GameWindowCallback
 	/** the bpm at which the entities are falling */
 	private double bpm;
 
+        /** the rank of the chart */
+        private final int rank;
+
 	/** the hispeed */
 	private final double hispeed;
 
@@ -92,10 +95,10 @@ public class Render implements GameWindowCallback
             ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
         }
 
-
-	public Render(Chart c, double hispeed)
+	public Render(Chart c, int rank, double hispeed)
 	{
 		this.chart = c;
+                this.rank = rank;
 		this.hispeed = hispeed;
 		window = ResourceFactory.get().getGameWindow();
 	}
@@ -119,7 +122,7 @@ public class Render implements GameWindowCallback
 		viewport = 0.8 * window.getResolutionHeight();
 		measure_size = 0.8 * hispeed * viewport;
 		buffer_offset = viewport;
-		setBPM(chart.getHeader().getBPM(chart.getRank()));
+		setBPM(chart.getBPM(rank));
 
 		entities_matrix = new ArrayList<List<Entity>>();
 		entities_matrix.add(new ArrayList<Entity>()); // layer 0 -- measure marks
@@ -149,7 +152,7 @@ public class Render implements GameWindowCallback
 		}
 
                 // load up initial buffer
-                buffer_iterator = chart.getEvents().iterator();
+                buffer_iterator = chart.getEvents(rank).iterator();
 		update_note_buffer();
 
                 // create sound sources
@@ -161,7 +164,7 @@ public class Render implements GameWindowCallback
                 }catch(OpenALException e){Util.warn("Couldn't create enough sources("+MAX_SOURCES+")");}
 
                 // get the chart sound samples
-                samples = chart.getHeader().getSamples(chart.getRank());
+                samples = chart.getSamples(rank);
 
 		lastLoopTime = SystemTimer.getTime();
 	}

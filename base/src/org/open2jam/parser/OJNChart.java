@@ -1,13 +1,11 @@
 package org.open2jam.parser;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 
-public class OJNHeader implements ChartHeader
+public class OJNChart implements Chart
 {
-	/** the internal format of this header */
-	public ChartParser.Formats getSourceType() { return ChartParser.Formats.OJN; }
-
 	/** full path to the source file of this header */
 	protected File source;
 	public File getSource() { return source; }
@@ -56,4 +54,8 @@ public class OJNHeader implements ChartHeader
 
 	protected int note_offsets[];
 	public int[] getNoteOffsets() { return note_offsets; }
+
+    public List<Event> getEvents(int rank) {
+        return OJNParser.parseChart(this, rank);
+    }
 }

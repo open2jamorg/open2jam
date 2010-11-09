@@ -57,7 +57,7 @@ public class OJMParser
 		for(int i=0; i<sample_count; i++)
 		{
                         if(buffer.remaining() < 52){
-                            Util.warn("Wrong number of samples on OJM header");
+                            Util.log("Wrong number of samples on OJM header");
                             break;
                         }
 			byte[] sample_name = new byte[32];

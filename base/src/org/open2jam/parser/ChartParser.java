@@ -11,29 +11,12 @@ public class ChartParser
 	/** this is a static class */
 	private ChartParser() {}
 
-	/** the names of the extensions supported.
-	*** UNKNOWN is a special one, for when no extension matches.
-	**/
-	public enum Formats { OJN, BMS, UNKNOWN };
-
 	/** parse and returns a ChartHeader object */
-	public static ChartHeader parseFileHeader(File file)
+	public static Chart parseFile(File file)
 	{
-		if(OJNParser.canRead(file))return OJNParser.parseFileHeader(file);
-		if(BMSParser.canRead(file))return BMSParser.parseFileHeader(file);
+		if(OJNParser.canRead(file))return OJNParser.parseFile(file);
+		if(BMSParser.canRead(file))return BMSParser.parseFile(file);
 
 		throw new UnsupportedOperationException("File ["+file+"] not supported");
-	}
-
-	/** parse and return the whole Chart representation */
-        public static Chart parseFile(ChartHeader h, int rank)
-	{
-                if(h instanceof BMSHeader){
-                    return BMSParser.parseFile((BMSHeader) h,rank);
-                }
-                if(h instanceof OJNHeader){
-                    return OJNParser.parseFile((OJNHeader) h,rank);
-                }
-		throw new UnsupportedOperationException("File format ["+h.getSourceType()+"] not supported");
 	}
 }

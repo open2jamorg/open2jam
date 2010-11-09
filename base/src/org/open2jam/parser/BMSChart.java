@@ -2,15 +2,15 @@ package org.open2jam.parser;
 
 import java.awt.Image;
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
-import org.open2jam.parser.ChartParser.Formats;
+import javax.imageio.ImageIO;
+import org.open2jam.Util;
 
-public class BMSHeader implements ChartHeader
+public class BMSChart implements Chart
 {
-
     protected int lntype;
-
-    public Formats getSourceType() { return Formats.BMS; }
 
     protected File source;
     protected File[] bms;
@@ -53,9 +53,17 @@ public class BMSHeader implements ChartHeader
 
     public int getDuration(int rank) { return 0; }
 
+    protected File image_cover;
     public Image getCover() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+            return ImageIO.read(image_cover);
+        } catch (IOException ex) {Util.warn(ex);}
+        return null;
     }
 
     public String getNoter() { return ""; }
+
+    public List<Event> getEvents(int rank) {
+        return BMSParser.parseChart(this, rank);
+    }
 }

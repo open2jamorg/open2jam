@@ -10,7 +10,10 @@ import java.util.regex.Matcher;
 import java.util.NoSuchElementException;
 import java.io.FileNotFoundException;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.open2jam.Util;
 import org.open2jam.render.lwjgl.SoundManager;
@@ -33,9 +36,9 @@ public class BMSParser
 		return bms.length > 0;
 	}
 
-	public static BMSHeader parseFileHeader(File file)
+	public static BMSChart parseFile(File file)
 	{
-		BMSHeader header = new BMSHeader();
+		BMSChart header = new BMSChart();
 
 		header.source = file;
 		header.bms = file.listFiles(bms_filter);
@@ -55,7 +58,7 @@ public class BMSParser
 		return header;
 	}
 
-	private static Integer parseBMSHeader(File f, BMSHeader header, int idx) throws BadFileException
+	private static Integer parseBMSHeader(File f, BMSChart header, int idx) throws BadFileException
 	{
 		BufferedReader r = null;
 		try{
@@ -103,6 +106,7 @@ public class BMSParser
 				}
 				if(cmd.equals("#PLAYER")){
 					player = Integer.parseInt(st.nextToken());
+                                        if(player != 1)throw new UnsupportedOperationException("Not supported yet.");
 					continue;
 				}
 				if(cmd.equals("#BPM")){
@@ -116,6 +120,9 @@ public class BMSParser
 				if(cmd.equals("#LNOBJ")){
 					throw new UnsupportedOperationException("LNOBJ Not supported yet.");
 				}
+                                if(cmd.equals("#STAGEFILE")){
+                                        header.image_cover = new File(f.getParent(),st.nextToken("").trim());
+				}
 				if(cmd.startsWith("#WAV")){
 					int id = Integer.parseInt(cmd.replaceFirst("#WAV",""), 36);
 					sample_files.put(id, new File(f.getParent(),st.nextToken("").trim()));
@@ -124,9 +131,7 @@ public class BMSParser
 			}catch(NoSuchElementException e){}
 			 catch(NumberFormatException e){ throw new BadFileException("unparsable number @ "+cmd); }
 		}
-		}catch(java.io.IOException e){e.printStackTrace();}
-
-		if(player != 1)throw new UnsupportedOperationException("Not supported yet.");
+		}catch(IOException e){Util.log(e);}
 
 		header.level[idx] = playlevel;
 		header.title = title;
@@ -138,9 +143,9 @@ public class BMSParser
 		return rank;
 	}
 
-	public static Chart parseFile(BMSHeader header, int rank)
+	public static List<Event> parseChart(BMSChart header, int rank)
 	{
-		Chart chart = new Chart(header, rank);
+                ArrayList<Event> event_list = new ArrayList<Event>();
 		BufferedReader r = null;
 		String line = null;
 		try{
@@ -174,7 +179,7 @@ public class BMSParser
 			
 			if(channel == 2){ // time signature
 				double value = Double.parseDouble(matcher.group(3));
-				chart.add(new Event(Event.Channel.TIME_SIGNATURE,measure,0,value,Event.Flag.NONE));
+				event_list.add(new Event(Event.Channel.TIME_SIGNATURE,measure,0,value,Event.Flag.NONE));
 				continue;
 			}
 
@@ -186,7 +191,7 @@ public class BMSParser
 					int value = Integer.parseInt(events[i], 16);
 					if(value == 0)continue;
 					double p = ((double)i)/events.length;
-					chart.add(new Event(Event.Channel.BPM_CHANGE,measure,p,value,Event.Flag.NONE));
+					event_list.add(new Event(Event.Channel.BPM_CHANGE,measure,p,value,Event.Flag.NONE));
 				}
 				continue;
 			}
@@ -196,7 +201,7 @@ public class BMSParser
 					if(events[i].equals("00"))continue;
 					double value = bpm_map.get(Integer.parseInt(events[i], 36));
 					double p = ((double)i)/events.length;
-					chart.add(new Event(Event.Channel.BPM_CHANGE,measure,p,value,Event.Flag.NONE));
+					event_list.add(new Event(Event.Channel.BPM_CHANGE,measure,p,value,Event.Flag.NONE));
 				}
 				continue;
 			}
@@ -220,33 +225,35 @@ public class BMSParser
 					Boolean b = ln_buffer.get(channel);
 					if(b != null && b == true){
 						if(header.lntype == 2){
-							if(value == 0)
-							chart.add(new Event(ec, measure, p, value, Event.Flag.RELEASE));
+							if(value == 0){
+							event_list.add(new Event(ec, measure, p, value, Event.Flag.RELEASE));
 							ln_buffer.put(channel, false);
+                                                    }
 						}else{
-							if(value > 0)
-							chart.add(new Event(ec, measure, p, value, Event.Flag.RELEASE));
+							if(value > 0){
+							event_list.add(new Event(ec, measure, p, value, Event.Flag.RELEASE));
 							ln_buffer.put(channel, false);
+                                                    }
 						}
 					}
 					else{
 						if(value > 0){
 							ln_buffer.put(channel, true);
-							chart.add(new Event(ec, measure, p, value, Event.Flag.HOLD));
+							event_list.add(new Event(ec, measure, p, value, Event.Flag.HOLD));
 						}
 					}
 				}
 				else{
 					if(value == 0)continue;
-					chart.add(new Event(ec, measure, p, value, Event.Flag.NONE));
+					event_list.add(new Event(ec, measure, p, value, Event.Flag.NONE));
 				}
 			}
 		}
 		}catch(Exception e){Util.log(e);}
-		return chart;
+		return event_list;
 	}
 
-	public static HashMap<Integer,Integer> loadSamples(BMSHeader h, int rank)
+	public static HashMap<Integer,Integer> loadSamples(BMSChart h, int rank)
 	{
 		HashMap<Integer,Integer> samples = new HashMap<Integer,Integer>();
 		for(Map.Entry<Integer,File> entry : h.sample_files.entrySet())
@@ -257,11 +264,5 @@ public class BMSParser
 			}catch(Exception e){Util.log(e);}
 		}
 		return samples;
-	}
-
-	public static void main(String[] args)
-	{
-		BMSHeader a = (BMSHeader)parseFileHeader(new File(args[0]));
-		parseFile(a, Integer.parseInt(args[1]));
 	}
 }

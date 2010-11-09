@@ -9,14 +9,14 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.SwingWorker;
-import org.open2jam.parser.ChartHeader;
+import org.open2jam.parser.Chart;
 import org.open2jam.parser.ChartParser;
 
 /**
  *
  * @author fox
  */
-public class ChartModelLoader extends SwingWorker<ChartTableModel,ChartHeader> {
+public class ChartModelLoader extends SwingWorker<ChartTableModel,Chart> {
 
     private ChartTableModel table_model;
     private File dir;
@@ -33,7 +33,7 @@ public class ChartModelLoader extends SwingWorker<ChartTableModel,ChartHeader> {
         for(int i=0;i<files.size();i++)
         {
             try{
-                publish(ChartParser.parseFileHeader(files.get(i)));
+                publish(ChartParser.parseFile(files.get(i)));
             }catch(UnsupportedOperationException e){}
             setProgress((int)(i/perc));
         }
@@ -43,8 +43,8 @@ public class ChartModelLoader extends SwingWorker<ChartTableModel,ChartHeader> {
 
 
     @Override
-     protected void process(List<ChartHeader> chunks) {
-         for (ChartHeader row : chunks) {
+     protected void process(List<Chart> chunks) {
+         for (Chart row : chunks) {
              table_model.addRow(row);
          }
      }

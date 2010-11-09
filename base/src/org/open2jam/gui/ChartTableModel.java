@@ -10,7 +10,7 @@ import java.util.List;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
-import org.open2jam.parser.ChartHeader;
+import org.open2jam.parser.Chart;
 
 /**
  *
@@ -18,7 +18,7 @@ import org.open2jam.parser.ChartHeader;
  */
 public class ChartTableModel implements TableModel
 {
-    private List<ChartHeader> items;
+    private List<Chart> items;
     private String[] col_names = new String[] { "Name", "Level", "Genre" };
     private int rank;
     
@@ -27,7 +27,7 @@ public class ChartTableModel implements TableModel
     public ChartTableModel()
     {
         listeners = new ArrayList<TableModelListener>();
-        items = new ArrayList<ChartHeader>();
+        items = new ArrayList<Chart>();
     }
     
     public void clear()
@@ -35,7 +35,7 @@ public class ChartTableModel implements TableModel
         items.clear();
     }
 
-    public void addRow(ChartHeader h)
+    public void addRow(Chart h)
     {
         items.add(h);
         fireListeners();
@@ -47,7 +47,7 @@ public class ChartTableModel implements TableModel
         fireListeners();
     }
 
-    public ChartHeader getRow(int row)
+    public Chart getRow(int row)
     {
         return items.get(row);
     }

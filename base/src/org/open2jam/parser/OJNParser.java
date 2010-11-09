@@ -7,6 +7,9 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.open2jam.Util;
 
 public class OJNParser
@@ -32,9 +35,9 @@ public class OJNParser
             return false;
         }
 
-	public static OJNHeader parseFileHeader(File file)
+	public static OJNChart parseFile(File file)
 	{
-		OJNHeader header = new OJNHeader();
+		OJNChart header = new OJNChart();
 		try{
 			RandomAccessFile f = new RandomAccessFile(file.getAbsolutePath(),"r");
                         byte[] sig = new byte[4];
@@ -53,7 +56,7 @@ public class OJNParser
 		return header;
 	}
 
-	private static void readHeader(OJNHeader header, ByteBuffer buffer, RandomAccessFile f, File parent) throws BadFileException
+	private static void readHeader(OJNChart header, ByteBuffer buffer, RandomAccessFile f, File parent) throws BadFileException
 	{
 		int songid = buffer.getInt();
 		byte signature[] = new byte[4];
@@ -137,9 +140,9 @@ public class OJNParser
 		header.note_offsets = note_offsets;
 	}
 
-	public static Chart parseFile(OJNHeader header, int rank)
+	public static List<Event> parseChart(OJNChart header, int rank)
 	{
-		Chart chart = new Chart(header, rank);
+		ArrayList<Event> event_list = new ArrayList<Event>();
 		try{
 			RandomAccessFile f = new RandomAccessFile(header.getSource().getAbsolutePath(), "r");
 
@@ -148,13 +151,13 @@ public class OJNParser
 
 			ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, start, end - start);
 			buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
-			readNoteBlock(chart, buffer);
+			readNoteBlock(event_list, buffer);
 			f.close();
 		}catch(Exception e){ Util.die(e); }
-		return chart;
+		return event_list;
 	}
 
-	private static void readNoteBlock(Chart chart, ByteBuffer buffer) throws Exception
+	private static void readNoteBlock(List<Event> event_list, ByteBuffer buffer) throws Exception
 	{
             while(buffer.hasRemaining())
             {
@@ -186,7 +189,7 @@ public class OJNParser
                         float v = buffer.getFloat();
                         if(v == 0)continue;
 
-                        chart.add(new Event(channel,measure,position,v,Event.Flag.NONE));
+                        event_list.add(new Event(channel,measure,position,v,Event.Flag.NONE));
                     }else{ // note event
                         short value = buffer.getShort();
                         int unk = buffer.get();
@@ -195,21 +198,21 @@ public class OJNParser
 
                         value--;
                         if(type == 0){
-                                chart.add(new Event(channel,measure,position,value,Event.Flag.NONE));
+                                event_list.add(new Event(channel,measure,position,value,Event.Flag.NONE));
                         }
                         else if(type == 2){
-                            chart.add(new Event(channel,measure,position,value,Event.Flag.HOLD));
+                            event_list.add(new Event(channel,measure,position,value,Event.Flag.HOLD));
                         }
                         else if(type == 3){
-                            chart.add(new Event(channel,measure,position,value,Event.Flag.RELEASE));
+                            event_list.add(new Event(channel,measure,position,value,Event.Flag.RELEASE));
                         }
                         else if(type == 4){ // M### auto-play
-                            chart.add(new Event(channel,measure,position,1000+value,Event.Flag.RELEASE));
+                            event_list.add(new Event(channel,measure,position,1000+value,Event.Flag.RELEASE));
                         }
                     }
                 }
             }
-            java.util.Collections.sort(chart.events);
+            Collections.sort(event_list);
 	}
 
 	private static String bytes2string(byte[] ch)
