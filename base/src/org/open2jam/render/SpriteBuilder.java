@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Stack;
 import java.net.URL;
 import java.util.EnumMap;
+import java.util.HashMap;
 import org.open2jam.Util;
 
 public class SpriteBuilder
@@ -16,7 +17,7 @@ public class SpriteBuilder
 	Stack<Map<String,String>> atts_stack;
 
 	Stack<Sprite> buffer;
-	EnumMap<SpriteEnum,SpriteList> result;
+	HashMap<String,SpriteList> result;
 
 	private static String FILE_PATH_PREFIX = "/resources/";
 
@@ -25,7 +26,7 @@ public class SpriteBuilder
 		call_stack = new Stack<Keyword>();
 		atts_stack = new Stack<Map<String,String>>();
 		buffer = new Stack<Sprite>();
-		result = new EnumMap<SpriteEnum,SpriteList>(SpriteEnum.class);
+		result = new HashMap<String,SpriteList>();
 	}
 	
 	public void parseStart(String s, Map<String,String> atts)
@@ -59,7 +60,7 @@ public class SpriteBuilder
 			double framespeed = Integer.parseInt(atts.get("framespeed"));
 			framespeed /= 1000; // spritelist need framespeed in milliseconds
 			try{
-				SpriteEnum id = SpriteEnum.valueOf(atts.get("id"));
+				String id = atts.get("id");
 				SpriteList sl = new SpriteList(framespeed);
 				sl.addAll(buffer);
 				result.put(id,sl);
@@ -68,7 +69,7 @@ public class SpriteBuilder
 		}
 	}
 
-	public EnumMap<SpriteEnum,SpriteList> getResult()
+	public HashMap<String,SpriteList> getResult()
 	{
 		return result;
 	}
