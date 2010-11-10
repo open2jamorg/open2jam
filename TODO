@@ -6,6 +6,8 @@
 
 - add combo counter
 
+- branch implement JOGL - see if it's worth the trouble
+
 - rescale textures if the resolution isn't 800x600
 
 - test the BPM modifier
