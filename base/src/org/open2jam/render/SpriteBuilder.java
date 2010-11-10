@@ -3,7 +3,6 @@ package org.open2jam.render;
 import java.util.Map;
 import java.util.Stack;
 import java.net.URL;
-import java.util.EnumMap;
 import java.util.HashMap;
 import org.open2jam.Util;
 

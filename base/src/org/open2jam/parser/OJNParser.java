@@ -21,19 +21,19 @@ public class OJNParser
 
         public static boolean canRead(File file)
         {
-            if(file.isDirectory())return false;
-            try{
-                RandomAccessFile f = new RandomAccessFile(file.getAbsolutePath(),"r");
-                ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 4, 8);
-                buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
-                int signature = buffer.getInt();
-                f.close();
-                System.out.println(signature+"");
-                return (signature == OJN_SIGNATURE);
-            }catch(IOException e){
-                Util.log(e);
-            }
-            return false;
+            return file.getName().endsWith(".ojn");
+//            if(file.isDirectory())return false;
+//            try{
+//                RandomAccessFile f = new RandomAccessFile(file.getAbsolutePath(),"r");
+//                ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 4, 8);
+//                buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
+//                int signature = buffer.getInt();
+//                f.close();
+//                return (signature == OJN_SIGNATURE);
+//            }catch(IOException e){
+//                Util.log(e);
+//            }
+//            return false;
         }
 
 	public static OJNChart parseFile(File file)
@@ -120,7 +120,9 @@ public class OJNParser
 				buffer.get(cv_data);
 			}
 			chart.cover = Toolkit.getDefaultToolkit().createImage(cv_data);
-		}catch(Exception e){Util.log(e);}
+		}catch(IOException e){
+                    Util.log(e.toString()+": fail map ["+chart.getSource().getName()+"] from["+note_offsets[3]+"] to ["+cover_size+"]");
+                }
 
 		chart.level = level;
 		chart.title = bytes2string(title);
@@ -213,7 +215,8 @@ public class OJNParser
 
 	private static String bytes2string(byte[] ch)
 	{
-		int i; for(i=0;i<ch.length&&ch[i]!=0;i++); // find \0 terminator
+		int i = 0;
+                while(ch[i]!=0 && i<ch.length)i++; // find \0 terminator
 		try{
 			return new String(ch,0,i);
 		}catch(Exception e){Util.die(e);}

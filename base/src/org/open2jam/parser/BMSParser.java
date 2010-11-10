@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -248,6 +249,7 @@ public class BMSParser
 			}
 		}
 		}catch(Exception e){Util.log(e);}
+                Collections.sort(event_list);
 		return event_list;
 	}
 
