@@ -1,5 +1,8 @@
 package org.open2jam.render;
 
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.net.URL;
 import org.open2jam.render.lwjgl.LWJGLGameWindow;
 import org.open2jam.render.lwjgl.LWJGLSprite;
 
@@ -85,28 +88,34 @@ public class ResourceFactory {
 
 	/**
 	 * Create or get a sprite which displays the image that is pointed
-	 * to in the classpath by "ref"
+	 * to in the class-path by "ref"
 	 * 
 	 * @param ref A reference to the image to load
 	 * @return A sprite that can be drawn onto the current graphics context.
 	 */
-	public Sprite getSprite(SpriteID ref) {
+	public Sprite getSprite(URL ref, Rectangle slice) {
 		if (window == null) {
 			throw new RuntimeException("Attempt to retrieve sprite before game window was created");
 		}
 		switch (renderingType) {
 			case OPENGL_LWJGL:
 			{
-				return new LWJGLSprite((LWJGLGameWindow) window,ref);
+				return new LWJGLSprite((LWJGLGameWindow) window,ref, slice);
 			}
 		}
 		throw new RuntimeException("Unknown rendering type: "+renderingType);
 	}
 
-	public Sprite[] getSprites(SpriteID refs[])
-	{
-		Sprite array[] = new Sprite[refs.length];
-		for(int i=0;i<refs.length;i++)array[i] = getSprite(refs[i]);
-		return array;
-	}
+        public Sprite getSprite(BufferedImage image) {
+            if (window == null) {
+                    throw new RuntimeException("Attempt to retrieve sprite before game window was created");
+            }
+            switch (renderingType) {
+                    case OPENGL_LWJGL:
+                    {
+                            return new LWJGLSprite((LWJGLGameWindow) window, image);
+                    }
+            }
+            throw new RuntimeException("Unknown rendering type: "+renderingType);
+        }
 }

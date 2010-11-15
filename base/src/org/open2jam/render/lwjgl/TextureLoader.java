@@ -84,20 +84,23 @@ public class TextureLoader {
      * @return The loaded texture
      * @throws IOException Indicates a failure to access the resource
      */
-    public Texture getTexture(URL resource) throws IOException {
+    public Texture getTexture(URL resource) throws IOException
+    {
         Texture tex = table.get(resource);
-        
         if (tex != null)return tex;
-        
-        tex = createTexture(resource,
+        BufferedImage image = loadImage(resource);
+        tex = createTexture(image);
+        table.put(resource,tex);
+        return tex;
+    }
+
+    public Texture createTexture(BufferedImage image) throws IOException
+    {
+       return createTexture(image,
                          GL11.GL_TEXTURE_2D, // target
                          GL11.GL_RGBA,     // dst pixel format
                          GL11.GL_LINEAR, // min filter (unused)
                          GL11.GL_LINEAR);
-        
-        table.put(resource,tex);
-        
-        return tex;
     }
     
     /**
@@ -112,15 +115,13 @@ public class TextureLoader {
      * @return The loaded texture
      * @throws IOException Indicates a failure to access the resource
      */
-    public Texture createTexture(URL resource, 
+    public Texture createTexture(BufferedImage image,
                               int target, 
                               int dstPixelFormat, 
                               int minFilter, 
                               int magFilter) throws IOException 
     {
         int srcPixelFormat = 0;
-
-        BufferedImage image = loadImage(resource);
 
 	int texw = getNextPOT(image.getWidth(null));
 	int texh = getNextPOT(image.getHeight(null));

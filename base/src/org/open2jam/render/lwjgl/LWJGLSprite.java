@@ -1,9 +1,12 @@
 package org.open2jam.render.lwjgl;
 
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URL;
 import org.lwjgl.opengl.GL11;
+import org.open2jam.Util;
 import org.open2jam.render.Sprite;
-import org.open2jam.render.SpriteID;
 
 /**
  * Implementation of sprite that uses an OpenGL quad and a texture
@@ -25,9 +28,6 @@ public class LWJGLSprite implements Sprite {
 	/** The height in pixels of this sprite */
 	private int height;
 
-	/** the id which describes this sprite */
-	private SpriteID spriteID;
-
 	/** the coordinates for the texture */
 	private float u, v, w, z;
 	
@@ -37,39 +37,45 @@ public class LWJGLSprite implements Sprite {
 	 * @param window The window in which the sprite will be displayed
 	 * @param ref A reference to the image on which this sprite should be based
 	 */
-	public LWJGLSprite(LWJGLGameWindow window,SpriteID ref) {
+	public LWJGLSprite(LWJGLGameWindow window,URL ref, Rectangle slice) {
 		try {
-			texture = window.getTextureLoader().getTexture(ref.getURL());
-
-			if(ref.getSlice() == null){
-				x = 0;
-				y = 0;
-				width = texture.getWidth();
-				height = texture.getHeight();
-			}else{
-				x = ref.getSlice().x;
-				y = ref.getSlice().y;
-				width = ref.getSlice().width;
-				height = ref.getSlice().height;
-			}
-			u = ((float)x/texture.getWidth()); // top-left x
-			v = ((float)y/texture.getHeight()); // top-left y
-
-			w = ((float)(x+width)/texture.getWidth()); // bottom-right x
-			z = ((float)(y+height)/texture.getHeight()); // bottom-right y
-
+			texture = window.getTextureLoader().getTexture(ref);
 		} catch (IOException e) {
-			// a tad abrupt, but our purposes if you can't find a 
-			// sprite's image you might as well give up.
-			System.err.println("Unable to load texture: "+ref.getURL());
-			System.exit(0);
+                    Util.warn(e);
 		}
-		this.spriteID = ref;
+                if(slice == null){
+                        x = 0;
+                        y = 0;
+                        width = texture.getWidth();
+                        height = texture.getHeight();
+                }else{
+                        x = slice.x;
+                        y = slice.y;
+                        width = slice.width;
+                        height = slice.height;
+                }
+                init();
 	}
 
-	public SpriteID getID() {
-		return spriteID;
-	}
+    public LWJGLSprite(LWJGLGameWindow window, BufferedImage image) {
+        try{
+            texture = window.getTextureLoader().createTexture(image);
+        }catch(IOException e){
+            Util.warn(e);
+        }
+        x = 0; y = 0;
+        width = texture.getWidth();
+        height = texture.getHeight();
+        init();
+    }
+
+    private void init(){
+        u = ((float)x/texture.getWidth()); // top-left x
+        v = ((float)y/texture.getHeight()); // top-left y
+
+        w = ((float)(x+width)/texture.getWidth()); // bottom-right x
+        z = ((float)(y+height)/texture.getHeight()); // bottom-right y
+    }
 	
 	/**
 	 * Get the width of this sprite in pixels

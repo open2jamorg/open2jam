@@ -1,6 +1,6 @@
 package org.open2jam.parser;
 
-import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -56,7 +56,7 @@ public class BMSChart implements Chart
     public int getDuration(int rank) { return 0; }
 
     protected File image_cover;
-    public Image getCover() {
+    public BufferedImage getCover() {
         try {
             return ImageIO.read(image_cover);
         } catch (IOException ex) {Util.warn(ex);}

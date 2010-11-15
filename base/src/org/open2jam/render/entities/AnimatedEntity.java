@@ -1,5 +1,6 @@
 package org.open2jam.render.entities;
 
+import org.open2jam.parser.Event;
 import org.open2jam.render.SpriteList;
 
 /** an animated entity.
@@ -19,20 +20,27 @@ public class AnimatedEntity extends Entity
 	**/
 	protected double sub_frame;
 
-	public AnimatedEntity(SpriteList sl)
+	public AnimatedEntity(SpriteList sl, Event.Channel ch)
 	{
-		this(sl, 0, 0);
+		this(sl, ch, 0, 0);
 	}
 
-	public AnimatedEntity(SpriteList frames, double x, double y)
+	public AnimatedEntity(SpriteList frames, Event.Channel ch, double x, double y)
 	{
-		super(frames.get(0),x,y);
+		super(frames.get(0),ch, x,y);
 		this.frames = frames;
 		nextFrame = 0;
 	}
 
+        protected AnimatedEntity(AnimatedEntity org) {
+            super(org);
+            this.frames = org.frames;
+            this.nextFrame = org.nextFrame;
+            this.sub_frame = org.sub_frame;
+        }
+
 	/** move the entity and change frame if necessary **/
-    @Override
+        @Override
 	public void move(long delta)
 	{
 		super.move(delta);
@@ -43,4 +51,9 @@ public class AnimatedEntity extends Entity
 		nextFrame %= frames.size(); // loops over
 		sprite = frames.get(nextFrame);
 	}
+
+    @Override
+    public AnimatedEntity copy(){
+        return new AnimatedEntity(this);
+    }
 }

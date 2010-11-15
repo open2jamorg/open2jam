@@ -3,7 +3,6 @@ package org.open2jam.parser;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -110,19 +109,8 @@ public class OJNParser
 		note_offsets[2] = buffer.getInt();
 		note_offsets[3] = buffer.getInt();
 
-		try{
-			buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, note_offsets[3], cover_size);
-			byte[] cv_data;
-			if(buffer.hasArray()){
-				cv_data = buffer.array();
-			}else{
-				cv_data = new byte[cover_size];
-				buffer.get(cv_data);
-			}
-			chart.cover = Toolkit.getDefaultToolkit().createImage(cv_data);
-		}catch(IOException e){
-                    Util.log(e.toString()+": fail map ["+chart.getSource().getName()+"] from["+note_offsets[3]+"] to ["+cover_size+"]");
-                }
+                chart.note_offsets = note_offsets;
+                chart.cover_size = cover_size;
 
 		chart.level = level;
 		chart.title = bytes2string(title);

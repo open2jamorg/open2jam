@@ -21,15 +21,26 @@ public class SampleEntity extends Entity
     {
         this.render = r;
         this.value = value;
-        bounds = new Rectangle2D.Double(0,y,0,0);
+        this.x = 0;
+        this.y = y;
+        this.width = 0;
+        this.height = 0;
     }
 
+    private SampleEntity(SampleEntity org) {
+        super(org);
+        this.value = org.value;
+        this.render = org.render;
+    }
+
+    @Override
     public void move(long delta)
     {
             setYMove(render.getNoteSpeed());
             super.move(delta);
     }
 
+    @Override
     public void judgment()
     {
          render.queueSample(value);
@@ -37,5 +48,10 @@ public class SampleEntity extends Entity
     }
 
     
+    @Override
     public void draw() {}
+
+    public SampleEntity copy(){
+        return new SampleEntity(this);
+    }
 }

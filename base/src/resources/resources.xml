@@ -1,81 +1,157 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Resources>
-<spritelist id="HEAD_NOTE_1" frames="3" framespeed="12">
-	<sprite x="225" y="142" w="28" h="7" file="main.png" />
-	<sprite x="225" y="150" w="28" h="7" file="main.png" />
-	<sprite x="225" y="158" w="28" h="7" file="main.png" />
-</spritelist>
-<spritelist id="BODY_NOTE_1" frames="3" framespeed="12">
-	<sprite x="225" y="143" w="28" h="5" file="main.png" />
-	<sprite x="225" y="151" w="28" h="5" file="main.png" />
-	<sprite x="225" y="159" w="28" h="5" file="main.png" />
-</spritelist>
-<spritelist id="HEAD_NOTE_2" framespeed="12">
-	<sprite x="254" y="142" w="22" h="7" file="main.png" />
-	<sprite x="254" y="150" w="22" h="7" file="main.png" />
-	<sprite x="254" y="158" w="22" h="7" file="main.png" />
-</spritelist>
-<spritelist id="BODY_NOTE_2" framespeed="12">
-	<sprite x="254" y="143" w="22" h="5" file="main.png" />
-	<sprite x="254" y="151" w="22" h="5" file="main.png" />
-	<sprite x="254" y="159" w="22" h="5" file="main.png" />
-</spritelist>
-<spritelist id="HEAD_NOTE_3" framespeed="12">
-	<sprite x="225" y="142" w="28" h="7" file="main.png" />
-	<sprite x="225" y="150" w="28" h="7" file="main.png" />
-	<sprite x="225" y="158" w="28" h="7" file="main.png" />
-</spritelist>
-<spritelist id="BODY_NOTE_3" framespeed="12">
-	<sprite x="225" y="143" w="28" h="5" file="main.png" />
-	<sprite x="225" y="151" w="28" h="5" file="main.png" />
-	<sprite x="225" y="159" w="28" h="5" file="main.png" />
-</spritelist>
-<spritelist id="HEAD_NOTE_4" framespeed="12">
-	<sprite x="277" y="142" w="32" h="7" file="main.png" />
-	<sprite x="277" y="150" w="32" h="7" file="main.png" />
-	<sprite x="277" y="158" w="32" h="7" file="main.png" />
-</spritelist>
-<spritelist id="BODY_NOTE_4" framespeed="12">
-	<sprite x="277" y="143" w="32" h="5" file="main.png" />
-	<sprite x="277" y="151" w="32" h="5" file="main.png" />
-	<sprite x="277" y="159" w="32" h="5" file="main.png" />
-</spritelist>
-<spritelist id="HEAD_NOTE_5" framespeed="12">
-	<sprite x="225" y="142" w="28" h="7" file="main.png" />
-	<sprite x="225" y="150" w="28" h="7" file="main.png" />
-	<sprite x="225" y="158" w="28" h="7" file="main.png" />
-</spritelist>
-<spritelist id="BODY_NOTE_5" framespeed="12">
-	<sprite x="225" y="143" w="28" h="5" file="main.png" />
-	<sprite x="225" y="151" w="28" h="5" file="main.png" />
-	<sprite x="225" y="159" w="28" h="5" file="main.png" />
-</spritelist>
-<spritelist id="HEAD_NOTE_6" framespeed="12">
-	<sprite x="254" y="142" w="22" h="7" file="main.png" />
-	<sprite x="254" y="150" w="22" h="7" file="main.png" />
-	<sprite x="254" y="158" w="22" h="7" file="main.png" />
-</spritelist>
-<spritelist id="BODY_NOTE_6" framespeed="12">
-	<sprite x="254" y="143" w="22" h="5" file="main.png" />
-	<sprite x="254" y="151" w="22" h="5" file="main.png" />
-	<sprite x="254" y="159" w="22" h="5" file="main.png" />
-</spritelist>
-<spritelist id="HEAD_NOTE_7" framespeed="12">
-	<sprite x="225" y="142" w="28" h="7" file="main.png" />
-	<sprite x="225" y="150" w="28" h="7" file="main.png" />
-	<sprite x="225" y="158" w="28" h="7" file="main.png" />
-</spritelist>
-<spritelist id="BODY_NOTE_7" framespeed="12">
-	<sprite x="225" y="143" w="28" h="5" file="main.png" />
-	<sprite x="225" y="151" w="28" h="5" file="main.png" />
-	<sprite x="225" y="159" w="28" h="5" file="main.png" />
-</spritelist>
-<spritelist id="MEASURE_MARK" framespeed="5">
-	<sprite x="225" y="134" w="188" h="3" file="main.png" />
-	<sprite x="225" y="138" w="188" h="3" file="main.png" />
-</spritelist>
-<spritelist id="JUDGMENT_LINE" framespeed="5">
-	<sprite x="224" y="1" w="191" h="64" file="main.png" />
-	<sprite x="224" y="66" w="191" h="64" file="main.png" />
-</spritelist>
+    <entity id="NOTE_1">
+        <spritelist id="HEAD" frames="3" framespeed="12">
+            <sprite x="225" y="142" w="28" h="7" file="main.png" />
+            <sprite x="225" y="150" w="28" h="7" file="main.png" />
+            <sprite x="225" y="158" w="28" h="7" file="main.png" />
+        </spritelist>
+        <spritelist id="BODY" frames="3" framespeed="12">
+            <sprite x="225" y="143" w="28" h="5" file="main.png" />
+            <sprite x="225" y="151" w="28" h="5" file="main.png" />
+            <sprite x="225" y="159" w="28" h="5" file="main.png" />
+        </spritelist>
+    </entity>
+    <entity id="NOTE_2">
+        <spritelist id="HEAD" framespeed="12">
+            <sprite x="254" y="142" w="22" h="7" file="main.png" />
+            <sprite x="254" y="150" w="22" h="7" file="main.png" />
+            <sprite x="254" y="158" w="22" h="7" file="main.png" />
+        </spritelist>
+        <spritelist id="BODY" framespeed="12">
+            <sprite x="254" y="143" w="22" h="5" file="main.png" />
+            <sprite x="254" y="151" w="22" h="5" file="main.png" />
+            <sprite x="254" y="159" w="22" h="5" file="main.png" />
+        </spritelist>
+    </entity>
+    <entity id="NOTE_3">
+        <spritelist id="HEAD" framespeed="12">
+            <sprite x="225" y="142" w="28" h="7" file="main.png" />
+            <sprite x="225" y="150" w="28" h="7" file="main.png" />
+            <sprite x="225" y="158" w="28" h="7" file="main.png" />
+        </spritelist>
+        <spritelist id="BODY" framespeed="12">
+            <sprite x="225" y="143" w="28" h="5" file="main.png" />
+            <sprite x="225" y="151" w="28" h="5" file="main.png" />
+            <sprite x="225" y="159" w="28" h="5" file="main.png" />
+        </spritelist>
+    </entity>
+    <entity id="NOTE_4">
+        <spritelist id="HEAD" framespeed="12">
+            <sprite x="277" y="142" w="32" h="7" file="main.png" />
+            <sprite x="277" y="150" w="32" h="7" file="main.png" />
+            <sprite x="277" y="158" w="32" h="7" file="main.png" />
+        </spritelist>
+        <spritelist id="BODY" framespeed="12">
+            <sprite x="277" y="143" w="32" h="5" file="main.png" />
+            <sprite x="277" y="151" w="32" h="5" file="main.png" />
+            <sprite x="277" y="159" w="32" h="5" file="main.png" />
+        </spritelist>
+    </entity>
+    <entity id="NOTE_5">
+        <spritelist id="HEAD" framespeed="12">
+            <sprite x="225" y="142" w="28" h="7" file="main.png" />
+            <sprite x="225" y="150" w="28" h="7" file="main.png" />
+            <sprite x="225" y="158" w="28" h="7" file="main.png" />
+        </spritelist>
+        <spritelist id="BODY" framespeed="12">
+            <sprite x="225" y="143" w="28" h="5" file="main.png" />
+            <sprite x="225" y="151" w="28" h="5" file="main.png" />
+            <sprite x="225" y="159" w="28" h="5" file="main.png" />
+        </spritelist>
+    </entity>
+    <entity id="NOTE_6">
+       <spritelist id="HEAD" framespeed="12">
+            <sprite x="254" y="142" w="22" h="7" file="main.png" />
+            <sprite x="254" y="150" w="22" h="7" file="main.png" />
+            <sprite x="254" y="158" w="22" h="7" file="main.png" />
+        </spritelist>
+        <spritelist id="BODY" framespeed="12">
+            <sprite x="254" y="143" w="22" h="5" file="main.png" />
+            <sprite x="254" y="151" w="22" h="5" file="main.png" />
+            <sprite x="254" y="159" w="22" h="5" file="main.png" />
+        </spritelist>
+    </entity>
+    <entity id="NOTE_7">
+        <spritelist id="HEAD" framespeed="12">
+            <sprite x="225" y="142" w="28" h="7" file="main.png" />
+            <sprite x="225" y="150" w="28" h="7" file="main.png" />
+            <sprite x="225" y="158" w="28" h="7" file="main.png" />
+        </spritelist>
+        <spritelist id="BODY" framespeed="12">
+            <sprite x="225" y="143" w="28" h="5" file="main.png" />
+            <sprite x="225" y="151" w="28" h="5" file="main.png" />
+            <sprite x="225" y="159" w="28" h="5" file="main.png" />
+        </spritelist>
+    </entity>
+
+    <entity id="MEASURE_MARK">
+        <spritelist framespeed="5">
+            <sprite x="225" y="134" w="188" h="3" file="main.png" />
+            <sprite x="225" y="138" w="188" h="3" file="main.png" />
+        </spritelist>
+    </entity>
+
+    <entity id="NOTE_PANEL" x="50" y="0" y2="416">
+        <spritelist framespeed="0">
+            <sprite x="208" y="313" w="204" h="1" file="main.png" />
+        </spritelist>
+    </entity>
+
+    <entity id="JUDGMENT_LINE" x="50" y="416">
+        <spritelist framespeed="5">
+            <sprite x="224" y="1" w="191" h="64" file="main.png" />
+            <sprite x="224" y="66" w="191" h="64" file="main.png" />
+        </spritelist>
+    </entity>
+
+    <entity id="KEYBOARD_PANEL" x="46" y="480">
+        <spritelist framespeed="0">
+            <sprite x="208" y="366" w="204" h="120" file="main.png" />
+        </spritelist>
+    </entity>
+
+    <entity id="PRESSED_NOTE_1" x="0" y="487">
+        <spritelist framespeed="0">
+            <sprite x="1" y="315" w="31" h="46" file="main.png" />
+        </spritelist>
+    </entity>
+
+    <entity id="PRESSED_NOTE_2" x="29" y="487">
+        <spritelist framespeed="0">
+            <sprite x="33" y="315" w="22" h="42" file="main.png" />
+        </spritelist>
+    </entity>
+
+    <entity id="PRESSED_NOTE_3" x="51" y="487">
+        <spritelist framespeed="0">
+            <sprite x="56" y="315" w="30" h="46" file="main.png" />
+        </spritelist>
+    </entity>
+
+    <entity id="PRESSED_NOTE_4" x="79" y="487">
+        <spritelist framespeed="0">
+            <sprite x="87" y="315" w="32" h="46" file="main.png" />
+        </spritelist>
+    </entity>
+
+    <entity id="PRESSED_NOTE_5" x="109" y="487">
+        <spritelist framespeed="0">
+            <sprite x="120" y="315" w="30" h="46" file="main.png" />
+        </spritelist>
+    </entity>
+
+    <entity id="PRESSED_NOTE_6" x="139" y="487">
+        <spritelist framespeed="0">
+            <sprite x="151" y="315" w="22" h="42" file="main.png" />
+        </spritelist>
+    </entity>
+
+    <entity id="PRESSED_NOTE_7" x="160" y="487">
+        <spritelist framespeed="0">
+            <sprite x="174" y="315" w="31" h="46" file="main.png" />
+        </spritelist>
+    </entity>
 </Resources>
+
+

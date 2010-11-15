@@ -5,6 +5,9 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+import org.open2jam.ByteBufferInputStream;
 
 import org.open2jam.render.lwjgl.SoundManager;
 import org.open2jam.Util;
@@ -15,29 +18,41 @@ public class OJMParser
 	/** the xor mask used in the M30 format */
 	private static final byte[] nami = new byte[]{0x6E, 0x61, 0x6D, 0x69};
 
+
+        /** the M30 signature, "M30\0" in little endian */
+        private static final int M30_SIGNATURE = 0x0030334D;
+
+        /** the M30 signature, "OMC\0" in little endian */
+        private static final int OMC_SIGNATURE = 0x00434D4F;
+
 	public static HashMap<Integer,Integer> parseFile(File file)
 	{
+                RandomAccessFile f = null;
+                HashMap<Integer,Integer> ret = null;
 		try{
-			RandomAccessFile f = new RandomAccessFile(file,"r");
-			byte[] sig = new byte[4];
-			f.read(sig);
-			String signature = new String(sig);
-			if(signature.equals("M30\0")) {
-				return parseM30(f);
-			}
-			else {
-				f.close();
-				throw new UnsupportedOperationException("["+signature+"] not supported");
-			}
-		}catch(Exception e) {
+			f = new RandomAccessFile(file,"r");
+                        ByteBuffer buffer = f.getChannel().map(java.nio.channels.FileChannel.MapMode.READ_ONLY, 0, 4);
+                        buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
+			int signature = buffer.getInt();
+
+                        switch(signature)
+                        {
+                            case M30_SIGNATURE:ret = parseM30(f);break;
+
+                            case OMC_SIGNATURE:ret = parseOMC(f);break;
+
+                            default:ret = new HashMap<Integer,Integer>();
+                        }
+                        f.close();
+		}catch(IOException e) {
 			Util.warn(e);
 		}
-		return new HashMap<Integer,Integer>();
+		return ret;
 	}
 
-	private static HashMap<Integer,Integer> parseM30(RandomAccessFile f) throws Exception
+	private static HashMap<Integer,Integer> parseM30(RandomAccessFile f) throws IOException
 	{
-		ByteBuffer buffer = f.getChannel().map(java.nio.channels.FileChannel.MapMode.READ_ONLY, 4, 28);
+		ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 4, 28);
 		buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
 
 		// header
@@ -52,7 +67,7 @@ public class OJMParser
 		int payload_size = buffer.getInt();
 		int unk_zero2 = buffer.getInt();
 
-		buffer = f.getChannel().map(java.nio.channels.FileChannel.MapMode.READ_ONLY, 28, payload_size);
+		buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 28, payload_size);
 		buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
 
 		HashMap<Integer,Integer> samples = new HashMap<Integer,Integer>();
@@ -109,4 +124,20 @@ public class OJMParser
 		}
 	}
 
+    private static HashMap<Integer, Integer> parseOMC(RandomAccessFile f) throws IOException
+    {
+        ByteBuffer buffer = f.getChannel().map(java.nio.channels.FileChannel.MapMode.READ_ONLY, 52, 4);
+        buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
+
+        int sample_size = buffer.getInt();
+
+        buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 56, sample_size);
+
+        int id = SoundManager.newBuffer(
+                new OggInputStream(new ByteBufferInputStream(buffer))
+        );
+        HashMap<Integer,Integer> samples = new HashMap<Integer,Integer>();
+        samples.put(1000, id);
+        return samples;
+    }
 }

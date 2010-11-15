@@ -51,4 +51,7 @@ public interface GameWindow {
 	public boolean isKeyPressed(int keyCode);
 
         public void destroy();
+
+        /** manually update the screen */
+        public void update();
 }

@@ -1,11 +1,15 @@
 package org.open2jam.render.entities;
 
 import java.awt.geom.Rectangle2D;
+import org.open2jam.Copyable;
+import org.open2jam.parser.Event;
 import org.open2jam.render.Sprite;
 
-public class Entity
+public class Entity implements Copyable
 {
 	protected Sprite sprite;
+
+        protected Event.Channel channel = Event.Channel.NONE;
 
 	/** The current speed of this entity horizontally (pixels/millisecs) */
 	protected double dx;
@@ -13,24 +17,40 @@ public class Entity
 	protected double dy;
 
 	/** this object stores the position(x,y) and dimensions (width,height) */
-	protected Rectangle2D.Double bounds;
+	protected double x, y, width, height;
 
 	/** when a entity die the render removes it */
 	protected boolean alive = true;
 
-	/** allows contructor extensions */
+	/** allows constructor extensions */
 	protected Entity() {}
 
-	public Entity(Sprite s)
+	public Entity(Sprite s, Event.Channel ch)
 	{
-		this(s,0,0);
+		this(s,ch, 0,0);
 	}
 
-	public Entity(Sprite sp, double x, double y)
+	public Entity(Sprite sp, Event.Channel ch, double x, double y)
 	{
 		this.sprite = sp;
-		bounds = new Rectangle2D.Double(x,y,sprite.getWidth(),sprite.getHeight());
+                this.channel = ch;
+                this.x = x;
+                this.y = y;
+                width = sprite.getWidth();
+                height = sprite.getHeight();
 	}
+
+        protected Entity(Entity org) {
+            this.alive = org.alive;
+            this.channel = org.channel;
+            this.sprite = org.sprite;
+            this.dx = org.dx;
+            this.dy = org.dy;
+            this.x = org.x;
+            this.y = org.y;
+            this.width = org.width;
+            this.height = org.height;
+        }
 
 	public boolean isAlive() { return alive; }
 	
@@ -43,8 +63,8 @@ public class Entity
 	 */
 	public void move(long delta) {
 		// update the location of the entity based on move speeds
-		bounds.x += delta * dx;
-		bounds.y += delta * dy;
+		x += delta * dx;
+		y += delta * dy;
 	}
 	
 	/**
@@ -63,7 +83,7 @@ public class Entity
 	 * Draw this entity to the graphics context provided
 	 */
 	public void draw() {
-		sprite.draw(bounds.x,bounds.y);
+		sprite.draw(x,y);
 	}
 	
 	/**
@@ -71,7 +91,24 @@ public class Entity
 	 * this will be called once, when it hits judgment.
 	 */
 	public void judgment() {}
-	
-	/** return the rectangle object representing the bounds */
-	public Rectangle2D.Double getBounds(){ return bounds; }
+
+
+        public double getX(){ return x;}
+        public double getY(){ return y;}
+        public void setX(double x){ this.x = x;}
+        public void setY(double y){ this.y = y;}
+        
+        public double getWidth(){ return width;}
+        public double getHeight(){ return height;}
+
+
+    public Event.Channel getChannel() {
+        return channel;
+    }
+
+    public Entity copy() {
+        return new Entity(this);
+    }
+
+
 }

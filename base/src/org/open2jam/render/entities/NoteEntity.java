@@ -1,5 +1,6 @@
 package org.open2jam.render.entities;
 
+import org.open2jam.parser.Event;
 import org.open2jam.render.SpriteList;
 import org.open2jam.render.Render;
 
@@ -7,26 +8,46 @@ import org.open2jam.render.Render;
 **/
 public class NoteEntity extends AnimatedEntity
 {
-	protected Render render;
+    protected Render render;
 
-        protected int sample_value;
+    protected int sample_value;
+    private boolean played = false;
 
-	public NoteEntity(Render r, SpriteList sl, double x, double y, int sample_value)
-	{
-		super(sl, x, y);
-		this.render = r;
-                this.sample_value = sample_value;
-	}
+    public NoteEntity(Render r, SpriteList sl, Event.Channel ch, double x, double y)
+    {
+            super(sl, ch, x, y);
+            this.render = r;
+    }
 
-	public void move(long delta)
-	{
-		setYMove(render.getNoteSpeed());
-		super.move(delta);
-	}
+    protected NoteEntity(NoteEntity org) {
+        super(org);
+        this.render = org.render;
+        this.sample_value = org.sample_value;
+        this.played = org.played;
+    }
+    
+    public void setSample(int sample){
+        this.sample_value = sample;
+    }
 
-	public void judgment()
-	{
-                render.queueSample(sample_value);
-		alive = false;
-	}
+    @Override
+    public void move(long delta)
+    {
+            setYMove(render.getNoteSpeed());
+            super.move(delta);
+    }
+
+    @Override
+    public void judgment()
+    {
+        if(!played){
+            render.queueSample(sample_value);
+            played = true;
+        }
+        if(y - height > render.getViewPort())alive = false;
+    }
+
+    public NoteEntity copy(){
+        return new NoteEntity(this);
+    }
 }

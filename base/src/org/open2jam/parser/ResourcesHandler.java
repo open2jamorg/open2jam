@@ -4,15 +4,15 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.Attributes;
 import java.util.HashMap;
 
-import org.open2jam.render.SpriteBuilder;
+import org.open2jam.render.ResourceBuilder;
 
 public class ResourcesHandler extends DefaultHandler
 {
 
 	/** our work is to just defer the nodes to this */
-	private SpriteBuilder ef;
+	private ResourceBuilder ef;
 
-	public ResourcesHandler(SpriteBuilder ef)
+	public ResourcesHandler(ResourceBuilder ef)
 	{
 		this.ef = ef;
 	}

@@ -1,10 +1,10 @@
-- add the judgment line
+- add combo counter
+
+- add support to the volume and pan of the OJN
 
 - workaround ranks in bms
 
 - find out how to extract the samples from OJM and OMC
-
-- add combo counter
 
 - branch implement JOGL - see if it's worth the trouble
 

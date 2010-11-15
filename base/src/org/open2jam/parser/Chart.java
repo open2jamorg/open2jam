@@ -3,7 +3,7 @@ package org.open2jam.parser;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
-import java.awt.Image;
+import java.awt.image.BufferedImage;
 /** this encapsulates a song chart.
 *** in case there's more than one rank(difficulty)
 *** for the song, the rank integer follows this pattern:
@@ -44,7 +44,7 @@ public interface Chart
 	public int getDuration(int rank);
 
 	/** a image cover, representing the song */
-	public Image getCover();
+	public BufferedImage getCover();
 
         /** this should return the list of events from this chart at this rank */
         public List<Event> getEvents(int rank);

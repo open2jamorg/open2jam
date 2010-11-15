@@ -3,6 +3,7 @@ package org.open2jam.parser;
 public class Event implements Comparable<Event>
 {
  	public enum Channel {
+            NONE,
             TIME_SIGNATURE,
             BPM_CHANGE,
             NOTE_1,

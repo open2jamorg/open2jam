@@ -1,8 +1,16 @@
 package org.open2jam.parser;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.Map;
+import javax.imageio.ImageIO;
+import org.open2jam.ByteBufferInputStream;
+import org.open2jam.Util;
 
 public class OJNChart implements Chart
 {
@@ -45,12 +53,22 @@ public class OJNChart implements Chart
 	protected int[] duration;
 	public int getDuration(int rank) { return duration[rank]; }
 
-	/** a image cover, representing the song */
-	protected java.awt.Image cover;
-	public java.awt.Image getCover() { return cover; }
 
-
-	/******* OJN specific fields *******/
+        protected int cover_size;
+	public BufferedImage getCover()
+        {
+            try{
+                RandomAccessFile f = new RandomAccessFile(source, "r");
+                ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, note_offsets[3], cover_size);
+                buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
+                ByteBufferInputStream bis = new ByteBufferInputStream(buffer);
+                f.close();
+                return ImageIO.read(bis);
+            }catch(IOException e){
+                Util.log(e.toString()+": fail map ["+source.getName()+"] from["+note_offsets[3]+"] to ["+cover_size+"]");
+            }
+            return null;
+        }
 
 	protected int note_offsets[];
 	public int[] getNoteOffsets() { return note_offsets; }

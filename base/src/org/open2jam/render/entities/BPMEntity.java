@@ -10,28 +10,44 @@ import org.open2jam.render.Render;
 ***/
 public class BPMEntity extends Entity
 {
-	private double bpm;
-	protected Render render;
+    private double bpm;
+    protected Render render;
 
-	public BPMEntity(Render r, double bpm, double y)
-	{
-		this.render = r;
-		this.bpm = bpm;
-		bounds = new Rectangle2D.Double(0,y,0,0);
-	}
+    public BPMEntity(Render r, double bpm, double y)
+    {
+            this.render = r;
+            this.bpm = bpm;
+            this.x = 0;
+            this.y = y;
+            this.width = 0;
+            this.height = 0;
+    }
 
-	public void move(long delta)
-	{
-		setYMove(render.getNoteSpeed());
-		super.move(delta);
-	}
+    protected BPMEntity(BPMEntity org) {
+        super(org);
+        this.bpm = org.bpm;
+        this.render = org.render;
+    }
 
-	public void judgment()
-	{
-		System.out.println("BPM CHANGE "+bpm);
-		render.setBPM(bpm);
-		alive = false;
-	}
+    @Override
+    public void move(long delta)
+    {
+            setYMove(render.getNoteSpeed());
+            super.move(delta);
+    }
 
-	public void draw() {}
+    @Override
+    public void judgment()
+    {
+            render.setBPM(bpm);
+            alive = false;
+    }
+
+    @Override
+    public void draw() {}
+
+    @Override
+    public BPMEntity copy(){
+        return new BPMEntity(this);
+    }
 }

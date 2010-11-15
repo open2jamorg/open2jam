@@ -107,7 +107,7 @@ while(!eof $OJN && tell $OJN < $endpos)
 			};
 		}
 		next if $channel < 2;
-		printf STDERR "m: %03d, ch: %1d, value: %d\n", $measure, $channel, $value;
+		printf STDERR "m: %03d, ch: %2d, v: %d, t: %d\n", $measure, $channel, $value, $type;
 	}
 }
 
