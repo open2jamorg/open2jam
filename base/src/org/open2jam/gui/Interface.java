@@ -22,7 +22,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableRowSorter;
 
-import org.open2jam.Util;
+import org.open2jam.Logger;
 import org.open2jam.parser.Chart;
 import org.open2jam.parser.Chart;
 import org.open2jam.parser.ChartParser;
@@ -510,7 +510,7 @@ public class Interface extends javax.swing.JFrame
         try {
             r.setDisplay(dm, vsync, fs);
         } catch (Exception ex) {
-            Util.die(ex);
+            Logger.die(ex);
         }
         r.startRendering();
     }//GEN-LAST:event_bt_playActionPerformed
@@ -564,7 +564,7 @@ public class Interface extends javax.swing.JFrame
         try {
             display_modes = Display.getAvailableDisplayModes();
         } catch (LWJGLException ex) {
-            Util.die(ex);
+            Logger.die(ex);
         }
         model_songlist = new ChartTableModel();
     }

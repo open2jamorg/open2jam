@@ -4,7 +4,7 @@ import java.util.Map;
 import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.HashMap;
-import org.open2jam.Util;
+import org.open2jam.Logger;
 import org.open2jam.parser.Event;
 import org.open2jam.render.entities.AnimatedEntity;
 import org.open2jam.render.entities.Entity;
@@ -76,7 +76,7 @@ public class ResourceBuilder
                 SpriteList sl = new SpriteList(framespeed);
                 sl.addAll(sprite_buffer);
                 spritelist_buffer.put(id, sl);
-            }catch(Exception e){ Util.log(e); }
+            }catch(Exception e){ Logger.log(e); }
             sprite_buffer.clear();
             }
             break;
@@ -85,7 +85,7 @@ public class ResourceBuilder
             try{
                 String id = atts.get("id");
                 createEntity(id, atts);
-            }catch(Exception e){ Util.log(e); }
+            }catch(Exception e){ Logger.log(e); }
             spritelist_buffer.clear();
             }break;
         }
@@ -153,7 +153,7 @@ public class ResourceBuilder
         try{
             return Keyword.valueOf(s);
         }catch(IllegalArgumentException e){
-            Util.die(new Exception("Unknown keyword ["+s+"] in resources.xml."));
+            Logger.die(new Exception("Unknown keyword ["+s+"] in resources.xml."));
         }
         return null;
     }

@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import org.lwjgl.opengl.GL11;
-import org.open2jam.Util;
+import org.open2jam.Logger;
 import org.open2jam.render.Sprite;
 
 /**
@@ -41,7 +41,7 @@ public class LWJGLSprite implements Sprite {
 		try {
 			texture = window.getTextureLoader().getTexture(ref);
 		} catch (IOException e) {
-                    Util.warn(e);
+                    Logger.warn(e);
 		}
                 if(slice == null){
                         x = 0;
@@ -61,7 +61,7 @@ public class LWJGLSprite implements Sprite {
         try{
             texture = window.getTextureLoader().createTexture(image);
         }catch(IOException e){
-            Util.warn(e);
+            Logger.warn(e);
         }
         x = 0; y = 0;
         width = texture.getWidth();

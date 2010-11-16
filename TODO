@@ -1,10 +1,12 @@
+- add note effects
+
 - add combo counter
 
 - add support to the volume and pan of the OJN
 
-- workaround ranks in bms
+- capture keyboard pressed keys
 
-- find out how to extract the samples from OJM and OMC
+- workaround ranks in bms
 
 - branch implement JOGL - see if it's worth the trouble
 

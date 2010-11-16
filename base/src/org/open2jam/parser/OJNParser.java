@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.open2jam.Util;
+import org.open2jam.Logger;
 
 public class OJNParser
 {
@@ -46,7 +46,7 @@ public class OJNParser
 			readHeader(chart, buffer, f, file.getParentFile());
                         buffer = null;
 			f.close();
-		}catch(IOException e){ Util.die(e); }
+		}catch(IOException e){ Logger.die(e); }
 		return chart;
 	}
 
@@ -139,7 +139,7 @@ public class OJNParser
 			buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
 			readNoteBlock(event_list, buffer);
 			f.close();
-		}catch(Exception e){ Util.die(e); }
+		}catch(Exception e){ Logger.die(e); }
 		return event_list;
 	}
 
@@ -207,7 +207,7 @@ public class OJNParser
                 while(ch[i]!=0 && i<ch.length)i++; // find \0 terminator
 		try{
 			return new String(ch,0,i);
-		}catch(Exception e){Util.die(e);}
+		}catch(Exception e){Logger.die(e);}
 		return null;
 	}
 }

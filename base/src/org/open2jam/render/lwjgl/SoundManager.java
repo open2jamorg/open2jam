@@ -10,7 +10,7 @@ import java.util.Iterator;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
-import org.open2jam.Util;
+import org.open2jam.Logger;
 
 import org.open2jam.parser.OggInputStream;
 
@@ -29,7 +29,7 @@ public class SoundManager
 		try{
 			AL.create();
 		} catch (Exception e) {
-			Util.die(e);
+			Logger.die(e);
 		}
 		AL10.alGetError();
 		FloatBuffer listenerPos = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });
@@ -44,6 +44,17 @@ public class SoundManager
 		AL10.alListener(AL10.AL_VELOCITY,    listenerVel);
 		AL10.alListener(AL10.AL_ORIENTATION, listenerOri);
 	}
+
+        public static void setGain(int source, float g)
+        {
+            AL10.alSourcef(source, AL10.AL_GAIN, g);
+        }
+
+        public static void setPan(int source, float x)
+        {
+            FloatBuffer pos = BufferUtils.createFloatBuffer(3).put(new float[] { x, 0.0f, 0.0f });
+            AL10.alSource(source, AL10.AL_POSITION, pos);
+        }
 
 	public static int newSource()
 	{
@@ -120,12 +131,41 @@ public class SoundManager
 
 		}catch(Exception e)
 		{
-			Util.die(e);
+			Logger.die(e);
 		}
 
 		sample_buffer.add(buffer.get(0));
 		return buffer.get(0);
 	}
+
+        public static int newBuffer(ByteBuffer buffer, int bits, int channels, int sample_rate)
+        {
+            IntBuffer id_buf = BufferUtils.createIntBuffer(1);
+            AL10.alGenBuffers(id_buf);
+
+            try{
+                org.lwjgl.openal.Util.checkALError();
+
+                int format = -1;
+                if(channels == 1){
+                    if(bits == 8)format = AL10.AL_FORMAT_MONO8;
+                    else format = AL10.AL_FORMAT_MONO16;
+                }else {
+                    if(bits == 8)format = AL10.AL_FORMAT_STEREO8;
+                    else format = AL10.AL_FORMAT_STEREO16;
+                }
+
+                AL10.alBufferData(id_buf.get(0), format, buffer, sample_rate);
+
+                org.lwjgl.openal.Util.checkALError();
+            }
+            catch(Exception e){
+                Logger.die(e);
+            }
+            
+            sample_buffer.add(id_buf.get(0));
+            return id_buf.get(0);
+        }
 
 	public static void killData()
 	{

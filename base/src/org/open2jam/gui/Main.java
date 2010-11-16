@@ -2,7 +2,7 @@ package org.open2jam.gui;
 
 import java.io.File;
 import javax.swing.UIManager;
-import org.open2jam.Util;
+import org.open2jam.Logger;
 
 
 public class Main
@@ -27,7 +27,7 @@ public class Main
                         });
 
 		}catch(Exception e){
-			Util.die(e);
+			Logger.die(e);
 		}
 	}
 

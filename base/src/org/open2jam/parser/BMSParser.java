@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.open2jam.Util;
+import org.open2jam.Logger;
 import org.open2jam.render.lwjgl.SoundManager;
 
 public class BMSParser
@@ -62,7 +62,7 @@ public class BMSParser
 		BufferedReader r = null;
 		try{
 			r = new BufferedReader(new FileReader(f));
-		}catch(FileNotFoundException e){Util.warn(e);return null;}
+		}catch(FileNotFoundException e){Logger.warn(e);return null;}
 
 		int playlevel = 0;
 		Integer rank = null;
@@ -130,7 +130,7 @@ public class BMSParser
 			}catch(NoSuchElementException e){}
 			 catch(NumberFormatException e){ throw new BadFileException("unparsable number @ "+cmd); }
 		}
-		}catch(IOException e){Util.log(e);}
+		}catch(IOException e){Logger.log(e);}
 
 		chart.level[idx] = playlevel;
 		chart.title = title;
@@ -149,7 +149,7 @@ public class BMSParser
 		String line = null;
 		try{
 			r = new BufferedReader(new FileReader(chart.bms[rank]));
-		}catch(FileNotFoundException e){Util.log(e);}
+		}catch(FileNotFoundException e){Logger.log(e);}
 
 		HashMap<Integer, Double> bpm_map = new HashMap<Integer, Double>();
 		HashMap<Integer, Boolean> ln_buffer = new HashMap<Integer, Boolean>();
@@ -248,7 +248,7 @@ public class BMSParser
 				}
 			}
 		}
-		}catch(Exception e){Util.log(e);}
+		}catch(Exception e){Logger.log(e);}
                 Collections.sort(event_list);
 		return event_list;
 	}
@@ -261,7 +261,7 @@ public class BMSParser
 			try{
 				int id = SoundManager.newBuffer(new OggInputStream(new FileInputStream(entry.getValue())));
 				samples.put(entry.getKey(), id);
-			}catch(Exception e){Util.log(e);}
+			}catch(Exception e){Logger.log(e);}
 		}
 		return samples;
 	}

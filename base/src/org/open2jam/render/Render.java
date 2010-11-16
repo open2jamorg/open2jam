@@ -25,7 +25,7 @@ import org.open2jam.render.entities.NoteEntity;
 import org.open2jam.render.entities.SampleEntity;
 import org.open2jam.render.entities.LaneEntity;
 import org.open2jam.render.lwjgl.SoundManager;
-import org.open2jam.Util;
+import org.open2jam.Logger;
 import org.open2jam.render.entities.AnimatedEntity;
 
 public class Render implements GameWindowCallback
@@ -87,7 +87,7 @@ public class Render implements GameWindowCallback
     ** basically, each list is a layer of entities
     ** the layers are rendered in order
     ** so entities at layer X will always be rendered before layer X+1 */
-    private List<List<Entity>> entities_matrix;
+    private List<LinkedList<Entity>> entities_matrix;
     private AnimatedEntity judgment_line;
     private Entity keyboard_panel;
     private LaneEntity note_lane;
@@ -135,8 +135,7 @@ public class Render implements GameWindowCallback
     */
     public void initialise()
     {
-        Sprite s = ResourceFactory.get().getSprite(chart.getCover());
-        s.draw(0, 0);
+        ResourceFactory.get().getSprite(chart.getCover()).draw(0,0);
         window.update();
 
         
@@ -145,15 +144,15 @@ public class Render implements GameWindowCallback
         buffer_offset = viewport;
         setBPM(chart.getBPM(rank));
 
-        entities_matrix = new ArrayList<List<Entity>>();
-        entities_matrix.add(new ArrayList<Entity>()); // layer 0 -- measure marks
-        entities_matrix.add(new ArrayList<Entity>()); // layer 1 -- notes
+        entities_matrix = new ArrayList<LinkedList<Entity>>();
+        entities_matrix.add(new LinkedList<Entity>()); // layer 0 -- measure marks
+        entities_matrix.add(new LinkedList<Entity>()); // layer 1 -- notes
 
         ResourceBuilder sb = new ResourceBuilder(this);
         try {
             SAXParserFactory.newInstance().newSAXParser().parse(resources_xml.openStream(),new ResourcesHandler(sb));
         } catch (Exception e) {
-            Util.die(e);
+            Logger.die(e);
         }
         entity_map = sb.getResult();
 
@@ -193,7 +192,7 @@ public class Render implements GameWindowCallback
 
         try{
         for(int i=0;i<MAX_SOURCES;i++)source_queue.push(SoundManager.newSource()); // creates 32 sources
-        }catch(OpenALException e){Util.warn("Couldn't create enough sources("+MAX_SOURCES+")");}
+        }catch(OpenALException e){Logger.warn("Couldn't create enough sources("+MAX_SOURCES+")");}
 
         // get the chart sound samples
         samples = chart.getSamples(rank);
@@ -232,7 +231,7 @@ public class Render implements GameWindowCallback
         judgment_line.move(delta);
         judgment_line.draw();
 
-        Iterator<List<Entity>> i = entities_matrix.iterator();
+        Iterator<LinkedList<Entity>> i = entities_matrix.iterator();
         while(i.hasNext()) // loop over layers
         {
             // get entity iterator from layer
@@ -258,9 +257,10 @@ public class Render implements GameWindowCallback
         
         buffer_offset += note_speed * delta; // walk with the buffer
 
+        
         if(!buffer_iterator.hasNext() && entities_matrix.get(1).isEmpty() && sources_playing.isEmpty()){
             window.destroy();
-                        windowClosed();
+            windowClosed();
             return;
         }
     }
@@ -299,7 +299,7 @@ public class Render implements GameWindowCallback
                 MeasureEntity m = (MeasureEntity) entity_map.get("MEASURE_MARK").copy();
                 m.setX(screen_x_offset);
                 m.setY(buffer_offset+6);
-                entities_matrix.get(0).add(m);
+                entities_matrix.get(0).push(m);
                 buffer_measure++;
                 fractional_measure = 1;
             }
@@ -312,7 +312,7 @@ public class Render implements GameWindowCallback
                 break;
 
                 case BPM_CHANGE:
-                entities_matrix.get(0).add(new BPMEntity(this,e.getValue(),abs_height));
+                entities_matrix.get(0).push(new BPMEntity(this,e.getValue(),abs_height));
                 break;
 
                 case NOTE_1:case NOTE_2:
@@ -323,7 +323,7 @@ public class Render implements GameWindowCallback
                     n.setX(channel_x_offset.get(e.getChannel()));
                     n.setY(abs_height);
                     n.setSample((int)e.getValue());
-                    entities_matrix.get(1).add(n);
+                    entities_matrix.get(1).push(n);
                 }
                 else if(e.getFlag() == Event.Flag.HOLD){
                     LongNoteEntity ln = (LongNoteEntity) entity_map.get("LONG_"+e.getChannel()).copy();
@@ -331,7 +331,7 @@ public class Render implements GameWindowCallback
                     ln.setY(abs_height);
                     ln.setSample((int)e.getValue());
                     ln_buffer.put(e.getChannel(),ln);
-                    entities_matrix.get(1).add(ln);
+                    entities_matrix.get(1).push(ln);
                 }
                 else if(e.getFlag() == Event.Flag.RELEASE){
                     if(ln_buffer.get(e.getChannel()) == null){
@@ -343,7 +343,7 @@ public class Render implements GameWindowCallback
                 }
                 break;
                 case AUTO_PLAY:
-                entities_matrix.get(0).add(new SampleEntity(this,(int)e.getValue(),abs_height));
+                entities_matrix.get(0).push(new SampleEntity(this,(int)e.getValue(),abs_height));
                 break;
             }
         }

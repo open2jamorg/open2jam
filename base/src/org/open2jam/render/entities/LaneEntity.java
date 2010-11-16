@@ -31,6 +31,7 @@ public class LaneEntity extends Entity
         }
     }
 
+    @Override
     public LaneEntity copy(){
         return new LaneEntity(this);
     }

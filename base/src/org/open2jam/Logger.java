@@ -10,7 +10,7 @@ import javax.swing.JOptionPane;
  *
  * @author fox
  */
-public class Util
+public class Logger
 {
     public static void die(Exception e)
     {

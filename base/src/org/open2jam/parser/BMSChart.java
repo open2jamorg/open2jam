@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
-import org.open2jam.Util;
+import org.open2jam.Logger;
 
 public class BMSChart implements Chart
 {
@@ -59,7 +59,7 @@ public class BMSChart implements Chart
     public BufferedImage getCover() {
         try {
             return ImageIO.read(image_cover);
-        } catch (IOException ex) {Util.warn(ex);}
+        } catch (IOException ex) {Logger.warn(ex);}
         return null;
     }
 

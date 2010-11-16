@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import org.open2jam.ByteBufferInputStream;
-import org.open2jam.Util;
+import org.open2jam.Logger;
 
 public class OJNChart implements Chart
 {
@@ -65,7 +65,7 @@ public class OJNChart implements Chart
                 f.close();
                 return ImageIO.read(bis);
             }catch(IOException e){
-                Util.log(e.toString()+": fail map ["+source.getName()+"] from["+note_offsets[3]+"] to ["+cover_size+"]");
+                Logger.log(e.toString()+": fail map ["+source.getName()+"] from["+note_offsets[3]+"] to ["+cover_size+"]");
             }
             return null;
         }
