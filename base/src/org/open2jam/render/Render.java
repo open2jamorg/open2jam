@@ -335,7 +335,7 @@ public class Render implements GameWindowCallback
                 }
                 else if(e.getFlag() == Event.Flag.RELEASE){
                     if(ln_buffer.get(e.getChannel()) == null){
-                        System.out.println("Attempted to RELEASE note "+e.getChannel());
+                        Logger.log("Attempted to RELEASE note "+e.getChannel());
                     }else{
                         ln_buffer.get(e.getChannel()).setEndY(abs_height);
                         ln_buffer.remove(e.getChannel());
@@ -360,6 +360,10 @@ public class Render implements GameWindowCallback
     {
         Integer buffer = samples.get(sample_value);
         if(buffer == null)return;
+        if(source_queue.isEmpty()){
+            Logger.log("Source queue exausted !");
+            return;
+        }
         Integer source = source_queue.pop();
         SoundManager.play(source, buffer);
         sources_playing.push(source);

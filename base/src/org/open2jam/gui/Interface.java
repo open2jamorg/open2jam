@@ -24,8 +24,6 @@ import javax.swing.table.TableRowSorter;
 
 import org.open2jam.Logger;
 import org.open2jam.parser.Chart;
-import org.open2jam.parser.Chart;
-import org.open2jam.parser.ChartParser;
 import org.open2jam.render.Render;
 
 import org.lwjgl.LWJGLException;
@@ -616,6 +614,8 @@ public class Interface extends javax.swing.JFrame
     }
 
     private void updateInfo() {
+        if(selected_header == null)return;
+        
         lbl_artist.setText(selected_header.getArtist());
         lbl_title.setText(selected_header.getTitle()+" ("+selected_header.getSource().getName()+")");
         lbl_genre.setText(selected_header.getGenre());
