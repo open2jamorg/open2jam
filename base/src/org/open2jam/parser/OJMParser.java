@@ -28,6 +28,46 @@ public class OJMParser
         /** the OJM signature, "OJM\0" in little endian */
         private static final int OJM_SIGNATURE = 0x004D4A4F;
 
+        /* this is a dump from debugging notetool */
+        private static final byte[] REARRANGE_TABLE = new byte[]{
+	0x10, 0x0E, 0x02, 0x09, 0x04, 0x00, 0x07, 0x01,
+	0x06, 0x08, 0x0F, 0x0A, 0x05, 0x0C, 0x03, 0x0D,
+	0x0B, 0x07, 0x02, 0x0A, 0x0B, 0x03, 0x05, 0x0D,
+	0x08, 0x04, 0x00, 0x0C, 0x06, 0x0F, 0x0E, 0x10,
+	0x01, 0x09, 0x0C, 0x0D, 0x03, 0x00, 0x06, 0x09,
+	0x0A, 0x01, 0x07, 0x08, 0x10, 0x02, 0x0B, 0x0E,
+	0x04, 0x0F, 0x05, 0x08, 0x03, 0x04, 0x0D, 0x06,
+	0x05, 0x0B, 0x10, 0x02, 0x0C, 0x07, 0x09, 0x0A,
+	0x0F, 0x0E, 0x00, 0x01, 0x0F, 0x02, 0x0C, 0x0D,
+	0x00, 0x04, 0x01, 0x05, 0x07, 0x03, 0x09, 0x10,
+	0x06, 0x0B, 0x0A, 0x08, 0x0E, 0x00, 0x04, 0x0B,
+	0x10, 0x0F, 0x0D, 0x0C, 0x06, 0x05, 0x07, 0x01,
+	0x02, 0x03, 0x08, 0x09, 0x0A, 0x0E, 0x03, 0x10,
+	0x08, 0x07, 0x06, 0x09, 0x0E, 0x0D, 0x00, 0x0A,
+	0x0B, 0x04, 0x05, 0x0C, 0x02, 0x01, 0x0F, 0x04,
+	0x0E, 0x10, 0x0F, 0x05, 0x08, 0x07, 0x0B, 0x00,
+	0x01, 0x06, 0x02, 0x0C, 0x09, 0x03, 0x0A, 0x0D,
+	0x06, 0x0D, 0x0E, 0x07, 0x10, 0x0A, 0x0B, 0x00,
+	0x01, 0x0C, 0x0F, 0x02, 0x03, 0x08, 0x09, 0x04,
+	0x05, 0x0A, 0x0C, 0x00, 0x08, 0x09, 0x0D, 0x03,
+	0x04, 0x05, 0x10, 0x0E, 0x0F, 0x01, 0x02, 0x0B,
+	0x06, 0x07, 0x05, 0x06, 0x0C, 0x04, 0x0D, 0x0F,
+	0x07, 0x0E, 0x08, 0x01, 0x09, 0x02, 0x10, 0x0A,
+	0x0B, 0x00, 0x03, 0x0B, 0x0F, 0x04, 0x0E, 0x03,
+	0x01, 0x00, 0x02, 0x0D, 0x0C, 0x06, 0x07, 0x05,
+	0x10, 0x09, 0x08, 0x0A, 0x03, 0x02, 0x01, 0x00,
+	0x04, 0x0C, 0x0D, 0x0B, 0x10, 0x05, 0x06, 0x0F,
+	0x0E, 0x07, 0x09, 0x0A, 0x08, 0x09, 0x0A, 0x00,
+	0x07, 0x08, 0x06, 0x10, 0x03, 0x04, 0x01, 0x02,
+	0x05, 0x0B, 0x0E, 0x0F, 0x0D, 0x0C, 0x0A, 0x06,
+	0x09, 0x0C, 0x0B, 0x10, 0x07, 0x08, 0x00, 0x0F,
+	0x03, 0x01, 0x02, 0x05, 0x0D, 0x0E, 0x04, 0x0D,
+	0x00, 0x01, 0x0E, 0x02, 0x03, 0x08, 0x0B, 0x07,
+	0x0C, 0x09, 0x05, 0x0A, 0x0F, 0x04, 0x06, 0x10,
+	0x01, 0x0E, 0x02, 0x03, 0x0D, 0x0B, 0x07, 0x00,
+	0x08, 0x0C, 0x09, 0x06, 0x0F, 0x10, 0x05, 0x0A,
+	0x04, 0x00};
+
 	public static HashMap<Integer,Integer> parseFile(File file)
 	{
                 RandomAccessFile f = null;
@@ -114,7 +154,7 @@ public class OJMParser
                                 value = 1000 + ref;
                         }
                         else if(unk_sample_type != 5){
-                            System.out.println("! WARNING ! unknown sample id type ["+unk_sample_type+"]");
+                           Logger.log("! WARNING ! unknown sample id type ["+unk_sample_type+"]");
                         }
 			samples.put(value, id);
 		}
@@ -122,16 +162,16 @@ public class OJMParser
 		return samples;
 	}
 
-	private static void nami_xor(byte[] array)
-	{
-		for(int i=0;i+3<array.length;i+=4)
-		{
-			array[i+0] ^= nami[0];
-			array[i+1] ^= nami[1];
-			array[i+2] ^= nami[2];
-			array[i+3] ^= nami[3];
-		}
-	}
+    private static void nami_xor(byte[] array)
+    {
+        for(int i=0;i+3<array.length;i+=4)
+        {
+            array[i+0] ^= nami[0];
+            array[i+1] ^= nami[1];
+            array[i+2] ^= nami[2];
+            array[i+3] ^= nami[3];
+        }
+    }
 
     private static HashMap<Integer, Integer> parseOMC(RandomAccessFile f) throws IOException
     {
@@ -173,6 +213,16 @@ public class OJMParser
            buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
            file_offset += chunk_size;
 
+           byte[] buf = new byte[buffer.remaining()];
+           buffer.get(buf);
+
+           buf = rearrange(buf);
+           buf = acc_xor(buf);
+
+           buffer = ByteBuffer.allocateDirect(buf.length);
+           buffer.put(buf);
+           buffer.flip();
+
            int buffer_id = SoundManager.newBuffer(buffer, bits_per_sample, num_channels, sample_rate);
            samples.put(sample_id, buffer_id);
            sample_id++;
@@ -201,6 +251,61 @@ public class OJMParser
        }
 
        return samples;
+    }
+
+    /**
+     * fuck the person who invented this, FUCK YOU!... but with love =$
+     */
+    private static byte[] rearrange(byte[] buf_encoded)
+    {
+        int length = buf_encoded.length;
+        int key = length % 17;             // Let's start to looking for a key
+        int key2 = key;                    // Copy it, we'll need it later
+        key = key << 4;                    // Shift 4 bits left, let's make some room
+        key = key+key2;                    // Yeah, add them! =$
+        key2 = key;                        // Again, we'll need it later
+        key = REARRANGE_TABLE[key];        // Let's see the table... ummm ok! founded
+        int block_size = length / 17;      // Ok, now the block size
+
+        // Let's fill with 0x00 the buffer
+        byte[] buf_plain = new byte[length];
+
+        for(int counter=0;counter<17;counter++) // loopy loop
+        {
+            int block_start_encoded = block_size * counter;	// Where is the start of the enconded block
+            int block_start_plain = block_size * key;	// Where the final plain block will be
+            System.arraycopy(buf_encoded, block_start_encoded, buf_plain, block_start_plain, block_size);
+
+            key2++;
+            key = REARRANGE_TABLE[key2];
+        }
+
+        return buf_plain;
+    }
+
+    /** some weird encryption */
+    private static byte[] acc_xor(byte[] buf)
+    {
+        int keybyte = 0xFF;
+        int counter = 0;
+        int temp = 0;
+        byte this_byte = 0;
+        for(int i=0;i<buf.length;i++)
+        {
+            if(counter > 7){
+                counter = 0;
+                keybyte = temp;
+            }
+            temp = this_byte = buf[i];
+
+            if(((keybyte << counter) & 0x80)!=0){
+                this_byte = (byte) ~this_byte;
+            }
+
+            buf[i] = this_byte;
+            counter++;
+        }
+        return buf;
     }
 
     public static void main(String[] args) throws InterruptedException{
