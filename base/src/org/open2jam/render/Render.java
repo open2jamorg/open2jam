@@ -1,5 +1,6 @@
 package org.open2jam.render;
 
+import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.Map;
@@ -27,6 +28,7 @@ import org.open2jam.render.entities.LaneEntity;
 import org.open2jam.render.lwjgl.SoundManager;
 import org.open2jam.Logger;
 import org.open2jam.render.entities.AnimatedEntity;
+import org.open2jam.render.entities.FlareEffectEntity;
 
 public class Render implements GameWindowCallback
 {
@@ -37,7 +39,7 @@ public class Render implements GameWindowCallback
     private int screen_x_offset;
 
     /** store the sources being played */
-    private final int MAX_SOURCES = 32;
+    private final int MAX_SOURCES = 64;
 
     /** the config xml */
     private static final URL resources_xml = Render.class.getResource("/resources/resources.xml");
@@ -78,7 +80,6 @@ public class Render implements GameWindowCallback
     private Iterator<Event> buffer_iterator;
     private EnumMap<Channel, LongNoteEntity> ln_buffer;
     private EnumMap<Event.Channel,Boolean> notes_pressed;
-    private EnumMap<Channel, Entity> note_press_entities;
 
     /** the bpm at which the entities are falling */
     private double bpm;
@@ -135,8 +136,12 @@ public class Render implements GameWindowCallback
     */
     public void initialise()
     {
-        ResourceFactory.get().getSprite(chart.getCover()).draw(0,0);
-        window.update();
+        BufferedImage img = chart.getCover();
+        if(img != null){
+            ResourceFactory.get().getSprite(img).draw(0,0);
+            window.update();
+        }
+        
 
         
         viewport = 0.8 * window.getResolutionHeight();
@@ -147,6 +152,9 @@ public class Render implements GameWindowCallback
         entities_matrix = new ArrayList<LinkedList<Entity>>();
         entities_matrix.add(new LinkedList<Entity>()); // layer 0 -- measure marks
         entities_matrix.add(new LinkedList<Entity>()); // layer 1 -- notes
+        entities_matrix.add(new LinkedList<Entity>()); // layer 2 -- static keyboard
+        entities_matrix.add(new LinkedList<Entity>()); // layer 3 -- pressed notes
+        entities_matrix.add(new LinkedList<Entity>()); // layer 4 -- effects
 
         ResourceBuilder sb = new ResourceBuilder(this);
         try {
@@ -161,19 +169,18 @@ public class Render implements GameWindowCallback
 
         // the notes pressed buffer
         notes_pressed = new EnumMap<Event.Channel,Boolean>(Event.Channel.class);
-        note_press_entities = new EnumMap<Event.Channel,Entity>(Event.Channel.class);
 
         // build the notes horizontal offset
         channel_x_offset = new EnumMap<Event.Channel,Integer>(Event.Channel.class);
 
-        screen_x_offset = (int) entity_map.get("NOTE_PANEL").getX();
+        // TODO: put this "4" in another place
+        screen_x_offset = (int) entity_map.get("NOTE_PANEL").getX() + 4;
         int off = screen_x_offset;
         for(Event.Channel c : Event.note_channels)
         {
             notes_pressed.put(c, Boolean.FALSE);
-            Entity e = entity_map.get("PRESSED_"+c).copy();
+            Entity e = entity_map.get("PRESSED_"+c);
             e.setX(screen_x_offset+e.getX());
-            note_press_entities.put(c,e);
             channel_x_offset.put(c, off);
             off += entity_map.get(c.toString()).getWidth();
         }
@@ -184,6 +191,8 @@ public class Render implements GameWindowCallback
 
         judgment_line = (AnimatedEntity) entity_map.get("JUDGMENT_LINE").copy();
         keyboard_panel = entity_map.get("KEYBOARD_PANEL").copy();
+        entities_matrix.get(2).add(keyboard_panel);
+        
         note_lane = (LaneEntity) entity_map.get("NOTE_PANEL").copy();
 
         // create sound sources
@@ -207,7 +216,6 @@ public class Render implements GameWindowCallback
     */
     public void frameRendering()
     {
-        //SystemTimer.sleep(10);
         
         // work out how long its been since the last update, this
         // will be used to calculate how far the entities should
@@ -241,20 +249,45 @@ public class Render implements GameWindowCallback
                 Entity e = j.next();
                 e.move(delta); // move the entity
 
-                if(e.getY() >= viewport){ e.judgment(); notes_pressed.put(e.getChannel(), Boolean.TRUE); }
-                if(!e.isAlive())j.remove(); // if dead, remove from list
+                if(e.getY() >= viewport) {
+                    e.judgment();
+
+                    if(e instanceof NoteEntity && notes_pressed.get(e.getChannel()) == false){
+                            Entity ee = entity_map.get("EFFECT_CLICK_1").copy();
+                            ee.setX(e.getX()+e.getWidth()/2-ee.getWidth()/2);
+                            ee.setY(viewport-ee.getHeight()/2);
+                            entities_matrix.get(4).add(ee);
+                            notes_pressed.put(e.getChannel(), true);
+                            
+                            FlareEffectEntity fe = (FlareEffectEntity) entity_map.get("PRESSED_"+e.getChannel()).copy();
+                            fe.setEntityWatch(e);
+                            entities_matrix.get(3).add(fe);
+                            
+//                            if(e instanceof LongNoteEntity){
+//                                fe = (FlareEffectEntity) entity_map.get("EFFECT_LONGFLARE").copy();
+//                                fe.setX(e.getX()+e.getWidth()/2-fe.getWidth()/2);
+//                                fe.setY(viewport-fe.getHeight()/4);
+//                                fe.setEntityWatch(e);
+//                                entities_matrix.get(4).add(fe);
+//                            }
+                    }
+                }
+                if(!e.isAlive()){ // if dead, remove from list
+                    j.remove();
+                    if(e instanceof NoteEntity){
+                        notes_pressed.put(e.getChannel(), false);
+                    }
+                    if(e instanceof LongNoteEntity){
+                        Entity ee = entity_map.get("EFFECT_CLICK_1").copy();
+                        ee.setX(e.getX()+e.getWidth()/2-ee.getWidth()/2);
+                        ee.setY(viewport-ee.getHeight()/2);
+                        entities_matrix.get(4).add(ee);
+                    }
+                }
                 else e.draw(); // or draw itself on screen
             }
         }
-        keyboard_panel.draw();
 
-        for(Event.Channel c : Event.note_channels){
-            if(notes_pressed.get(c)){
-                note_press_entities.get(c).draw();
-            }
-            notes_pressed.put(c, Boolean.FALSE);
-        }
-        
         buffer_offset += note_speed * delta; // walk with the buffer
 
         
@@ -299,7 +332,7 @@ public class Render implements GameWindowCallback
                 MeasureEntity m = (MeasureEntity) entity_map.get("MEASURE_MARK").copy();
                 m.setX(screen_x_offset);
                 m.setY(buffer_offset+6);
-                entities_matrix.get(0).push(m);
+                entities_matrix.get(0).add(m);
                 buffer_measure++;
                 fractional_measure = 1;
             }
@@ -312,7 +345,7 @@ public class Render implements GameWindowCallback
                 break;
 
                 case BPM_CHANGE:
-                entities_matrix.get(0).push(new BPMEntity(this,e.getValue(),abs_height));
+                entities_matrix.get(0).add(new BPMEntity(this,e.getValue(),abs_height));
                 break;
 
                 case NOTE_1:case NOTE_2:
@@ -323,7 +356,7 @@ public class Render implements GameWindowCallback
                     n.setX(channel_x_offset.get(e.getChannel()));
                     n.setY(abs_height);
                     n.setSample((int)e.getValue());
-                    entities_matrix.get(1).push(n);
+                    entities_matrix.get(1).add(n);
                 }
                 else if(e.getFlag() == Event.Flag.HOLD){
                     LongNoteEntity ln = (LongNoteEntity) entity_map.get("LONG_"+e.getChannel()).copy();
@@ -331,7 +364,7 @@ public class Render implements GameWindowCallback
                     ln.setY(abs_height);
                     ln.setSample((int)e.getValue());
                     ln_buffer.put(e.getChannel(),ln);
-                    entities_matrix.get(1).push(ln);
+                    entities_matrix.get(1).add(ln);
                 }
                 else if(e.getFlag() == Event.Flag.RELEASE){
                     if(ln_buffer.get(e.getChannel()) == null){
@@ -343,7 +376,7 @@ public class Render implements GameWindowCallback
                 }
                 break;
                 case AUTO_PLAY:
-                entities_matrix.get(0).push(new SampleEntity(this,(int)e.getValue(),abs_height));
+                entities_matrix.get(0).add(new SampleEntity(this,(int)e.getValue(),abs_height));
                 break;
             }
         }
@@ -364,19 +397,20 @@ public class Render implements GameWindowCallback
             Logger.log("Source queue exausted !");
             return;
         }
-        Integer source = source_queue.pop();
+        Integer source = source_queue.pollFirst();
         SoundManager.play(source, buffer);
-        sources_playing.push(source);
+        sources_playing.add(source);
     }
 
-    private void check_sources() {
+    private void check_sources()
+    {
         Iterator<Integer> it = sources_playing.iterator();
         while(it.hasNext())
         {
             Integer i = it.next();
             if(!SoundManager.isPlaying(i)){
                 it.remove();
-                source_queue.push(i);
+                source_queue.addLast(i);
             }
         }
     }

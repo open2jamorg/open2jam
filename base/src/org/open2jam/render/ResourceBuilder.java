@@ -3,11 +3,14 @@ package org.open2jam.render;
 import java.util.Map;
 import java.net.URL;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.HashMap;
 import org.open2jam.Logger;
 import org.open2jam.parser.Event;
 import org.open2jam.render.entities.AnimatedEntity;
+import org.open2jam.render.entities.EffectEntity;
 import org.open2jam.render.entities.Entity;
+import org.open2jam.render.entities.FlareEffectEntity;
 import org.open2jam.render.entities.LaneEntity;
 import org.open2jam.render.entities.LongNoteEntity;
 import org.open2jam.render.entities.MeasureEntity;
@@ -22,7 +25,7 @@ public class ResourceBuilder
     ArrayDeque<Keyword> call_stack;
     ArrayDeque<Map<String,String>> atts_stack;
 
-    ArrayDeque<Sprite> sprite_buffer;
+    ArrayList<Sprite> sprite_buffer;
     HashMap<String, SpriteList> spritelist_buffer;
     HashMap<String,Entity> result;
 
@@ -35,7 +38,7 @@ public class ResourceBuilder
         this.render = r;
         call_stack = new ArrayDeque<Keyword>();
         atts_stack = new ArrayDeque<Map<String,String>>();
-        sprite_buffer = new ArrayDeque<Sprite>();
+        sprite_buffer = new ArrayList<Sprite>();
         spritelist_buffer = new HashMap<String, SpriteList>();
         result = new HashMap<String,Entity>();
     }
@@ -63,12 +66,12 @@ public class ResourceBuilder
             URL url = ResourceBuilder.class.getResource(FILE_PATH_PREFIX+atts.get("file"));
             if (url == null)throw new RuntimeException("Cannot find resource: "+FILE_PATH_PREFIX+atts.get("file"));
 
-            sprite_buffer.push(ResourceFactory.get().getSprite(url, slice));
+            sprite_buffer.add(ResourceFactory.get().getSprite(url, slice));
             }
             break;
 
             case spritelist:{
-            double framespeed = Integer.parseInt(atts.get("framespeed"));
+            double framespeed = Double.parseDouble(atts.get("framespeed"));
             framespeed /= 1000; // spritelist need framespeed in milliseconds
             try{
                 String id = "default";
@@ -138,7 +141,20 @@ public class ResourceBuilder
             int x = Integer.parseInt(atts.get("x"));
             int y = Integer.parseInt(atts.get("y"));
             SpriteList sl = spritelist_buffer.get("default");
-            Entity e = new Entity(sl.get(0), Event.Channel.NONE, x, y);
+            Entity e = new FlareEffectEntity(sl, Event.Channel.NONE, x, y);
+            result.put(id, e);
+        }
+        else
+        if(id.equals("EFFECT_LONGFLARE")){
+            SpriteList s = spritelist_buffer.get("default");
+            FlareEffectEntity e = new FlareEffectEntity(s, Event.Channel.NONE, 0, 0);
+            result.put(id, e);
+        }
+        else
+        if(id.startsWith("EFFECT_")){
+            SpriteList s = spritelist_buffer.get("default");
+            EffectEntity e = new EffectEntity(s, Event.Channel.NONE, 0, 0);
+            e.setScale(0.7f, 0.7f);
             result.put(id, e);
         }
     }

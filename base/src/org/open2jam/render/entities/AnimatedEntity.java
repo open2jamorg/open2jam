@@ -12,12 +12,6 @@ public class AnimatedEntity extends Entity
 	/** the list of frames */
 	protected SpriteList frames;
 
-	/** index of the next frame to be rendered */
-	protected int nextFrame;
-
-	/** accumulated time delta.
-	** when reaches 1 it's time to change frames
-	**/
 	protected double sub_frame;
 
 	public AnimatedEntity(SpriteList sl, Event.Channel ch)
@@ -29,13 +23,12 @@ public class AnimatedEntity extends Entity
 	{
 		super(frames.get(0),ch, x,y);
 		this.frames = frames;
-		nextFrame = 0;
+		sub_frame = 0;
 	}
 
         protected AnimatedEntity(AnimatedEntity org) {
             super(org);
             this.frames = org.frames;
-            this.nextFrame = org.nextFrame;
             this.sub_frame = org.sub_frame;
         }
 
@@ -45,11 +38,8 @@ public class AnimatedEntity extends Entity
 	{
 		super.move(delta);
 		sub_frame += delta * frames.getFrameSpeed();
-		int over = (int) sub_frame;
-		nextFrame += over;
-		sub_frame -= over;
-		nextFrame %= frames.size(); // loops over
-		sprite = frames.get(nextFrame);
+		sub_frame %= frames.size(); // loops over
+		sprite = frames.get((int)sub_frame);
 	}
 
     @Override

@@ -40,7 +40,7 @@ public class LongNoteEntity extends NoteEntity
     public void move(long delta)
     {
             super.move(delta);
-            body_sprite = body_frames.get(nextFrame);
+            body_sprite = body_frames.get((int)sub_frame);
             if(end_y != null)end_y += delta * dy;
     }
 

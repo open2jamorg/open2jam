@@ -95,50 +95,63 @@ public class LWJGLSprite implements Sprite {
 		return height;
 	}
 
-	/**
-	 * Draw the sprite at the specified location
-	 * 
-	 * @param px The x location at which to draw this sprite
-	 * @param py The y location at which to draw this sprite
-	 */
-	public void draw(int px, int py) {
-		// store the current model matrix
-		GL11.glPushMatrix();
-		
-		// bind to the appropriate texture for this sprite
-		texture.bind();
-    
-		// translate to the right location and prepare to draw
-		GL11.glTranslatef(px, py, 0);
-		GL11.glColor3f(1,1,1);
-		
-		// draw a quad textured to match the sprite
-		GL11.glBegin(GL11.GL_QUADS);
+    /**
+     * Draw the sprite at the specified location
+     *
+     * @param px The x location at which to draw this sprite
+     * @param py The y location at which to draw this sprite
+     */
+    public void draw(int px, int py, float sx, float sy)
+    {
+        // store the current model matrix
+        GL11.glPushMatrix();
 
-		GL11.glTexCoord2f(u, v);
-		GL11.glVertex2f(0, 0);
+        // bind to the appropriate texture for this sprite
+        texture.bind();
 
-		GL11.glTexCoord2f(u, z);
-		GL11.glVertex2f(0, height);
+        // translate to the right location and prepare to draw
+        GL11.glTranslatef(px, py, 0);
+        GL11.glColor3f(1,1,1);
 
-		GL11.glTexCoord2f(w, z);
-		GL11.glVertex2f(width,height);
+        GL11.glScalef(sx, sy, 1);
 
-		GL11.glTexCoord2f(w, v);
-		GL11.glVertex2f(width,0);
+        // draw a quad textured to match the sprite
+        GL11.glBegin(GL11.GL_QUADS);
 
-		GL11.glEnd();
-		
-		// restore the model view matrix to prevent contamination
-		GL11.glPopMatrix();
-	}
+        GL11.glTexCoord2f(u, v);
+        GL11.glVertex2f(0, 0);
 
-	/** draw the sprite.
-	** the same as draw(int,int)
-	** but attempts to draw at the closest point
-	*/
-	public void draw(double x, double y)
-	{
-		this.draw((int)Math.round(x),(int)Math.round(y));
-	}
+        GL11.glTexCoord2f(u, z);
+        GL11.glVertex2f(0, height);
+
+        GL11.glTexCoord2f(w, z);
+        GL11.glVertex2f(width,height);
+
+        GL11.glTexCoord2f(w, v);
+        GL11.glVertex2f(width,0);
+
+        GL11.glEnd();
+
+        // restore the model view matrix to prevent contamination
+        GL11.glPopMatrix();
+    }
+    public void draw(int x, int y)
+    {
+        draw(x, y, 1, 1);
+    }
+
+    /** draw the sprite.
+    ** the same as draw(int,int)
+    ** but attempts to draw at the closest point
+    */
+    public void draw(double x, double y, float scale_x, float scale_y)
+    {
+         this.draw((int)Math.round(x),(int)Math.round(y), scale_x, scale_y);
+    }
+    public void draw(double x, double y)
+    {
+        this.draw((int)Math.round(x),(int)Math.round(y), 1, 1);
+    }
+
+
 }

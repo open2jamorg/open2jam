@@ -10,23 +10,24 @@ import org.open2jam.render.SpriteList;
 public class EffectEntity extends AnimatedEntity
 {
     /** keeps the last frame used. */
-    protected int lastFrame;
+    protected double last_frame = 0;
 
     public EffectEntity(SpriteList refs, Event.Channel ch, double x, double y)
     {
             super(refs, ch, x, y);
     }
 
-    private EffectEntity(EffectEntity org) {
+    protected EffectEntity(EffectEntity org) {
         super(org);
-        this.lastFrame = org.lastFrame;
+        this.last_frame = org.last_frame;
     }
 
+    @Override
     public void move(long delta)
     {
             super.move(delta);
-            if(nextFrame < lastFrame)alive = false; // we already looped over, now we die
-            else lastFrame = nextFrame;
+            if(sub_frame < last_frame)alive = false; // we already looped over, now we die
+            else last_frame = sub_frame;
     }
 
     @Override

@@ -1,6 +1,6 @@
-- add note effects
-
 - add combo counter
+
+- fix the BPM modifier
 
 - add support to the volume and pan of the OJN
 
@@ -12,7 +12,6 @@
 
 - rescale textures if the resolution isn't 800x600
 
-- test the BPM modifier
 
 - make a ChartWriter
 

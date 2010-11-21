@@ -207,7 +207,7 @@ public class OJMParser
            int data = buffer.getInt();
            int chunk_size = buffer.getInt();
 
-           if(chunk_size == 0)continue;
+           if(chunk_size == 0){ sample_id++; continue; }
 
            buffer = f.getChannel().map(java.nio.channels.FileChannel.MapMode.READ_ONLY, file_offset, chunk_size);
            buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
@@ -239,7 +239,7 @@ public class OJMParser
 
            int sample_size = buffer.getInt();
 
-           if(sample_size == 0)continue;
+           if(sample_size == 0){ sample_id++; continue; }
 
            buffer = f.getChannel().map(java.nio.channels.FileChannel.MapMode.READ_ONLY, file_offset, sample_size);
            buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
@@ -259,65 +259,47 @@ public class OJMParser
     private static byte[] rearrange(byte[] buf_encoded)
     {
         int length = buf_encoded.length;
-        int key = length % 17;             // Let's start to looking for a key
-        int key2 = key;                    // Copy it, we'll need it later
-        key = key << 4;                    // Shift 4 bits left, let's make some room
-        key = key+key2;                    // Yeah, add them! =$
-        key2 = key;                        // Again, we'll need it later
-        key = REARRANGE_TABLE[key];        // Let's see the table... ummm ok! founded
-        int block_size = length / 17;      // Ok, now the block size
+        int key = ((length % 17) << 4) + (length % 17);
 
-        // Let's fill with 0x00 the buffer
+        int block_size = length / 17;
+
+        // Let's fill the buffer
         byte[] buf_plain = new byte[length];
+        System.arraycopy(buf_encoded, 0, buf_plain, 0, length);
 
-        for(int counter=0;counter<17;counter++) // loopy loop
+        for(int block=0;block<17;block++) // loopy loop
         {
-            int block_start_encoded = block_size * counter;	// Where is the start of the enconded block
-            int block_start_plain = block_size * key;	// Where the final plain block will be
+            int block_start_encoded = block_size * block;	// Where is the start of the enconded block
+            int block_start_plain = block_size * REARRANGE_TABLE[key];	// Where the final plain block will be
             System.arraycopy(buf_encoded, block_start_encoded, buf_plain, block_start_plain, block_size);
 
-            key2++;
-            key = REARRANGE_TABLE[key2];
+            key++;
         }
-
         return buf_plain;
     }
 
     /** some weird encryption */
+    private static int acc_keybyte = 0xFF;
+    private static int acc_counter = 0;
     private static byte[] acc_xor(byte[] buf)
     {
-        int keybyte = 0xFF;
-        int counter = 0;
         int temp = 0;
         byte this_byte = 0;
         for(int i=0;i<buf.length;i++)
         {
-            if(counter > 7){
-                counter = 0;
-                keybyte = temp;
+            if(acc_counter > 7){
+                acc_counter = 0;
+                acc_keybyte = temp;
             }
             temp = this_byte = buf[i];
 
-            if(((keybyte << counter) & 0x80)!=0){
+            if(((acc_keybyte << acc_counter) & 0x80)!=0){
                 this_byte = (byte) ~this_byte;
             }
 
             buf[i] = this_byte;
-            counter++;
+            acc_counter++;
         }
         return buf;
-    }
-
-    public static void main(String[] args) throws InterruptedException{
-        HashMap<Integer, Integer> samples = parseFile(new File(args[0]));
-
-        int source = SoundManager.newSource();
-
-        for(int sample_id : samples.keySet()){
-            System.out.println("sample: "+sample_id);
-            SoundManager.play(source, samples.get(sample_id));
-
-            while(SoundManager.isPlaying(source))Thread.sleep(0);
-        }
     }
 }

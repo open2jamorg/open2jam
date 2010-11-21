@@ -9,6 +9,7 @@ package org.open2jam.gui;
 
 import java.awt.Image;
 import java.awt.event.ItemEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -625,10 +626,16 @@ public class Interface extends javax.swing.JFrame
         int d = selected_header.getDuration(rank);
 
         lbl_time.setText((d/60)+":"+(d%60));
-        lbl_cover.setIcon(new ImageIcon(selected_header.getCover().getScaledInstance(
+
+        BufferedImage i = selected_header.getCover();
+
+        if(i != null)
+        lbl_cover.setIcon(new ImageIcon(i.getScaledInstance(
                 lbl_cover.getWidth(),
                 lbl_cover.getHeight(),
                 Image.SCALE_SMOOTH
                 )));
+        else
+            lbl_cover.setIcon(null);
     }
 }

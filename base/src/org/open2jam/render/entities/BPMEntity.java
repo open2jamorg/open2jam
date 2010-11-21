@@ -1,6 +1,5 @@
 package org.open2jam.render.entities;
 
-import java.awt.geom.Rectangle2D;
 
 import org.open2jam.render.Render;
 /** this is a special type of entity.
@@ -15,12 +14,12 @@ public class BPMEntity extends Entity
 
     public BPMEntity(Render r, double bpm, double y)
     {
-            this.render = r;
-            this.bpm = bpm;
-            this.x = 0;
-            this.y = y;
-            this.width = 0;
-            this.height = 0;
+        this.render = r;
+        this.bpm = bpm;
+        this.x = 0;
+        this.y = y;
+        this.width = 0;
+        this.height = 0;
     }
 
     protected BPMEntity(BPMEntity org) {
@@ -39,8 +38,8 @@ public class BPMEntity extends Entity
     @Override
     public void judgment()
     {
-            render.setBPM(bpm);
-            alive = false;
+        render.setBPM(bpm);
+        alive = false;
     }
 
     @Override

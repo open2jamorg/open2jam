@@ -13,8 +13,8 @@ use Data::Dumper;
 #
 
 my $filename = shift;
-my $notelevel = 2; # 0,1,2 <-> Easy,Normal,Hard, which note rank to print
-my $speed = 1; # hi-speed
+my $notelevel = 0; # 0,1,2 <-> Easy,Normal,Hard, which note rank to print
+my $speed = 4; # hi-speed
 
 # this is the space height the user can see at a time,
 # which is only defined here because the measure size is relative to this
@@ -106,8 +106,8 @@ while(!eof $OJN && tell $OJN < $endpos)
 			'type'    => $type,
 			};
 		}
-		next if $channel < 2;
-		printf STDERR "m: %03d, ch: %2d, v: %d, t: %d\n", $measure, $channel, $value, $type;
+		next if $channel > 1;
+		print STDERR "$value m: $measure pos: ".($i / $events_count)."\n";
 	}
 }
 
