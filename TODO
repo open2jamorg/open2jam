@@ -1,3 +1,5 @@
+- make a real skinning system
+
 - add combo counter
 
 - fix the BPM modifier
@@ -11,7 +13,6 @@
 - branch implement JOGL - see if it's worth the trouble
 
 - rescale textures if the resolution isn't 800x600
-
 
 - make a ChartWriter
 

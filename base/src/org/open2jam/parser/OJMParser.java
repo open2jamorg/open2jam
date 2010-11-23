@@ -1,5 +1,6 @@
 package org.open2jam.parser;
 
+import org.open2jam.OggInputStream;
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -188,6 +189,10 @@ public class OJMParser
 
        int file_offset = 20;
        int sample_id = 0; // wav samples use id 0~999
+
+       // reset global variables
+       acc_keybyte = 0xFF;
+       acc_counter = 0;
 
        while(file_offset < ogg_start) // WAV data
        {

@@ -169,7 +169,7 @@
         </spritelist>
     </entity>
 
-    <entity id="EFFECT_LONGFLARE">
+<!--    <entity id="EFFECT_LONGFLARE">
         <spritelist framespeed="33.3">
             <sprite x="0"    y="0"   w="128" h="128" file="longflare.png" />
             <sprite x="128"  y="0"   w="128" h="128" file="longflare.png" />
@@ -186,7 +186,7 @@
             <sprite x="256"  y="256" w="128" h="128" file="longflare.png" />
             <sprite x="384"  y="256" w="128" h="128" file="longflare.png" />
         </spritelist>
-    </entity>
+    </entity>-->
 </Resources>
 
 

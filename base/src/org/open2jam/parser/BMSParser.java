@@ -1,5 +1,6 @@
 package org.open2jam.parser;
 
+import org.open2jam.OggInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;

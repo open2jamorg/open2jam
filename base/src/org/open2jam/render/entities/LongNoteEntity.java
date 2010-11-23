@@ -47,16 +47,17 @@ public class LongNoteEntity extends NoteEntity
     @Override
     public void draw()
     {
-            sprite.draw(x,y);
-
             double end = (end_y == null) ? -10 : end_y;
+            sprite.draw(x,y,1f, (float) ((end - y) / height));
 
-            double p = y - body_sprite.getHeight();
-            while(p > end){
-                    body_sprite.draw(x, p);
-                    p -= body_sprite.getHeight();
-            }
-            sprite.draw(x,end);
+//            sprite.draw(x,y);
+//            double end = (end_y == null) ? -10 : end_y;
+//            double p = y - body_sprite.getHeight();
+//            while(p > end){
+//                    body_sprite.draw(x, p);
+//                    p -= body_sprite.getHeight();
+//            }
+//            sprite.draw(x,end);
     }
 
     @Override

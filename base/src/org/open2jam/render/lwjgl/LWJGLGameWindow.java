@@ -187,7 +187,6 @@ public class LWJGLGameWindow implements GameWindow {
 
                     if(Display.isCloseRequested() || Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
                             destroy();
-                            callback.windowClosed();
                     }
             }
             Display.destroy();
@@ -195,5 +194,6 @@ public class LWJGLGameWindow implements GameWindow {
 
     public void destroy() {
         gameRunning = false;
+        callback.windowClosed();
     }
 }

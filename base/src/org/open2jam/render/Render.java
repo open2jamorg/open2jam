@@ -216,7 +216,6 @@ public class Render implements GameWindowCallback
     */
     public void frameRendering()
     {
-        
         // work out how long its been since the last update, this
         // will be used to calculate how far the entities should
         // move this loop
@@ -227,7 +226,8 @@ public class Render implements GameWindowCallback
         
         // update our FPS counter if a second has passed
         if (lastFpsTime >= 1000) {
-            window.setTitle("Render (FPS: "+fps+")");
+//            window.setTitle("Render (FPS: "+fps+")");
+            Logger.log("FPS: "+fps);
             lastFpsTime = 0;
             fps = 0;
         }
@@ -252,37 +252,37 @@ public class Render implements GameWindowCallback
                 if(e.getY() >= viewport) {
                     e.judgment();
 
-                    if(e instanceof NoteEntity && notes_pressed.get(e.getChannel()) == false){
-                            Entity ee = entity_map.get("EFFECT_CLICK_1").copy();
-                            ee.setX(e.getX()+e.getWidth()/2-ee.getWidth()/2);
-                            ee.setY(viewport-ee.getHeight()/2);
-                            entities_matrix.get(4).add(ee);
-                            notes_pressed.put(e.getChannel(), true);
-                            
-                            FlareEffectEntity fe = (FlareEffectEntity) entity_map.get("PRESSED_"+e.getChannel()).copy();
-                            fe.setEntityWatch(e);
-                            entities_matrix.get(3).add(fe);
-                            
-//                            if(e instanceof LongNoteEntity){
-//                                fe = (FlareEffectEntity) entity_map.get("EFFECT_LONGFLARE").copy();
-//                                fe.setX(e.getX()+e.getWidth()/2-fe.getWidth()/2);
-//                                fe.setY(viewport-fe.getHeight()/4);
-//                                fe.setEntityWatch(e);
-//                                entities_matrix.get(4).add(fe);
-//                            }
-                    }
+//                    if(e instanceof NoteEntity && notes_pressed.get(e.getChannel()) == false){
+//                            Entity ee = entity_map.get("EFFECT_CLICK_1").copy();
+//                            ee.setX(e.getX()+e.getWidth()/2-ee.getWidth()/2);
+//                            ee.setY(viewport-ee.getHeight()/2);
+//                            entities_matrix.get(4).add(ee);
+//                            notes_pressed.put(e.getChannel(), true);
+//
+//                            FlareEffectEntity fe = (FlareEffectEntity) entity_map.get("PRESSED_"+e.getChannel()).copy();
+//                            fe.setEntityWatch(e);
+//                            entities_matrix.get(3).add(fe);
+//
+////                            if(e instanceof LongNoteEntity){
+////                                fe = (FlareEffectEntity) entity_map.get("EFFECT_LONGFLARE").copy();
+////                                fe.setX(e.getX()+e.getWidth()/2-fe.getWidth()/2);
+////                                fe.setY(viewport-fe.getHeight()/4);
+////                                fe.setEntityWatch(e);
+////                                entities_matrix.get(4).add(fe);
+////                            }
+//                    }
                 }
                 if(!e.isAlive()){ // if dead, remove from list
                     j.remove();
-                    if(e instanceof NoteEntity){
-                        notes_pressed.put(e.getChannel(), false);
-                    }
-                    if(e instanceof LongNoteEntity){
-                        Entity ee = entity_map.get("EFFECT_CLICK_1").copy();
-                        ee.setX(e.getX()+e.getWidth()/2-ee.getWidth()/2);
-                        ee.setY(viewport-ee.getHeight()/2);
-                        entities_matrix.get(4).add(ee);
-                    }
+//                    if(e instanceof NoteEntity){
+//                        notes_pressed.put(e.getChannel(), false);
+//                    }
+//                    if(e instanceof LongNoteEntity){
+//                        Entity ee = entity_map.get("EFFECT_CLICK_1").copy();
+//                        ee.setX(e.getX()+e.getWidth()/2-ee.getWidth()/2);
+//                        ee.setY(viewport-ee.getHeight()/2);
+//                        entities_matrix.get(4).add(ee);
+//                    }
                 }
                 else e.draw(); // or draw itself on screen
             }
@@ -293,7 +293,6 @@ public class Render implements GameWindowCallback
         
         if(!buffer_iterator.hasNext() && entities_matrix.get(1).isEmpty() && sources_playing.isEmpty()){
             window.destroy();
-            windowClosed();
             return;
         }
     }

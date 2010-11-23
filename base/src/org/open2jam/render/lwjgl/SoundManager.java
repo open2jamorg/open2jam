@@ -12,7 +12,7 @@ import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
 import org.open2jam.Logger;
 
-import org.open2jam.parser.OggInputStream;
+import org.open2jam.OggInputStream;
 
 /**
   this class is the bridge between OpenAL and the app.

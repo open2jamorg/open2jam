@@ -1,4 +1,4 @@
-package org.open2jam.parser;
+package org.open2jam;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -415,7 +415,6 @@ public class OggInputStream extends FilterInputStream {
 		int convOff = 0;
 		int samples;
 		while ((samples = dspState.synthesis_pcmout(_pcm, _index)) > 0) {
-			//System.out.println("while() 4");
 			float[][] pcm = _pcm[0];
 			int bout = (samples < convsize ? samples : convsize);
 
@@ -493,14 +492,14 @@ public class OggInputStream extends FilterInputStream {
 					fetchData();
 				} else if (result2 == -1) {
 					//throw new Exception("syncState.pageout(page) result == -1");
-					System.out.println("syncState.pageout(page) result == -1");
+					Logger.log("syncState.pageout(page) result == -1");
 					return -1;
 				} else {
 					int result3 = streamState.pagein(page);
 				}
 			} else if (result1 == -1) {
 				//throw new Exception("streamState.packetout(packet) result == -1");
-				System.out.println("streamState.packetout(packet) result == -1");
+				Logger.log("streamState.packetout(packet) result == -1");
 				return -1;
 			} else {
 				fetchedPacket = true;
