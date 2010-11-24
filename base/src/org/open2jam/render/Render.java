@@ -156,7 +156,7 @@ public class Render implements GameWindowCallback
         entities_matrix.add(new LinkedList<Entity>()); // layer 3 -- pressed notes
         entities_matrix.add(new LinkedList<Entity>()); // layer 4 -- effects
 
-        ResourceBuilder sb = new ResourceBuilder(this);
+        ResourceBuilder sb = new ResourceBuilder(this,"o2jam");
         try {
             SAXParserFactory.newInstance().newSAXParser().parse(resources_xml.openStream(),new ResourcesHandler(sb));
         } catch (Exception e) {

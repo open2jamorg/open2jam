@@ -17,7 +17,7 @@ commands:
 	1: single player
 	2: 2 players
 	3: double play( 14 keys)
-	4: ????
+	4: P2 mirror P1
 
 #GENRE <string>
 	the genre of the song in string
@@ -64,18 +64,29 @@ commands:
 
 #STOP<XX> <integer>
 	stop time( a rest ?), the integer is relative to the measure, <integer>/192 * measure_size ( ??? ) 
-	
+
+#STP<real> <integer>
+	same as #STOP, but will happen in the measure position <real>.
+
 #LNTYPE <integer>
 	defines which type of long notes to use, there are 2 types ( can be used simultaneous ????)
 	both types use channels 5x and 6x instead of normal note channels
-	1: one XX code to defined long note start, followed by 00, and a XX code to define an end
+	1: one XX code to defined long note start, followed by 00, and a XX code to define an end, exclusive.
 	2: the XX code that defines the start is repeated as necessary, e.g: AAAAAAAAAAAABBB..
 
 #LNOBJ <XX>
-	another way to use long notes, ( how this works ????)
+	if <XX> is presented in a visible channel the previous nonzero entry and <XX>
+	denotes, respectively, the start and end of the longnote.
 
 #EXTCHR ???????????????
 
+#RANDOM <integer>
+	generates a random number between 1 and <integer>, 
+	for the sole purpose of using it on the next #IF block
+
+#IF <integer>/#ELSE/#ENDIF
+	the IF~ELSE block will only be used if <integer> is the result of #RANDOM,
+	if it isn't, the ELSE~ENDIF block will be used instead
 
 ------------------------------------------
 
@@ -112,7 +123,7 @@ channels:
 
 16: scratch ( not used on o2jam )
 
-17: ????
+17: pedal ????
 
 20: ????
 
@@ -121,7 +132,7 @@ channels:
 
 26: player 2 scratch ( not used on o2jam )
 
-27: ????
+27: pedal ????
 
 5x: long notes (LNTYPE) notes for player 1
 	same as channels 11~19
@@ -129,4 +140,11 @@ channels:
 6x: long notes (LNTYPE) notes for player 2 ( not used on o2jam )
 	same as channels 21~29
 
+------------
 
+note/channel distribution
+
+NOTE  - SC  1  2  3  4  5  6  7
+5keys - 16 11 12 13 14 15  X  X
+7keys - 16 11 12 13 14 15 18 19
+o2jam -  X  1  2  3  4  5  6  7

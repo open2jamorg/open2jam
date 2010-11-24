@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Resources>
-<Skin name="o2jam">
-    
-    <info>
-        <judgment y="480" />
-    </info>
+<skin name="o2jam" judgment_y="480" width="800" height="600">
 
     <layer id="0">
         <entity>
+            <!-- borders for the note area -->
             <sprite x="41" y="0">
                 <frame x="66" y="1" w="9" h="230" file="main.png" />
             </sprite>
@@ -44,58 +41,87 @@
 
     <layer id="3">
         <entity id="NOTE_1">
-            <sprite framespeed="12" x="50">
+            <sprite id="HEAD" framespeed="12">
                 <frame x="225" y="142" w="28" h="7" file="main.png" />
                 <frame x="225" y="150" w="28" h="7" file="main.png" />
                 <frame x="225" y="158" w="28" h="7" file="main.png" />
             </sprite>
+            <sprite id="BODY" framespeed="12">
+                <frame x="225" y="143" w="28" h="5" file="main.png" />
+                <frame x="225" y="151" w="28" h="5" file="main.png" />
+                <frame x="225" y="159" w="28" h="5" file="main.png" />
+            </sprite>
         </entity>
-
         <entity id="NOTE_2">
-            <sprite framespeed="12" x="78">
+            <sprite id="HEAD" framespeed="12">
                 <frame x="254" y="142" w="22" h="7" file="main.png" />
                 <frame x="254" y="150" w="22" h="7" file="main.png" />
                 <frame x="254" y="158" w="22" h="7" file="main.png" />
             </sprite>
+            <sprite id="BODY" framespeed="12">
+                <frame x="254" y="143" w="22" h="5" file="main.png" />
+                <frame x="254" y="151" w="22" h="5" file="main.png" />
+                <frame x="254" y="159" w="22" h="5" file="main.png" />
+            </sprite>
         </entity>
-
         <entity id="NOTE_3">
-            <sprite framespeed="12" x="100">
+            <sprite id="HEAD" framespeed="12">
                 <frame x="225" y="142" w="28" h="7" file="main.png" />
                 <frame x="225" y="150" w="28" h="7" file="main.png" />
                 <frame x="225" y="158" w="28" h="7" file="main.png" />
             </sprite>
-        </entity>
-
+            <sprite id="BODY" framespeed="12">
+                <frame x="225" y="143" w="28" h="5" file="main.png" />
+                <frame x="225" y="151" w="28" h="5" file="main.png" />
+                <frame x="225" y="159" w="28" h="5" file="main.png" />
+            </sprite>
+            </entity>
         <entity id="NOTE_4">
-            <sprite framespeed="12" x="132">
+            <sprite id="HEAD" framespeed="12">
                 <frame x="277" y="142" w="32" h="7" file="main.png" />
                 <frame x="277" y="150" w="32" h="7" file="main.png" />
                 <frame x="277" y="158" w="32" h="7" file="main.png" />
             </sprite>
+            <sprite id="BODY" framespeed="12">
+                <frame x="277" y="143" w="32" h="5" file="main.png" />
+                <frame x="277" y="151" w="32" h="5" file="main.png" />
+                <frame x="277" y="159" w="32" h="5" file="main.png" />
+            </sprite>
         </entity>
-
         <entity id="NOTE_5">
-            <sprite framespeed="12" x="164">
+            <sprite id="HEAD" framespeed="12">
                 <frame x="225" y="142" w="28" h="7" file="main.png" />
                 <frame x="225" y="150" w="28" h="7" file="main.png" />
                 <frame x="225" y="158" w="28" h="7" file="main.png" />
             </sprite>
+            <sprite id="BODY" framespeed="12">
+                <frame x="225" y="143" w="28" h="5" file="main.png" />
+                <frame x="225" y="151" w="28" h="5" file="main.png" />
+                <frame x="225" y="159" w="28" h="5" file="main.png" />
+            </sprite>
         </entity>
-
         <entity id="NOTE_6">
-           <sprite framespeed="12" x="186">
+            <sprite id="HEAD" framespeed="12">
                 <frame x="254" y="142" w="22" h="7" file="main.png" />
                 <frame x="254" y="150" w="22" h="7" file="main.png" />
                 <frame x="254" y="158" w="22" h="7" file="main.png" />
             </sprite>
+            <sprite id="BODY" framespeed="12">
+                <frame x="254" y="143" w="22" h="5" file="main.png" />
+                <frame x="254" y="151" w="22" h="5" file="main.png" />
+                <frame x="254" y="159" w="22" h="5" file="main.png" />
+            </sprite>
         </entity>
-
         <entity id="NOTE_7">
-            <sprite framespeed="12" x="214">
+            <sprite id="HEAD" framespeed="12">
                 <frame x="225" y="142" w="28" h="7" file="main.png" />
                 <frame x="225" y="150" w="28" h="7" file="main.png" />
                 <frame x="225" y="158" w="28" h="7" file="main.png" />
+            </sprite>
+            <sprite id="BODY" framespeed="12">
+                <frame x="225" y="143" w="28" h="5" file="main.png" />
+                <frame x="225" y="151" w="28" h="5" file="main.png" />
+                <frame x="225" y="159" w="28" h="5" file="main.png" />
             </sprite>
         </entity>
 
@@ -199,6 +225,6 @@
             </sprite>
         </entity>
     </layer>
-</Skin>
+</skin>
 </Resources>
 
