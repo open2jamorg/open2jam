@@ -1,6 +1,6 @@
 package org.open2jam.parser;
 
-import org.open2jam.OggInputStream;
+import org.open2jam.util.OggInputStream;
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -8,10 +8,10 @@ import java.util.HashMap;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
-import org.open2jam.ByteBufferInputStream;
+import org.open2jam.util.ByteBufferInputStream;
 
 import org.open2jam.render.lwjgl.SoundManager;
-import org.open2jam.Logger;
+import org.open2jam.util.Logger;
 
 
 public class OJMParser

@@ -1,4 +1,8 @@
-- make a real skinning system
+- make a real skinning system [IN PROCESS]
+
+- capture keyboard pressed keys [IN PROCESS]
+
+- create the judgment system [IN PROCESS]
 
 - add combo counter
 
@@ -6,11 +10,11 @@
 
 - add support to the volume and pan of the OJN
 
-- capture keyboard pressed keys
-
 - workaround ranks in bms
 
 - branch implement JOGL - see if it's worth the trouble
+
+- use the java Logging API instead
 
 - rescale textures if the resolution isn't 800x600
 

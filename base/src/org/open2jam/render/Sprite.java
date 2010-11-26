@@ -24,6 +24,18 @@ public interface Sprite {
 	 * @return The height in pixels of this sprite
 	 */
 	public int getHeight();
+
+
+        /**
+         * set the scale of the image
+         * which will be used on the draw(x,y) call
+         * the default is 1,1
+         * 
+         */
+        public void setScale(float x, float y);
+
+        public float getScaleX();
+        public float getScaleY();
 	
 	/**
 	 * Draw the sprite onto the graphics context provided

@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
-import org.open2jam.Logger;
+import org.open2jam.util.Logger;
 
 public class BMSChart implements Chart
 {

@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.open2jam.Logger;
+import org.open2jam.util.Logger;
 
 public class OJNParser
 {

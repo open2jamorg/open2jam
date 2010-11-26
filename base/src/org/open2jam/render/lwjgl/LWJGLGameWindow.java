@@ -1,6 +1,7 @@
 package org.open2jam.render.lwjgl;
 
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -37,6 +38,23 @@ public class LWJGLGameWindow implements GameWindow {
   
 	/** Title of window, we get it before our window is ready, so store it till needed */
 	private String title;
+
+        private static final HashMap<Integer,Integer> key_map = new HashMap<Integer,Integer>();
+
+        static {
+            key_map.put(KeyEvent.VK_S, Keyboard.KEY_S);
+            key_map.put(KeyEvent.VK_D, Keyboard.KEY_D);
+            key_map.put(KeyEvent.VK_F, Keyboard.KEY_F);
+            key_map.put(KeyEvent.VK_SPACE, Keyboard.KEY_SPACE);
+            key_map.put(KeyEvent.VK_J, Keyboard.KEY_J);
+            key_map.put(KeyEvent.VK_K, Keyboard.KEY_K);
+            key_map.put(KeyEvent.VK_L, Keyboard.KEY_L);
+            key_map.put(KeyEvent.VK_ESCAPE, Keyboard.KEY_ESCAPE);
+            key_map.put(KeyEvent.VK_UP, Keyboard.KEY_UP);
+            key_map.put(KeyEvent.VK_DOWN, Keyboard.KEY_DOWN);
+            key_map.put(KeyEvent.VK_LEFT, Keyboard.KEY_LEFT);
+            key_map.put(KeyEvent.VK_RIGHT, Keyboard.KEY_RIGHT);
+        }
 	
 	/**
 	 * Create a new game window that will use OpenGL to 
@@ -150,21 +168,11 @@ public class LWJGLGameWindow implements GameWindow {
 	 * @return True if the specified key is pressed
 	 */
 	public boolean isKeyPressed(int keyCode) {
-		// apparently, someone at decided not to use standard 
-		// keycode, so we have to map them over:
-		switch(keyCode) {
-		case KeyEvent.VK_SPACE:
-			keyCode = Keyboard.KEY_SPACE;
-			break;
-		case KeyEvent.VK_LEFT:
-			keyCode = Keyboard.KEY_LEFT;
-			break;
-		case KeyEvent.VK_RIGHT:
-			keyCode = Keyboard.KEY_RIGHT;
-			break;
-		}    
-		
-		return Keyboard.isKeyDown(keyCode);
+
+            Integer code = key_map.get(keyCode);
+            if(code == null)return false;
+
+            return Keyboard.isKeyDown(code);
 	}
   
 	/**

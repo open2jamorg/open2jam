@@ -23,7 +23,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableRowSorter;
 
-import org.open2jam.Logger;
+import org.open2jam.util.Logger;
 import org.open2jam.parser.Chart;
 import org.open2jam.render.Render;
 

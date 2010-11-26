@@ -9,8 +9,8 @@ import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
-import org.open2jam.ByteBufferInputStream;
-import org.open2jam.Logger;
+import org.open2jam.util.ByteBufferInputStream;
+import org.open2jam.util.Logger;
 
 public class OJNChart implements Chart
 {

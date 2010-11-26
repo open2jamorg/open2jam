@@ -1,6 +1,6 @@
 package org.open2jam.render.entities;
 
-import org.open2jam.Copyable;
+import org.open2jam.util.Copyable;
 import org.open2jam.parser.Event;
 import org.open2jam.render.Sprite;
 import org.open2jam.render.SpriteList;
@@ -23,8 +23,7 @@ public class Entity implements Copyable
     /** when a entity die the render removes it */
     protected boolean alive = true;
 
-    /** entity scale */
-    private float scale_x = 1, scale_y = 1;
+    protected int layer = 0;
 
     /** allows constructor extensions */
     protected Entity() {}
@@ -56,20 +55,13 @@ public class Entity implements Copyable
         this.y = org.y;
         this.width = org.width;
         this.height = org.height;
-        this.scale_x = org.scale_x;
-        this.scale_y = org.scale_y;
+        this.layer = org.layer;
     }
 
     public boolean isAlive() { return alive; }
 
     public void setAlive(boolean state){
         alive = state;
-    }
-
-    public void setScale(float sx, float sy)
-    {
-        this.scale_x = sx;
-        this.scale_y = sy;
     }
 	
     /**
@@ -100,7 +92,7 @@ public class Entity implements Copyable
      * Draw this entity to the graphics context provided
      */
     public void draw() {
-            sprite.draw(x,y, scale_x, scale_y);
+            sprite.draw(x,y, sprite.getScaleX(), sprite.getScaleY());
     }
 
     /**
@@ -115,8 +107,11 @@ public class Entity implements Copyable
     public void setX(double x){ this.x = x;}
     public void setY(double y){ this.y = y;}
 
-    public double getWidth(){ return width*scale_x;}
-    public double getHeight(){ return height*scale_y;}
+    public double getWidth(){ return width;}
+    public double getHeight(){ return height;}
+
+    public void setLayer(int layer){ this.layer = layer; }
+    public int getLayer(){ return layer; }
 
     public SpriteList getFrames(){
         return frames;

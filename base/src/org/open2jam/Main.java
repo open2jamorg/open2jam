@@ -1,8 +1,9 @@
-package org.open2jam.gui;
+package org.open2jam;
 
 import java.io.File;
 import javax.swing.UIManager;
-import org.open2jam.Logger;
+import org.open2jam.gui.Interface;
+import org.open2jam.util.Logger;
 
 
 public class Main

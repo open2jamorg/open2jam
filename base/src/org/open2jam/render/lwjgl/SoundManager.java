@@ -10,9 +10,9 @@ import java.util.Iterator;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
-import org.open2jam.Logger;
+import org.open2jam.util.Logger;
 
-import org.open2jam.OggInputStream;
+import org.open2jam.util.OggInputStream;
 
 /**
   this class is the bridge between OpenAL and the app.

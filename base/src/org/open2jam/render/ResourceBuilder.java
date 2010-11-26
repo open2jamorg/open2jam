@@ -1,28 +1,24 @@
 package org.open2jam.render;
 
 import java.awt.Rectangle;
-import java.util.Collection;
 import java.util.Map;
 import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import org.open2jam.Logger;
+import org.open2jam.util.Logger;
 import org.open2jam.parser.Event;
 import org.open2jam.render.entities.AnimatedEntity;
 import org.open2jam.render.entities.CompositeEntity;
 import org.open2jam.render.entities.EffectEntity;
 import org.open2jam.render.entities.Entity;
-import org.open2jam.render.entities.FlareEffectEntity;
 import org.open2jam.render.entities.LongNoteEntity;
-import org.open2jam.render.entities.MeasureEntity;
 import org.open2jam.render.entities.NoteEntity;
 
 public class ResourceBuilder
 {
     private enum Keyword {
-        Resources, skin, layer, entity, sprite, frame, spritelist;
+        Resources, skin, layer, entity, sprite, frame, judgment, type;
     }
 
     ArrayDeque<Keyword> call_stack;
@@ -30,7 +26,12 @@ public class ResourceBuilder
 
     ArrayList<Sprite> frame_buffer;
     HashMap<String, Entity> sprite_buffer;
-    HashMap<String,Entity> result;
+
+    HashMap<String, Double> judgment_type_map;
+
+    private Skin result;
+
+    private int layer = -1;
 
     private static String FILE_PATH_PREFIX = "/resources/";
 
@@ -47,7 +48,8 @@ public class ResourceBuilder
         atts_stack = new ArrayDeque<Map<String,String>>();
         frame_buffer = new ArrayList<Sprite>();
         sprite_buffer = new HashMap<String, Entity>();
-        result = new HashMap<String,Entity>();
+        judgment_type_map = new HashMap<String,Double>();
+        result = new Skin();
     }
     
     public void parseStart(String s, Map<String,String> atts)
@@ -69,6 +71,9 @@ public class ResourceBuilder
 
         switch(k)
         {
+            case layer:{
+                layer = Integer.parseInt(atts.get("id"));
+            }
             case frame:{
             int x = Integer.parseInt(atts.get("x"));
             int y = Integer.parseInt(atts.get("y"));
@@ -110,18 +115,23 @@ public class ResourceBuilder
             break;
 
             case entity:{
-            String id = null;
-            if(atts.containsKey("id"))id = atts.get("id");
-            else {
-                id = "AUTODRAW_ENTITY_"+auto_draw_id;
-                auto_draw_id++;
-            }
-
             Entity e = null;
 
-            if(sprite_buffer.size() == 1 && id.startsWith("EFFECT_")){
+            String id = null;
+            if(atts.containsKey("id"))id = atts.get("id");
+
+            if(sprite_buffer.size() == 1 && id != null && id.startsWith("EFFECT_")){
                 Entity t = sprite_buffer.values().iterator().next();
                 e = new EffectEntity(t.getFrames(), t.getChannel(), t.getX(), t.getY());
+            }
+            else if(id != null && id.startsWith("NOTE_")){
+                Entity head = sprite_buffer.remove("HEAD");
+                Entity body = sprite_buffer.remove("BODY");
+
+                e = new LongNoteEntity(render, head.getFrames(), body.getFrames(), Event.Channel.valueOf(id), head.getX(), head.getY());
+                e.setLayer(layer);
+                result.addNamed(id, e);
+                e = new NoteEntity(render, head.getFrames(), Event.Channel.valueOf(id), head.getX(), head.getY());
             }
             else if(sprite_buffer.size() > 1){
                 e = new CompositeEntity(sprite_buffer.values());
@@ -129,16 +139,31 @@ public class ResourceBuilder
             else{
                 e = sprite_buffer.values().iterator().next();
             }
+
+            e.setLayer(layer);
+            if(id != null)result.addNamed(id, e);
+            else result.add(e);
             
-            result.put(id, e);
             sprite_buffer.clear();
+            }break;
+
+            case type:{
+                String name = atts.get("id");
+                Double hit = Double.parseDouble(atts.get("hit"));
+                judgment_type_map.put(name, hit);
+            }break;
+
+            case judgment:{
+                Integer start = Integer.parseInt(atts.get("start"));
+                Integer size = Integer.parseInt(atts.get("size"));
+                // TODO: the types
             }break;
         }
     }
 
 
 
-    public HashMap<String,Entity> getResult()
+    public Skin getResult()
     {
         return result;
     }

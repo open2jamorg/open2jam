@@ -1,4 +1,4 @@
-package org.open2jam;
+package org.open2jam.util;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

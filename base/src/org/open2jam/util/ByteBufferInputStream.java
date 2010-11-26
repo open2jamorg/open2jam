@@ -1,5 +1,5 @@
 
-package org.open2jam;
+package org.open2jam.util;
 
 import java.io.IOException;
 import java.io.InputStream;

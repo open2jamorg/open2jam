@@ -1,7 +1,7 @@
 
 package org.open2jam.render;
 
-import org.open2jam.Copyable;
+import org.open2jam.util.Copyable;
 
 /**
  *

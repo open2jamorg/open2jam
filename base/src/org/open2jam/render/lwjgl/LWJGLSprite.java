@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import org.lwjgl.opengl.GL11;
-import org.open2jam.Logger;
+import org.open2jam.util.Logger;
 import org.open2jam.render.Sprite;
 
 /**
@@ -30,6 +30,9 @@ public class LWJGLSprite implements Sprite {
 
 	/** the coordinates for the texture */
 	private float u, v, w, z;
+
+        /** the scale of the image */
+        private float scale_x, scale_y;
 	
 	/**
 	 * Create a new sprite from a specified image.
@@ -100,6 +103,8 @@ public class LWJGLSprite implements Sprite {
      *
      * @param px The x location at which to draw this sprite
      * @param py The y location at which to draw this sprite
+     * @param sx the scale of the image width
+     * @param sy the scale of the image height
      */
     public void draw(int px, int py, float sx, float sy)
     {
@@ -137,7 +142,7 @@ public class LWJGLSprite implements Sprite {
     }
     public void draw(int x, int y)
     {
-        draw(x, y, 1, 1);
+        draw(x, y, scale_x, scale_y);
     }
 
     /** draw the sprite.
@@ -150,8 +155,19 @@ public class LWJGLSprite implements Sprite {
     }
     public void draw(double x, double y)
     {
-        this.draw((int)Math.round(x),(int)Math.round(y), 1, 1);
+        this.draw((int)Math.round(x),(int)Math.round(y), scale_x, scale_y);
     }
 
+    public void setScale(float x, float y) {
+        this.scale_x = x;
+        this.scale_y = y;
+    }
 
+    public float getScaleX() {
+       return scale_x;
+    }
+
+    public float getScaleY() {
+        return scale_y;
+    }
 }

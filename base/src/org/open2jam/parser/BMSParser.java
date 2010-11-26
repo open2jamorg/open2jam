@@ -1,6 +1,6 @@
 package org.open2jam.parser;
 
-import org.open2jam.OggInputStream;
+import org.open2jam.util.OggInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.open2jam.Logger;
+import org.open2jam.util.Logger;
 import org.open2jam.render.lwjgl.SoundManager;
 
 public class BMSParser
