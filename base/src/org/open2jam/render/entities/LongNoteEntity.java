@@ -37,6 +37,18 @@ public class LongNoteEntity extends NoteEntity
     }
 
     @Override
+    public double getY()
+    {
+        return end_y == null ? -10 : end_y;
+    }
+
+    @Override
+    public double getStartY()
+    {
+        return y + sprite.getHeight();
+    }
+
+    @Override
     public void move(long delta)
     {
             super.move(delta);
@@ -47,20 +59,18 @@ public class LongNoteEntity extends NoteEntity
     @Override
     public void draw()
     {
-            double end = (end_y == null) ? -10 : end_y;
-            body_sprite.draw(x,y,1f, (float) ((end - y) / sprite.getHeight()));
-            sprite.draw(x,y);
-            sprite.draw(x,end);
+        double end = getY();
+        double y = this.y;
+        if(y > render.getViewport())y = render.getViewport();
+        body_sprite.draw(x,end,1f, (float) ((y-end) / body_sprite.getHeight()));
+        if(y < render.getViewport())sprite.draw(x,y);
+        sprite.draw(x,end);
     }
 
     @Override
     public void judgment()
     {
-        if(!played){
-            render.queueSample(sample_value);
-            played = true;
-        }
-        if(end_y != null && end_y > render.getViewPort())alive = false;
+        alive = false;
     }
 
     @Override

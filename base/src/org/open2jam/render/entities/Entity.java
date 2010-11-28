@@ -5,7 +5,7 @@ import org.open2jam.parser.Event;
 import org.open2jam.render.Sprite;
 import org.open2jam.render.SpriteList;
 
-public class Entity implements Copyable
+public class Entity implements Copyable<Entity>
 {
     protected SpriteList frames;
     protected Sprite sprite;

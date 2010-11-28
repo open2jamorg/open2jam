@@ -113,6 +113,8 @@ public class LWJGLGameWindow implements GameWindow {
 		try {
 			//setDisplayMode();
 			Display.create();
+
+                        setTitle(title);
 			
 			// grab the mouse, dont want that hideous cursor when we're playing!
 // 			Mouse.setGrabbed(true);
@@ -162,12 +164,12 @@ public class LWJGLGameWindow implements GameWindow {
 	}
 	
 	/**
-	 * Check if a particular key is current pressed.
+	 * Check if a particular key is current held.
 	 *
 	 * @param keyCode The code associated with the key to check 
-	 * @return True if the specified key is pressed
+	 * @return True if the specified key is being held
 	 */
-	public boolean isKeyPressed(int keyCode) {
+	public boolean isKeyDown(int keyCode) {
 
             Integer code = key_map.get(keyCode);
             if(code == null)return false;

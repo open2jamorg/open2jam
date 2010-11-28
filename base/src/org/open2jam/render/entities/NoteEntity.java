@@ -30,6 +30,8 @@ public class NoteEntity extends AnimatedEntity
         this.sample_value = sample;
     }
 
+    public int getSample(){ return sample_value; }
+
     @Override
     public void move(long delta)
     {
@@ -40,14 +42,14 @@ public class NoteEntity extends AnimatedEntity
     @Override
     public void judgment()
     {
-        if(!played){
-            render.queueSample(sample_value);
-            played = true;
-        }
-        if(y - height > render.getViewPort())alive = false;
+        alive = false;
     }
 
     public NoteEntity copy(){
         return new NoteEntity(this);
+    }
+
+    public double getStartY(){
+        return y + height;
     }
 }

@@ -14,7 +14,7 @@ public class EffectEntity extends AnimatedEntity
 
     public EffectEntity(SpriteList refs, Event.Channel ch, double x, double y)
     {
-            super(refs, ch, x, y);
+        super(refs, ch, x, y);
     }
 
     protected EffectEntity(EffectEntity org) {
@@ -25,9 +25,9 @@ public class EffectEntity extends AnimatedEntity
     @Override
     public void move(long delta)
     {
-            super.move(delta);
-            if(sub_frame < last_frame)alive = false; // we already looped over, now we die
-            else last_frame = sub_frame;
+        super.move(delta);
+        if(sub_frame < last_frame)alive = false; // we already looped over, now we die
+        else last_frame = sub_frame;
     }
 
     @Override

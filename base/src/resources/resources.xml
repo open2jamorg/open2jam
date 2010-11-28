@@ -7,23 +7,17 @@
         <type id="EFFECT_COOL" hit="0.8" />
         <type id="EFFECT_GOOD" hit="0.5" />
         <type id="EFFECT_BAD"  hit="0.2" />
-        <type id="EFFECT_MISS"  />
+        <type id="EFFECT_MISS" hit="0" />
     </judgment>
 
     <layer id="0">
         <entity>
             <!-- borders for the note area -->
-            <sprite x="41" y="0">
-                <frame x="66" y="1" w="9" h="230" file="main.png" />
+            <sprite x="46" y="0">
+                <frame x="72" y="1" w="3" h="230" scale_y="2.1" file="main.png" />
             </sprite>
-            <sprite x="41" y="230">
-                <frame x="66" y="1" w="9" h="230" file="main.png" />
-            </sprite>
-            <sprite x="242" y="0">
-                <frame x="213" y="1" w="9" h="230" file="main.png" />
-            </sprite>
-            <sprite x="242" y="230">
-                <frame x="213" y="1" w="9" h="230" file="main.png" />
+            <sprite x="241" y="0">
+                <frame x="213" y="1" w="9" h="230" scale_y="2.1" file="main.png" />
             </sprite>
         </entity>
     </layer>
@@ -31,14 +25,100 @@
     <layer id="1">
         <entity>
             <!-- the judgment area -->
-            <sprite framespeed="5" x="50" y="416">
-                <frame x="224" y="1"  w="191" h="64" file="main.png" />
-                <frame x="224" y="66" w="191" h="64" file="main.png" />
+            <sprite framespeed="5" x="49" y="416">
+                <frame x="224" y="1"  w="192" h="64" file="main.png" />
+                <frame x="224" y="66" w="192" h="64" file="main.png" />
             </sprite>
         </entity>
     </layer>
 
     <layer id="2">
+        <!-- static keyboard sprite -->
+        <entity>
+            <sprite x="46" y="480">
+                <frame x="208" y="366" w="204" h="120" file="main.png" />
+            </sprite>
+        </entity>
+    </layer>
+
+    <layer id="3">
+        <entity id="PRESSED_NOTE_1">
+            <sprite x="49" y="487">
+                <frame x="1" y="315" w="31" h="46" file="main.png" />
+            </sprite>
+            <sprite x="80" y="528">
+                <frame x="1" y="362" w="10" h="5" file="main.png" />
+            </sprite>
+            <sprite x="51" y="215">
+                <frame x="425" y="1" w="28" h="266" file="main.png" />
+            </sprite>
+        </entity>
+
+        <entity id="PRESSED_NOTE_2">
+            <sprite x="79" y="487">
+                <frame x="33" y="315" w="22" h="42" file="main.png" />
+            </sprite>
+            <sprite x="79" y="1">
+                <frame x="455" y="1" w="22" h="480" file="main.png" />
+            </sprite>
+        </entity>
+
+        <entity id="PRESSED_NOTE_3">
+            <sprite x="100" y="487">
+                <frame x="56" y="315" w="30" h="46" file="main.png" />
+            </sprite>
+            <sprite x="91" y="528">
+                <frame x="12" y="362" w="10" h="5" file="main.png" />
+            </sprite>
+            <sprite x="101" y="215">
+                <frame x="425" y="1" w="28" h="266" file="main.png" />
+            </sprite>
+        </entity>
+
+        <entity id="PRESSED_NOTE_4">
+            <sprite x="129" y="487">
+                <frame x="87" y="315" w="32" h="46" file="main.png" />
+            </sprite>
+            <sprite x="129" y="1">
+                <frame x="478" y="1" w="32" h="480" file="main.png" />
+            </sprite>
+        </entity>
+
+        <entity id="PRESSED_NOTE_5">
+            <sprite x="160" y="487">
+                <frame x="120" y="315" w="30" h="46" file="main.png" />
+            </sprite>
+            <sprite x="190" y="528">
+                <frame x="1" y="362" w="10" h="5" file="main.png" />
+            </sprite>
+            <sprite x="160" y="215">
+                <frame x="425" y="1" w="28" h="266" file="main.png" />
+            </sprite>
+        </entity>
+
+        <entity id="PRESSED_NOTE_6">
+            <sprite x="189" y="487">
+                <frame x="151" y="315" w="22" h="42" file="main.png" />
+            </sprite>
+            <sprite x="188" y="1">
+                <frame x="455" y="1" w="22" h="480" file="main.png" />
+            </sprite>
+        </entity>
+
+        <entity id="PRESSED_NOTE_7">
+            <sprite x="210" y="487">
+                <frame x="174" y="315" w="31" h="46" file="main.png" />
+            </sprite>
+            <sprite x="200" y="528">
+                <frame x="12" y="362" w="10" h="5" file="main.png" />
+             </sprite>
+             <sprite x="210" y="215">
+                <frame x="425" y="1" w="28" h="266" file="main.png" />
+            </sprite>
+        </entity>
+    </layer>
+
+    <layer id="4">
         <entity id="MEASURE_MARK">
             <sprite framespeed="5" x="50">
                 <frame x="225" y="134" w="188" h="3" file="main.png" />
@@ -47,9 +127,9 @@
         </entity>
     </layer>
 
-    <layer id="3">
+    <layer id="5">
         <entity id="NOTE_1">
-            <sprite id="HEAD" framespeed="12" x="50">
+            <sprite id="HEAD" framespeed="12" x="51">
                 <frame x="225" y="142" w="28" h="7" file="main.png" />
                 <frame x="225" y="150" w="28" h="7" file="main.png" />
                 <frame x="225" y="158" w="28" h="7" file="main.png" />
@@ -61,7 +141,7 @@
             </sprite>
         </entity>
         <entity id="NOTE_2">
-            <sprite id="HEAD" framespeed="12" x="78">
+            <sprite id="HEAD" framespeed="12" x="79">
                 <frame x="254" y="142" w="22" h="7" file="main.png" />
                 <frame x="254" y="150" w="22" h="7" file="main.png" />
                 <frame x="254" y="158" w="22" h="7" file="main.png" />
@@ -73,7 +153,7 @@
             </sprite>
         </entity>
         <entity id="NOTE_3">
-            <sprite id="HEAD" framespeed="12" x="100">
+            <sprite id="HEAD" framespeed="12" x="101">
                 <frame x="225" y="142" w="28" h="7" file="main.png" />
                 <frame x="225" y="150" w="28" h="7" file="main.png" />
                 <frame x="225" y="158" w="28" h="7" file="main.png" />
@@ -85,7 +165,7 @@
             </sprite>
             </entity>
         <entity id="NOTE_4">
-            <sprite id="HEAD" framespeed="12" x="132">
+            <sprite id="HEAD" framespeed="12" x="129">
                 <frame x="277" y="142" w="32" h="7" file="main.png" />
                 <frame x="277" y="150" w="32" h="7" file="main.png" />
                 <frame x="277" y="158" w="32" h="7" file="main.png" />
@@ -97,7 +177,7 @@
             </sprite>
         </entity>
         <entity id="NOTE_5">
-            <sprite id="HEAD" framespeed="12" x="164">
+            <sprite id="HEAD" framespeed="12" x="161">
                 <frame x="225" y="142" w="28" h="7" file="main.png" />
                 <frame x="225" y="150" w="28" h="7" file="main.png" />
                 <frame x="225" y="158" w="28" h="7" file="main.png" />
@@ -109,7 +189,7 @@
             </sprite>
         </entity>
         <entity id="NOTE_6">
-            <sprite id="HEAD" framespeed="12" x="186">
+            <sprite id="HEAD" framespeed="12" x="189">
                 <frame x="254" y="142" w="22" h="7" file="main.png" />
                 <frame x="254" y="150" w="22" h="7" file="main.png" />
                 <frame x="254" y="158" w="22" h="7" file="main.png" />
@@ -121,7 +201,7 @@
             </sprite>
         </entity>
         <entity id="NOTE_7">
-            <sprite id="HEAD" framespeed="12" x="214">
+            <sprite id="HEAD" framespeed="12" x="211">
                 <frame x="225" y="142" w="28" h="7" file="main.png" />
                 <frame x="225" y="150" w="28" h="7" file="main.png" />
                 <frame x="225" y="158" w="28" h="7" file="main.png" />
@@ -132,72 +212,11 @@
                 <frame x="225" y="159" w="28" h="5" file="main.png" />
             </sprite>
         </entity>
-
-        <!-- static keyboard sprite -->
-        <entity>
-            <sprite x="46" y="480">
-                <frame x="208" y="366" w="204" h="120" file="main.png" />
-            </sprite>
-        </entity>
     </layer>
 
-    <layer id="4">
-        <entity id="PRESSED_NOTE_1">
-            <sprite x="0" y="487">
-                <frame x="1" y="315" w="31" h="46" file="main.png" />
-            </sprite>
-            <sprite x="31" y="533">
-                <frame x="1" y="362" w="10" h="5" file="main.png" />
-            </sprite>
-        </entity>
 
-        <entity id="PRESSED_NOTE_2">
-            <sprite x="29" y="487">
-                <frame x="33" y="315" w="22" h="42" file="main.png" />
-            </sprite>
-        </entity>
 
-        <entity id="PRESSED_NOTE_3">
-            <sprite x="51" y="487">
-                <frame x="56" y="315" w="30" h="46" file="main.png" />
-            </sprite>
-            <sprite x="81" y="533">
-                <frame x="10" y="362" w="10" h="5" file="main.png" />
-            </sprite>
-        </entity>
-
-        <entity id="PRESSED_NOTE_4">
-            <sprite x="79" y="487">
-                <frame x="87" y="315" w="32" h="46" file="main.png" />
-            </sprite>
-        </entity>
-
-        <entity id="PRESSED_NOTE_5">
-            <sprite x="110" y="487">
-                <frame x="120" y="315" w="30" h="46" file="main.png" />
-            </sprite>
-            <sprite x="166" y="533">
-                <frame x="1" y="362" w="10" h="5" file="main.png" />
-            </sprite>
-        </entity>
-
-        <entity id="PRESSED_NOTE_6">
-            <sprite x="139" y="487">
-                <frame x="151" y="315" w="22" h="42" file="main.png" />
-            </sprite>
-        </entity>
-
-        <entity id="PRESSED_NOTE_7">
-            <sprite x="160" y="487">
-                <frame x="174" y="315" w="31" h="46" file="main.png" />
-            </sprite>
-            <sprite x="191" y="533">
-                <frame x="10" y="362" w="10" h="5" file="main.png" />
-             </sprite>
-        </entity>
-    </layer>
-
-    <layer id="5">
+    <layer id="6">
         <entity id="EFFECT_CLICK_1">
             <sprite framespeed="60">
                 <frame x="0"    y="0"   w="256" h="256" file="note_click5_3.png" />
@@ -234,7 +253,69 @@
         </entity>
     </layer>
 
+    <layer id="7">
+        <entity id="NUMBER_0">
+            <sprite>
+                <frame x="40" y="27" w="46" h="71" file="numbers_1.png" />
+            </sprite>
+        </entity>
 
+        <entity id="NUMBER_1">
+            <sprite>
+                <frame x="177" y="28" w="46" h="71" file="numbers_1.png" />
+            </sprite>
+        </entity>
+
+        <entity id="NUMBER_2">
+            <sprite>
+                <frame x="298" y="27" w="46" h="71" file="numbers_1.png" />
+            </sprite>
+        </entity>
+
+        <entity id="NUMBER_3">
+            <sprite>
+                <frame x="427" y="27" w="46" h="71" file="numbers_1.png" />
+            </sprite>
+        </entity>
+
+        <entity id="NUMBER_4">
+            <sprite>
+                <frame x="553" y="28" w="46" h="71" file="numbers_1.png" />
+            </sprite>
+        </entity>
+
+        <entity id="NUMBER_5">
+            <sprite>
+                <frame x="41" y="155" w="46" h="71" file="numbers_1.png" />
+            </sprite>
+        </entity>
+
+        <entity id="NUMBER_6">
+            <sprite>
+                <frame x="169" y="155" w="46" h="71" file="numbers_1.png" />
+            </sprite>
+        </entity>
+
+        <entity id="NUMBER_7">
+            <sprite>
+                <frame x="300" y="156" w="46" h="71" file="numbers_1.png" />
+            </sprite>
+        </entity>
+
+        <entity id="NUMBER_8">
+            <sprite>
+                <frame x="426" y="155" w="46" h="71" file="numbers_1.png" />
+            </sprite>
+        </entity>
+
+        <entity id="NUMBER_9">
+            <sprite>
+                <frame x="553" y="155" w="46" h="71" file="numbers_1.png" />
+            </sprite>
+        </entity>
+    </layer>
+
+    
 <!--     <entity id="EFFECT_JUDGMENT_COOL">
          </entity>
          <entity id="EFFECT_JUDGMENT_GOOD">

@@ -10,20 +10,21 @@ import java.util.LinkedList;
  */
 public class CompositeEntity extends Entity
 {
-    private LinkedList<Entity> entity_list;
+    protected LinkedList<Entity> entity_list;
 
     public CompositeEntity(Collection<Entity> list)
     {
         entity_list = new LinkedList<Entity>();
         entity_list.addAll(list);
     }
-    
-    protected CompositeEntity(CompositeEntity ce)
-    {
-        super(ce);
-        this.entity_list = ce.entity_list;
-    }
 
+    protected CompositeEntity(CompositeEntity org)
+    {
+        super(org);
+        entity_list = new LinkedList<Entity>();
+        for(Entity e : org.entity_list)entity_list.add(e.copy());
+    }
+    
     @Override
     public void move(long delta)
     {

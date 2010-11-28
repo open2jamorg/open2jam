@@ -43,12 +43,12 @@ public interface GameWindow {
 	public void setGameWindowCallback(GameWindowCallback callback);
 	
 	/**
-	 * Check if a particular key is pressed
+	 * Check if a particular key is held
 	 * 
 	 * @param keyCode The code associate with the key to check
-	 * @return True if the particular key is pressed
+	 * @return True if the particular key is being held
 	 */
-	public boolean isKeyPressed(int keyCode);
+	public boolean isKeyDown(int keyCode);
 
         public void destroy();
 

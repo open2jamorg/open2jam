@@ -17,11 +17,13 @@ public class Skin
     private ArrayList<Entity> other_entities;
 
     protected Judgment judgment;
+    protected int max_layer = 0;
 
     public Skin()
     {
         named_entities = new HashMap<String,Entity>();
         other_entities = new ArrayList<Entity>();
+        judgment = new Judgment();
     }
 
     public void addNamed(String id, Entity e)
@@ -45,7 +47,6 @@ public class Skin
     protected class Judgment {
         int start;
         int size;
-
         /** this should return the
          *
          * @param p

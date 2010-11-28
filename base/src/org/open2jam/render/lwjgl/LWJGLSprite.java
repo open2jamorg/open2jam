@@ -32,7 +32,7 @@ public class LWJGLSprite implements Sprite {
 	private float u, v, w, z;
 
         /** the scale of the image */
-        private float scale_x, scale_y;
+        private float scale_x = 1f, scale_y = 1f;
 	
 	/**
 	 * Create a new sprite from a specified image.
