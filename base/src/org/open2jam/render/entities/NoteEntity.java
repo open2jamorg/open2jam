@@ -13,14 +13,18 @@ public class NoteEntity extends AnimatedEntity
     protected int sample_value;
     private boolean played = false;
 
+    protected Event.Channel channel = Event.Channel.NONE;
+
     public NoteEntity(Render r, SpriteList sl, Event.Channel ch, double x, double y)
     {
-            super(sl, ch, x, y);
+            super(sl, x, y);
+            this.channel = ch;
             this.render = r;
     }
 
     protected NoteEntity(NoteEntity org) {
         super(org);
+        this.channel = org.channel;
         this.render = org.render;
         this.sample_value = org.sample_value;
         this.played = org.played;
@@ -45,11 +49,17 @@ public class NoteEntity extends AnimatedEntity
         alive = false;
     }
 
+    @Override
     public NoteEntity copy(){
         return new NoteEntity(this);
     }
 
     public double getStartY(){
         return y + height;
+    }
+
+
+    public Event.Channel getChannel() {
+        return channel;
     }
 }

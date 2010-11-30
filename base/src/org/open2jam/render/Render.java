@@ -1,6 +1,5 @@
 package org.open2jam.render;
 
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.ArrayDeque;
@@ -14,12 +13,13 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.lwjgl.openal.OpenALException;
 import org.lwjgl.opengl.DisplayMode;
+import org.open2jam.Config;
 import org.open2jam.parser.Event.Channel;
 
-import org.open2jam.parser.ResourcesHandler;
 import org.open2jam.parser.Chart;
 import org.open2jam.parser.Event;
 import org.open2jam.render.entities.BPMEntity;
+import org.open2jam.render.entities.ComboCounterEntity;
 import org.open2jam.render.entities.Entity;
 import org.open2jam.render.entities.LongNoteEntity;
 import org.open2jam.render.entities.MeasureEntity;
@@ -31,11 +31,8 @@ import org.open2jam.util.Logger;
 
 public class Render implements GameWindowCallback
 {
-    /** the number of keys */
-    private final int NUM_KEYS = 7;
-
-    /** store the sources being played */
-    private final int MAX_SOURCES = 64;
+    /** store the sound sources being played */
+    private static final int MAX_SOURCES = 64;
 
     /** the config xml */
     private static final URL resources_xml = Render.class.getResource("/resources/resources.xml");
@@ -61,6 +58,9 @@ public class Render implements GameWindowCallback
     /** the size of a measure */
     private double measure_size;
 
+    /** the bpm at which the entities are falling */
+    private double bpm;
+
     /** the vertical speed of entities pixels/milliseconds */
     private double note_speed;
 
@@ -70,36 +70,8 @@ public class Render implements GameWindowCallback
     /** the note layer, to check when it's empty */
     private int note_layer;
 
-    /** maps the Event value to OpenGL sample ID's */
-    private Map<Integer, Integer> samples;
-
-    private Iterator<Event> buffer_iterator;
-    private EnumMap<Channel, LongNoteEntity> ln_buffer;
-    private EnumMap<Event.Channel,Boolean> notes_pressed;
-
-    private NumberEntity fps_entity;
-
-    /** the bpm at which the entities are falling */
-    private double bpm;
-
-    /** a list of list of entities.
-    ** basically, each list is a layer of entities
-    ** the layers are rendered in order
-    ** so entities at layer X will always be rendered before layer X+1 */
-    private List<LinkedList<Entity>> entities_matrix;
-
-
-    private EnumMap<Event.Channel,LinkedList<NoteEntity>> note_channels;
-    private EnumMap<Event.Channel,Entity> notes_pressed_entity;
-    private EnumMap<Event.Channel,LongNoteEntity> note_holded;
-
-
     /** The recorded fps */
     private int fps;
-
-    private ArrayDeque<Integer> source_queue;
-    private LinkedList<Integer> sources_playing;
-
 
     /** The time at which the last rendering looped started from the point of view of the game logic */
     private long lastLoopTime;
@@ -107,17 +79,57 @@ public class Render implements GameWindowCallback
     /** The time since the last record of fps */
     private long lastFpsTime = 0;
 
+    /** maps the Event value to OpenGL sample ID's */
+    private Map<Integer, Integer> samples;
+
+    /** a list of list of entities.
+    ** basically, each list is a layer of entities
+    ** the layers are rendered in order
+    ** so entities at layer X will always be rendered before layer X+1 */
+    private List<LinkedList<Entity>> entities_matrix;
+
+    /** this iterator is used by the update_note_buffer
+     * to go through the events on the chart */
+    private Iterator<Event> buffer_iterator;
+
+    /** this is used by the update_note_buffer
+     * to remember the "opened" long-notes */
+    private EnumMap<Channel, LongNoteEntity> ln_buffer;
+
+    /** this holds the actual state of the keyboard,
+     * whether each is being pressed or not */
+    private EnumMap<Channel,Boolean> keyboard_key_pressed;
+
+    /** these are the same notes from the entity_matrix
+     * but divided in channels for ease to pull */
+    private EnumMap<Channel,LinkedList<NoteEntity>> note_channels;
+
+    /** entities for the key pressed events
+     * need to keep track of then to kill
+     * when the key is released */
+    private EnumMap<Channel,Entity> key_pressed_entity;
+
+    /** keep track of the long note the player may be
+     * holding with the key */
+    private EnumMap<Channel,LongNoteEntity> longnote_holded;
+
+    /** this queue hold the available sources
+     * that may be used to play sounds */
+    private ArrayDeque<Integer> source_queue;
+
+    /** this list hold the sources that are playing
+     * sounds at the moment */
+    private LinkedList<Integer> sources_playing;
+
+    /** number to display the fps on the screen */
+    private NumberEntity fps_entity;
+
+    /** the combo counter */
+    private ComboCounterEntity combo_entity;
+
     static{
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
-        keyboard_map = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
-
-        keyboard_map.put(Channel.NOTE_1, KeyEvent.VK_S);
-        keyboard_map.put(Channel.NOTE_2, KeyEvent.VK_D);
-        keyboard_map.put(Channel.NOTE_3, KeyEvent.VK_F);
-        keyboard_map.put(Channel.NOTE_4, KeyEvent.VK_SPACE);
-        keyboard_map.put(Channel.NOTE_5, KeyEvent.VK_J);
-        keyboard_map.put(Channel.NOTE_6, KeyEvent.VK_K);
-        keyboard_map.put(Channel.NOTE_7, KeyEvent.VK_L);
+        keyboard_map = Config.read().getKeyboardMap();
     }
 
     public Render(Chart c, int rank, double hispeed)
@@ -152,9 +164,9 @@ public class Render implements GameWindowCallback
         img = null;
         System.gc();
 
-        ResourceBuilder sb = new ResourceBuilder(this,"o2jam");
+        SkinHandler sb = new SkinHandler(this,"o2jam");
         try {
-            SAXParserFactory.newInstance().newSAXParser().parse(resources_xml.openStream(),new ResourcesHandler(sb));
+            SAXParserFactory.newInstance().newSAXParser().parse(resources_xml.openStream(),sb);
         } catch (Exception e) {
             Logger.die(e);
         }
@@ -180,24 +192,26 @@ public class Render implements GameWindowCallback
         ln_buffer = new EnumMap<Event.Channel,LongNoteEntity>(Event.Channel.class);
 
         // the notes pressed buffer
-        notes_pressed = new EnumMap<Event.Channel,Boolean>(Event.Channel.class);
+        keyboard_key_pressed = new EnumMap<Event.Channel,Boolean>(Event.Channel.class);
 
         // weak reference to the notes in the buffer, separated by the channel
         note_channels = new EnumMap<Event.Channel,LinkedList<NoteEntity>>(Event.Channel.class);
 
-        notes_pressed_entity = new EnumMap<Event.Channel,Entity>(Event.Channel.class);
-        note_holded = new EnumMap<Event.Channel,LongNoteEntity>(Event.Channel.class);
+        key_pressed_entity = new EnumMap<Event.Channel,Entity>(Event.Channel.class);
+        longnote_holded = new EnumMap<Event.Channel,LongNoteEntity>(Event.Channel.class);
 
 
         ArrayList<Entity> numbers = new ArrayList<Entity>();
         for(int i=0;i<10;i++)numbers.add(skin.getEntityMap().get("NUMBER_"+i));
-        fps_entity = new NumberEntity(numbers, 0, 0);
+        fps_entity = new NumberEntity(numbers, 400, 400);
+        combo_entity = new ComboCounterEntity(numbers, 145, 100);
         entities_matrix.get(numbers.get(0).getLayer()).add(fps_entity);
+        entities_matrix.get(numbers.get(0).getLayer()).add(combo_entity);
 
 
         for(Event.Channel c : Event.note_channels)
         {
-            notes_pressed.put(c, Boolean.FALSE);
+            keyboard_key_pressed.put(c, Boolean.FALSE);
             note_channels.put(c, new LinkedList<NoteEntity>());
         }
 
@@ -255,12 +269,12 @@ public class Render implements GameWindowCallback
             int key = keyboard_map.get(c);
             if(window.isKeyDown(key)) // this key is being pressed
             {
-                if(notes_pressed.get(c) == false){ // started holding now
-                    notes_pressed.put(c, true);
+                if(keyboard_key_pressed.get(c) == false){ // started holding now
+                    keyboard_key_pressed.put(c, true);
 
                     Entity ee = skin.getEntityMap().get("PRESSED_"+c).copy();
                     entities_matrix.get(ee.getLayer()).add(ee);
-                    notes_pressed_entity.put(c, ee);
+                    key_pressed_entity.put(c, ee);
 
                     if(note_channels.get(c).isEmpty())continue;
                     NoteEntity e = note_channels.get(c).getFirst();
@@ -272,7 +286,7 @@ public class Render implements GameWindowCallback
                     if(Math.abs(prec) < 2*skin.judgment.size*hispeed){
 
                         if(e instanceof LongNoteEntity){
-                            note_holded.put(c, (LongNoteEntity) e);
+                            longnote_holded.put(c, (LongNoteEntity) e);
                         }else{
                             e.setAlive(false);
                             note_channels.get(c).removeFirst();
@@ -282,20 +296,22 @@ public class Render implements GameWindowCallback
                         ee.setX(e.getX()+e.getWidth()/2-ee.getWidth()/2);
                         ee.setY(getViewport()-ee.getHeight()/2);
                         entities_matrix.get(ee.getLayer()).add(ee);
+
+                        combo_entity.incNumber();
                     }
                 }
             }
             else
-            if(notes_pressed.get(c) == true) { // key released
+            if(keyboard_key_pressed.get(c) == true) { // key released now
 
-                notes_pressed.put(c, false);
-                notes_pressed_entity.get(c).setAlive(false);
+                keyboard_key_pressed.put(c, false);
+                key_pressed_entity.get(c).setAlive(false);
 
-                LongNoteEntity e = note_holded.get(c);
+                LongNoteEntity e = longnote_holded.get(c);
                 if(e == null || note_channels.get(c).isEmpty()
                         || e != note_channels.get(c).getFirst())continue;
 
-                note_holded.put(c,null);
+                longnote_holded.put(c,null);
 
                 double prec = e.getY()- skin.judgment.start;
 
@@ -307,6 +323,8 @@ public class Render implements GameWindowCallback
                     ee.setX(e.getX()+e.getWidth()/2-ee.getWidth()/2);
                     ee.setY(getViewport()-ee.getHeight()/2);
                     entities_matrix.get(ee.getLayer()).add(ee);
+
+                    combo_entity.incNumber();
                 }
             }
         }
@@ -330,7 +348,8 @@ public class Render implements GameWindowCallback
                 else
                 if(e.isAlive() && e instanceof NoteEntity && e.getY() > window.getResolutionHeight()){
                     e.setAlive(false);
-                    note_channels.get(e.getChannel()).removeFirst();
+                    note_channels.get(((NoteEntity)e).getChannel()).removeFirst();
+                    combo_entity.resetNumber();
                 }
 
                 if(!e.isAlive())j.remove();

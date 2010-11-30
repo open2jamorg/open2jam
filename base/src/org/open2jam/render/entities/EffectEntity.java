@@ -1,6 +1,5 @@
 package org.open2jam.render.entities;
 
-import org.open2jam.parser.Event;
 import org.open2jam.render.SpriteList;
 
 /** an EffectEntity is an animated entity which animates only once.
@@ -12,9 +11,9 @@ public class EffectEntity extends AnimatedEntity
     /** keeps the last frame used. */
     protected double last_frame = 0;
 
-    public EffectEntity(SpriteList refs, Event.Channel ch, double x, double y)
+    public EffectEntity(SpriteList refs, double x, double y)
     {
-        super(refs, ch, x, y);
+        super(refs, x, y);
     }
 
     protected EffectEntity(EffectEntity org) {

@@ -1,6 +1,5 @@
 package org.open2jam.render.entities;
 
-import org.open2jam.parser.Event;
 import org.open2jam.render.SpriteList;
 
 /** an animated entity.
@@ -11,14 +10,14 @@ public class AnimatedEntity extends Entity
 {
     protected double sub_frame;
 
-    public AnimatedEntity(SpriteList sl, Event.Channel ch)
+    public AnimatedEntity(SpriteList sl)
     {
-            this(sl, ch, 0, 0);
+            this(sl, 0, 0);
     }
 
-    public AnimatedEntity(SpriteList frames, Event.Channel ch, double x, double y)
+    public AnimatedEntity(SpriteList frames, double x, double y)
     {
-            super(frames,ch, x,y);
+            super(frames, x,y);
             sub_frame = 0;
     }
 

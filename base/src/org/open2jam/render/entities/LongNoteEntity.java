@@ -60,10 +60,10 @@ public class LongNoteEntity extends NoteEntity
     public void draw()
     {
         double end = getY();
-        double y = this.y;
-        if(y > render.getViewport())y = render.getViewport();
-        body_sprite.draw(x,end,1f, (float) ((y-end) / body_sprite.getHeight()));
-        if(y < render.getViewport())sprite.draw(x,y);
+        double local_y = this.y;
+        if(local_y > render.getViewport())local_y = render.getViewport();
+        body_sprite.draw(x,end,1f, (float) ((local_y-end) / body_sprite.getHeight()));
+        if(local_y < render.getViewport())sprite.draw(x,local_y);
         sprite.draw(x,end);
     }
 

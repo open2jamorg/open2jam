@@ -15,8 +15,10 @@ import org.open2jam.render.entities.Entity;
 import org.open2jam.render.entities.LongNoteEntity;
 import org.open2jam.render.entities.MeasureEntity;
 import org.open2jam.render.entities.NoteEntity;
+import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.Attributes;
 
-public class ResourceBuilder
+public class SkinHandler extends DefaultHandler
 {
     private enum Keyword {
         Resources, skin, layer, entity, sprite, frame, judgment, type;
@@ -41,7 +43,7 @@ public class ResourceBuilder
     protected boolean on_skin = false;
     protected int auto_draw_id = 0;
 
-    public ResourceBuilder(Render r, String skin)
+    public SkinHandler(Render r, String skin)
     {
         this.render = r;
         this.target_skin = skin;
@@ -52,27 +54,33 @@ public class ResourceBuilder
         judgment_type_map = new HashMap<String,Double>();
         result = new Skin();
     }
-    
-    public void parseStart(String s, Map<String,String> atts)
+
+    @Override
+    public void startElement(String uri, String localName, String qName, Attributes atts)
     {
-        Keyword k = getKeyword(s);
+        HashMap<String,String> atts_map = new HashMap<String,String>(atts.getLength());
+        for(int i=0;i<atts.getLength();i++)
+                atts_map.put(atts.getQName(i), atts.getValue(i));
+
+        Keyword k = getKeyword(qName);
         call_stack.push(k);
-        atts_stack.push(atts);
+        atts_stack.push(atts_map);
 
         switch(k)
         {
             case skin:{
-                if(atts.get("name").equals(target_skin))on_skin = true;
+                if(atts_map.get("name").equals(target_skin))on_skin = true;
             }break;
 
             case layer:{
-                this.layer = Integer.parseInt(atts.get("id"));
+                this.layer = Integer.parseInt(atts_map.get("id"));
                 if(this.layer > result.max_layer)result.max_layer = this.layer;
             }break;
         }
     }
 
-    public void parseEnd()
+    @Override
+    public void endElement(String uri,String localName,String qName)
     {
         Keyword k = call_stack.pop();
         Map<String,String> atts = atts_stack.pop();
@@ -94,14 +102,13 @@ public class ResourceBuilder
 
             Rectangle slice = new Rectangle(x,y,w,h);
 
-            URL url = ResourceBuilder.class.getResource(FILE_PATH_PREFIX+atts.get("file"));
+            URL url = SkinHandler.class.getResource(FILE_PATH_PREFIX+atts.get("file"));
             if(url == null)throw new RuntimeException("Cannot find resource: "+FILE_PATH_PREFIX+atts.get("file"));
 
             Sprite s = ResourceFactory.get().getSprite(url, slice);
             s.setScale(sx, sy);
             frame_buffer.add(s);
             }
-            break;
 
             case sprite:{
             int x = atts.containsKey("x") ? Integer.parseInt(atts.get("x")) : 0;
@@ -121,8 +128,8 @@ public class ResourceBuilder
                 sl.addAll(frame_buffer);
 
                 Entity e = null;
-                if(sl.size() == 1)e = new Entity(sl, Event.Channel.NONE, x, y);
-                else e = new AnimatedEntity(sl, Event.Channel.NONE, x, y);
+                if(sl.size() == 1)e = new Entity(sl, x, y);
+                else e = new AnimatedEntity(sl, x, y);
                 
                 sprite_buffer.put(id, e);
             }catch(Exception e){ Logger.log(e); }
@@ -186,11 +193,11 @@ public class ResourceBuilder
         }
         else if(id.equals("MEASURE_MARK")){
             Entity sprite = sprite_buffer.values().iterator().next();
-            e = new MeasureEntity(render, sprite.getFrames(), Event.Channel.NONE, sprite.getX(), sprite.getY());
+            e = new MeasureEntity(render, sprite.getFrames(), sprite.getX(), sprite.getY());
         }
         else if(id.startsWith("EFFECT_")){
             Entity t = sprite_buffer.values().iterator().next();
-            e = new EffectEntity(t.getFrames(), t.getChannel(), t.getX(), t.getY());
+            e = new EffectEntity(t.getFrames(),t.getX(), t.getY());
         }
         else if(id.startsWith("PRESSED_NOTE_")){
             e = new CompositeEntity(sprite_buffer.values());
@@ -201,8 +208,6 @@ public class ResourceBuilder
 
         return e;
     }
-
-
 
     public Skin getResult()
     {

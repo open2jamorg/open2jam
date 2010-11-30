@@ -8,7 +8,7 @@ import java.util.Collection;
  */
 public class NumberEntity extends CompositeEntity
 {
-    private Integer number = 0;
+    protected Integer number = null;
     
     public NumberEntity(Collection<Entity> list, double x, double y)
     {
@@ -17,7 +17,7 @@ public class NumberEntity extends CompositeEntity
         this.y = y;
     }
 
-    public void setNumber(int i){
+    public void setNumber(Integer i){
         this.number = i;
     }
 

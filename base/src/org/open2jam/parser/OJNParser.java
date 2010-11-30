@@ -20,7 +20,7 @@ public class OJNParser
 
         public static boolean canRead(File file)
         {
-            return file.getName().endsWith(".ojn");
+            return file.getName().toLowerCase().endsWith(".ojn");
 //            if(file.isDirectory())return false;
 //            try{
 //                RandomAccessFile f = new RandomAccessFile(file.getAbsolutePath(),"r");

@@ -1,7 +1,6 @@
 package org.open2jam.render.entities;
 
 import org.open2jam.util.Copyable;
-import org.open2jam.parser.Event;
 import org.open2jam.render.Sprite;
 import org.open2jam.render.SpriteList;
 
@@ -9,8 +8,6 @@ public class Entity implements Copyable<Entity>
 {
     protected SpriteList frames;
     protected Sprite sprite;
-
-    protected Event.Channel channel = Event.Channel.NONE;
 
     /** The current speed of this entity horizontally (pixels/millisecs) */
     protected double dx;
@@ -28,16 +25,15 @@ public class Entity implements Copyable<Entity>
     /** allows constructor extensions */
     protected Entity() {}
 
-    public Entity(SpriteList s, Event.Channel ch)
+    public Entity(SpriteList s)
     {
-            this(s,ch, 0,0);
+            this(s,0,0);
     }
 
-    public Entity(SpriteList sp, Event.Channel ch, double x, double y)
+    public Entity(SpriteList sp, double x, double y)
     {
         this.frames = sp;
         this.sprite = sp.get(0);
-        this.channel = ch;
         this.x = x;
         this.y = y;
         width = sprite.getWidth();
@@ -46,7 +42,6 @@ public class Entity implements Copyable<Entity>
 
     protected Entity(Entity org) {
         this.alive = org.alive;
-        this.channel = org.channel;
         this.sprite = org.sprite;
         this.frames = org.frames;
         this.dx = org.dx;
@@ -117,14 +112,7 @@ public class Entity implements Copyable<Entity>
         return frames;
     }
 
-
-    public Event.Channel getChannel() {
-        return channel;
-    }
-
     public Entity copy() {
         return new Entity(this);
     }
-
-
 }
