@@ -8,70 +8,73 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.open2jam.util.ByteBufferInputStream;
-import org.open2jam.util.Logger;
 
 public class OJNChart implements Chart
 {
-	/** full path to the source file of this header */
-	protected File source;
-	public File getSource() { return source; }
+    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-	/** an integer representing difficulty.
-	*** this is the internal difficult level of the song
-	*** for that rank **/
-	protected short[] level;
-	public int getLevel(int rank){ return level[rank]; }
+    /** full path to the source file of this header */
+    protected File source;
+    public File getSource() { return source; }
 
-	public int getMaxRank(){ return 2; }
+    /** an integer representing difficulty.
+    *** this is the internal difficult level of the song
+    *** for that rank **/
+    protected short[] level;
+    public int getLevel(int rank){ return level[rank]; }
 
-	protected String title;
-	public String getTitle() { return title; }
+    public int getMaxRank(){ return 2; }
 
-	protected String artist;
-	public String getArtist() { return artist; }
+    protected String title;
+    public String getTitle() { return title; }
 
-	protected String genre;
-	public String getGenre() { return genre; }
+    protected String artist;
+    public String getArtist() { return artist; }
 
-	protected String noter;
-	public String getNoter(){ return noter; }
+    protected String genre;
+    public String getGenre() { return genre; }
 
-	protected File sample_file;
-	public Map<Integer,Integer> getSamples(int rank){ return OJMParser.parseFile(sample_file); }
+    protected String noter;
+    public String getNoter(){ return noter; }
 
-	/** the bpm as specified is the header */
-	protected double bpm;
-	public double getBPM(int rank) { return bpm; }
+    protected File sample_file;
+    public Map<Integer,Integer> getSamples(int rank){ return OJMParser.parseFile(sample_file); }
 
-	/** the number of notes in the song */
-	protected int[] note_count;
-	public int getNoteCount(int rank) { return note_count[rank]; }
+    /** the bpm as specified is the header */
+    protected double bpm;
+    public double getBPM(int rank) { return bpm; }
 
-	/** the duration in seconds */
-	protected int[] duration;
-	public int getDuration(int rank) { return duration[rank]; }
+    /** the number of notes in the song */
+    protected int[] note_count;
+    public int getNoteCount(int rank) { return note_count[rank]; }
+
+    /** the duration in seconds */
+    protected int[] duration;
+    public int getDuration(int rank) { return duration[rank]; }
 
 
-        protected int cover_size;
-	public BufferedImage getCover()
-        {
-            try{
-                RandomAccessFile f = new RandomAccessFile(source, "r");
-                ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, note_offsets[3], cover_size);
-                buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
-                ByteBufferInputStream bis = new ByteBufferInputStream(buffer);
-                f.close();
-                return ImageIO.read(bis);
-            }catch(IOException e){
-                Logger.log(e.toString()+": fail map ["+source.getName()+"] from["+note_offsets[3]+"] to ["+cover_size+"]");
-            }
-            return null;
+    protected int cover_size;
+    public BufferedImage getCover()
+    {
+        try{
+            RandomAccessFile f = new RandomAccessFile(source, "r");
+            ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, note_offsets[3], cover_size);
+            buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
+            ByteBufferInputStream bis = new ByteBufferInputStream(buffer);
+            f.close();
+            return ImageIO.read(bis);
+        }catch(IOException e){
+            logger.log(Level.WARNING, "IO exception getting image from file {0}", source.getName());
         }
+        return null;
+    }
 
-	protected int note_offsets[];
-	public int[] getNoteOffsets() { return note_offsets; }
+    protected int note_offsets[];
+    public int[] getNoteOffsets() { return note_offsets; }
 
     public List<Event> getEvents(int rank) {
         return OJNParser.parseChart(this, rank);

@@ -8,7 +8,7 @@ import java.util.Collection;
  */
 public class NumberEntity extends CompositeEntity
 {
-    protected Integer number = null;
+    protected Integer number = 0;
     
     public NumberEntity(Collection<Entity> list, double x, double y)
     {

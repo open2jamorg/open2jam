@@ -1,5 +1,6 @@
 package org.open2jam.parser;
 
+import java.util.logging.Level;
 import org.open2jam.util.OggInputStream;
 import java.io.File;
 import java.io.RandomAccessFile;
@@ -8,160 +9,161 @@ import java.util.HashMap;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.util.logging.Logger;
 import org.open2jam.util.ByteBufferInputStream;
 
 import org.open2jam.render.lwjgl.SoundManager;
-import org.open2jam.util.Logger;
 
 
 public class OJMParser
 {
-	/** the xor mask used in the M30 format */
-	private static final byte[] nami = new byte[]{0x6E, 0x61, 0x6D, 0x69};
+    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
+    /** the xor mask used in the M30 format */
+    private static final byte[] nami = new byte[]{0x6E, 0x61, 0x6D, 0x69};
 
 
-        /** the M30 signature, "M30\0" in little endian */
-        private static final int M30_SIGNATURE = 0x0030334D;
+    /** the M30 signature, "M30\0" in little endian */
+    private static final int M30_SIGNATURE = 0x0030334D;
 
-        /** the OMC signature, "OMC\0" in little endian */
-        private static final int OMC_SIGNATURE = 0x00434D4F;
+    /** the OMC signature, "OMC\0" in little endian */
+    private static final int OMC_SIGNATURE = 0x00434D4F;
 
-        /** the OJM signature, "OJM\0" in little endian */
-        private static final int OJM_SIGNATURE = 0x004D4A4F;
+    /** the OJM signature, "OJM\0" in little endian */
+    private static final int OJM_SIGNATURE = 0x004D4A4F;
 
-        /* this is a dump from debugging notetool */
-        private static final byte[] REARRANGE_TABLE = new byte[]{
-	0x10, 0x0E, 0x02, 0x09, 0x04, 0x00, 0x07, 0x01,
-	0x06, 0x08, 0x0F, 0x0A, 0x05, 0x0C, 0x03, 0x0D,
-	0x0B, 0x07, 0x02, 0x0A, 0x0B, 0x03, 0x05, 0x0D,
-	0x08, 0x04, 0x00, 0x0C, 0x06, 0x0F, 0x0E, 0x10,
-	0x01, 0x09, 0x0C, 0x0D, 0x03, 0x00, 0x06, 0x09,
-	0x0A, 0x01, 0x07, 0x08, 0x10, 0x02, 0x0B, 0x0E,
-	0x04, 0x0F, 0x05, 0x08, 0x03, 0x04, 0x0D, 0x06,
-	0x05, 0x0B, 0x10, 0x02, 0x0C, 0x07, 0x09, 0x0A,
-	0x0F, 0x0E, 0x00, 0x01, 0x0F, 0x02, 0x0C, 0x0D,
-	0x00, 0x04, 0x01, 0x05, 0x07, 0x03, 0x09, 0x10,
-	0x06, 0x0B, 0x0A, 0x08, 0x0E, 0x00, 0x04, 0x0B,
-	0x10, 0x0F, 0x0D, 0x0C, 0x06, 0x05, 0x07, 0x01,
-	0x02, 0x03, 0x08, 0x09, 0x0A, 0x0E, 0x03, 0x10,
-	0x08, 0x07, 0x06, 0x09, 0x0E, 0x0D, 0x00, 0x0A,
-	0x0B, 0x04, 0x05, 0x0C, 0x02, 0x01, 0x0F, 0x04,
-	0x0E, 0x10, 0x0F, 0x05, 0x08, 0x07, 0x0B, 0x00,
-	0x01, 0x06, 0x02, 0x0C, 0x09, 0x03, 0x0A, 0x0D,
-	0x06, 0x0D, 0x0E, 0x07, 0x10, 0x0A, 0x0B, 0x00,
-	0x01, 0x0C, 0x0F, 0x02, 0x03, 0x08, 0x09, 0x04,
-	0x05, 0x0A, 0x0C, 0x00, 0x08, 0x09, 0x0D, 0x03,
-	0x04, 0x05, 0x10, 0x0E, 0x0F, 0x01, 0x02, 0x0B,
-	0x06, 0x07, 0x05, 0x06, 0x0C, 0x04, 0x0D, 0x0F,
-	0x07, 0x0E, 0x08, 0x01, 0x09, 0x02, 0x10, 0x0A,
-	0x0B, 0x00, 0x03, 0x0B, 0x0F, 0x04, 0x0E, 0x03,
-	0x01, 0x00, 0x02, 0x0D, 0x0C, 0x06, 0x07, 0x05,
-	0x10, 0x09, 0x08, 0x0A, 0x03, 0x02, 0x01, 0x00,
-	0x04, 0x0C, 0x0D, 0x0B, 0x10, 0x05, 0x06, 0x0F,
-	0x0E, 0x07, 0x09, 0x0A, 0x08, 0x09, 0x0A, 0x00,
-	0x07, 0x08, 0x06, 0x10, 0x03, 0x04, 0x01, 0x02,
-	0x05, 0x0B, 0x0E, 0x0F, 0x0D, 0x0C, 0x0A, 0x06,
-	0x09, 0x0C, 0x0B, 0x10, 0x07, 0x08, 0x00, 0x0F,
-	0x03, 0x01, 0x02, 0x05, 0x0D, 0x0E, 0x04, 0x0D,
-	0x00, 0x01, 0x0E, 0x02, 0x03, 0x08, 0x0B, 0x07,
-	0x0C, 0x09, 0x05, 0x0A, 0x0F, 0x04, 0x06, 0x10,
-	0x01, 0x0E, 0x02, 0x03, 0x0D, 0x0B, 0x07, 0x00,
-	0x08, 0x0C, 0x09, 0x06, 0x0F, 0x10, 0x05, 0x0A,
-	0x04, 0x00};
+    /* this is a dump from debugging notetool */
+    private static final byte[] REARRANGE_TABLE = new byte[]{
+    0x10, 0x0E, 0x02, 0x09, 0x04, 0x00, 0x07, 0x01,
+    0x06, 0x08, 0x0F, 0x0A, 0x05, 0x0C, 0x03, 0x0D,
+    0x0B, 0x07, 0x02, 0x0A, 0x0B, 0x03, 0x05, 0x0D,
+    0x08, 0x04, 0x00, 0x0C, 0x06, 0x0F, 0x0E, 0x10,
+    0x01, 0x09, 0x0C, 0x0D, 0x03, 0x00, 0x06, 0x09,
+    0x0A, 0x01, 0x07, 0x08, 0x10, 0x02, 0x0B, 0x0E,
+    0x04, 0x0F, 0x05, 0x08, 0x03, 0x04, 0x0D, 0x06,
+    0x05, 0x0B, 0x10, 0x02, 0x0C, 0x07, 0x09, 0x0A,
+    0x0F, 0x0E, 0x00, 0x01, 0x0F, 0x02, 0x0C, 0x0D,
+    0x00, 0x04, 0x01, 0x05, 0x07, 0x03, 0x09, 0x10,
+    0x06, 0x0B, 0x0A, 0x08, 0x0E, 0x00, 0x04, 0x0B,
+    0x10, 0x0F, 0x0D, 0x0C, 0x06, 0x05, 0x07, 0x01,
+    0x02, 0x03, 0x08, 0x09, 0x0A, 0x0E, 0x03, 0x10,
+    0x08, 0x07, 0x06, 0x09, 0x0E, 0x0D, 0x00, 0x0A,
+    0x0B, 0x04, 0x05, 0x0C, 0x02, 0x01, 0x0F, 0x04,
+    0x0E, 0x10, 0x0F, 0x05, 0x08, 0x07, 0x0B, 0x00,
+    0x01, 0x06, 0x02, 0x0C, 0x09, 0x03, 0x0A, 0x0D,
+    0x06, 0x0D, 0x0E, 0x07, 0x10, 0x0A, 0x0B, 0x00,
+    0x01, 0x0C, 0x0F, 0x02, 0x03, 0x08, 0x09, 0x04,
+    0x05, 0x0A, 0x0C, 0x00, 0x08, 0x09, 0x0D, 0x03,
+    0x04, 0x05, 0x10, 0x0E, 0x0F, 0x01, 0x02, 0x0B,
+    0x06, 0x07, 0x05, 0x06, 0x0C, 0x04, 0x0D, 0x0F,
+    0x07, 0x0E, 0x08, 0x01, 0x09, 0x02, 0x10, 0x0A,
+    0x0B, 0x00, 0x03, 0x0B, 0x0F, 0x04, 0x0E, 0x03,
+    0x01, 0x00, 0x02, 0x0D, 0x0C, 0x06, 0x07, 0x05,
+    0x10, 0x09, 0x08, 0x0A, 0x03, 0x02, 0x01, 0x00,
+    0x04, 0x0C, 0x0D, 0x0B, 0x10, 0x05, 0x06, 0x0F,
+    0x0E, 0x07, 0x09, 0x0A, 0x08, 0x09, 0x0A, 0x00,
+    0x07, 0x08, 0x06, 0x10, 0x03, 0x04, 0x01, 0x02,
+    0x05, 0x0B, 0x0E, 0x0F, 0x0D, 0x0C, 0x0A, 0x06,
+    0x09, 0x0C, 0x0B, 0x10, 0x07, 0x08, 0x00, 0x0F,
+    0x03, 0x01, 0x02, 0x05, 0x0D, 0x0E, 0x04, 0x0D,
+    0x00, 0x01, 0x0E, 0x02, 0x03, 0x08, 0x0B, 0x07,
+    0x0C, 0x09, 0x05, 0x0A, 0x0F, 0x04, 0x06, 0x10,
+    0x01, 0x0E, 0x02, 0x03, 0x0D, 0x0B, 0x07, 0x00,
+    0x08, 0x0C, 0x09, 0x06, 0x0F, 0x10, 0x05, 0x0A,
+    0x04, 0x00};
 
-	public static HashMap<Integer,Integer> parseFile(File file)
-	{
-                RandomAccessFile f = null;
-                HashMap<Integer,Integer> ret = null;
-		try{
-			f = new RandomAccessFile(file,"r");
-                        ByteBuffer buffer = f.getChannel().map(java.nio.channels.FileChannel.MapMode.READ_ONLY, 0, 4);
-                        buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
-			int signature = buffer.getInt();
+    public static HashMap<Integer,Integer> parseFile(File file)
+    {
+        RandomAccessFile f = null;
+        HashMap<Integer,Integer> ret = null;
+        try{
+            f = new RandomAccessFile(file,"r");
+            ByteBuffer buffer = f.getChannel().map(java.nio.channels.FileChannel.MapMode.READ_ONLY, 0, 4);
+            buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
+            int signature = buffer.getInt();
 
-                        switch(signature)
-                        {
-                            case M30_SIGNATURE:
-                                ret = parseM30(f);
-                                break;
+            switch(signature)
+            {
+                case M30_SIGNATURE:
+                    ret = parseM30(f, file);
+                    break;
 
-                            case OMC_SIGNATURE:
-                            case OJM_SIGNATURE:
-                                ret = parseOMC(f);
-                                break;
+                case OMC_SIGNATURE:
+                case OJM_SIGNATURE:
+                    ret = parseOMC(f);
+                    break;
 
-                            default:
-                                ret = new HashMap<Integer,Integer>();
-                        }
-                        f.close();
-		}catch(IOException e) {
-			Logger.warn(e);
-		}
-		return ret;
-	}
+                default:
+                    ret = new HashMap<Integer,Integer>();
+            }
+            f.close();
+        }catch(IOException e) {
+            logger.log(Level.WARNING, "IO expeption on file {0} : {1}", new Object[]{file.getName(), e.getMessage()});
+        }
+        return ret;
+    }
 
-	private static HashMap<Integer,Integer> parseM30(RandomAccessFile f) throws IOException
-	{
-		ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 4, 28);
-		buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
+    private static HashMap<Integer,Integer> parseM30(RandomAccessFile f, File file) throws IOException
+    {
+        ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 4, 28);
+        buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
 
-		// header
-		byte[] unk_fixed = new byte[4];
-		buffer.get(unk_fixed);
-                byte nami_encoded = buffer.get();
-                byte[] unk_fixed2 = new byte[3];
-                buffer.get(unk_fixed2);
-		short sample_count = buffer.getShort();
-		byte[] unk_fixed3 = new byte[6];
-		buffer.get(unk_fixed3);
-		int payload_size = buffer.getInt();
-		int unk_zero2 = buffer.getInt();
+        // header
+        byte[] unk_fixed = new byte[4];
+        buffer.get(unk_fixed);
+        byte nami_encoded = buffer.get();
+        byte[] unk_fixed2 = new byte[3];
+        buffer.get(unk_fixed2);
+        short sample_count = buffer.getShort();
+        byte[] unk_fixed3 = new byte[6];
+        buffer.get(unk_fixed3);
+        int payload_size = buffer.getInt();
+        int unk_zero2 = buffer.getInt();
 
-		buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 28, payload_size);
-		buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
+        buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 28, payload_size);
+        buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
 
-		HashMap<Integer,Integer> samples = new HashMap<Integer,Integer>();
+        HashMap<Integer,Integer> samples = new HashMap<Integer,Integer>();
 
+        for(int i=0; i<sample_count; i++)
+        {
+            // reached the end of the file before the samples_count
+            if(buffer.remaining() < 52){
+                logger.log(Level.INFO, "Wrong number of samples on OJM header : {0}", file.getName());
+                break;
+            }
+            byte[] sample_name = new byte[32];
+            buffer.get(sample_name);
+            int sample_size = buffer.getInt();
+            byte unk_sample_type = buffer.get();
+            byte unk_off = buffer.get();
+            short fixed_2 = buffer.getShort();
+            int unk_sample_type2 = buffer.getInt();
+            short ref = buffer.getShort();
+            short unk_zero = buffer.getShort();
+            byte[] unk_wut = new byte[3];
+            buffer.get(unk_wut);
+            byte unk_counter = buffer.get();
 
-		for(int i=0; i<sample_count; i++)
-		{
-			// reached the end of the file before the samples_count
-                        if(buffer.remaining() < 52){
-                            Logger.log("Wrong number of samples on OJM header");
-                            break;
-                        }
-			byte[] sample_name = new byte[32];
-			buffer.get(sample_name);
-			int sample_size = buffer.getInt();
-			byte unk_sample_type = buffer.get();
-			byte unk_off = buffer.get();
-			short fixed_2 = buffer.getShort();
-			int unk_sample_type2 = buffer.getInt();
-			short ref = buffer.getShort();
-			short unk_zero = buffer.getShort();
-			byte[] unk_wut = new byte[3];
-			buffer.get(unk_wut);
-			byte unk_counter = buffer.get();
+            byte[] sample_data = new byte[sample_size];
+            buffer.get(sample_data);
+            if(nami_encoded > 0)nami_xor(sample_data);
 
-			byte[] sample_data = new byte[sample_size];
-			buffer.get(sample_data);
-			if(nami_encoded > 0)nami_xor(sample_data);
-
-			int id = SoundManager.newBuffer(
-				new OggInputStream(new ByteArrayInputStream(sample_data))
-			);
-                        int value = ref;
-                        if(unk_sample_type == 0){
-                                value = 1000 + ref;
-                        }
-                        else if(unk_sample_type != 5){
-                           Logger.log("! WARNING ! unknown sample id type ["+unk_sample_type+"]");
-                        }
-			samples.put(value, id);
-		}
-		f.close();
-		return samples;
-	}
+            int id = SoundManager.newBuffer(
+                new OggInputStream(new ByteArrayInputStream(sample_data))
+            );
+            int value = ref;
+            if(unk_sample_type == 0){
+                value = 1000 + ref;
+            }
+            else if(unk_sample_type != 5){
+               logger.log(Level.WARNING, "Unknown sample id type [{0}] on OJM : {1}", new Object[]{unk_sample_type, file.getName()});
+            }
+            samples.put(value, id);
+        }
+        f.close();
+        return samples;
+    }
 
     private static void nami_xor(byte[] array)
     {

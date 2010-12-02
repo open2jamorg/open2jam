@@ -254,63 +254,69 @@
     </layer>
 
     <layer id="7">
-        <entity id="NUMBER_0">
-            <sprite>
+        <entity id="FPS_COUNTER" x="400" y="400">
+            <sprite id="0">
                 <frame x="40" y="27" w="46" h="71" file="numbers_1.png" />
             </sprite>
-        </entity>
-
-        <entity id="NUMBER_1">
-            <sprite>
+            <sprite id="1">
                 <frame x="177" y="28" w="46" h="71" file="numbers_1.png" />
             </sprite>
-        </entity>
-
-        <entity id="NUMBER_2">
-            <sprite>
+            <sprite id="2">
                 <frame x="298" y="27" w="46" h="71" file="numbers_1.png" />
             </sprite>
-        </entity>
-
-        <entity id="NUMBER_3">
-            <sprite>
+            <sprite id="3">
                 <frame x="427" y="27" w="46" h="71" file="numbers_1.png" />
             </sprite>
-        </entity>
-
-        <entity id="NUMBER_4">
-            <sprite>
+            <sprite id="4">
                 <frame x="553" y="28" w="46" h="71" file="numbers_1.png" />
             </sprite>
-        </entity>
-
-        <entity id="NUMBER_5">
-            <sprite>
+            <sprite id="5">
                 <frame x="41" y="155" w="46" h="71" file="numbers_1.png" />
             </sprite>
-        </entity>
-
-        <entity id="NUMBER_6">
-            <sprite>
+            <sprite id="6">
                 <frame x="169" y="155" w="46" h="71" file="numbers_1.png" />
             </sprite>
-        </entity>
-
-        <entity id="NUMBER_7">
-            <sprite>
+            <sprite id="7">
                 <frame x="300" y="156" w="46" h="71" file="numbers_1.png" />
             </sprite>
-        </entity>
-
-        <entity id="NUMBER_8">
-            <sprite>
+            <sprite id="8">
                 <frame x="426" y="155" w="46" h="71" file="numbers_1.png" />
+            </sprite>
+            <sprite id="9">
+                <frame x="553" y="155" w="46" h="71" file="numbers_1.png" />
             </sprite>
         </entity>
 
-        <entity id="NUMBER_9">
-            <sprite>
-                <frame x="553" y="155" w="46" h="71" file="numbers_1.png" />
+        <entity id="COMBO_COUNTER" x="145" y="100">
+            <sprite id="0">
+                <frame x="40" y="27" w="46" h="71" scale="0.5" file="numbers_1.png" />
+            </sprite>
+            <sprite id="1">
+                <frame x="177" y="28" w="46" h="71" scale="0.5" file="numbers_1.png" />
+            </sprite>
+            <sprite id="2">
+                <frame x="298" y="27" w="46" h="71" scale="0.5" file="numbers_1.png" />
+            </sprite>
+            <sprite id="3">
+                <frame x="427" y="27" w="46" h="71" scale="0.5" file="numbers_1.png" />
+            </sprite>
+            <sprite id="4">
+                <frame x="553" y="28" w="46" h="71" scale="0.5" file="numbers_1.png" />
+            </sprite>
+            <sprite id="5">
+                <frame x="41" y="155" w="46" h="71" scale="0.5" file="numbers_1.png" />
+            </sprite>
+            <sprite id="6">
+                <frame x="169" y="155" w="46" h="71" scale="0.5" file="numbers_1.png" />
+            </sprite>
+            <sprite id="7">
+                <frame x="300" y="156" w="46" h="71" scale="0.5" file="numbers_1.png" />
+            </sprite>
+            <sprite id="8">
+                <frame x="426" y="155" w="46" h="71" scale="0.5" file="numbers_1.png" />
+            </sprite>
+            <sprite id="9">
+                <frame x="553" y="155" w="46" h="71" scale="0.5" file="numbers_1.png" />
             </sprite>
         </entity>
     </layer>

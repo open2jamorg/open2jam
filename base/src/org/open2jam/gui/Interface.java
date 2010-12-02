@@ -13,6 +13,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -23,7 +25,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableRowSorter;
 
-import org.open2jam.util.Logger;
 import org.open2jam.parser.Chart;
 import org.open2jam.render.Render;
 
@@ -36,6 +37,8 @@ import org.lwjgl.opengl.DisplayMode;
  */
 public class Interface extends javax.swing.JFrame 
         implements PropertyChangeListener, ListSelectionListener {
+
+    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private ChartTableModel model_songlist;
     private String cwd;
@@ -506,11 +509,9 @@ public class Interface extends javax.swing.JFrame
         final boolean fs = jc_full_screen.isSelected();
 
         Render r = new Render(selected_header, rank, hispeed);
-        try {
-            r.setDisplay(dm, vsync, fs);
-        } catch (Exception ex) {
-            Logger.die(ex);
-        }
+
+        r.setDisplay(dm, vsync, fs);
+
         r.startRendering();
     }//GEN-LAST:event_bt_playActionPerformed
 
@@ -563,7 +564,7 @@ public class Interface extends javax.swing.JFrame
         try {
             display_modes = Display.getAvailableDisplayModes();
         } catch (LWJGLException ex) {
-            Logger.die(ex);
+            logger.log(Level.WARNING, "Could not get the display modes !! {0}", ex.getMessage());
         }
         model_songlist = new ChartTableModel();
     }

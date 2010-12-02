@@ -1,8 +1,8 @@
-- add combo counter
-
 - create the judgment system
 
 - fix the alpha channels of the image resources
+
+- create a config screen to the interface
 
 - fix the BPM modifier
 
@@ -11,8 +11,6 @@
 - workaround ranks in bms
 
 - branch implement JOGL - see if it's worth the trouble
-
-- use the java Logging API instead
 
 - rescale textures if the resolution isn't 800x600
 

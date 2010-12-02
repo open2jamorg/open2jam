@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package org.open2jam.gui;
 
 import java.util.ArrayList;
@@ -108,5 +103,4 @@ public class ChartTableModel implements TableModel
     private void fireListeners(TableModelEvent e) {
         for(TableModelListener l : listeners)l.tableChanged(e);
     }
-
 }

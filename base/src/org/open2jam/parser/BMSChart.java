@@ -5,11 +5,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import org.open2jam.util.Logger;
 
 public class BMSChart implements Chart
 {
+    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
     protected int lntype;
 
     protected Map<Integer, Integer> rank_map;
@@ -59,7 +62,9 @@ public class BMSChart implements Chart
     public BufferedImage getCover() {
         try {
             return ImageIO.read(image_cover);
-        } catch (IOException ex) {Logger.warn(ex);}
+        } catch (IOException ex) {
+            logger.log(Level.WARNING, "IO Error on reading cover: {0}", ex.getMessage());
+        }
         return null;
     }
 

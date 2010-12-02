@@ -2,6 +2,8 @@ package org.open2jam.render.lwjgl;
 
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -20,6 +22,8 @@ import org.open2jam.render.GameWindowCallback;
  * @author Brian Matzon
  */
 public class LWJGLGameWindow implements GameWindow {
+
+        static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
   
 	/** The callback which should be notified of window events */
 	private GameWindowCallback callback;
@@ -94,12 +98,16 @@ public class LWJGLGameWindow implements GameWindow {
 	 * @param x The width of the game display area
 	 * @param y The height of the game display area
 	 */
-	public void setDisplay(DisplayMode dm, boolean vsync, boolean fs) throws Exception{
-            Display.setDisplayMode(dm);
-            Display.setVSyncEnabled(vsync);
-            Display.setFullscreen(fs);
-            width = dm.getWidth();
-            height = dm.getHeight();
+	public void setDisplay(DisplayMode dm, boolean vsync, boolean fs) {
+            try{
+                Display.setDisplayMode(dm);
+                Display.setVSyncEnabled(vsync);
+                Display.setFullscreen(fs);
+                width = dm.getWidth();
+                height = dm.getHeight();
+            }catch(LWJGLException e){
+                logger.log(Level.WARNING, "LWJGL Error: {0}", e.getMessage());
+            }
         }
 
 	public int getResolutionHeight(){ return height; }

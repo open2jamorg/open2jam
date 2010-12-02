@@ -1,4 +1,4 @@
-package org.open2jam.render;
+package org.open2jam.util;
 
 /**
  * A wrapper class that provides timing methods.
@@ -53,10 +53,11 @@ public class SystemTimer {
         return ticks;
     }
 	
-    public static void sleep(int ticks)
+    public static void sleep(int milli)
     {
+        if(milli <= 0)return;
         try{
-                Thread.sleep(0L, ticks);
+                Thread.sleep(milli);
         }catch(InterruptedException e){}
     }
 }

@@ -8,8 +8,24 @@ import java.util.Collection;
  */
 public class ComboCounterEntity extends NumberEntity
 {
-    protected double base_y;
-    protected double base_x;
+    /** how much the entity will "wobble" down
+     * when the count number is increased, in pixels */
+    protected static final int wobble = 50;
+
+    /** the speed in which the entity will go
+     * back to the base position */
+    protected static final double wobble_dy = -1;
+
+    /** the time in milliseconds in which the entity
+     * will be displayed when the count is updated */
+    protected static final int show_time = 5000;
+
+    /** the base position of the entity */
+    protected double base_y, base_x;
+
+    /** time left to display on screen,
+     * won't be draw on screen if it's zero */
+    protected int to_show = 0;
 
     public ComboCounterEntity(Collection<Entity> list, double x, double y)
     {
@@ -18,24 +34,26 @@ public class ComboCounterEntity extends NumberEntity
         base_x = x;
     }
 
-
     public void incNumber()
     {
         number++;
-        y = base_y - 100;
+        y = base_y + wobble;
+        to_show = show_time;
     }
 
     public void resetNumber()
     {
         number = 0;
-        y = base_y - 100;
+        y = base_y + wobble;
+        to_show = 0;
     }
 
     @Override
     public void move(long delta)
     {
         super.move(delta);
-        if(y < base_y)y++;
+        to_show -= delta;
+        if(y > base_y)y += delta * wobble_dy;
     }
 
     private void findMiddle()
@@ -52,7 +70,7 @@ public class ComboCounterEntity extends NumberEntity
     @Override
     public void draw()
     {
-        if(number < 1)return;
+        if(to_show <= 0)return;
         findMiddle();
         char[] chars = number.toString().toCharArray();
         double tx = x;

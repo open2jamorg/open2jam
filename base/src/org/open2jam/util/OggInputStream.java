@@ -14,6 +14,7 @@ import com.jcraft.jorbis.Block;
 import com.jcraft.jorbis.Comment;
 import com.jcraft.jorbis.DspState;
 import com.jcraft.jorbis.Info;
+import java.util.logging.Logger;
 
 
 
@@ -31,57 +32,59 @@ import com.jcraft.jorbis.Info;
  */
 public class OggInputStream extends FilterInputStream {
 
-	/** The mono 16 bit format */
-	public static final int FORMAT_MONO16 = 1;
-	
-	/** The stereo 16 bit format */
-	public static final int FORMAT_STEREO16 = 2;
+    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-	// temp vars
-	private float[][][] _pcm = new float[1][][];
-	private int[] _index;
+    /** The mono 16 bit format */
+    public static final int FORMAT_MONO16 = 1;
 
-	// end of stream
-	private boolean eos = false;
+    /** The stereo 16 bit format */
+    public static final int FORMAT_STEREO16 = 2;
 
-	// sync and verify incoming physical bitstream
-	private SyncState syncState = new SyncState(); 
+    // temp vars
+    private float[][][] _pcm = new float[1][][];
+    private int[] _index;
 
-	// take physical pages, weld into a logical stream of packets
-	private StreamState streamState = new StreamState(); 
+    // end of stream
+    private boolean eos = false;
 
-	// one Ogg bitstream page.  Vorbis packets are inside
-	private Page page = new Page(); 
+    // sync and verify incoming physical bitstream
+    private SyncState syncState = new SyncState();
 
-	// one raw packet of data for decode
-	private Packet packet = new Packet(); 
+    // take physical pages, weld into a logical stream of packets
+    private StreamState streamState = new StreamState();
 
-	// struct that stores all the static vorbis bitstream settings
-	private Info info = new Info(); 
+    // one Ogg bitstream page.  Vorbis packets are inside
+    private Page page = new Page();
 
-	// struct that stores all the bitstream user comments
-	private Comment comment = new Comment(); 
+    // one raw packet of data for decode
+    private Packet packet = new Packet();
 
-	// central working state for the packet->PCM decoder
-	private DspState dspState = new DspState(); 
+    // struct that stores all the static vorbis bitstream settings
+    private Info info = new Info();
 
-	// local working space for packet->PCM decode
-	private Block block = new Block(dspState); 
+    // struct that stores all the bitstream user comments
+    private Comment comment = new Comment();
 
-	/// Conversion buffer size
-	private static int convsize = 4096 * 2;
-	
-	// Conversion buffer
-	private static byte[] convbuffer = new byte[convsize];
-	
-	// where we are in the convbuffer
-	private int convbufferOff = 0;
+    // central working state for the packet->PCM decoder
+    private DspState dspState = new DspState();
 
-	// bytes ready in convbuffer.
-	private int convbufferSize = 0;
+    // local working space for packet->PCM decode
+    private Block block = new Block(dspState);
 
-	// a dummy used by read() to read 1 byte.
-	private byte readDummy[] = new byte[1];
+    /// Conversion buffer size
+    private static int convsize = 4096 * 2;
+
+    // Conversion buffer
+    private static byte[] convbuffer = new byte[convsize];
+
+    // where we are in the convbuffer
+    private int convbufferOff = 0;
+
+    // bytes ready in convbuffer.
+    private int convbufferSize = 0;
+
+    // a dummy used by read() to read 1 byte.
+    private byte readDummy[] = new byte[1];
 	
 
 	/**
@@ -492,14 +495,14 @@ public class OggInputStream extends FilterInputStream {
 					fetchData();
 				} else if (result2 == -1) {
 					//throw new Exception("syncState.pageout(page) result == -1");
-					Logger.log("syncState.pageout(page) result == -1");
+                                        logger.severe("OGG decode Error: syncState.pageout(page) result == -1");
 					return -1;
 				} else {
 					int result3 = streamState.pagein(page);
 				}
 			} else if (result1 == -1) {
 				//throw new Exception("streamState.packetout(packet) result == -1");
-				Logger.log("streamState.packetout(packet) result == -1");
+                                logger.severe("OGG decode Error: streamState.packetout(packet) result == -1");
 				return -1;
 			} else {
 				fetchedPacket = true;

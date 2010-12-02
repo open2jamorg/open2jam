@@ -1,10 +1,11 @@
 package org.open2jam;
 
 import java.io.File;
+import java.awt.EventQueue;
+import java.util.logging.Handler;
+import java.util.logging.Logger;
 import javax.swing.UIManager;
 import org.open2jam.gui.Interface;
-import org.open2jam.util.Logger;
-
 
 public class Main
 {
@@ -14,22 +15,29 @@ public class Main
         "native" + File.separator +
         getOS();
 
+    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
     public static void main(String []args)
     {
-        try{
-            trySetLAF();
+        setupLogging();
 
-            System.setProperty("org.lwjgl.librarypath", LIB_PATH);
+        trySetLAF();
 
-            java.awt.EventQueue.invokeLater(new Runnable() {
-                public void run() {
-                     new Interface().setVisible(true);
-                }
-            });
+        System.setProperty("org.lwjgl.librarypath", LIB_PATH);
 
-        }catch(Exception e){
-            Logger.die(e);
-        }
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                 new Interface().setVisible(true);
+            }
+        });
+    }
+
+    private static void setupLogging()
+    {
+        Config c = Config.read();
+        if(c.log_handle != null)logger.addHandler(c.log_handle);
+        for(Handler h : logger.getHandlers())h.setLevel(c.log_level);
+        logger.setLevel(c.log_level);
     }
 
     private static void trySetLAF()
@@ -43,7 +51,9 @@ public class Main
                 }
             }
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            logger.info(e.toString());
+        }
     }
 
     public static String getOS()

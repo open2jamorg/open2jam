@@ -6,20 +6,26 @@ import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.open2jam.util.Logger;
+import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.open2jam.parser.Event;
 import org.open2jam.render.entities.AnimatedEntity;
+import org.open2jam.render.entities.ComboCounterEntity;
 import org.open2jam.render.entities.CompositeEntity;
 import org.open2jam.render.entities.EffectEntity;
 import org.open2jam.render.entities.Entity;
 import org.open2jam.render.entities.LongNoteEntity;
 import org.open2jam.render.entities.MeasureEntity;
 import org.open2jam.render.entities.NoteEntity;
+import org.open2jam.render.entities.NumberEntity;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.Attributes;
 
 public class SkinHandler extends DefaultHandler
 {
+    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
     private enum Keyword {
         Resources, skin, layer, entity, sprite, frame, judgment, type;
     }
@@ -99,6 +105,10 @@ public class SkinHandler extends DefaultHandler
             float sx = 1, sy = 1;
             if(atts.containsKey("scale_x"))sx = Float.parseFloat(atts.get("scale_x"));
             if(atts.containsKey("scale_y"))sy = Float.parseFloat(atts.get("scale_y"));
+            if(atts.containsKey("scale")){
+                sx = Float.parseFloat(atts.get("scale"));
+                sy = sx;
+            }
 
             Rectangle slice = new Rectangle(x,y,w,h);
 
@@ -108,7 +118,7 @@ public class SkinHandler extends DefaultHandler
             Sprite s = ResourceFactory.get().getSprite(url, slice);
             s.setScale(sx, sy);
             frame_buffer.add(s);
-            }
+            }break;
 
             case sprite:{
             int x = atts.containsKey("x") ? Integer.parseInt(atts.get("x")) : 0;
@@ -116,23 +126,23 @@ public class SkinHandler extends DefaultHandler
             double framespeed = 0;
             if(atts.containsKey("framespeed"))framespeed = Double.parseDouble(atts.get("framespeed"));
             framespeed /= 1000; // spritelist need framespeed in milliseconds
-            try{
-                String id = null;
-                if(atts.containsKey("id"))id = atts.get("id");
-                else {
-                    id = "AUTODRAW_SPRITE_"+auto_draw_id;
-                    auto_draw_id++;
-                }
 
-                SpriteList sl = new SpriteList(framespeed);
-                sl.addAll(frame_buffer);
+            String id = null;
+            if(atts.containsKey("id"))id = atts.get("id");
+            else {
+                id = "AUTODRAW_SPRITE_"+auto_draw_id;
+                auto_draw_id++;
+            }
 
-                Entity e = null;
-                if(sl.size() == 1)e = new Entity(sl, x, y);
-                else e = new AnimatedEntity(sl, x, y);
-                
-                sprite_buffer.put(id, e);
-            }catch(Exception e){ Logger.log(e); }
+            SpriteList sl = new SpriteList(framespeed);
+            sl.addAll(frame_buffer);
+
+            Entity e = null;
+            if(sl.size() == 1)e = new Entity(sl, x, y);
+            else e = new AnimatedEntity(sl, x, y);
+
+            sprite_buffer.put(id, e);
+
             frame_buffer.clear();
             }
             break;
@@ -202,8 +212,20 @@ public class SkinHandler extends DefaultHandler
         else if(id.startsWith("PRESSED_NOTE_")){
             e = new CompositeEntity(sprite_buffer.values());
         }
+        else if(id.equals("FPS_COUNTER")){
+            int x = 0, y = 0;
+            if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x"));
+            if(atts.containsKey("y"))y = Integer.parseInt(atts.get("y"));
+            e = new NumberEntity(new TreeMap(sprite_buffer).values(), x, y);
+        }
+        else if(id.equals("COMBO_COUNTER")){
+            int x = 0, y = 0;
+            if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x"));
+            if(atts.containsKey("y"))y = Integer.parseInt(atts.get("y"));
+            e = new ComboCounterEntity(new TreeMap(sprite_buffer).values(), x, y);
+        }
         else{
-
+            logger.log(Level.WARNING, "unpromoted entity [{0}]", id);
         }
 
         return e;
@@ -219,7 +241,7 @@ public class SkinHandler extends DefaultHandler
         try{
             return Keyword.valueOf(s);
         }catch(IllegalArgumentException e){
-            Logger.die(new Exception("Unknown keyword ["+s+"] in resources.xml."));
+            logger.log(Level.WARNING, "Unknown keyword [{0}] in resources.xml.", s);
         }
         return null;
     }

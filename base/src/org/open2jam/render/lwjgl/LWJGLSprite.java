@@ -4,8 +4,9 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.lwjgl.opengl.GL11;
-import org.open2jam.util.Logger;
 import org.open2jam.render.Sprite;
 
 /**
@@ -16,56 +17,60 @@ import org.open2jam.render.Sprite;
  * @author Brian Matzon
  */
 public class LWJGLSprite implements Sprite {
-	/** The texture that stores the image for this sprite */
-	private Texture texture;
 
-	/** the position inside the texture of the sprite */
-	private int x, y;
-  
-	/** The width in pixels of this sprite */
-	private int width;
-  
-	/** The height in pixels of this sprite */
-	private int height;
+    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-	/** the coordinates for the texture */
-	private float u, v, w, z;
+    /** The texture that stores the image for this sprite */
+    private Texture texture;
 
-        /** the scale of the image */
-        private float scale_x = 1f, scale_y = 1f;
+    /** the position inside the texture of the sprite */
+    private int x, y;
+
+    /** The width in pixels of this sprite */
+    private int width;
+
+    /** The height in pixels of this sprite */
+    private int height;
+
+    /** the coordinates for the texture */
+    private float u, v, w, z;
+
+    /** the scale of the image */
+    private float scale_x = 1f, scale_y = 1f;
 	
-	/**
-	 * Create a new sprite from a specified image.
-	 * 
-	 * @param window The window in which the sprite will be displayed
-	 * @param ref A reference to the image on which this sprite should be based
-	 */
-	public LWJGLSprite(LWJGLGameWindow window,URL ref, Rectangle slice) {
-		try {
-			texture = window.getTextureLoader().getTexture(ref);
-		} catch (IOException e) {
-                    Logger.warn(e);
-		}
-                if(slice == null){
-                        x = 0;
-                        y = 0;
-                        width = texture.getWidth();
-                        height = texture.getHeight();
-                }else{
-                        x = slice.x;
-                        y = slice.y;
-                        width = slice.width;
-                        height = slice.height;
-                }
-                init();
-	}
+    /**
+     * Create a new sprite from a specified image.
+     *
+     * @param window The window in which the sprite will be displayed
+     * @param ref A reference to the image on which this sprite should be based
+     */
+    public LWJGLSprite(LWJGLGameWindow window,URL ref, Rectangle slice) {
+            try {
+                    texture = window.getTextureLoader().getTexture(ref);
+            } catch (IOException e) {
+                logger.log(Level.WARNING, "IO Exception on loading texture: {0}", e.getMessage());
+            }
+            if(slice == null){
+                    x = 0;
+                    y = 0;
+                    width = texture.getWidth();
+                    height = texture.getHeight();
+            }else{
+                    x = slice.x;
+                    y = slice.y;
+                    width = slice.width;
+                    height = slice.height;
+            }
+            init();
+    }
 
     public LWJGLSprite(LWJGLGameWindow window, BufferedImage image) {
         try{
             texture = window.getTextureLoader().createTexture(image);
         }catch(IOException e){
-            Logger.warn(e);
+            logger.log(Level.WARNING, "IO Exception on loading texture: {0}", e.getMessage());
         }
+        
         x = 0; y = 0;
         width = texture.getWidth();
         height = texture.getHeight();
@@ -80,23 +85,23 @@ public class LWJGLSprite implements Sprite {
         z = ((float)(y+height)/texture.getHeight()); // bottom-right y
     }
 	
-	/**
-	 * Get the width of this sprite in pixels
-	 * 
-	 * @return The width of this sprite in pixels
-	 */
-	public int getWidth() {
-		return width;
-	}
+    /**
+     * Get the width of this sprite in pixels
+     *
+     * @return The width of this sprite in pixels
+     */
+    public int getWidth() {
+            return width;
+    }
 
-	/**
-	 * Get the height of this sprite in pixels
-	 * 
-	 * @return The height of this sprite in pixels
-	 */
-	public int getHeight() {
-		return height;
-	}
+    /**
+     * Get the height of this sprite in pixels
+     *
+     * @return The height of this sprite in pixels
+     */
+    public int getHeight() {
+            return height;
+    }
 
     /**
      * Draw the sprite at the specified location
