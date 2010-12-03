@@ -39,8 +39,33 @@ public class NoteEntity extends AnimatedEntity
     @Override
     public void move(long delta)
     {
-            setYMove(render.getNoteSpeed());
-            super.move(delta);
+        setYMove(render.getNoteSpeed());
+        super.move(delta);
+    }
+
+    public double testHit(double jy1, double jy2)
+    {
+        return testHit(y, y + height, jy1, jy2);
+    }
+
+    /**
+     * y1 < y2 < jy1 < jy2 - no intersection
+     * y1 < jy1 < y2 < jy2 - half intersection of y2 - jy1
+     * jy1 < y1 < y2 < jy2 - full intersection
+     * jy1 < y1 < jy2 < y2 - half intersection of jy2 - y1
+     * jy1 < jy2 < y1 < y2 - no intersection
+     */
+    protected double testHit(double y1, double y2, double jy1, double jy2)
+    {
+        if(y1 < jy1){
+            if(jy1 < y2)return (y2 - jy1)/height;
+        }
+        else{
+            if(y2 < jy2)return 1;
+            else
+            if(y1 < jy2)return (jy2 - y1)/height;
+        }
+        return 0;
     }
 
     @Override

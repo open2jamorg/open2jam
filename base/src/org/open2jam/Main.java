@@ -34,7 +34,7 @@ public class Main
 
     private static void setupLogging()
     {
-        Config c = Config.read();
+        Config c = Config.get();
         if(c.log_handle != null)logger.addHandler(c.log_handle);
         for(Handler h : logger.getHandlers())h.setLevel(c.log_level);
         logger.setLevel(c.log_level);

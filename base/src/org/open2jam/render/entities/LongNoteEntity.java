@@ -36,6 +36,24 @@ public class LongNoteEntity extends NoteEntity
             height = y - end_y;
     }
 
+
+    protected boolean head_hit = false;
+    @Override
+    public double testHit(double jy1, double jy2)
+    {
+        double y1, y2;
+        if(!head_hit){
+            y1 = y;
+        }else{
+            if(end_y == null)return 0;
+            y1 = end_y;
+        }
+        y2 = y1 + sprite.getHeight();
+        double hit = testHit(y1, y2, jy1, jy2);
+        if(hit > 0)head_hit = true;
+        return hit;
+    }
+
     @Override
     public double getY()
     {

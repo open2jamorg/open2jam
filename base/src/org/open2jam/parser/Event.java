@@ -31,17 +31,7 @@ public class Event implements Comparable<Event>
 	        return super.toString();
 	    }
         };
-
-        public static Channel[] note_channels = new Event.Channel[]{
-                Channel.NOTE_1,
-                Channel.NOTE_2,
-                Channel.NOTE_3,
-                Channel.NOTE_4,
-                Channel.NOTE_5,
-                Channel.NOTE_6,
-                Channel.NOTE_7
-        };
-
+        
 	public enum Flag { NONE, HOLD, RELEASE };
 
 	private Channel channel;

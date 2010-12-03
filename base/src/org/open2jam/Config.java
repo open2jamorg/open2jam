@@ -31,6 +31,9 @@ public class Config implements Serializable
 
     static final Logger logger = Logger.getLogger(Config.class.getName());
 
+    /** singleton object */
+    private static Config config = null;
+
     private Config()
     {
         keyboard_map = new EnumMap<Event.Channel,Integer>(Event.Channel.class);
@@ -47,7 +50,7 @@ public class Config implements Serializable
         return keyboard_map;
     }
 
-    public void write()
+    public void save()
     {
         try {
             new ObjectOutputStream(new FileOutputStream(CONFIG_FILE)).writeObject(this);
@@ -58,19 +61,20 @@ public class Config implements Serializable
         }
     }
 
-    public static Config read()
+    public static Config get()
     {
-        try {
-            return (Config) new ObjectInputStream(new FileInputStream(CONFIG_FILE)).readObject();
-        } catch (ClassNotFoundException ex) {
-            logger.severe("There's no Config class !! impossibru !");
-        } catch (FileNotFoundException ex) {
-            Config c = new Config();
-            c.write();
-            return c;
-        } catch (IOException ioe) {
-            logger.log(Level.SEVERE, "IO Error on reading config file ! :{0}", ioe.getMessage());
+        if(config == null){
+            try {
+                config = (Config) new ObjectInputStream(new FileInputStream(CONFIG_FILE)).readObject();
+            } catch (ClassNotFoundException ex) {
+                logger.severe("There's no Config class !! impossibru !");
+            } catch (FileNotFoundException ex) {
+                config = new Config();
+                config.save();
+            } catch (IOException ioe) {
+                logger.log(Level.SEVERE, "IO Error on reading config file ! :{0}", ioe.getMessage());
+            }
         }
-        return null;
+        return config;
     }
 }

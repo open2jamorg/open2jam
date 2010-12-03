@@ -142,7 +142,7 @@ public class Render implements GameWindowCallback
 
     static{
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
-        keyboard_map = Config.read().getKeyboardMap();
+        keyboard_map = Config.get().getKeyboardMap();
     }
 
     public Render(Chart c, int rank, double hispeed)
@@ -204,9 +204,11 @@ public class Render implements GameWindowCallback
         judgment_line_y2 = skin.judgment.start + skin.judgment.size;
 
         if(hispeed > 1){
-            double off = (hispeed-1) * skin.judgment.size;
-            judgment_line_y1 -= off;
-            judgment_line_y2 += off;
+            judgment_line_y1 = skin.judgment.start + skin.judgment.size / 2;
+            judgment_line_y2 = judgment_line_y1;
+            double off = skin.judgment.size;
+            judgment_line_y1 -= hispeed * off;
+            judgment_line_y2 += hispeed *off;
         }
 
         entities_matrix = new ArrayList<LinkedList<Entity>>();
@@ -231,11 +233,15 @@ public class Render implements GameWindowCallback
         // the notes pressed buffer
         keyboard_key_pressed = new EnumMap<Event.Channel,Boolean>(Event.Channel.class);
 
-        // weak reference to the notes in the buffer, separated by the channel
+        // reference to the notes in the buffer, separated by the channel
         note_channels = new EnumMap<Event.Channel,LinkedList<NoteEntity>>(Event.Channel.class);
 
+        // entity for key pressed events
         key_pressed_entity = new EnumMap<Event.Channel,Entity>(Event.Channel.class);
+
+        // reference to long notes being holded
         longnote_holded = new EnumMap<Event.Channel,LongNoteEntity>(Event.Channel.class);
+
         last_sound = new EnumMap<Event.Channel,Integer>(Event.Channel.class);
 
         fps_entity = (NumberEntity) skin.getEntityMap().get("FPS_COUNTER");
@@ -244,7 +250,7 @@ public class Render implements GameWindowCallback
         combo_entity = (ComboCounterEntity) skin.getEntityMap().get("COMBO_COUNTER");
         entities_matrix.get(combo_entity.getLayer()).add(combo_entity);
 
-        for(Event.Channel c : Event.note_channels)
+        for(Event.Channel c : keyboard_map.keySet())
         {
             keyboard_key_pressed.put(c, Boolean.FALSE);
             note_channels.put(c, new LinkedList<NoteEntity>());
@@ -295,7 +301,7 @@ public class Render implements GameWindowCallback
         
         // update our FPS counter if a second has passed
         if (lastFpsTime >= 1000) {
-            logger.log(Level.INFO, "FPS: {0}", fps);
+            logger.log(Level.FINEST, "FPS: {0}", fps);
             fps_entity.setNumber(fps);
             lastFpsTime = 0;
             fps = 0;
@@ -366,10 +372,10 @@ public class Render implements GameWindowCallback
 
     private void check_keyboard()
     {
-        for(Event.Channel c : Event.note_channels)
+        for(Map.Entry<Event.Channel,Integer> entry : keyboard_map.entrySet())
         {
-            int key = keyboard_map.get(c);
-            if(window.isKeyDown(key)) // this key is being pressed
+            Event.Channel c = entry.getKey();
+            if(window.isKeyDown(entry.getValue())) // this key is being pressed
             {
                 if(keyboard_key_pressed.get(c) == false){ // started holding now
                     keyboard_key_pressed.put(c, true);
@@ -388,8 +394,9 @@ public class Render implements GameWindowCallback
 
                     queueSample(e.getSample());
 
-                    if(e.getStartY() >= judgment_line_y1 && e.getStartY() <= judgment_line_y2){
+                    double hit = e.testHit(judgment_line_y1, judgment_line_y2);
 
+                    if(hit > 0){
                         if(e instanceof LongNoteEntity){
                             longnote_holded.put(c, (LongNoteEntity) e);
                         }else{
@@ -419,7 +426,9 @@ public class Render implements GameWindowCallback
 
                 longnote_holded.put(c,null);
 
-                if(e.getY() >= judgment_line_y1 && e.getY() <= judgment_line_y2){
+                double hit = e.testHit(judgment_line_y1, judgment_line_y2);
+
+                if(hit > 0){
                     e.setAlive(false);
                     note_channels.get(c).removeFirst();
                     last_sound.put(c, e.getSample());
@@ -497,6 +506,7 @@ public class Render implements GameWindowCallback
                     }
                 }
                 break;
+                
                 case AUTO_PLAY:
                 entities_matrix.get(0).add(new SampleEntity(this,(int)e.getValue(),abs_height));
                 break;

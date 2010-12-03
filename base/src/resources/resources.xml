@@ -3,11 +3,11 @@
 <skin name="o2jam" keys="7">
 
     <judgment start="473" size="7">
-        <!--<type name="EFFECT_PERFECT" hit="1" />-->
-        <type id="EFFECT_COOL" hit="0.8" />
-        <type id="EFFECT_GOOD" hit="0.5" />
-        <type id="EFFECT_BAD"  hit="0.2" />
         <type id="EFFECT_MISS" hit="0" />
+        <type id="EFFECT_BAD"  hit="0.2" />
+        <type id="EFFECT_GOOD" hit="0.5" />
+        <type id="EFFECT_COOL" hit="0.8" />
+        <!--<type name="EFFECT_PERFECT" hit="1" />-->
     </judgment>
 
     <layer id="0">
@@ -254,7 +254,7 @@
     </layer>
 
     <layer id="7">
-        <entity id="FPS_COUNTER" x="400" y="400">
+        <entity id="COMBO_COUNTER" x="145" y="100">
             <sprite id="0">
                 <frame x="40" y="27" w="46" h="71" file="numbers_1.png" />
             </sprite>
@@ -287,7 +287,7 @@
             </sprite>
         </entity>
 
-        <entity id="COMBO_COUNTER" x="145" y="100">
+        <entity id="FPS_COUNTER" x="400" y="400">
             <sprite id="0">
                 <frame x="40" y="27" w="46" h="71" scale="0.5" file="numbers_1.png" />
             </sprite>

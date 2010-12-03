@@ -7,7 +7,6 @@ package org.open2jam.gui;
  * Created on Oct 30, 2010, 6:51:02 PM
  */
 
-import java.awt.Image;
 import java.awt.event.ItemEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -634,7 +633,7 @@ public class Interface extends javax.swing.JFrame
         lbl_cover.setIcon(new ImageIcon(i.getScaledInstance(
                 lbl_cover.getWidth(),
                 lbl_cover.getHeight(),
-                Image.SCALE_SMOOTH
+                BufferedImage.SCALE_SMOOTH
                 )));
         else
             lbl_cover.setIcon(null);

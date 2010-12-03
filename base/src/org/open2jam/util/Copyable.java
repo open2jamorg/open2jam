@@ -5,12 +5,12 @@ package org.open2jam.util;
  *
  * @author fox
  */
-public interface Copyable<T> {
+public interface Copyable {
 
     /** 
      *
      * @return returns a copy of the object.
      */
-    public T copy();
+    public <T extends Copyable> T copy();
 
 }
