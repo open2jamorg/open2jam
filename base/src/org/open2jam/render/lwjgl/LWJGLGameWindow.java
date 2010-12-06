@@ -184,8 +184,7 @@ public class LWJGLGameWindow implements GameWindow {
 	public boolean isKeyDown(int keyCode)
         {
             Integer code = key_map.get(keyCode);
-            if(code == null)return false;
-
+            if(code == null)code = keyCode; // use raw key
             return Keyboard.isKeyDown(code);
 	}
   

@@ -10,7 +10,7 @@ public class NoteEntity extends AnimatedEntity
 {
     protected Render render;
 
-    protected int sample_value;
+    protected Event.SoundSample sample_value;
     private boolean played = false;
 
     protected Event.Channel channel = Event.Channel.NONE;
@@ -30,11 +30,11 @@ public class NoteEntity extends AnimatedEntity
         this.played = org.played;
     }
     
-    public void setSample(int sample){
+    public void setSample(Event.SoundSample sample){
         this.sample_value = sample;
     }
 
-    public int getSample(){ return sample_value; }
+    public Event.SoundSample getSample(){ return sample_value; }
 
     @Override
     public void move(long delta)

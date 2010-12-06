@@ -33,22 +33,23 @@ public class SoundManager
     static {
         try {
             AL.create();
+
+            AL10.alGetError();
+            FloatBuffer listenerPos = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });
+            FloatBuffer listenerVel = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });
+            FloatBuffer listenerOri = BufferUtils.createFloatBuffer(6).put(new float[] { 0.0f, 0.0f, -1.0f,  0.0f, 1.0f, 0.0f });
+
+            listenerPos.flip();
+            listenerVel.flip();
+            listenerOri.flip();
+
+            AL10.alListener(AL10.AL_POSITION,    listenerPos);
+            AL10.alListener(AL10.AL_VELOCITY,    listenerVel);
+            AL10.alListener(AL10.AL_ORIENTATION, listenerOri);
+
         } catch (LWJGLException ex) {
-            logger.log(Level.SEVERE, null, ex);
+            logger.severe("Could not initialize the OpenAL context !!");
         }
-
-        AL10.alGetError();
-        FloatBuffer listenerPos = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });
-        FloatBuffer listenerVel = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });
-        FloatBuffer listenerOri = BufferUtils.createFloatBuffer(6).put(new float[] { 0.0f, 0.0f, -1.0f,  0.0f, 1.0f, 0.0f });
-
-        listenerPos.flip();
-        listenerVel.flip();
-        listenerOri.flip();
-
-        AL10.alListener(AL10.AL_POSITION,    listenerPos);
-        AL10.alListener(AL10.AL_VELOCITY,    listenerVel);
-        AL10.alListener(AL10.AL_ORIENTATION, listenerOri);
     }
 
     public static void setGain(int source, float g)
@@ -56,10 +57,11 @@ public class SoundManager
         AL10.alSourcef(source, AL10.AL_GAIN, g);
     }
 
+    private static FloatBuffer pan_pos_buffer = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });
     public static void setPan(int source, float x)
     {
-        FloatBuffer pos = BufferUtils.createFloatBuffer(3).put(new float[] { x, 0.0f, 0.0f });
-        AL10.alSource(source, AL10.AL_POSITION, pos);
+        pan_pos_buffer.put(0, x).flip();
+        AL10.alSource(source, AL10.AL_POSITION, pan_pos_buffer);
     }
 
     public static int newSource()
@@ -103,11 +105,6 @@ public class SoundManager
         AL10.alSourcePlay(source);
     }
 
-    public static void bindSource(int source, int buffer)
-    {
-        AL10.alSourcei(source, AL10.AL_BUFFER,buffer);
-    }
-
     private static byte[] tmp_buffer = new byte[1024];
     public static int newBuffer(OggInputStream in)
     {
@@ -148,25 +145,20 @@ public class SoundManager
         IntBuffer id_buf = BufferUtils.createIntBuffer(1);
         AL10.alGenBuffers(id_buf);
 
-        try{
-            org.lwjgl.openal.Util.checkALError();
+        org.lwjgl.openal.Util.checkALError();
 
-            int format = -1;
-            if(channels == 1){
-                if(bits == 8)format = AL10.AL_FORMAT_MONO8;
-                else format = AL10.AL_FORMAT_MONO16;
-            }else {
-                if(bits == 8)format = AL10.AL_FORMAT_STEREO8;
-                else format = AL10.AL_FORMAT_STEREO16;
-            }
-
-            AL10.alBufferData(id_buf.get(0), format, buffer, sample_rate);
-
-            org.lwjgl.openal.Util.checkALError();
+        int format = -1;
+        if(channels == 1){
+            if(bits == 8)format = AL10.AL_FORMAT_MONO8;
+            else format = AL10.AL_FORMAT_MONO16;
+        }else {
+            if(bits == 8)format = AL10.AL_FORMAT_STEREO8;
+            else format = AL10.AL_FORMAT_STEREO16;
         }
-        catch(Exception e){
-            logger.log(Level.SEVERE, null, e);
-        }
+
+        AL10.alBufferData(id_buf.get(0), format, buffer, sample_rate);
+
+        org.lwjgl.openal.Util.checkALError();
 
         sample_buffer.add(id_buf.get(0));
         return id_buf.get(0);

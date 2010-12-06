@@ -187,22 +187,31 @@ public class OJNParser
                     event_list.add(new Event(channel,measure,position,v,Event.Flag.NONE));
                 }else{ // note event
                     short value = buffer.getShort();
-                    int unk = buffer.get();
+                    int volume_pan = buffer.get();
                     int type = buffer.get();
                     if(value == 0)continue; // ignore value=0 events
 
+                    // MIN 1 ~ 15 MAX, special 0 = MAX
+                    float volume = (volume_pan & 0xF) / 16f;
+                    if(volume == 0)volume = 1;
+
+                    // LEFT 1 ~ 8 CENTER 8 ~ 15 RIGHT, special: 0 = 8
+                    int pan = (volume_pan & 0xF0) >> 4;
+                    if(pan == 0)pan = 8;
+                    pan -= 8;
+
                     value--;
                     if(type == 0){
-                            event_list.add(new Event(channel,measure,position,value,Event.Flag.NONE));
+                            event_list.add(new Event(channel,measure,position,value,Event.Flag.NONE,volume, pan));
                     }
                     else if(type == 2){
-                        event_list.add(new Event(channel,measure,position,value,Event.Flag.HOLD));
+                        event_list.add(new Event(channel,measure,position,value,Event.Flag.HOLD,volume, pan));
                     }
                     else if(type == 3){
-                        event_list.add(new Event(channel,measure,position,value,Event.Flag.RELEASE));
+                        event_list.add(new Event(channel,measure,position,value,Event.Flag.RELEASE,volume, pan));
                     }
                     else if(type == 4){ // M### auto-play
-                        event_list.add(new Event(channel,measure,position,1000+value,Event.Flag.RELEASE));
+                        event_list.add(new Event(channel,measure,position,1000+value,Event.Flag.RELEASE,volume, pan));
                     }
                 }
             }

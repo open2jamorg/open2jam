@@ -36,8 +36,6 @@ public class SkinHandler extends DefaultHandler
     ArrayList<Sprite> frame_buffer;
     HashMap<String, Entity> sprite_buffer;
 
-    HashMap<String, Double> judgment_type_map;
-
     private Skin result;
 
     private int layer = -1;
@@ -57,7 +55,6 @@ public class SkinHandler extends DefaultHandler
         atts_stack = new ArrayDeque<Map<String,String>>();
         frame_buffer = new ArrayList<Sprite>();
         sprite_buffer = new HashMap<String, Entity>();
-        judgment_type_map = new HashMap<String,Double>();
         result = new Skin();
     }
 
@@ -164,9 +161,22 @@ public class SkinHandler extends DefaultHandler
             }
 
             e.setLayer(this.layer);
+            if(atts.containsKey("x"))e.setX(Integer.parseInt(atts.get("x")));
+            if(atts.containsKey("y"))e.setY(Integer.parseInt(atts.get("y")));
             
-            if(id != null)result.addNamed(id, e);
-            else result.add(e);
+            if(id != null){
+                if(!result.getEntityMap().containsKey(id))result.getEntityMap().put(id, e);
+                else{
+                    Entity prime = result.getEntityMap().get(id);
+                    if(prime instanceof CompositeEntity){
+                        ((CompositeEntity)prime).getEntityList().add(e);
+                    }else{
+                        CompositeEntity ce = new CompositeEntity(prime, e);
+                        result.getEntityMap().put(id, ce);
+                    }
+                }
+            }
+            else result.getEntityList().add(e);
             
             sprite_buffer.clear();
             }break;
@@ -174,7 +184,7 @@ public class SkinHandler extends DefaultHandler
             case type:{
                 String name = atts.get("id");
                 Double hit = Double.parseDouble(atts.get("hit"));
-                judgment_type_map.put(name, hit);
+                result.judgment.score_map.put(hit, name);
             }break;
 
             case judgment:{
@@ -183,8 +193,6 @@ public class SkinHandler extends DefaultHandler
 
                 result.judgment.start = start;
                 result.judgment.size = size;
-
-                // TODO: the types
             }break;
         }
     }
@@ -198,7 +206,7 @@ public class SkinHandler extends DefaultHandler
 
             e = new LongNoteEntity(render, head.getFrames(), body.getFrames(), Event.Channel.valueOf(id), head.getX(), head.getY());
             e.setLayer(layer);
-            result.addNamed("LONG_"+id, e);
+            result.getEntityMap().put("LONG_"+id, e);
             e = new NoteEntity(render, head.getFrames(), Event.Channel.valueOf(id), head.getX(), head.getY());
         }
         else if(id.equals("MEASURE_MARK")){
@@ -213,21 +221,14 @@ public class SkinHandler extends DefaultHandler
             e = new CompositeEntity(sprite_buffer.values());
         }
         else if(id.equals("FPS_COUNTER")){
-            int x = 0, y = 0;
-            if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x"));
-            if(atts.containsKey("y"))y = Integer.parseInt(atts.get("y"));
-            e = new NumberEntity(new TreeMap(sprite_buffer).values(), x, y);
+            e = new NumberEntity(new TreeMap(sprite_buffer).values(), 0, 0);
         }
         else if(id.equals("COMBO_COUNTER")){
-            int x = 0, y = 0;
-            if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x"));
-            if(atts.containsKey("y"))y = Integer.parseInt(atts.get("y"));
-            e = new ComboCounterEntity(new TreeMap(sprite_buffer).values(), x, y);
+            e = new ComboCounterEntity(new TreeMap(sprite_buffer).values(), 0, 0);
         }
         else{
             logger.log(Level.WARNING, "unpromoted entity [{0}]", id);
         }
-
         return e;
     }
 

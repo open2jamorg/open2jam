@@ -2,6 +2,9 @@ package org.open2jam.render;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 import org.open2jam.render.entities.Entity;
 
 /**
@@ -26,16 +29,6 @@ public class Skin
         judgment = new Judgment();
     }
 
-    public void addNamed(String id, Entity e)
-    {
-        named_entities.put(id, e);
-    }
-
-    public void add(Entity e)
-    {
-        other_entities.add(e);
-    }
-
     public HashMap<String,Entity> getEntityMap(){
         return named_entities;
     }
@@ -47,6 +40,8 @@ public class Skin
     protected class Judgment {
         int start;
         int size;
+
+        NavigableMap<Double,String> score_map = new TreeMap<Double,String>().descendingMap();
         /** this should return the
          *
          * @param p
@@ -54,6 +49,10 @@ public class Skin
          */
         public String ratePrecision(double p)
         {
+            for(Map.Entry<Double,String> e : score_map.entrySet())
+            {
+                if(p >= e.getKey())return e.getValue();
+            }
             return null;
         }
     }

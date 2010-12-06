@@ -1,10 +1,14 @@
-- create the judgment system
+- add the judgment animations (Cool, Good, etc..)
+
+- create the judgment system [IN PROGRESS]
+
+- add support to the volume and pan of the OJN [IN PROGRESS]
 
 - create a config screen to the interface
 
-- fix the BPM modifier
+- make the score & ranking system
 
-- add support to the volume and pan of the OJN
+- fix the BPM modifier
 
 - workaround ranks in bms
 

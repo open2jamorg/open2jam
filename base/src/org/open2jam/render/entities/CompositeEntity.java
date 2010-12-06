@@ -1,6 +1,7 @@
 package org.open2jam.render.entities;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -18,11 +19,22 @@ public class CompositeEntity extends Entity
         entity_list.addAll(list);
     }
 
+    public CompositeEntity(Entity ... e)
+    {
+        entity_list = new LinkedList<Entity>();
+        Collections.addAll(entity_list, e);
+    }
+
     protected CompositeEntity(CompositeEntity org)
     {
         super(org);
         entity_list = new LinkedList<Entity>();
         for(Entity e : org.entity_list)entity_list.add(e.copy());
+    }
+
+    public LinkedList<Entity> getEntityList()
+    {
+        return entity_list;
     }
     
     @Override

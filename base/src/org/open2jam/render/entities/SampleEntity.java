@@ -5,7 +5,7 @@
 
 package org.open2jam.render.entities;
 
-import java.awt.geom.Rectangle2D;
+import org.open2jam.parser.Event;
 import org.open2jam.render.Render;
 
 /**
@@ -14,10 +14,10 @@ import org.open2jam.render.Render;
  */
 public class SampleEntity extends Entity
 {
-    private int value;
+    private Event.SoundSample value;
     private Render render;
 
-    public SampleEntity(Render r, int value, double y)
+    public SampleEntity(Render r, Event.SoundSample value, double y)
     {
         this.render = r;
         this.value = value;

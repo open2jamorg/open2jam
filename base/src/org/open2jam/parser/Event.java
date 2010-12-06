@@ -31,6 +31,25 @@ public class Event implements Comparable<Event>
 	        return super.toString();
 	    }
         };
+
+        /**
+         * wrapper for the sound sample
+         *
+         * contains the sample id for the SoundManager
+         * volume and pan */
+        public class SoundSample
+        {
+            public int sample_id;
+            public float volume;
+            public int pan;
+
+            public SoundSample(int sample, float vol, int pan){
+                this.sample_id = sample;
+                this.volume = vol;
+                this.pan = pan;
+            }
+        }
+
         
 	public enum Flag { NONE, HOLD, RELEASE };
 
@@ -40,6 +59,7 @@ public class Event implements Comparable<Event>
 	
 	private double value;
 	private Flag flag;
+        private final SoundSample sound_sample;
 
 	public Event(Channel channel, int measure, double position,
 			double value, Flag flag) {
@@ -48,6 +68,17 @@ public class Event implements Comparable<Event>
 		this.position = position;
 		this.value = value;
 		this.flag = flag;
+                this.sound_sample = null;
+	}
+
+        	public Event(Channel channel, int measure, double position,
+			double value, Flag flag, float vol, int pan) {
+		this.channel = channel;
+		this.measure = measure;
+		this.position = position;
+		this.value = value;
+		this.flag = flag;
+                this.sound_sample = new SoundSample((int) value,vol, pan);
 	}
 
 	public int compareTo(Event e)
@@ -60,4 +91,5 @@ public class Event implements Comparable<Event>
 	public double getPosition() { return position; }
 	public Flag getFlag() { return flag; }
 	public double getValue() { return value; }
+        public SoundSample getSample(){ return sound_sample; }
 }
