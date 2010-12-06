@@ -2,7 +2,7 @@
 <Resources>
 <skin name="o2jam" keys="7">
 
-    <judgment start="473" size="7">
+    <judgment start="473" size="14">
         <type id="EFFECT_MISS" hit="0" />
         <type id="EFFECT_BAD"  hit="0.2" />
         <type id="EFFECT_GOOD" hit="0.5" />
@@ -91,7 +91,7 @@
             <sprite x="190" y="528">
                 <frame x="1" y="362" w="10" h="5" file="main.png" />
             </sprite>
-            <sprite x="160" y="215">
+            <sprite x="161" y="215">
                 <frame x="425" y="1" w="28" h="266" file="main.png" />
             </sprite>
         </entity>
@@ -100,7 +100,7 @@
             <sprite x="189" y="487">
                 <frame x="151" y="315" w="22" h="42" file="main.png" />
             </sprite>
-            <sprite x="188" y="1">
+            <sprite x="189" y="1">
                 <frame x="455" y="1" w="22" h="480" file="main.png" />
             </sprite>
         </entity>
@@ -112,7 +112,7 @@
             <sprite x="200" y="528">
                 <frame x="12" y="362" w="10" h="5" file="main.png" />
              </sprite>
-             <sprite x="210" y="215">
+             <sprite x="211" y="215">
                 <frame x="425" y="1" w="28" h="266" file="main.png" />
             </sprite>
         </entity>
@@ -219,17 +219,17 @@
     <layer id="6">
         <entity id="EFFECT_CLICK_1">
             <sprite framespeed="60">
-                <frame x="0"    y="0"   w="256" h="256" file="note_click5_3.png" />
-                <frame x="256"  y="0"   w="256" h="256" file="note_click5_3.png" />
-                <frame x="512"  y="0"   w="256" h="256" file="note_click5_3.png" />
-                <frame x="768"  y="0"   w="256" h="256" file="note_click5_3.png" />
-                <frame x="1024" y="0"   w="256" h="256" file="note_click5_3.png" />
-                <frame x="0"    y="256" w="256" h="256" file="note_click5_3.png" />
-                <frame x="256"  y="256" w="256" h="256" file="note_click5_3.png" />
-                <frame x="512"  y="256" w="256" h="256" file="note_click5_3.png" />
-                <frame x="768"  y="256" w="256" h="256" file="note_click5_3.png" />
-                <frame x="1024" y="256" w="256" h="256" file="note_click5_3.png" />
-                <frame x="0"    y="512" w="256" h="256" file="note_click5_3.png" />
+                <frame x="0"    y="0"   w="256" h="256" file="note_click5_2.png" />
+                <frame x="256"  y="0"   w="256" h="256" file="note_click5_2.png" />
+                <frame x="512"  y="0"   w="256" h="256" file="note_click5_2.png" />
+                <frame x="768"  y="0"   w="256" h="256" file="note_click5_2.png" />
+                <frame x="1024" y="0"   w="256" h="256" file="note_click5_2.png" />
+                <frame x="0"    y="256" w="256" h="256" file="note_click5_2.png" />
+                <frame x="256"  y="256" w="256" h="256" file="note_click5_2.png" />
+                <frame x="512"  y="256" w="256" h="256" file="note_click5_2.png" />
+                <frame x="768"  y="256" w="256" h="256" file="note_click5_2.png" />
+                <frame x="1024" y="256" w="256" h="256" file="note_click5_2.png" />
+                <frame x="0"    y="512" w="256" h="256" file="note_click5_2.png" />
             </sprite>
         </entity>
 

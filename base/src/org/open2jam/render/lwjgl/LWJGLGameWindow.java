@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
@@ -24,7 +25,9 @@ import org.open2jam.render.GameWindowCallback;
 public class LWJGLGameWindow implements GameWindow {
 
         static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-  
+        
+        private static final HashMap<Integer,Integer> key_map = new HashMap<Integer,Integer>();
+
 	/** The callback which should be notified of window events */
 	private GameWindowCallback callback;
   
@@ -42,8 +45,6 @@ public class LWJGLGameWindow implements GameWindow {
   
 	/** Title of window, we get it before our window is ready, so store it till needed */
 	private String title;
-
-        private static final HashMap<Integer,Integer> key_map = new HashMap<Integer,Integer>();
 
         static {
             key_map.put(KeyEvent.VK_S, Keyboard.KEY_S);
@@ -116,44 +117,47 @@ public class LWJGLGameWindow implements GameWindow {
 	 * Start the rendering process. This method will cause the display to redraw
 	 * as fast as possible.
 	 */
-	public void startRendering() {
-                if(callback == null)throw new RuntimeException(" Need callback to start rendering !");
-		try {
-			//setDisplayMode();
-			Display.create();
+	public void startRendering()
+        {
+            if(callback == null)throw new RuntimeException(" Need callback to start rendering !");
 
-                        setTitle(title);
-			
-			// grab the mouse, dont want that hideous cursor when we're playing!
-// 			Mouse.setGrabbed(true);
-  
-			// enable textures since we're going to use these for our sprites
-			GL11.glEnable(GL11.GL_TEXTURE_2D);
-			
-			// disable the OpenGL depth test since we're rendering 2D graphics
-			GL11.glDisable(GL11.GL_DEPTH_TEST);
+            try {
+                Display.create();
+            } catch (LWJGLException ex) {
+                Logger.getLogger(LWJGLGameWindow.class.getName()).log(Level.SEVERE, null, ex);
+                callback.windowClosed();
+                return;
+            }
 
-                        // enable apha blending
-                        GL11.glEnable(GL11.GL_BLEND);
-                        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			
-			GL11.glMatrixMode(GL11.GL_PROJECTION);
-			GL11.glLoadIdentity();
-			
-			GL11.glOrtho(0, width, height, 0, -1, 1);
-			
-			textureLoader = new TextureLoader();
+            setTitle(title);
 
-                        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-                        GL11.glMatrixMode(GL11.GL_MODELVIEW);
-                        GL11.glLoadIdentity();
-			
-			callback.initialise();
-                        
-		} catch (LWJGLException le) {
-			callback.windowClosed();
-		}
-		gameLoop();
+            // grab the mouse, dont want that hideous cursor when we're playing!
+            if(Display.isFullscreen())Mouse.setGrabbed(true);
+
+            // enable textures since we're going to use these for our sprites
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+
+            // disable the OpenGL depth test since we're rendering 2D graphics
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+            // enable apha blending
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+            GL11.glMatrixMode(GL11.GL_PROJECTION);
+            GL11.glLoadIdentity();
+
+            GL11.glOrtho(0, width, height, 0, -1, 1);
+
+            textureLoader = new TextureLoader();
+
+            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+            GL11.glMatrixMode(GL11.GL_MODELVIEW);
+            GL11.glLoadIdentity();
+
+            callback.initialise();
+
+            gameLoop();
 	}
 
         public void update(){
@@ -168,7 +172,7 @@ public class LWJGLGameWindow implements GameWindow {
 	 * window events. 
 	 */
 	public void setGameWindowCallback(GameWindowCallback callback) {
-		this.callback = callback;
+            this.callback = callback;
 	}
 	
 	/**
@@ -177,8 +181,8 @@ public class LWJGLGameWindow implements GameWindow {
 	 * @param keyCode The code associated with the key to check 
 	 * @return True if the specified key is being held
 	 */
-	public boolean isKeyDown(int keyCode) {
-
+	public boolean isKeyDown(int keyCode)
+        {
             Integer code = key_map.get(keyCode);
             if(code == null)return false;
 
@@ -189,7 +193,8 @@ public class LWJGLGameWindow implements GameWindow {
 	 * Run the main game loop. This method keeps rendering the scene
 	 * and requesting that the callback update its screen.
 	 */
-	private void gameLoop() {
+	private void gameLoop()
+        {
             gameRunning = true;
             while (gameRunning) {
                     // clear screen
