@@ -3,10 +3,10 @@
 <skin name="o2jam" keys="7">
 
     <judgment start="473" size="14">
-        <type id="JUDGMENT_MISS" hit="0" />
-        <type id="JUDGMENT_BAD"  hit="0.2" />
-        <type id="JUDGMENT_GOOD" hit="0.5" />
-        <type id="JUDGMENT_COOL" hit="0.8" />
+        <type id="EFFECT_JUDGMENT_MISS" hit="0" />
+        <type id="EFFECT_JUDGMENT_BAD"  hit="0.2" />
+        <type id="EFFECT_JUDGMENT_GOOD" hit="0.5" />
+        <type id="EFFECT_JUDGMENT_COOL" hit="0.8" />
         <!--<type name="EFFECT_PERFECT" hit="1" />-->
     </judgment>
 
@@ -319,21 +319,41 @@
                 <frame x="553" y="155" w="46" h="71" scale="0.5" file="numbers_1.png" />
             </sprite>
         </entity>
+
          <entity id="EFFECT_JUDGMENT_COOL">
-             <sprite>
+             <sprite x="245" y="150" framespeed="10">
+                 <frame x="0" y="0" w="128" h="128" scale="0.1" file="note_cool_1.png" />
+                 <frame x="0" y="0" w="128" h="128" scale="0.5" file="note_cool_1.png" />
+                 <frame x="0" y="0" w="128" h="128" scale="0.7" file="note_cool_1.png" />
                  <frame x="0" y="0" w="128" h="128" file="note_cool_1.png" />
              </sprite>
          </entity>
+
+          <entity id="EFFECT_JUDGMENT_GOOD">
+             <sprite x="245" y="150" framespeed="10">
+                 <frame x="0" y="0" w="128" h="128" scale="0.1" file="note_good_1.png" />
+                 <frame x="0" y="0" w="128" h="128" scale="0.5" file="note_good_1.png" />
+                 <frame x="0" y="0" w="128" h="128" scale="0.7" file="note_good_1.png" />
+                 <frame x="0" y="0" w="128" h="128" file="note_good_1.png" />
+             </sprite>
+         </entity>
+          <entity id="EFFECT_JUDGMENT_BAD">
+             <sprite x="245" y="150" framespeed="10">
+                 <frame x="0" y="0" w="128" h="128" scale="0.1" file="note_bad_1.png" />
+                 <frame x="0" y="0" w="128" h="128" scale="0.5" file="note_bad_1.png" />
+                 <frame x="0" y="0" w="128" h="128" scale="0.7" file="note_bad_1.png" />
+                 <frame x="0" y="0" w="128" h="128" file="note_bad_1.png" />
+             </sprite>
+         </entity>
+          <entity id="EFFECT_JUDGMENT_MISS">
+             <sprite x="245" y="150" framespeed="10">
+                 <frame x="0" y="0" w="128" h="128" scale="0.1" file="note_miss_1.png" />
+                 <frame x="0" y="0" w="128" h="128" scale="0.5" file="note_miss_1.png" />
+                 <frame x="0" y="0" w="128" h="128" scale="0.7" file="note_miss_1.png" />
+                 <frame x="0" y="0" w="128" h="128" file="note_miss_1.png" />
+             </sprite>
+         </entity>
 <!--
-         <entity id="EFFECT_JUDGMENT_GOOD">
-         </entity>
-         <entity id="EFFECT_JUDGMENT_BAD">
-         </entity>
-         <entity id="EFFECT_JUDGMENT_MISS">
-         </entity>
-
-
-
          <entity id="COUNTER_JUDGMENT_COOL">
          </entity>
          <entity id="COUNTER_JUDGMENT_GOOD">
@@ -342,7 +362,6 @@
          </entity>
          <entity id="COUNTER_JUDGMENT_MISS">
          </entity>
-
  -->
 
 

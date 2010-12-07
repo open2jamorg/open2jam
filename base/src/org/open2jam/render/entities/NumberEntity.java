@@ -28,6 +28,11 @@ public class NumberEntity extends Entity
         return number;
     }
 
+    public void incNumber()
+    {
+        number++;
+    }
+
     @Override
     public void draw()
     {

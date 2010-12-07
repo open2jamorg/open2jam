@@ -42,11 +42,7 @@ public class Skin
         int size;
 
         NavigableMap<Double,String> score_map = new TreeMap<Double,String>().descendingMap();
-        /** this should return the
-         *
-         * @param p
-         * @return
-         */
+
         public String ratePrecision(double p)
         {
             for(Map.Entry<Double,String> e : score_map.entrySet())
@@ -54,6 +50,10 @@ public class Skin
                 if(p >= e.getKey())return e.getValue();
             }
             return null;
+        }
+
+        public String[] getRates(){
+            return score_map.values().toArray(new String[0]);
         }
     }
 }

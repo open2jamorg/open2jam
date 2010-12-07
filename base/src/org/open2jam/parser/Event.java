@@ -41,9 +41,9 @@ public class Event implements Comparable<Event>
         {
             public int sample_id;
             public float volume;
-            public int pan;
+            public float pan;
 
-            public SoundSample(int sample, float vol, int pan){
+            public SoundSample(int sample, float vol, float pan){
                 this.sample_id = sample;
                 this.volume = vol;
                 this.pan = pan;
@@ -72,7 +72,7 @@ public class Event implements Comparable<Event>
 	}
 
         	public Event(Channel channel, int measure, double position,
-			double value, Flag flag, float vol, int pan) {
+			double value, Flag flag, float vol, float pan) {
 		this.channel = channel;
 		this.measure = measure;
 		this.position = position;

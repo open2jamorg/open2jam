@@ -48,7 +48,7 @@ public class ComboCounterEntity extends NumberEntity
 
     public void incNumber()
     {
-        number++;
+        super.incNumber();
         y = base_y + wobble;
         to_show = show_time;
     }

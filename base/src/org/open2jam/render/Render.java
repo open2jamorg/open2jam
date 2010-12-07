@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.Map;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.logging.Level;
@@ -131,8 +132,9 @@ public class Render implements GameWindowCallback
      * sounds at the moment */
     private LinkedList<Integer> sources_playing;
 
-    /** number to display the fps on the screen */
+    /** number to display the fps, and note counters on the screen */
     private NumberEntity fps_entity;
+    private HashMap<String,NumberEntity> note_counter;
 
     /** the combo counter */
     private ComboCounterEntity combo_entity;
@@ -219,6 +221,11 @@ public class Render implements GameWindowCallback
         // adding static entities
         for(Entity e : skin.getEntityList()){
             entities_matrix.add(e);
+        }
+
+        note_counter = new HashMap<String,NumberEntity>();
+        for(String s : skin.judgment.getRates()){
+            note_counter.put(s, (NumberEntity) skin.getEntityMap().get("FPS_COUNTER").copy());
         }
 
         // build long note buffer
@@ -409,6 +416,11 @@ public class Render implements GameWindowCallback
                         ee.setY(getViewport()-ee.getHeight()/2);
                         entities_matrix.add(ee);
 
+                        String judge = skin.judgment.ratePrecision(hit);
+                        ee = skin.getEntityMap().get(judge).copy();
+                        entities_matrix.add(ee);
+
+                        note_counter.get(judge).incNumber();
                         combo_entity.incNumber();
                     }
                 }
@@ -437,6 +449,11 @@ public class Render implements GameWindowCallback
                     ee.setY(getViewport()-ee.getHeight()/2);
                     entities_matrix.add(ee);
 
+                    String judge = skin.judgment.ratePrecision(hit);
+                    ee = skin.getEntityMap().get(judge).copy();
+                    entities_matrix.add(ee);
+
+                    note_counter.get(judge).incNumber();
                     combo_entity.incNumber();
                 }
             }

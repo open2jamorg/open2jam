@@ -196,9 +196,10 @@ public class OJNParser
                     if(volume == 0)volume = 1;
 
                     // LEFT 1 ~ 8 CENTER 8 ~ 15 RIGHT, special: 0 = 8
-                    int pan = (volume_pan & 0xF0) >> 4;
+                    float pan = (volume_pan & 0xF0) >> 4;
                     if(pan == 0)pan = 8;
                     pan -= 8;
+                    pan /= 16;
 
                     value--;
                     if(type == 0){
