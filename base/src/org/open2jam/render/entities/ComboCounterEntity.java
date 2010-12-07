@@ -34,6 +34,18 @@ public class ComboCounterEntity extends NumberEntity
         base_x = x;
     }
 
+    @Override
+    public void setX(double x)
+    {
+        base_x = x;
+    }
+
+    @Override
+    public void setY(double y)
+    {
+        base_y = y;
+    }
+
     public void incNumber()
     {
         number++;

@@ -319,14 +319,20 @@
                 <frame x="553" y="155" w="46" h="71" scale="0.5" file="numbers_1.png" />
             </sprite>
         </entity>
-<!--     <entity id="EFFECT_JUDGMENT_COOL">
+         <entity id="EFFECT_JUDGMENT_COOL">
+             <sprite>
+                 <frame x="0" y="0" w="128" h="128" file="note_cool_1.png" />
+             </sprite>
          </entity>
+<!--
          <entity id="EFFECT_JUDGMENT_GOOD">
          </entity>
          <entity id="EFFECT_JUDGMENT_BAD">
          </entity>
          <entity id="EFFECT_JUDGMENT_MISS">
          </entity>
+
+
 
          <entity id="COUNTER_JUDGMENT_COOL">
          </entity>

@@ -57,10 +57,10 @@ public class SoundManager
         AL10.alSourcef(source, AL10.AL_GAIN, g);
     }
 
-    private static FloatBuffer pan_pos_buffer = BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f });
+    private static FloatBuffer pan_pos_buffer = BufferUtils.createFloatBuffer(3);
     public static void setPan(int source, float x)
     {
-        pan_pos_buffer.put(0, x).flip();
+        pan_pos_buffer.put(new float[] { x, 0.0f, 0.0f }).flip();
         AL10.alSource(source, AL10.AL_POSITION, pan_pos_buffer);
     }
 

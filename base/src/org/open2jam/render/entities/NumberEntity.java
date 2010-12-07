@@ -1,18 +1,21 @@
 package org.open2jam.render.entities;
 
 import java.util.Collection;
+import java.util.LinkedList;
 
 /**
  *
  * @author fox
  */
-public class NumberEntity extends CompositeEntity
+public class NumberEntity extends Entity
 {
     protected Integer number = 0;
+    protected LinkedList<Entity> entity_list;
     
     public NumberEntity(Collection<Entity> list, double x, double y)
     {
-        super(list);
+        entity_list = new LinkedList<Entity>();
+        entity_list.addAll(list);
         this.x = x;
         this.y = y;
     }

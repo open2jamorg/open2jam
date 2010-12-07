@@ -45,6 +45,27 @@ public class CompositeEntity extends Entity
     }
 
     @Override
+    public void setLayer(int layer)
+    {
+        super.setLayer(layer);
+        for(Entity e : entity_list)e.setLayer(layer);
+    }
+
+    @Override
+    public void setY(double y)
+    {
+        super.setY(y);
+        for(Entity e : entity_list)e.setY(y);
+    }
+
+    @Override
+    public void setX(double x)
+    {
+        super.setX(x);
+        for(Entity e : entity_list)e.setX(x);
+    }
+
+    @Override
     public void setXMove(double dx)
     {
         throw new UnsupportedOperationException("CompositeEntity does not support this");
