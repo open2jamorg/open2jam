@@ -22,7 +22,9 @@ import org.open2jam.parser.Chart;
 import org.open2jam.parser.Event;
 import org.open2jam.render.entities.BPMEntity;
 import org.open2jam.render.entities.ComboCounterEntity;
+import org.open2jam.render.entities.EffectEntity;
 import org.open2jam.render.entities.Entity;
+import org.open2jam.render.entities.JudgmentEntity;
 import org.open2jam.render.entities.LongNoteEntity;
 import org.open2jam.render.entities.MeasureEntity;
 import org.open2jam.render.entities.NoteEntity;
@@ -136,6 +138,8 @@ public class Render implements GameWindowCallback
     private NumberEntity fps_entity;
     private HashMap<String,NumberEntity> note_counter;
 
+    private JudgmentEntity judgment_entity;
+
     /** the combo counter */
     private ComboCounterEntity combo_entity;
 
@@ -225,7 +229,7 @@ public class Render implements GameWindowCallback
 
         note_counter = new HashMap<String,NumberEntity>();
         for(String s : skin.judgment.getRates()){
-            note_counter.put(s, (NumberEntity) skin.getEntityMap().get("FPS_COUNTER").copy());
+            note_counter.put(s, (NumberEntity)skin.getEntityMap().get("FPS_COUNTER").copy());
         }
 
         // build long note buffer
@@ -335,6 +339,12 @@ public class Render implements GameWindowCallback
                         note_channels.get(ne.getChannel()).removeFirst();
                         last_sound.put(ne.getChannel(), ne.getSample());
                         combo_entity.resetNumber();
+
+
+                        if(judgment_entity != null)judgment_entity.setAlive(false);
+                        String judge = skin.judgment.ratePrecision(0);
+                        judgment_entity = (JudgmentEntity) skin.getEntityMap().get(judge).copy();
+                        entities_matrix.add(judgment_entity);
                     }
                 }
                 // else, if it's on the line, judge it
@@ -416,9 +426,10 @@ public class Render implements GameWindowCallback
                         ee.setY(getViewport()-ee.getHeight()/2);
                         entities_matrix.add(ee);
 
+                        if(judgment_entity != null)judgment_entity.setAlive(false);
                         String judge = skin.judgment.ratePrecision(hit);
-                        ee = skin.getEntityMap().get(judge).copy();
-                        entities_matrix.add(ee);
+                        judgment_entity = (JudgmentEntity) skin.getEntityMap().get(judge).copy();
+                        entities_matrix.add(judgment_entity);
 
                         note_counter.get(judge).incNumber();
                         combo_entity.incNumber();
@@ -449,9 +460,10 @@ public class Render implements GameWindowCallback
                     ee.setY(getViewport()-ee.getHeight()/2);
                     entities_matrix.add(ee);
 
+                    if(judgment_entity != null)judgment_entity.setAlive(false);
                     String judge = skin.judgment.ratePrecision(hit);
-                    ee = skin.getEntityMap().get(judge).copy();
-                    entities_matrix.add(ee);
+                    judgment_entity = (JudgmentEntity) skin.getEntityMap().get(judge).copy();
+                    entities_matrix.add(judgment_entity);
 
                     note_counter.get(judge).incNumber();
                     combo_entity.incNumber();

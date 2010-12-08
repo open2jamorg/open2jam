@@ -15,6 +15,7 @@ import org.open2jam.render.entities.ComboCounterEntity;
 import org.open2jam.render.entities.CompositeEntity;
 import org.open2jam.render.entities.EffectEntity;
 import org.open2jam.render.entities.Entity;
+import org.open2jam.render.entities.JudgmentEntity;
 import org.open2jam.render.entities.LongNoteEntity;
 import org.open2jam.render.entities.MeasureEntity;
 import org.open2jam.render.entities.NoteEntity;
@@ -212,6 +213,10 @@ public class SkinHandler extends DefaultHandler
         else if(id.equals("MEASURE_MARK")){
             Entity sprite = sprite_buffer.values().iterator().next();
             e = new MeasureEntity(render, sprite.getFrames(), sprite.getX(), sprite.getY());
+        }
+        else if(id.startsWith("EFFECT_JUDGMENT_")){
+            Entity t = sprite_buffer.values().iterator().next();
+            e = new JudgmentEntity(t.getFrames(),t.getX(), t.getY());
         }
         else if(id.startsWith("EFFECT_")){
             Entity t = sprite_buffer.values().iterator().next();

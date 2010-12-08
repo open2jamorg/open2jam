@@ -254,7 +254,7 @@
     </layer>
 
     <layer id="7">
-        <entity id="COMBO_COUNTER" x="145" y="100">
+        <entity id="COMBO_COUNTER" x="145" y="250">
             <sprite id="0">
                 <frame x="40" y="27" w="46" h="71" file="numbers_1.png" />
             </sprite>
@@ -321,35 +321,23 @@
         </entity>
 
          <entity id="EFFECT_JUDGMENT_COOL">
-             <sprite x="245" y="150" framespeed="10">
-                 <frame x="0" y="0" w="128" h="128" scale="0.1" file="note_cool_1.png" />
-                 <frame x="0" y="0" w="128" h="128" scale="0.5" file="note_cool_1.png" />
-                 <frame x="0" y="0" w="128" h="128" scale="0.7" file="note_cool_1.png" />
+             <sprite x="145" y="300">
                  <frame x="0" y="0" w="128" h="128" file="note_cool_1.png" />
              </sprite>
          </entity>
 
           <entity id="EFFECT_JUDGMENT_GOOD">
-             <sprite x="245" y="150" framespeed="10">
-                 <frame x="0" y="0" w="128" h="128" scale="0.1" file="note_good_1.png" />
-                 <frame x="0" y="0" w="128" h="128" scale="0.5" file="note_good_1.png" />
-                 <frame x="0" y="0" w="128" h="128" scale="0.7" file="note_good_1.png" />
+             <sprite x="145" y="300">
                  <frame x="0" y="0" w="128" h="128" file="note_good_1.png" />
              </sprite>
          </entity>
           <entity id="EFFECT_JUDGMENT_BAD">
-             <sprite x="245" y="150" framespeed="10">
-                 <frame x="0" y="0" w="128" h="128" scale="0.1" file="note_bad_1.png" />
-                 <frame x="0" y="0" w="128" h="128" scale="0.5" file="note_bad_1.png" />
-                 <frame x="0" y="0" w="128" h="128" scale="0.7" file="note_bad_1.png" />
+             <sprite x="145" y="300">
                  <frame x="0" y="0" w="128" h="128" file="note_bad_1.png" />
              </sprite>
          </entity>
           <entity id="EFFECT_JUDGMENT_MISS">
-             <sprite x="245" y="150" framespeed="10">
-                 <frame x="0" y="0" w="128" h="128" scale="0.1" file="note_miss_1.png" />
-                 <frame x="0" y="0" w="128" h="128" scale="0.5" file="note_miss_1.png" />
-                 <frame x="0" y="0" w="128" h="128" scale="0.7" file="note_miss_1.png" />
+             <sprite x="145" y="300">
                  <frame x="0" y="0" w="128" h="128" file="note_miss_1.png" />
              </sprite>
          </entity>

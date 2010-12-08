@@ -20,6 +20,13 @@ public class NumberEntity extends Entity
         this.y = y;
     }
 
+    private NumberEntity(NumberEntity org) {
+        super(org);
+        entity_list = new LinkedList<Entity>();
+        for(Entity e : org.entity_list)entity_list.add(e.copy());
+        this.number = org.number;
+    }
+
     public void setNumber(Integer i){
         this.number = i;
     }
@@ -46,5 +53,11 @@ public class NumberEntity extends Entity
             entity_list.get(i).draw();
             tx += entity_list.get(i).getWidth();
         }
+    }
+
+    @Override
+    public NumberEntity copy()
+    {
+        return new NumberEntity(this);
     }
 }
