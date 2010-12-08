@@ -1,7 +1,7 @@
 package org.open2jam.render.entities;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 
 /**
  *
@@ -9,12 +9,12 @@ import java.util.LinkedList;
  */
 public class NumberEntity extends Entity
 {
-    protected Integer number = 0;
-    protected LinkedList<Entity> entity_list;
+    protected int number = 0;
+    protected ArrayList<Entity> entity_list;
     
     public NumberEntity(Collection<Entity> list, double x, double y)
     {
-        entity_list = new LinkedList<Entity>();
+        entity_list = new ArrayList<Entity>();
         entity_list.addAll(list);
         this.x = x;
         this.y = y;
@@ -22,7 +22,7 @@ public class NumberEntity extends Entity
 
     private NumberEntity(NumberEntity org) {
         super(org);
-        entity_list = new LinkedList<Entity>();
+        entity_list = new ArrayList<Entity>();
         for(Entity e : org.entity_list)entity_list.add(e.copy());
         this.number = org.number;
     }
@@ -43,13 +43,12 @@ public class NumberEntity extends Entity
     @Override
     public void draw()
     {
-        char[] chars = number.toString().toCharArray();
+        char[] chars = String.valueOf(number).toCharArray();
         double tx = x;
         for(char c : chars)
         {
             int i = Integer.parseInt(c+"");
-            entity_list.get(i).setX(tx);
-            entity_list.get(i).setY(y);
+            entity_list.get(i).setPos(tx,y);
             entity_list.get(i).draw();
             tx += entity_list.get(i).getWidth();
         }

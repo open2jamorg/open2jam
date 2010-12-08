@@ -36,8 +36,7 @@ public class SampleEntity extends Entity
     @Override
     public void move(long delta)
     {
-            setYMove(render.getNoteSpeed());
-            super.move(delta);
+        y += delta * render.getNoteSpeed();
     }
 
     @Override
@@ -51,6 +50,7 @@ public class SampleEntity extends Entity
     @Override
     public void draw() {}
 
+    @Override
     public SampleEntity copy(){
         return new SampleEntity(this);
     }

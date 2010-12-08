@@ -18,7 +18,7 @@ public class ComboCounterEntity extends NumberEntity
 
     /** the time in milliseconds in which the entity
      * will be displayed when the count is updated */
-    protected static final int show_time = 5000;
+    protected static final int show_time = 4000;
 
     /** the base position of the entity */
     protected double base_y, base_x;
@@ -35,17 +35,13 @@ public class ComboCounterEntity extends NumberEntity
     }
 
     @Override
-    public void setX(double x)
+    public void setPos(double x, double y)
     {
         base_x = x;
-    }
-
-    @Override
-    public void setY(double y)
-    {
         base_y = y;
     }
 
+    @Override
     public void incNumber()
     {
         super.incNumber();
@@ -68,29 +64,22 @@ public class ComboCounterEntity extends NumberEntity
         if(y > base_y)y += delta * wobble_dy;
     }
 
-    private void findMiddle()
+    @Override
+    public void draw()
     {
-        char[] chars = number.toString().toCharArray();
+        if(to_show < 0)return;
+        char[] chars = String.valueOf(number).toCharArray();
         x = 0;
         for(char c : chars){
              int i = Integer.parseInt(c+"");
              x += entity_list.get(i).getWidth();
         }
         x = base_x - (x/2);
-    }
-
-    @Override
-    public void draw()
-    {
-        if(to_show <= 0)return;
-        findMiddle();
-        char[] chars = number.toString().toCharArray();
         double tx = x;
         for(char c : chars)
         {
             int i = Integer.parseInt(c+"");
-            entity_list.get(i).setX(tx);
-            entity_list.get(i).setY(y);
+            entity_list.get(i).setPos(tx, y);
             entity_list.get(i).draw();
             tx += entity_list.get(i).getWidth();
         }

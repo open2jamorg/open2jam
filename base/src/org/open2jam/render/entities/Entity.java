@@ -25,11 +25,6 @@ public class Entity implements Copyable
     /** allows constructor extensions */
     protected Entity() {}
 
-    public Entity(SpriteList s)
-    {
-            this(s,0,0);
-    }
-
     public Entity(SpriteList sp, double x, double y)
     {
         this.frames = sp;
@@ -66,9 +61,9 @@ public class Entity implements Copyable
      * @param delta The ammount of time that has passed in milliseconds
      */
     public void move(long delta) {
-            // update the location of the entity based on move speeds
-            x += delta * dx;
-            y += delta * dy;
+        // update the location of the entity based on move speeds
+        x += delta * dx;
+        y += delta * dy;
     }
 
     /**
@@ -87,7 +82,7 @@ public class Entity implements Copyable
      * Draw this entity to the graphics context provided
      */
     public void draw() {
-            sprite.draw(x,y, sprite.getScaleX(), sprite.getScaleY());
+        sprite.draw(x,y, sprite.getScaleX(), sprite.getScaleY());
     }
 
     /**
@@ -96,11 +91,13 @@ public class Entity implements Copyable
      */
     public void judgment() {}
 
-
     public double getX(){ return x;}
     public double getY(){ return y;}
-    public void setX(double x){ this.x = x;}
-    public void setY(double y){ this.y = y;}
+
+    public void setPos(double x, double y){
+        this.x = x;
+        this.y = y;
+    }
 
     public double getWidth(){ return width;}
     public double getHeight(){ return height;}

@@ -22,7 +22,6 @@ import org.open2jam.parser.Chart;
 import org.open2jam.parser.Event;
 import org.open2jam.render.entities.BPMEntity;
 import org.open2jam.render.entities.ComboCounterEntity;
-import org.open2jam.render.entities.EffectEntity;
 import org.open2jam.render.entities.Entity;
 import org.open2jam.render.entities.JudgmentEntity;
 import org.open2jam.render.entities.LongNoteEntity;
@@ -218,7 +217,8 @@ public class Render implements GameWindowCallback
 
         measure_size = 0.8 * hispeed * getViewport();
         buffer_offset = getViewport();
-        setBPM(chart.getBPM(rank));
+        bpm = chart.getBPM(rank);
+        update_note_speed();
 
         note_layer = skin.getEntityMap().get("NOTE_1").getLayer();
 
@@ -228,8 +228,11 @@ public class Render implements GameWindowCallback
         }
 
         note_counter = new HashMap<String,NumberEntity>();
+        int off = 0;
         for(String s : skin.judgment.getRates()){
-            note_counter.put(s, (NumberEntity)skin.getEntityMap().get("FPS_COUNTER").copy());
+            NumberEntity e = (NumberEntity)skin.getEntityMap().get("FPS_COUNTER").copy();
+            note_counter.put(s, e);
+            e.setPos(500, off+=100);
         }
 
         // build long note buffer
@@ -343,7 +346,7 @@ public class Render implements GameWindowCallback
 
                         if(judgment_entity != null)judgment_entity.setAlive(false);
                         String judge = skin.judgment.ratePrecision(0);
-                        judgment_entity = (JudgmentEntity) skin.getEntityMap().get(judge).copy();
+                        judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
                         entities_matrix.add(judgment_entity);
                     }
                 }
@@ -357,9 +360,9 @@ public class Render implements GameWindowCallback
                 if(!(e instanceof NoteEntity) || e.getY() < skin.judgment.start+skin.judgment.size)e.draw();
             }
         }
-
         buffer_offset += note_speed * delta; // walk with the buffer
 
+        update_note_speed(); // speed will change if the bpm changed in this frame
         
         if(!buffer_iterator.hasNext() && entities_matrix.isEmpty(note_layer)){
             if(sources_playing.isEmpty()){
@@ -375,13 +378,15 @@ public class Render implements GameWindowCallback
     public void setBPM(double e)
     {
         this.bpm = e;
+    }
+
+    private void update_note_speed(){
         note_speed = ((bpm/240) * measure_size) / 1000.0d;
     }
 
     /** returns the note speed in pixels/milliseconds */
     public double getNoteSpeed() { return note_speed; }
 
-    public double getBPM() { return bpm; }
     public double getMeasureSize() { return measure_size; }
     public double getViewport() { return skin.judgment.start+skin.judgment.size; }
 
@@ -422,13 +427,13 @@ public class Render implements GameWindowCallback
                         }
 
                         ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
-                        ee.setX(e.getX()+e.getWidth()/2-ee.getWidth()/2);
-                        ee.setY(getViewport()-ee.getHeight()/2);
+                        ee.setPos(e.getX()+e.getWidth()/2-ee.getWidth()/2,
+                                getViewport()-ee.getHeight()/2);
                         entities_matrix.add(ee);
 
                         if(judgment_entity != null)judgment_entity.setAlive(false);
                         String judge = skin.judgment.ratePrecision(hit);
-                        judgment_entity = (JudgmentEntity) skin.getEntityMap().get(judge).copy();
+                        judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
                         entities_matrix.add(judgment_entity);
 
                         note_counter.get(judge).incNumber();
@@ -443,10 +448,10 @@ public class Render implements GameWindowCallback
                 key_pressed_entity.get(c).setAlive(false);
 
                 LongNoteEntity e = longnote_holded.get(c);
+                longnote_holded.put(c,null);
+
                 if(e == null || note_channels.get(c).isEmpty()
                         || e != note_channels.get(c).getFirst())continue;
-
-                longnote_holded.put(c,null);
 
                 double hit = e.testHit(judgment_line_y1, judgment_line_y2);
 
@@ -456,13 +461,13 @@ public class Render implements GameWindowCallback
                     last_sound.put(c, e.getSample());
 
                     Entity ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
-                    ee.setX(e.getX()+e.getWidth()/2-ee.getWidth()/2);
-                    ee.setY(getViewport()-ee.getHeight()/2);
+                    ee.setPos(e.getX()+e.getWidth()/2-ee.getWidth()/2,
+                        getViewport()-ee.getHeight()/2);
                     entities_matrix.add(ee);
 
                     if(judgment_entity != null)judgment_entity.setAlive(false);
                     String judge = skin.judgment.ratePrecision(hit);
-                    judgment_entity = (JudgmentEntity) skin.getEntityMap().get(judge).copy();
+                    judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
                     entities_matrix.add(judgment_entity);
 
                     note_counter.get(judge).incNumber();
@@ -490,7 +495,7 @@ public class Render implements GameWindowCallback
             {
                 buffer_offset -= measure_size * fractional_measure;
                 MeasureEntity m = (MeasureEntity) skin.getEntityMap().get("MEASURE_MARK").copy();
-                m.setY(buffer_offset+6);
+                m.setPos(m.getX(), buffer_offset+6);
                 entities_matrix.add(m);
                 buffer_measure++;
                 fractional_measure = 1;
@@ -512,14 +517,14 @@ public class Render implements GameWindowCallback
                 case NOTE_5:case NOTE_6:case NOTE_7:
                 if(e.getFlag() == Event.Flag.NONE){
                     NoteEntity n = (NoteEntity) skin.getEntityMap().get(e.getChannel().toString()).copy();
-                    n.setY(abs_height);
+                    n.setPos(n.getX(), abs_height);
                     n.setSample(e.getSample());
                     entities_matrix.add(n);
                     note_channels.get(n.getChannel()).add(n);
                 }
                 else if(e.getFlag() == Event.Flag.HOLD){
                     LongNoteEntity ln = (LongNoteEntity) skin.getEntityMap().get("LONG_"+e.getChannel()).copy();
-                    ln.setY(abs_height);
+                    ln.setPos(ln.getX(), abs_height);
                     ln.setSample(e.getSample());
                     ln_buffer.put(e.getChannel(),ln);
                     entities_matrix.add(ln);

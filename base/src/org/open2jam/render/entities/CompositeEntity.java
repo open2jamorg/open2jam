@@ -52,17 +52,10 @@ public class CompositeEntity extends Entity
     }
 
     @Override
-    public void setY(double y)
+    public void setPos(double x, double y)
     {
-        super.setY(y);
-        for(Entity e : entity_list)e.setY(y);
-    }
-
-    @Override
-    public void setX(double x)
-    {
-        super.setX(x);
-        for(Entity e : entity_list)e.setX(x);
+        super.setPos(x,y);
+        for(Entity e : entity_list)e.setPos(x,y);
     }
 
     @Override

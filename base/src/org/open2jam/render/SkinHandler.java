@@ -162,8 +162,10 @@ public class SkinHandler extends DefaultHandler
             }
 
             e.setLayer(this.layer);
-            if(atts.containsKey("x"))e.setX(Integer.parseInt(atts.get("x")));
-            if(atts.containsKey("y"))e.setY(Integer.parseInt(atts.get("y")));
+            double x = e.getX(), y = e.getY();
+            if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x"));
+            if(atts.containsKey("y"))y = Integer.parseInt(atts.get("y"));
+            e.setPos(x, y);
             
             if(id != null){
                 if(!result.getEntityMap().containsKey(id))result.getEntityMap().put(id, e);
