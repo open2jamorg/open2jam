@@ -4,14 +4,14 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.SwingWorker;
-import org.open2jam.parser.Chart;
+import org.open2jam.parser.ChartList;
 import org.open2jam.parser.ChartParser;
 
 /**
  *
  * @author fox
  */
-public class ChartModelLoader extends SwingWorker<ChartTableModel,Chart> {
+public class ChartModelLoader extends SwingWorker<ChartTableModel,ChartList> {
 
     private ChartTableModel table_model;
     private File dir;
@@ -38,8 +38,8 @@ public class ChartModelLoader extends SwingWorker<ChartTableModel,Chart> {
 
 
     @Override
-     protected void process(List<Chart> chunks) {
-         for (Chart row : chunks) {
+     protected void process(List<ChartList> chunks) {
+         for (ChartList row : chunks) {
              table_model.addRow(row);
          }
      }

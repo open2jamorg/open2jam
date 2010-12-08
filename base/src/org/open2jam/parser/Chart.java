@@ -10,42 +10,42 @@ import java.awt.image.BufferedImage;
 *** 0 - easy, 1 - normal, 2 - hard, 3 - very hard, ... 
 *** there's no upper bound.
 **/
-public interface Chart
+public abstract class Chart implements Comparable<Chart>
 {
-	/** the File object to the source file of this header */
-	public File getSource();
+    /** the File object to the source file of this header */
+    public abstract File getSource();
 
-	/** an integer representing difficulty.
-	*** we _should_ have some standard here
-	*** maybe we could use o2jam as the default
-	*** and normalize the others to this rule
-	**/
-	public int getLevel(int rank);
+    /** an integer representing difficulty.
+    *** we _should_ have some standard here
+    *** maybe we could use o2jam as the default
+    *** and normalize the others to this rule
+    **/
+    public abstract int getLevel();
 
-	/** returns the maximum rank this chart has.
-	** in a way that getLevel(getMaxRank()) will give the hardest version.
-	**/
-	public int getMaxRank();
+    public abstract String getTitle();
+    public abstract String getArtist();
+    public abstract String getGenre();
+    public abstract String getNoter();
+    public abstract Map<Integer,Integer> getSamples();
 
-	public String getTitle();
-	public String getArtist();
-	public String getGenre();
-	public String getNoter();
-	public Map<Integer,Integer> getSamples(int rank);
+    /** a bpm representing the whole song.
+    *** doesn't need to be exact, just for info */
+    public abstract double getBPM();
 
-	/** a bpm representing the whole song.
-	*** doesn't need to be exact, just for info */
-	public double getBPM(int rank);
+    /** the number of notes in the song */
+    public abstract int getNoteCount();
 
-	/** the number of notes in the song */
-	public int getNoteCount(int rank);
+    /** the duration in seconds */
+    public abstract int getDuration();
 
-	/** the duration in seconds */
-	public int getDuration(int rank);
+    /** a image cover, representing the song */
+    public abstract BufferedImage getCover();
 
-	/** a image cover, representing the song */
-	public BufferedImage getCover();
+    /** this should return the list of events from this chart at this rank */
+    public abstract List<Event> getEvents();
 
-        /** this should return the list of events from this chart at this rank */
-        public List<Event> getEvents(int rank);
+    public int compareTo(Chart c)
+    {
+        return getLevel() - c.getLevel();
+    }
 }

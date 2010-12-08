@@ -6,6 +6,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import org.open2jam.parser.Chart;
+import org.open2jam.parser.ChartList;
 
 /**
  *
@@ -13,7 +14,7 @@ import org.open2jam.parser.Chart;
  */
 public class ChartTableModel implements TableModel
 {
-    private List<Chart> items;
+    private List<ChartList> items;
     private String[] col_names = new String[] { "Name", "Level", "Genre" };
     private int rank;
     
@@ -22,7 +23,7 @@ public class ChartTableModel implements TableModel
     public ChartTableModel()
     {
         listeners = new ArrayList<TableModelListener>();
-        items = new ArrayList<Chart>();
+        items = new ArrayList<ChartList>();
     }
     
     public void clear()
@@ -30,7 +31,7 @@ public class ChartTableModel implements TableModel
         items.clear();
     }
 
-    public void addRow(Chart h)
+    public void addRow(ChartList h)
     {
         items.add(h);
         fireListeners();
@@ -42,7 +43,7 @@ public class ChartTableModel implements TableModel
         fireListeners();
     }
 
-    public Chart getRow(int row)
+    public ChartList getRow(int row)
     {
         return items.get(row);
     }
@@ -74,11 +75,12 @@ public class ChartTableModel implements TableModel
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
+        Chart c = items.get(rowIndex).get(rank);
         switch(columnIndex)
         {
-            case 0:return items.get(rowIndex).getTitle();
-            case 1:return items.get(rowIndex).getLevel(rank);
-            case 2:return items.get(rowIndex).getGenre();
+            case 0:return c.getTitle();
+            case 1:return c.getLevel();
+            case 2:return c.getGenre();
         }
         return null;
     }

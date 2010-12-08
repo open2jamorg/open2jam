@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
-public class BMSChart implements Chart
+public class BMSChart extends Chart
 {
     static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
@@ -18,11 +18,11 @@ public class BMSChart implements Chart
     protected Map<Integer, Integer> rank_map;
 
     protected File source;
-    protected File[] bms;
+    protected File bms;
     public File getSource() { return source; }
 
-    protected int[] level;
-    public int getLevel(int rank) { return level[rank_map.get(rank)]; }
+    protected int level;
+    public int getLevel() { return level; }
 
     protected int max_rank;
     public int getMaxRank() {
@@ -45,18 +45,18 @@ public class BMSChart implements Chart
     }
 
     protected Map<Integer, File> sample_files;
-    public Map<Integer,Integer> getSamples(int rank) {
-        return BMSParser.loadSamples(this, rank_map.get(rank));
+    public Map<Integer,Integer> getSamples() {
+        return BMSParser.loadSamples(this);
     }
 
-    protected int[] bpm;
-    public double getBPM(int rank) {
-        return bpm[rank_map.get(rank)];
+    protected int bpm;
+    public double getBPM() {
+        return bpm;
     }
 
-    public int getNoteCount(int rank) { return 0; }
+    public int getNoteCount() { return 0; }
 
-    public int getDuration(int rank) { return 0; }
+    public int getDuration() { return 0; }
 
     protected File image_cover;
     public BufferedImage getCover() {
@@ -70,7 +70,7 @@ public class BMSChart implements Chart
 
     public String getNoter() { return ""; }
 
-    public List<Event> getEvents(int rank) {
-        return BMSParser.parseChart(this, rank_map.get(rank));
+    public List<Event> getEvents() {
+        return BMSParser.parseChart(this);
     }
 }

@@ -27,8 +27,8 @@ public class BMSParser
 
     private static final FileFilter bms_filter = new FileFilter(){
         public boolean accept(File f){
-                String s = f.getName().toLowerCase();
-                return (!f.isDirectory()) && (s.endsWith(".bms") || s.endsWith(".bme"));
+            String s = f.getName().toLowerCase();
+            return (!f.isDirectory()) && (s.endsWith(".bms") || s.endsWith(".bme"));
         }
     };
 
@@ -40,29 +40,26 @@ public class BMSParser
         return bms.length > 0;
     }
 
-    public static BMSChart parseFile(File file)
+    public static ChartList parseFile(File file)
     {
-        BMSChart chart = new BMSChart();
+        ChartList list = new ChartList();
+        list.source_file = file;
 
-        chart.source = file;
-        chart.bms = file.listFiles(bms_filter);
-        chart.level = new int[chart.bms.length];
-        chart.bpm = new int[chart.bms.length];
+        File[] bms_files = file.listFiles(bms_filter);
 
-        chart.rank_map = new HashMap<Integer, Integer>();
-        for(int i=0;i<chart.bms.length;i++)
+        for(int i=0;i<bms_files.length;i++)
         {
-                try{
-                        Integer rank = parseBMSHeader(chart.bms[i], chart, i);
-                        if(rank == null)rank = 3;
-                        chart.rank_map.put(3-rank, i);
-                }catch(UnsupportedOperationException e){continue;}
+            try{
+                list.add(parseBMSHeader(bms_files[i]));
+            }catch(UnsupportedOperationException e){continue;}
         }
-        return chart;
+        Collections.sort(list);
+        return list;
     }
 
-    private static Integer parseBMSHeader(File f, BMSChart chart, int idx) throws BadFileException
+    private static BMSChart parseBMSHeader(File f) throws BadFileException
     {
+        BMSChart chart = new BMSChart();
         BufferedReader r = null;
         try{
             r = new BufferedReader(new FileReader(f));
@@ -90,50 +87,50 @@ public class BMSParser
             String cmd = st.nextToken().toUpperCase();
 
             try{
-                    if(cmd.equals("#PLAYLEVEL")){
-                            playlevel = Integer.parseInt(st.nextToken());
-                            continue;
-                    }
-                    if(cmd.equals("#RANK")){
-                            rank = Integer.parseInt(st.nextToken());
-                            continue;
-                    }
-                    if(cmd.equals("#TITLE")){
-                            title = st.nextToken("").trim();
-                            continue;
-                    }
-                    if(cmd.equals("#ARTIST")){
-                            artist = st.nextToken("").trim();
-                            continue;
-                    }
-                    if(cmd.equals("#GENRE")){
-                            genre = st.nextToken("").trim();
-                            continue;
-                    }
-                    if(cmd.equals("#PLAYER")){
-                            player = Integer.parseInt(st.nextToken());
-                            if(player != 1)throw new UnsupportedOperationException("Not supported yet.");
-                            continue;
-                    }
-                    if(cmd.equals("#BPM")){
-                            bpm = Integer.parseInt(st.nextToken());
-                            continue;
-                    }
-                    if(cmd.equals("#LNTYPE")){
-                            lntype = Integer.parseInt(st.nextToken());
-                            continue;
-                    }
-                    if(cmd.equals("#LNOBJ")){
-                            throw new UnsupportedOperationException("LNOBJ Not supported yet.");
-                    }
-                    if(cmd.equals("#STAGEFILE")){
-                            chart.image_cover = new File(f.getParent(),st.nextToken("").trim());
-                    }
-                    if(cmd.startsWith("#WAV")){
-                            int id = Integer.parseInt(cmd.replaceFirst("#WAV",""), 36);
-                            sample_files.put(id, new File(f.getParent(),st.nextToken("").trim()));
-                            continue;
-                    }
+                if(cmd.equals("#PLAYLEVEL")){
+                        playlevel = Integer.parseInt(st.nextToken());
+                        continue;
+                }
+                if(cmd.equals("#RANK")){
+                        rank = Integer.parseInt(st.nextToken());
+                        continue;
+                }
+                if(cmd.equals("#TITLE")){
+                        title = st.nextToken("").trim();
+                        continue;
+                }
+                if(cmd.equals("#ARTIST")){
+                        artist = st.nextToken("").trim();
+                        continue;
+                }
+                if(cmd.equals("#GENRE")){
+                        genre = st.nextToken("").trim();
+                        continue;
+                }
+                if(cmd.equals("#PLAYER")){
+                        player = Integer.parseInt(st.nextToken());
+                        if(player != 1)throw new UnsupportedOperationException("Not supported yet.");
+                        continue;
+                }
+                if(cmd.equals("#BPM")){
+                        bpm = Integer.parseInt(st.nextToken());
+                        continue;
+                }
+                if(cmd.equals("#LNTYPE")){
+                        lntype = Integer.parseInt(st.nextToken());
+                        continue;
+                }
+                if(cmd.equals("#LNOBJ")){
+                        throw new UnsupportedOperationException("LNOBJ Not supported yet.");
+                }
+                if(cmd.equals("#STAGEFILE")){
+                        chart.image_cover = new File(f.getParent(),st.nextToken("").trim());
+                }
+                if(cmd.startsWith("#WAV")){
+                        int id = Integer.parseInt(cmd.replaceFirst("#WAV",""), 36);
+                        sample_files.put(id, new File(f.getParent(),st.nextToken("").trim()));
+                        continue;
+                }
             }catch(NoSuchElementException e){}
              catch(NumberFormatException e){ throw new BadFileException("unparsable number @ "+cmd); }
         }
@@ -141,25 +138,25 @@ public class BMSParser
             logger.log(Level.WARNING, "IO exception on file parsing ! {0}", e.getMessage());
         }
 
-        chart.level[idx] = playlevel;
+        chart.level = playlevel;
         chart.title = title;
         chart.artist = artist;
         chart.genre = genre;
-        chart.bpm[idx] = bpm;
+        chart.bpm = bpm;
         chart.sample_files = sample_files;
         chart.lntype = lntype;
-        return rank;
+        return chart;
     }
 
-    public static List<Event> parseChart(BMSChart chart, int rank)
+    public static List<Event> parseChart(BMSChart chart)
     {
         ArrayList<Event> event_list = new ArrayList<Event>();
         BufferedReader r = null;
         String line = null;
         try{
-            r = new BufferedReader(new FileReader(chart.bms[rank]));
+            r = new BufferedReader(new FileReader(chart.bms));
         }catch(FileNotFoundException e){
-            logger.log(Level.WARNING, "File {0} not found !!", chart.bms[rank]);
+            logger.log(Level.WARNING, "File {0} not found !!", chart.bms);
             return null;
         }
 
@@ -215,7 +212,8 @@ public class BMSParser
                     continue;
                 }
                 Event.Channel ec;
-                switch (channel) {
+                switch (channel)
+                {
                     case 1:
                         ec = Event.Channel.AUTO_PLAY;
                         break;
@@ -288,7 +286,7 @@ public class BMSParser
         return event_list;
     }
 
-    public static HashMap<Integer,Integer> loadSamples(BMSChart h, int rank)
+    public static HashMap<Integer,Integer> loadSamples(BMSChart h)
     {
         HashMap<Integer,Integer> samples = new HashMap<Integer,Integer>();
         for(Map.Entry<Integer,File> entry : h.sample_files.entrySet())

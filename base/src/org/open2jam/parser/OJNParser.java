@@ -38,46 +38,55 @@ public class OJNParser
 //        return false;
     }
 
-    public static OJNChart parseFile(File file)
+    public static ChartList parseFile(File file)
     {
-        OJNChart chart = new OJNChart();
+        ByteBuffer buffer = null;
+        RandomAccessFile f = null;
         try{
-            RandomAccessFile f = new RandomAccessFile(file.getAbsolutePath(),"r");
-            ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, 300);
-            buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
-            chart.source = file;
-            readHeader(chart, buffer, f, file.getParentFile());
-            buffer = null;
-            f.close();
-        }catch(IOException e){ 
+            f = new RandomAccessFile(file.getAbsolutePath(),"r");
+            buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, 300);
+        }catch(IOException e){
             logger.log(Level.WARNING, "IO exception on reading OJN file {0}", file.getName());
         }
-        return chart;
-    }
 
-    private static void readHeader(OJNChart chart, ByteBuffer buffer, RandomAccessFile f, File parent) throws BadFileException
-    {
+        buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
+
+        OJNChart easy = new OJNChart();
+        OJNChart normal = new OJNChart();
+        OJNChart hard = new OJNChart();
+
         int songid = buffer.getInt();
         int signature = buffer.getInt();
         if(signature != OJN_SIGNATURE)throw new BadFileException("Not a OJN file");
 
         byte encoder_value[] = new byte[4];
         buffer.get(encoder_value);
+        
         int genre = buffer.getInt();
+        String str_genre = genre_map[(genre<0||genre>10)?10:genre];
+        easy.genre = str_genre;
+        normal.genre = str_genre;
+        hard.genre = str_genre;
+        
         float bpm = buffer.getFloat();
-        short level[] = new short[4];
-        level[0] = buffer.getShort();
-        level[1] = buffer.getShort();
-        level[2] = buffer.getShort();
-        level[3] = buffer.getShort();
+        easy.bpm = bpm;
+        normal.bpm = bpm;
+        hard.bpm = bpm;
+
+        easy.level = buffer.getShort();
+        normal.level = buffer.getShort();
+        hard.level = buffer.getShort();
+        buffer.getShort(); // 0, always
+
         int event_count[] = new int[3];
         event_count[0] = buffer.getInt();
         event_count[1] = buffer.getInt();
         event_count[2] = buffer.getInt();
-        int note_count[] = new int[3];
-        note_count[0] = buffer.getInt();
-        note_count[1] = buffer.getInt();
-        note_count[2] = buffer.getInt();
+
+        easy.note_count = buffer.getInt();
+        normal.note_count = buffer.getInt();
+        hard.note_count = buffer.getInt();
+
         int measure_count[] = new int[3];
         measure_count[0] = buffer.getInt();
         measure_count[1] = buffer.getInt();
@@ -95,50 +104,85 @@ public class OJNParser
         short unk_a[] = new short[2];
         unk_a[0] = buffer.getShort();
         unk_a[1] = buffer.getShort();
+        
         byte title[] = new byte[64];
         buffer.get(title);
+        String str_title = bytes2string(title);
+        easy.title = str_title;
+        normal.title = str_title;
+        hard.title = str_title;
+
         byte artist[] = new byte[32];
         buffer.get(artist);
+        String str_artist = bytes2string(artist);
+        easy.artist = str_artist;
+        normal.artist = str_artist;
+        hard.artist = str_artist;
+
         byte noter[] = new byte[32];
         buffer.get(noter);
+        String str_noter = bytes2string(noter);
+        easy.noter = str_noter;
+        normal.noter = str_noter;
+        hard.noter = str_noter;
+
         byte ojm_file[] = new byte[32];
         buffer.get(ojm_file);
+        File sample_file = new File(file.getParent(), bytes2string(ojm_file));
+        easy.sample_file = sample_file;
+        normal.sample_file = sample_file;
+        hard.sample_file = sample_file;
+
         int cover_size = buffer.getInt();
-        int time[] = new int[3];
-        time[0] = buffer.getInt();
-        time[1] = buffer.getInt();
-        time[2] = buffer.getInt();
-        int note_offsets[] = new int[4];
-        note_offsets[0] = buffer.getInt();
-        note_offsets[1] = buffer.getInt();
-        note_offsets[2] = buffer.getInt();
-        note_offsets[3] = buffer.getInt();
+        easy.cover_size = cover_size;
+        normal.cover_size = cover_size;
+        hard.cover_size = cover_size;
+        
+        easy.duration = buffer.getInt();
+        normal.duration = buffer.getInt();
+        hard.duration = buffer.getInt();
 
-        chart.note_offsets = note_offsets;
-        chart.cover_size = cover_size;
+        easy.note_offset = buffer.getInt();
+        normal.note_offset = buffer.getInt();
+        hard.note_offset = buffer.getInt();
+        int cover_offset = buffer.getInt();
 
-        chart.level = level;
-        chart.title = bytes2string(title);
-        chart.artist = bytes2string(artist);
-        chart.genre = genre_map[(genre<0||genre>10)?10:genre];
-        chart.bpm = bpm;
-        chart.note_count = note_count;
-        chart.noter = bytes2string(noter);
-        chart.duration = time;
-        chart.sample_file = new File(parent, bytes2string(ojm_file));
+        easy.note_offset_end = normal.note_offset;
+        normal.note_offset_end = hard.note_offset;
+        hard.note_offset_end = cover_offset;
 
-        //ojn specific fields
-        chart.note_offsets = note_offsets;
+        easy.cover_offset = cover_offset;
+        normal.cover_offset = cover_offset;
+        hard.cover_offset = cover_offset;
+
+        easy.source = file;
+        normal.source = file;
+        hard.source = file;
+
+        ChartList list = new ChartList();
+        list.add(easy);
+        list.add(normal);
+        list.add(hard);
+
+        list.source_file = file;
+        buffer = null;
+
+        try {
+            f.close();
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+        return list;
     }
 
-    public static List<Event> parseChart(OJNChart chart, int rank)
+    public static List<Event> parseChart(OJNChart chart)
     {
         ArrayList<Event> event_list = new ArrayList<Event>();
         try{
                 RandomAccessFile f = new RandomAccessFile(chart.getSource().getAbsolutePath(), "r");
 
-                int start = chart.getNoteOffsets()[rank];
-                int end = chart.getNoteOffsets()[rank+1];
+                int start = chart.note_offset;
+                int end = chart.note_offset_end;
 
                 ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, start, end - start);
                 buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);

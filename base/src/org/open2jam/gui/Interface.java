@@ -507,7 +507,7 @@ public class Interface extends javax.swing.JFrame
         final boolean vsync = jc_vsync.isSelected();
         final boolean fs = jc_full_screen.isSelected();
 
-        Render r = new Render(selected_header, rank, hispeed);
+        Render r = new Render(selected_header, hispeed);
 
         r.setDisplay(dm, vsync, fs);
 
@@ -610,7 +610,7 @@ public class Interface extends javax.swing.JFrame
         }else{
             i = table_songlist.convertRowIndexToModel(i);
         }
-        selected_header = model_songlist.getRow(i);
+        selected_header = model_songlist.getRow(i).get(rank);
         updateInfo();
     }
 
@@ -620,10 +620,10 @@ public class Interface extends javax.swing.JFrame
         lbl_artist.setText(selected_header.getArtist());
         lbl_title.setText(selected_header.getTitle()+" ("+selected_header.getSource().getName()+")");
         lbl_genre.setText(selected_header.getGenre());
-        lbl_level.setText(selected_header.getLevel(rank)+"");
-        lbl_bpm.setText(selected_header.getBPM(rank)+"");
-        lbl_notes.setText(selected_header.getNoteCount(rank)+"");
-        int d = selected_header.getDuration(rank);
+        lbl_level.setText(selected_header.getLevel()+"");
+        lbl_bpm.setText(selected_header.getBPM()+"");
+        lbl_notes.setText(selected_header.getNoteCount()+"");
+        int d = selected_header.getDuration();
 
         lbl_time.setText((d/60)+":"+(d%60));
 

@@ -51,9 +51,6 @@ public class Render implements GameWindowCallback
     /** the chart being rendered */
     private final Chart chart;
 
-    /** the rank of the chart */
-    private final int rank;
-
     /** the hispeed */
     private final double hispeed;
 
@@ -147,10 +144,9 @@ public class Render implements GameWindowCallback
         keyboard_map = Config.get().getKeyboardMap();
     }
 
-    public Render(Chart c, int rank, double hispeed)
+    public Render(Chart c, double hispeed)
     {
         this.chart = c;
-        this.rank = rank;
         this.hispeed = hispeed;
         window = ResourceFactory.get().getGameWindow();
     }
@@ -217,7 +213,7 @@ public class Render implements GameWindowCallback
 
         measure_size = 0.8 * hispeed * getViewport();
         buffer_offset = getViewport();
-        bpm = chart.getBPM(rank);
+        bpm = chart.getBPM();
         update_note_speed();
 
         note_layer = skin.getEntityMap().get("NOTE_1").getLayer();
@@ -265,7 +261,7 @@ public class Render implements GameWindowCallback
         }
 
         // load up initial buffer
-        buffer_iterator = chart.getEvents(rank).iterator();
+        buffer_iterator = chart.getEvents().iterator();
         update_note_buffer();
 
 
@@ -281,7 +277,7 @@ public class Render implements GameWindowCallback
         }
 
         // get the chart sound samples
-        samples = chart.getSamples(rank);
+        samples = chart.getSamples();
 
         //clean up
         System.gc();

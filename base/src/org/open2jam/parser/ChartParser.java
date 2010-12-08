@@ -12,7 +12,7 @@ public class ChartParser
 	private ChartParser() {}
 
 	/** parse and returns a ChartHeader object */
-	public static Chart parseFile(File file)
+	public static ChartList parseFile(File file)
 	{
 		if(OJNParser.canRead(file))return OJNParser.parseFile(file);
 		if(BMSParser.canRead(file))return BMSParser.parseFile(file);
