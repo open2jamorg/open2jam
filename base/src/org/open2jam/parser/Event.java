@@ -63,27 +63,27 @@ public class Event implements Comparable<Event>
 
 	public Event(Channel channel, int measure, double position,
 			double value, Flag flag) {
-		this.channel = channel;
-		this.measure = measure;
-		this.position = position;
-		this.value = value;
-		this.flag = flag;
-                this.sound_sample = null;
+            this.channel = channel;
+            this.measure = measure;
+            this.position = position;
+            this.value = value;
+            this.flag = flag;
+            this.sound_sample = new SoundSample((int)value, 1, 0);
 	}
 
-        	public Event(Channel channel, int measure, double position,
-			double value, Flag flag, float vol, float pan) {
-		this.channel = channel;
-		this.measure = measure;
-		this.position = position;
-		this.value = value;
-		this.flag = flag;
-                this.sound_sample = new SoundSample((int) value,vol, pan);
+        public Event(Channel channel, int measure, double position,
+                    double value, Flag flag, float vol, float pan) {
+            this.channel = channel;
+            this.measure = measure;
+            this.position = position;
+            this.value = value;
+            this.flag = flag;
+            this.sound_sample = new SoundSample((int) value,vol, pan);
 	}
 
 	public int compareTo(Event e)
 	{
-		return (int) ((measure+position) - (e.getMeasure()+e.getPosition()));
+            return (int) ((measure+position) - (e.getMeasure()+e.getPosition()));
 	}
 
 	public Channel getChannel() { return channel; }

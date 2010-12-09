@@ -39,7 +39,8 @@ public class NoteEntity extends AnimatedEntity
     @Override
     public void move(long delta)
     {
-        y += delta * render.getNoteSpeed();
+        dy = render.getNoteSpeed();
+        y += delta * dy;
     }
 
     public double testHit(double jy1, double jy2)

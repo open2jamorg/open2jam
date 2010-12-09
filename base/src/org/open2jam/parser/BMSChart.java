@@ -18,7 +18,6 @@ public class BMSChart extends Chart
     protected Map<Integer, Integer> rank_map;
 
     protected File source;
-    protected File bms;
     public File getSource() { return source; }
 
     protected int level;
@@ -60,6 +59,7 @@ public class BMSChart extends Chart
 
     protected File image_cover;
     public BufferedImage getCover() {
+        if(image_cover == null)return null;
         try {
             return ImageIO.read(image_cover);
         } catch (IOException ex) {

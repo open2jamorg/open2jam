@@ -145,6 +145,7 @@ public class BMSParser
         chart.bpm = bpm;
         chart.sample_files = sample_files;
         chart.lntype = lntype;
+        chart.source = f;
         return chart;
     }
 
@@ -154,9 +155,9 @@ public class BMSParser
         BufferedReader r = null;
         String line = null;
         try{
-            r = new BufferedReader(new FileReader(chart.bms));
+            r = new BufferedReader(new FileReader(chart.source));
         }catch(FileNotFoundException e){
-            logger.log(Level.WARNING, "File {0} not found !!", chart.bms);
+            logger.log(Level.WARNING, "File {0} not found !!", chart.source);
             return null;
         }
 
@@ -167,10 +168,9 @@ public class BMSParser
         Pattern bpm_line = Pattern.compile("^#BPM(\\w\\w)\\s+(.+)$");
         try {
             while ((line = r.readLine()) != null) {
-                line = line.trim();
-                if (!line.startsWith("#")) {
-                    continue;
-                }
+                line = line.trim().toUpperCase();
+                if (!line.startsWith("#"))continue;
+
                 Matcher matcher = note_line.matcher(line);
                 if (!matcher.find()) {
                     Matcher bpm_match = bpm_line.matcher(line);

@@ -52,13 +52,6 @@ public class CompositeEntity extends Entity
     }
 
     @Override
-    public void setPos(double x, double y)
-    {
-        super.setPos(x,y);
-        for(Entity e : entity_list)e.setPos(x,y);
-    }
-
-    @Override
     public void setXMove(double dx)
     {
         throw new UnsupportedOperationException("CompositeEntity does not support this");
