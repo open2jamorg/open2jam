@@ -16,7 +16,6 @@ public class ChartParser
 	{
 		if(OJNParser.canRead(file))return OJNParser.parseFile(file);
 		if(BMSParser.canRead(file))return BMSParser.parseFile(file);
-
-		throw new UnsupportedOperationException("File ["+file+"] not supported");
+		return null;
 	}
 }

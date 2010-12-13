@@ -27,8 +27,6 @@ public class OJNChart extends Chart
     protected short level;
     public int getLevel(){ return level; }
 
-    public int getMaxRank(){ return 2; }
-
     protected String title;
     public String getTitle() { return title; }
 

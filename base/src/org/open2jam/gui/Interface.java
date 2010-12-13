@@ -30,6 +30,7 @@ import org.open2jam.render.Render;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.open2jam.parser.ChartList;
 /**
  *
  * @author fox
@@ -610,11 +611,13 @@ public class Interface extends javax.swing.JFrame
         }else{
             i = table_songlist.convertRowIndexToModel(i);
         }
-        selected_header = model_songlist.getRow(i).get(rank);
+        ChartList cl = model_songlist.getRow(i);
+        if(cl.size() > rank)selected_header = cl.get(rank);
         updateInfo();
     }
 
-    private void updateInfo() {
+    private void updateInfo()
+    {
         if(selected_header == null)return;
         
         lbl_artist.setText(selected_header.getArtist());

@@ -1,8 +1,11 @@
 package org.open2jam.gui;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.SwingWorker;
 import org.open2jam.parser.ChartList;
 import org.open2jam.parser.ChartParser;
@@ -11,7 +14,9 @@ import org.open2jam.parser.ChartParser;
  *
  * @author fox
  */
-public class ChartModelLoader extends SwingWorker<ChartTableModel,ChartList> {
+public class ChartModelLoader extends SwingWorker<ChartTableModel,ChartList>
+{
+    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private ChartTableModel table_model;
     private File dir;
@@ -22,18 +27,28 @@ public class ChartModelLoader extends SwingWorker<ChartTableModel,ChartList> {
     }
 
     protected ChartTableModel doInBackground() {
-        List<File> files = Arrays.asList(dir.listFiles());
+        try{
         table_model.clear();
-        double perc = files.size() / 100.0d;
+        ArrayList<File> files = new ArrayList(Arrays.asList(dir.listFiles()));
+        double perc = files.size() / 100d;
         for(int i=0;i<files.size();i++)
         {
-            try{
-                publish(ChartParser.parseFile(files.get(i)));
-            }catch(UnsupportedOperationException e){}
+            ChartList cl = ChartParser.parseFile(files.get(i));
+            if(cl != null)publish(cl);
+            else if(files.get(i).isDirectory()){
+                List<File> nl = Arrays.asList(files.get(i).listFiles());
+                files.addAll(nl);
+                perc = files.size() / 100d;
+            }
             setProgress((int)(i/perc));
         }
         setProgress(100);
         return table_model;
+        }catch(Exception e){
+            logger.log(Level.SEVERE, "Exception in chart loader ! {0}", e.getMessage());
+            System.exit(1);
+            return null;
+        }
     }
 
 

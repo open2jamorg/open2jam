@@ -144,7 +144,9 @@ channels:
 
 note/channel distribution
 
-NOTE  - SC  1  2  3  4  5  6  7
-5keys - 16 11 12 13 14 15  X  X
-7keys - 16 11 12 13 14 15 18 19
-o2jam -  X  1  2  3  4  5  6  7
+NOTE   - SC  1  2  3  4  5  6  7  8  9 10 11 12 13 14 SC2
+ 5keys - 16 11 12 13 14 15  X  X  X  X  X  X  X  X  X  X
+ 7keys - 16 11 12 13 14 15 18 19  X  X  X  X  X  X  X  X
+10keys - 16 11 12 13 14 15  X  X 21 22 23 24 25  X  X 26
+14keys - 16 11 12 13 14 15 18 19 21 22 23 24 25 26 27 28
+o2jam  -  X  1  2  3  4  5  6  7  X  X  X  X  X  X  X  X

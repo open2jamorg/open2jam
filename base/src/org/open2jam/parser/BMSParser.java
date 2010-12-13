@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 import org.open2jam.render.lwjgl.SoundManager;
 
@@ -28,7 +27,7 @@ public class BMSParser
     private static final FileFilter bms_filter = new FileFilter(){
         public boolean accept(File f){
             String s = f.getName().toLowerCase();
-            return (!f.isDirectory()) && (s.endsWith(".bms") || s.endsWith(".bme"));
+            return (!f.isDirectory()) && (s.endsWith(".bms") || s.endsWith(".bme") || s.endsWith(".bml"));
         }
     };
 
@@ -51,7 +50,9 @@ public class BMSParser
         {
             try{
                 list.add(parseBMSHeader(bms_files[i]));
-            }catch(UnsupportedOperationException e){continue;}
+            } catch (Exception e) {
+                logger.log(Level.WARNING, null, e);
+            }
         }
         Collections.sort(list);
         return list;
@@ -60,6 +61,7 @@ public class BMSParser
     private static BMSChart parseBMSHeader(File f) throws BadFileException
     {
         BMSChart chart = new BMSChart();
+        chart.source = f;
         BufferedReader r = null;
         try{
             r = new BufferedReader(new FileReader(f));
@@ -67,16 +69,10 @@ public class BMSParser
             logger.log(Level.WARNING, "File {0} not found !!", f.getName());
             return null;
         }
-
-        int playlevel = 0;
-        Integer rank = null;
-        int player = 1;
-        int bpm = 130;
-        int lntype = 0;
-        String title = null, artist = null, genre = null;
+        
         String line = null;
         StringTokenizer st = null;
-        Map<String,Integer> sample_files = new HashMap<String, Integer>();
+        chart.sample_files = new HashMap<String, Integer>();
         try{
         while((line = r.readLine()) != null)
         {
@@ -88,40 +84,40 @@ public class BMSParser
 
             try{
                 if(cmd.equals("#PLAYLEVEL")){
-                        playlevel = Integer.parseInt(st.nextToken());
+                        chart.level = Integer.parseInt(st.nextToken());
                         continue;
                 }
                 if(cmd.equals("#RANK")){
-                        rank = Integer.parseInt(st.nextToken());
+                        //int rank = Integer.parseInt(st.nextToken());
                         continue;
                 }
                 if(cmd.equals("#TITLE")){
-                        title = st.nextToken("").trim();
+                        chart.title = st.nextToken("").trim();
                         continue;
                 }
                 if(cmd.equals("#ARTIST")){
-                        artist = st.nextToken("").trim();
+                        chart.artist = st.nextToken("").trim();
                         continue;
                 }
                 if(cmd.equals("#GENRE")){
-                        genre = st.nextToken("").trim();
+                        chart.genre = st.nextToken("").trim();
                         continue;
                 }
                 if(cmd.equals("#PLAYER")){
-                        player = Integer.parseInt(st.nextToken());
+                        int player = Integer.parseInt(st.nextToken());
                         if(player != 1)throw new UnsupportedOperationException("Not supported yet.");
                         continue;
                 }
                 if(cmd.equals("#BPM")){
-                        bpm = Integer.parseInt(st.nextToken());
+                        chart.bpm = Integer.parseInt(st.nextToken());
                         continue;
                 }
                 if(cmd.equals("#LNTYPE")){
-                        lntype = Integer.parseInt(st.nextToken());
+                        chart.lntype = Integer.parseInt(st.nextToken());
                         continue;
                 }
                 if(cmd.equals("#LNOBJ")){
-                        throw new UnsupportedOperationException("LNOBJ Not supported yet.");
+                        chart.lnobj = Integer.parseInt(st.nextToken(), 36);
                 }
                 if(cmd.equals("#STAGEFILE")){
                         chart.image_cover = new File(f.getParent(),st.nextToken("").trim());
@@ -131,7 +127,7 @@ public class BMSParser
                         String name = st.nextToken("").trim();
                         int idx = name.lastIndexOf('.');
                         if(idx > 0)name = name.substring(0, idx);
-                        sample_files.put(name, id);
+                        chart.sample_files.put(name, id);
                         continue;
                 }
             }catch(NoSuchElementException e){}
@@ -140,15 +136,6 @@ public class BMSParser
         }catch(IOException e){
             logger.log(Level.WARNING, "IO exception on file parsing ! {0}", e.getMessage());
         }
-
-        chart.level = playlevel;
-        chart.title = title;
-        chart.artist = artist;
-        chart.genre = genre;
-        chart.bpm = bpm;
-        chart.sample_files = sample_files;
-        chart.lntype = lntype;
-        chart.source = f;
         return chart;
     }
 

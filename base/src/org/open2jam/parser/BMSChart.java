@@ -16,6 +16,8 @@ public class BMSChart extends Chart
     protected int lntype;
 
     protected File source;
+    protected int lnobj;
+
     public File getSource() { return source; }
 
     protected int level;
@@ -46,7 +48,7 @@ public class BMSChart extends Chart
         return BMSParser.loadSamples(this);
     }
 
-    protected int bpm;
+    protected int bpm = 130;
     public double getBPM() {
         return bpm;
     }
