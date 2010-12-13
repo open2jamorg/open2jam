@@ -76,7 +76,7 @@ public class BMSParser
         String title = null, artist = null, genre = null;
         String line = null;
         StringTokenizer st = null;
-        Map<Integer,File> sample_files = new HashMap<Integer, File>();
+        Map<String,Integer> sample_files = new HashMap<String, Integer>();
         try{
         while((line = r.readLine()) != null)
         {
@@ -128,7 +128,10 @@ public class BMSParser
                 }
                 if(cmd.startsWith("#WAV")){
                         int id = Integer.parseInt(cmd.replaceFirst("#WAV",""), 36);
-                        sample_files.put(id, new File(f.getParent(),st.nextToken("").trim()));
+                        String name = st.nextToken("").trim();
+                        int idx = name.lastIndexOf('.');
+                        if(idx > 0)name = name.substring(0, idx);
+                        sample_files.put(name, id);
                         continue;
                 }
             }catch(NoSuchElementException e){}
@@ -289,15 +292,18 @@ public class BMSParser
     public static HashMap<Integer,Integer> loadSamples(BMSChart h)
     {
         HashMap<Integer,Integer> samples = new HashMap<Integer,Integer>();
-        for(Map.Entry<Integer,File> entry : h.sample_files.entrySet())
+        for(File f : h.source.getParentFile().listFiles())
         {
+            String s = f.getName();
+            int idx = s.lastIndexOf('.');
+            if(idx > 0)s = s.substring(0, idx);
+            Integer id = h.sample_files.get(s);
+            if(id == null)continue;
             try {
-                int id = SoundManager.newBuffer(new OggInputStream(new FileInputStream(entry.getValue())));
-                samples.put(entry.getKey(), id);
-            } catch (FileNotFoundException ex) {
-                logger.log(Level.WARNING, null, ex);
+                int buffer = SoundManager.newBuffer(new OggInputStream(new FileInputStream(f)));
+                samples.put(id, buffer);
             } catch (IOException ex) {
-                logger.log(Level.WARNING, null, ex);
+                logger.log(Level.SEVERE, null, ex);
             }
         }
         return samples;

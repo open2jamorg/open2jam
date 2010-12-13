@@ -15,7 +15,7 @@ public class JudgmentEntity extends Entity
     public JudgmentEntity(SpriteList refs, double x, double y)
     {
         super(refs, x, y);
-        x -= sprite.getWidth()/2;
+        this.x -= sprite.getWidth()/2;
     }
 
     protected JudgmentEntity(JudgmentEntity org)
@@ -35,10 +35,17 @@ public class JudgmentEntity extends Entity
     @Override
     public void draw()
     {
-        if(show_time > 2900)
-            sprite.draw(x+(sprite.getWidth()*0.1)/2, y, 0.9f* sprite.getScaleX(), 0.9f*sprite.getScaleY());
-        else
-        super.draw();
+        double tx = x, ty = y;
+        float sx = sprite.getScaleX(), sy = sprite.getScaleY();
+
+        if(show_time > 2900){
+            double p = 0.5 + (3000-show_time)/200f;
+            tx += (1-p)*(sprite.getWidth()/2);
+            ty += (1-p)*(sprite.getHeight()/2);
+            sx *= p;
+            sy *= p;
+        }
+        sprite.draw(tx, ty, sx, sy);
     }
 
     @Override

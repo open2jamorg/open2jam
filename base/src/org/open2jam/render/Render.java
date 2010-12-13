@@ -202,11 +202,9 @@ public class Render implements GameWindowCallback
         judgment_line_y2 = skin.judgment.start + skin.judgment.size;
 
         if(hispeed > 1){
-            judgment_line_y1 = skin.judgment.start + skin.judgment.size / 2;
-            judgment_line_y2 = judgment_line_y1;
-            double off = skin.judgment.size;
-            judgment_line_y1 -= hispeed * off;
-            judgment_line_y2 += hispeed *off;
+            double off = skin.judgment.size * (hispeed-1);
+            judgment_line_y1 -= off;
+//            judgment_line_y2 += off;
         }
 
         entities_matrix = new EntityMatrix(skin.max_layer+1);
@@ -327,7 +325,6 @@ public class Render implements GameWindowCallback
                 Entity e = j.next();
                 e.move(delta); // move the entity
 
-
                 if(e instanceof NoteEntity) // if it's a note
                 {
                     if(e.isAlive() && e.getY() > window.getResolutionHeight())// and it passed the judge space
@@ -347,7 +344,7 @@ public class Render implements GameWindowCallback
                     }
                 }
                 // else, if it's on the line, judge it
-                else if(e.getY() >= skin.judgment.start){
+                else if(e.getY() >= skin.judgment.start+skin.judgment.size){
                     e.judgment();
                 }
 
@@ -378,6 +375,11 @@ public class Render implements GameWindowCallback
 
     private void update_note_speed(){
         note_speed = ((bpm/240) * measure_size) / 1000.0d;
+    }
+
+    public double judgmentArea()
+    {
+        return hispeed * skin.judgment.size;
     }
 
     /** returns the note speed in pixels/milliseconds */

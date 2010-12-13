@@ -15,8 +15,6 @@ public class BMSChart extends Chart
 
     protected int lntype;
 
-    protected Map<Integer, Integer> rank_map;
-
     protected File source;
     public File getSource() { return source; }
 
@@ -43,7 +41,7 @@ public class BMSChart extends Chart
         return genre;
     }
 
-    protected Map<Integer, File> sample_files;
+    protected Map<String, Integer> sample_files;
     public Map<Integer,Integer> getSamples() {
         return BMSParser.loadSamples(this);
     }
