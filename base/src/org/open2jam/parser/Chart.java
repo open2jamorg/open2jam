@@ -44,6 +44,9 @@ public abstract class Chart implements Comparable<Chart>
     /** this should return the list of events from this chart at this rank */
     public abstract List<Event> getEvents();
 
+    /** the key number */
+    public abstract int getKeys();
+
     public int compareTo(Chart c)
     {
         return getLevel() - c.getLevel();

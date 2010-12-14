@@ -104,6 +104,10 @@ public class SoundManager
         AL10.alSourcei(source, AL10.AL_BUFFER,buffer);
         AL10.alSourcePlay(source);
     }
+    public static void stop(int source)
+    {
+        AL10.alSourceStop(source);
+    }
 
     private static byte[] tmp_buffer = new byte[1024];
     public static int newBuffer(OggInputStream in)

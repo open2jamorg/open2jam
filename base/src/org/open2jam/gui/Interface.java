@@ -91,6 +91,8 @@ public class Interface extends javax.swing.JFrame
         lbl_time1 = new javax.swing.JLabel();
         bt_play = new javax.swing.JButton();
         lbl_cover = new javax.swing.JLabel();
+        lbl_keys1 = new javax.swing.JLabel();
+        lbl_keys = new javax.swing.JLabel();
         panel_setting = new javax.swing.JPanel();
         lbl_dir = new javax.swing.JLabel();
         jr_rank_hard = new javax.swing.JRadioButton();
@@ -109,6 +111,7 @@ public class Interface extends javax.swing.JFrame
         bt_choose_dir = new javax.swing.JButton();
         load_progress = new javax.swing.JProgressBar();
         js_hispeed = new javax.swing.JSpinner();
+        configuration = new javax.swing.JButton();
         table_scroll = new javax.swing.JScrollPane();
         table_songlist = new javax.swing.JTable();
         txt_filter = new javax.swing.JTextField();
@@ -161,17 +164,18 @@ public class Interface extends javax.swing.JFrame
             }
         });
 
+        lbl_keys1.setText("Keys:");
+
+        lbl_keys.setText("content");
+
         javax.swing.GroupLayout panel_infoLayout = new javax.swing.GroupLayout(panel_info);
         panel_info.setLayout(panel_infoLayout);
         panel_infoLayout.setHorizontalGroup(
             panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel_infoLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panel_infoLayout.createSequentialGroup()
-                        .addGap(61, 61, 61)
-                        .addComponent(bt_play))
-                    .addGroup(panel_infoLayout.createSequentialGroup()
-                        .addContainerGap()
                         .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lbl_title1)
                             .addComponent(lbl_artist1)
@@ -179,24 +183,25 @@ public class Interface extends javax.swing.JFrame
                             .addComponent(lbl_genre1)
                             .addComponent(lbl_level1)
                             .addComponent(lbl_notes1)
-                            .addComponent(lbl_time1))
+                            .addComponent(lbl_time1)
+                            .addComponent(lbl_keys1))
                         .addGap(18, 18, 18)
                         .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbl_keys)
                             .addComponent(lbl_level, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
                             .addComponent(lbl_notes, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
                             .addComponent(lbl_time, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
                             .addComponent(lbl_genre, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
                             .addComponent(lbl_bpm, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
                             .addComponent(lbl_artist, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
-                            .addComponent(lbl_title, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)))
-                    .addGroup(panel_infoLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(lbl_cover, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(lbl_title, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                            .addComponent(bt_play)))
+                    .addComponent(lbl_cover, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         panel_infoLayout.setVerticalGroup(
             panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_infoLayout.createSequentialGroup()
+            .addGroup(panel_infoLayout.createSequentialGroup()
                 .addComponent(lbl_cover, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -227,8 +232,12 @@ public class Interface extends javax.swing.JFrame
                     .addComponent(lbl_time)
                     .addComponent(lbl_time1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbl_keys1)
+                    .addComponent(lbl_keys))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
                 .addComponent(bt_play)
-                .addContainerGap(7, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         lbl_dir.setText("choose a dir..");
@@ -251,6 +260,7 @@ public class Interface extends javax.swing.JFrame
         txt_res_width.setText("800");
         txt_res_width.setEnabled(false);
 
+        jc_vsync.setSelected(true);
         jc_vsync.setText("Use VSync");
 
         lbl_rank.setText("Rank:");
@@ -289,7 +299,6 @@ public class Interface extends javax.swing.JFrame
             }
         });
 
-        jc_full_screen.setSelected(true);
         jc_full_screen.setText("Full screen");
 
         bt_choose_dir.setText("Choose dir");
@@ -302,6 +311,13 @@ public class Interface extends javax.swing.JFrame
         load_progress.setStringPainted(true);
 
         js_hispeed.setModel(new javax.swing.SpinnerNumberModel(1.0d, 0.5d, 10.0d, 0.5d));
+
+        configuration.setText("Configuration");
+        configuration.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                configurationActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panel_settingLayout = new javax.swing.GroupLayout(panel_setting);
         panel_setting.setLayout(panel_settingLayout);
@@ -325,7 +341,7 @@ public class Interface extends javax.swing.JFrame
                     .addGroup(panel_settingLayout.createSequentialGroup()
                         .addComponent(lbl_hispeed)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(js_hispeed, javax.swing.GroupLayout.DEFAULT_SIZE, 66, Short.MAX_VALUE)
+                        .addComponent(js_hispeed, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
                         .addGap(102, 102, 102))
                     .addGroup(panel_settingLayout.createSequentialGroup()
                         .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -344,7 +360,10 @@ public class Interface extends javax.swing.JFrame
                                     .addComponent(lbl_res_x)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(txt_res_height))))
-                        .addContainerGap(33, Short.MAX_VALUE))))
+                        .addContainerGap(76, Short.MAX_VALUE))
+                    .addGroup(panel_settingLayout.createSequentialGroup()
+                        .addComponent(configuration)
+                        .addContainerGap(144, Short.MAX_VALUE))))
         );
         panel_settingLayout.setVerticalGroup(
             panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -380,7 +399,9 @@ public class Interface extends javax.swing.JFrame
                 .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jc_vsync)
                     .addComponent(jc_full_screen))
-                .addGap(29, 29, 29))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(configuration)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         table_songlist.setAutoCreateRowSorter(true);
@@ -389,7 +410,7 @@ public class Interface extends javax.swing.JFrame
         table_songlist.getSelectionModel().addListSelectionListener(this);
         table_scroll.setViewportView(table_songlist);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12));
         jLabel1.setText("Source");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -398,14 +419,14 @@ public class Interface extends javax.swing.JFrame
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel1)))
+                        .addComponent(jLabel1))
+                    .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
-                    .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE))
+                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+                    .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panel_info, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -417,12 +438,13 @@ public class Interface extends javax.swing.JFrame
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(panel_info, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(panel_setting, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txt_filter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1)))
-                    .addComponent(panel_setting, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel1))))
                 .addContainerGap())
         );
 
@@ -489,37 +511,45 @@ public class Interface extends javax.swing.JFrame
 
     private void bt_playActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_playActionPerformed
 
-        final double hispeed = (Double) js_hispeed.getValue();
+        if(selected_header != null)
+	{
+	    final double hispeed = (Double) js_hispeed.getValue();
 
-        final DisplayMode dm;
-        if(jc_custom_size.isSelected()){ // custom size selected
-            int w,h;
-            try{
-                w = Integer.parseInt(txt_res_width.getText());
-                h = Integer.parseInt(txt_res_height.getText());
-            }catch(Exception e){
-                JOptionPane.showMessageDialog(this, "Invalid value on custom size", "Error", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-            dm = new DisplayMode(w,h);
-        }else{
-            dm = (DisplayMode) combo_displays.getSelectedItem();
-        }
-        final boolean vsync = jc_vsync.isSelected();
-        final boolean fs = jc_full_screen.isSelected();
+	    final DisplayMode dm;
+	    if(jc_custom_size.isSelected()){ // custom size selected
+		int w,h;
+		try{
+		    w = Integer.parseInt(txt_res_width.getText());
+		    h = Integer.parseInt(txt_res_height.getText());
+		}catch(Exception e){
+		    JOptionPane.showMessageDialog(this, "Invalid value on custom size", "Error", JOptionPane.WARNING_MESSAGE);
+		    return;
+		}
+		dm = new DisplayMode(w,h);
+	    }else{
+		dm = (DisplayMode) combo_displays.getSelectedItem();
+	    }
+	    final boolean vsync = jc_vsync.isSelected();
+	    final boolean fs = jc_full_screen.isSelected();
 
-        Render r = new Render(selected_header, hispeed);
+	    Render r = new Render(selected_header, hispeed);
 
-        r.setDisplay(dm, vsync, fs);
+	    r.setDisplay(dm, vsync, fs);
 
-        r.startRendering();
+	    r.startRendering();
+	}
     }//GEN-LAST:event_bt_playActionPerformed
+
+    private void configurationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configurationActionPerformed
+	new Configuration().setVisible(true);
+    }//GEN-LAST:event_configurationActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bt_choose_dir;
     private javax.swing.JButton bt_play;
     private javax.swing.JComboBox combo_displays;
+    private javax.swing.JButton configuration;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JCheckBox jc_custom_size;
     private javax.swing.JCheckBox jc_full_screen;
@@ -538,6 +568,8 @@ public class Interface extends javax.swing.JFrame
     private javax.swing.JLabel lbl_genre;
     private javax.swing.JLabel lbl_genre1;
     private javax.swing.JLabel lbl_hispeed;
+    private javax.swing.JLabel lbl_keys;
+    private javax.swing.JLabel lbl_keys1;
     private javax.swing.JLabel lbl_level;
     private javax.swing.JLabel lbl_level1;
     private javax.swing.JLabel lbl_notes;
@@ -626,6 +658,7 @@ public class Interface extends javax.swing.JFrame
         lbl_level.setText(selected_header.getLevel()+"");
         lbl_bpm.setText(selected_header.getBPM()+"");
         lbl_notes.setText(selected_header.getNoteCount()+"");
+	lbl_keys.setText(selected_header.getKeys()+"");
         int d = selected_header.getDuration();
 
         lbl_time.setText((d/60)+":"+(d%60));

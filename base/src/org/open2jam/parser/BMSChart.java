@@ -70,6 +70,12 @@ public class BMSChart extends Chart
 
     public String getNoter() { return ""; }
 
+    protected int keys;
+    public int getKeys()
+    {
+	return keys;
+    }
+
     public List<Event> getEvents() {
         return BMSParser.parseChart(this);
     }

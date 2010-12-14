@@ -74,6 +74,8 @@ public class OJNChart extends Chart
         return null;
     }
 
+    public int getKeys() { return 7; }
+
     public List<Event> getEvents() {
         return OJNParser.parseChart(this);
     }

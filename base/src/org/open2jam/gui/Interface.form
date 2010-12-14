@@ -28,16 +28,16 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="panel_setting" min="-2" max="-2" attributes="0"/>
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <Component id="panel_setting" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="table_scroll" pref="384" max="32767" attributes="1"/>
-                  <Component id="txt_filter" alignment="0" pref="384" max="32767" attributes="1"/>
+                  <Component id="table_scroll" pref="360" max="32767" attributes="1"/>
+                  <Component id="txt_filter" alignment="0" pref="360" max="32767" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="panel_info" min="-2" max="-2" attributes="0"/>
@@ -52,14 +52,16 @@
               <Group type="103" groupAlignment="1" attributes="0">
                   <Component id="panel_info" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="table_scroll" pref="300" max="32767" attributes="1"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="panel_setting" alignment="0" max="32767" attributes="1"/>
+                          <Component id="table_scroll" alignment="1" pref="329" max="32767" attributes="1"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="txt_filter" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <Component id="panel_setting" alignment="0" min="-2" pref="308" max="-2" attributes="1"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
@@ -73,13 +75,9 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="61" pref="61" max="61" attributes="0"/>
-                          <Component id="bt_play" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="lbl_title1" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="lbl_artist1" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -88,9 +86,11 @@
                               <Component id="lbl_level1" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="lbl_notes1" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="lbl_time1" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="lbl_keys1" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="lbl_keys" min="-2" max="-2" attributes="0"/>
                               <Component id="lbl_level" alignment="0" pref="171" max="32767" attributes="0"/>
                               <Component id="lbl_notes" alignment="0" pref="171" max="32767" attributes="0"/>
                               <Component id="lbl_time" alignment="0" pref="171" max="32767" attributes="0"/>
@@ -98,12 +98,10 @@
                               <Component id="lbl_bpm" alignment="0" pref="171" max="32767" attributes="0"/>
                               <Component id="lbl_artist" alignment="0" pref="171" max="32767" attributes="0"/>
                               <Component id="lbl_title" alignment="0" pref="171" max="32767" attributes="0"/>
+                              <Component id="bt_play" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="lbl_cover" min="-2" pref="146" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="lbl_cover" alignment="0" min="-2" pref="146" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -111,7 +109,7 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="1" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
                   <Component id="lbl_cover" min="-2" pref="146" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -149,8 +147,13 @@
                       <Component id="lbl_time1" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="lbl_keys1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="lbl_keys" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace pref="15" max="32767" attributes="0"/>
                   <Component id="bt_play" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="7" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -249,6 +252,16 @@
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lbl_coverMouseClicked"/>
           </Events>
         </Component>
+        <Component class="javax.swing.JLabel" name="lbl_keys1">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Keys:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="lbl_keys">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="content"/>
+          </Properties>
+        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="panel_setting">
@@ -276,7 +289,7 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="lbl_hispeed" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="js_hispeed" pref="66" max="32767" attributes="0"/>
+                          <Component id="js_hispeed" pref="90" max="32767" attributes="0"/>
                           <EmptySpace min="-2" pref="102" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
@@ -300,7 +313,11 @@
                                   </Group>
                               </Group>
                           </Group>
-                          <EmptySpace pref="33" max="32767" attributes="0"/>
+                          <EmptySpace pref="76" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="configuration" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="144" max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -345,7 +362,9 @@
                       <Component id="jc_vsync" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jc_full_screen" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="configuration" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -390,6 +409,7 @@
         </Component>
         <Component class="javax.swing.JCheckBox" name="jc_vsync">
           <Properties>
+            <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Use VSync"/>
           </Properties>
         </Component>
@@ -450,7 +470,6 @@
         </Component>
         <Component class="javax.swing.JCheckBox" name="jc_full_screen">
           <Properties>
-            <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Full screen"/>
           </Properties>
         </Component>
@@ -473,6 +492,14 @@
               <SpinnerModel initial="1.0" maximum="10.0" minimum="0.5" numberType="java.lang.Double" stepSize="0.5" type="number"/>
             </Property>
           </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="configuration">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Configuration"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="configurationActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
