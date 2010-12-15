@@ -334,15 +334,17 @@ public class Render implements GameWindowCallback
                         ne.setAlive(false);
                         note_channels.get(ne.getChannel()).removeFirst();
                         last_sound.put(ne.getChannel(), ne.getSample());
-                        combo_entity.resetNumber();
+                        
 
-
-                        if(judgment_entity != null)judgment_entity.setAlive(false);
+			if(judgment_entity != null)judgment_entity.setAlive(false);
                         String judge = skin.judgment.ratePrecision(0);
                         judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
                         entities_matrix.add(judgment_entity);
+
+			combo_entity.resetNumber();
                     }
                 }
+
                 // else, if it's on the line, judge it
                 else if(e.getY() >= skin.judgment.start+skin.judgment.size){
                     e.judgment();
@@ -408,7 +410,7 @@ public class Render implements GameWindowCallback
                         if(i != null)queueSample(i);
                         continue;
                     }
-                    
+
                     NoteEntity e = note_channels.get(c).getFirst();
 
                     queueSample(e.getSample());
@@ -418,6 +420,11 @@ public class Render implements GameWindowCallback
                     if(hit > 0){
                         if(e instanceof LongNoteEntity){
                             longnote_holded.put(c, (LongNoteEntity) e);
+			    //longnote flare effect
+			    ee = skin.getEntityMap().get("EFFECT_LONGFLARE").copy();
+			    ee.setPos(e.getX()+e.getWidth()/2-ee.getWidth()/2,
+				    getViewport()-ee.getHeight()/2);
+			    entities_matrix.add(ee);
                         }else{
                             e.setAlive(false);
                             note_channels.get(c).removeFirst();
@@ -437,6 +444,18 @@ public class Render implements GameWindowCallback
                         note_counter.get(judge).incNumber();
                         combo_entity.incNumber();
                     }
+		else
+		{
+		    if(e.getY() > judgmentArea())
+		    {
+			if(judgment_entity != null)judgment_entity.setAlive(false);
+			String judge = skin.judgment.ratePrecision(0);
+			judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
+			entities_matrix.add(judgment_entity);
+
+			combo_entity.resetNumber();
+		    }
+		}
                 }
             }
             else
@@ -445,15 +464,15 @@ public class Render implements GameWindowCallback
                 keyboard_key_pressed.put(c, false);
                 key_pressed_entity.get(c).setAlive(false);
 
-                LongNoteEntity e = longnote_holded.get(c);
-                longnote_holded.put(c,null);
+                NoteEntity e = longnote_holded.get(c);
+		longnote_holded.put(c,null);
 
                 if(e == null || note_channels.get(c).isEmpty()
                         || e != note_channels.get(c).getFirst())continue;
 
                 double hit = e.testHit(judgment_line_y1, judgment_line_y2);
-
-                if(hit > 0){
+		
+		if(hit > 0){
                     e.setAlive(false);
                     note_channels.get(c).removeFirst();
                     last_sound.put(c, e.getSample());
@@ -471,9 +490,21 @@ public class Render implements GameWindowCallback
                     note_counter.get(judge).incNumber();
                     combo_entity.incNumber();
                 }
+		else
+		{
+		    if(e.getY() > judgmentArea())
+		    {
+			if(judgment_entity != null)judgment_entity.setAlive(false);
+			String judge = skin.judgment.ratePrecision(0);
+			judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
+			entities_matrix.add(judgment_entity);
+			
+			combo_entity.resetNumber();
+		    }
+		}
             }
         }
-    }
+    } 
 
     private int buffer_measure = -1;
 
@@ -565,6 +596,11 @@ public class Render implements GameWindowCallback
         SoundManager.setPan(source, sample.pan);
         SoundManager.play(source, buffer);
         sources_playing.add(source);
+    }
+
+    public void stopSample(int source)
+    {
+	SoundManager.stop(source);
     }
 
     private void check_sources()
