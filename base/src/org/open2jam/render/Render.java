@@ -327,22 +327,36 @@ public class Render implements GameWindowCallback
 
                 if(e instanceof NoteEntity) // if it's a note
                 {
-                    if(e.isAlive() && e.getY() > window.getResolutionHeight())// and it passed the judge space
-                    {
-                        // kill it
-                        NoteEntity ne = (NoteEntity) e;
-                        ne.setAlive(false);
-                        note_channels.get(ne.getChannel()).removeFirst();
-                        last_sound.put(ne.getChannel(), ne.getSample());
-                        
+		    NoteEntity ne = (NoteEntity) e;
+
+		    String judge = skin.judgment.ratePrecision(ne.getHit());
+
+		    if(ne.getHit() > 0)
+		    {
+			if(judgment_entity != null)judgment_entity.setAlive(false);
+			judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
+			entities_matrix.add(judgment_entity);
+
+			note_counter.get(judge).incNumber();
+			combo_entity.incNumber();
+		    }
+		    else
+		    {
+		    if(ne.isAlive() && ne.getY() >= skin.judgment.start+skin.judgment.size*2)
+		    {
+			// kill it
+			ne.setAlive(false);
+			note_channels.get(ne.getChannel()).removeFirst();
+			last_sound.put(ne.getChannel(), ne.getSample());
 
 			if(judgment_entity != null)judgment_entity.setAlive(false);
-                        String judge = skin.judgment.ratePrecision(0);
-                        judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
-                        entities_matrix.add(judgment_entity);
-
+			judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
+			entities_matrix.add(judgment_entity);
+			
 			combo_entity.resetNumber();
-                    }
+
+		    }
+		    }
                 }
 
                 // else, if it's on the line, judge it
@@ -436,26 +450,10 @@ public class Render implements GameWindowCallback
                                 getViewport()-ee.getHeight()/2);
                         entities_matrix.add(ee);
 
-                        if(judgment_entity != null)judgment_entity.setAlive(false);
-                        String judge = skin.judgment.ratePrecision(hit);
-                        judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
-                        entities_matrix.add(judgment_entity);
-
-                        note_counter.get(judge).incNumber();
-                        combo_entity.incNumber();
-                    }
-		else
-		{
-		    if(e.getY() > judgmentArea())
-		    {
-			if(judgment_entity != null)judgment_entity.setAlive(false);
-			String judge = skin.judgment.ratePrecision(0);
-			judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
-			entities_matrix.add(judgment_entity);
-
-			combo_entity.resetNumber();
+			e.setHit(hit);
 		    }
-		}
+		    else
+			e.setHit(0);
                 }
             }
             else
@@ -464,7 +462,7 @@ public class Render implements GameWindowCallback
                 keyboard_key_pressed.put(c, false);
                 key_pressed_entity.get(c).setAlive(false);
 
-                NoteEntity e = longnote_holded.get(c);
+                LongNoteEntity e = longnote_holded.get(c);
 		longnote_holded.put(c,null);
 
                 if(e == null || note_channels.get(c).isEmpty()
@@ -482,26 +480,10 @@ public class Render implements GameWindowCallback
                         getViewport()-ee.getHeight()/2);
                     entities_matrix.add(ee);
 
-                    if(judgment_entity != null)judgment_entity.setAlive(false);
-                    String judge = skin.judgment.ratePrecision(hit);
-                    judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
-                    entities_matrix.add(judgment_entity);
-
-                    note_counter.get(judge).incNumber();
-                    combo_entity.incNumber();
-                }
-		else
-		{
-		    if(e.getY() > judgmentArea())
-		    {
-			if(judgment_entity != null)judgment_entity.setAlive(false);
-			String judge = skin.judgment.ratePrecision(0);
-			judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
-			entities_matrix.add(judgment_entity);
-			
-			combo_entity.resetNumber();
-		    }
+		    e.setHit(hit);
 		}
+		else
+		    e.setHit(0);
             }
         }
     } 

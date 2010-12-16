@@ -15,6 +15,8 @@ public class NoteEntity extends AnimatedEntity
 
     protected Event.Channel channel = Event.Channel.NONE;
 
+    protected double hit = 0;
+
     public NoteEntity(Render r, SpriteList sl, Event.Channel ch, double x, double y)
     {
             super(sl, x, y);
@@ -42,6 +44,9 @@ public class NoteEntity extends AnimatedEntity
         dy = render.getNoteSpeed();
         y += delta * dy;
     }
+
+    public void setHit(double hit) { this.hit = hit; }
+    public double getHit() { return hit; }
 
     public double testHit(double jy1, double jy2)
     {
