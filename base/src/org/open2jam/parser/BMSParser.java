@@ -50,7 +50,8 @@ public class BMSParser
         {
             try{
                 list.add(parseBMSHeader(bms_files[i]));
-            } catch (Exception e) {
+            } catch (UnsupportedOperationException e){}
+              catch (Exception e) {
                 logger.log(Level.WARNING, null, e);
             }
         }
@@ -73,6 +74,11 @@ public class BMSParser
         String line = null;
         StringTokenizer st = null;
         chart.sample_files = new HashMap<String, Integer>();
+
+        Pattern note_line = Pattern.compile("^#(\\d\\d\\d)(\\d\\d):(.+)$");
+
+        int max_key = 0;
+
         try{
         while((line = r.readLine()) != null)
         {
@@ -130,12 +136,41 @@ public class BMSParser
                         chart.sample_files.put(name, id);
                         continue;
                 }
+                Matcher note_match = note_line.matcher(cmd);
+                if(note_match.find()){
+                    int measure = Integer.parseInt(note_match.group(1));
+                    int channel = Integer.parseInt(note_match.group(2));
+
+                    if(channel > 50)channel -= 40;
+                    if(channel > max_key)max_key = channel;
+                }
             }catch(NoSuchElementException e){}
              catch(NumberFormatException e){ throw new BadFileException("unparsable number @ "+cmd); }
         }
         }catch(IOException e){
             logger.log(Level.WARNING, "IO exception on file parsing ! {0}", e.getMessage());
         }
+        switch(max_key)
+        {
+            case 15:
+            case 16:
+                chart.keys = 5;
+                break;
+            case 19:
+                chart.keys = 7;
+                break;
+            case 25:
+            case 26:
+                chart.keys = 10;
+                break;
+            case 27:
+            case 28:
+                chart.keys = 14;
+                break;
+            default:
+                logger.log(Level.WARNING, "Unknown key number {0} on file {1}", new Object[]{max_key, f.getName()});
+        }
+        if(chart.keys != 7)throw new UnsupportedOperationException("Not supported yet.");
         return chart;
     }
 
@@ -153,6 +188,7 @@ public class BMSParser
 
         HashMap<Integer, Double> bpm_map = new HashMap<Integer, Double>();
         HashMap<Integer, Boolean> ln_buffer = new HashMap<Integer, Boolean>();
+        HashMap<Integer, Event> lnobj_buffer = new HashMap<Integer, Event>();
 
         Pattern note_line = Pattern.compile("^#(\\d\\d\\d)(\\d\\d):(.+)$");
         Pattern bpm_line = Pattern.compile("^#BPM(\\w\\w)\\s+(.+)$");
@@ -265,7 +301,17 @@ public class BMSParser
                         if (value == 0) {
                             continue;
                         }
-                        event_list.add(new Event(ec, measure, p, value, Event.Flag.NONE));
+                        Event e = new Event(ec, measure, p, value, Event.Flag.NONE);
+                        if(chart.lnobj != 0){
+                            if(value == chart.lnobj){
+                                e.flag = Event.Flag.RELEASE;
+                                lnobj_buffer.get(channel).flag = Event.Flag.HOLD;
+                                lnobj_buffer.put(channel, null);
+                            }else{
+                                lnobj_buffer.put(channel, e);
+                            }
+                        }
+                        event_list.add(e);
                     }
                 }
             }

@@ -45,7 +45,7 @@ public class ChartModelLoader extends SwingWorker<ChartTableModel,ChartList>
         setProgress(100);
         return table_model;
         }catch(Exception e){
-            logger.log(Level.SEVERE, "Exception in chart loader ! {0}", e.getMessage());
+            logger.log(Level.SEVERE, "Exception in chart loader ! {0} {1}", new Object[]{e.toString(), e.getMessage()});
             System.exit(1);
             return null;
         }

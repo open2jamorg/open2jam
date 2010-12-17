@@ -39,7 +39,7 @@ commands:
 	the level of the song
 
 #RANK <integer>
-	the difficult level
+	the difficult level (of the judgment ?)
 	0: very hard
 	1: hard
 	2: normal
@@ -121,23 +121,23 @@ channels:
 	the note keys, <XX> codes indicate a note and at the same time
 	a specify a sound to play, defined in the #WAV command
 
-16: scratch ( not used on o2jam )
+16: scratch
 
 17: pedal ????
 
 20: ????
 
-21,22,23,24,25,28,29: player 2 note keys ( not used on o2jam )
+21,22,23,24,25,28,29: player 2 note keys
 	same as channels 11~19 but for #PLAYER 2
 
-26: player 2 scratch ( not used on o2jam )
+26: player 2 scratch
 
 27: pedal ????
 
 5x: long notes (LNTYPE) notes for player 1
 	same as channels 11~19
 
-6x: long notes (LNTYPE) notes for player 2 ( not used on o2jam )
+6x: long notes (LNTYPE) notes for player 2
 	same as channels 21~29
 
 ------------

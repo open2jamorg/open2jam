@@ -5,7 +5,8 @@
 - fix the long note flare animation
 
 - finish the bms implementation
-	- how do I find which keys are used ? (5keys/7keys/etc)
+	- add support to choose different key number
+	- test LNOBJ
 
 - branch implement JOGL - see if it's worth the trouble
 

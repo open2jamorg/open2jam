@@ -23,10 +23,9 @@ public class BMSChart extends Chart
     protected int level;
     public int getLevel() { return level; }
 
-    protected int max_rank;
-    public int getMaxRank() {
-        return max_rank;
-    }
+    protected int keys;
+    public int getKeys()  {  return keys; }
+
 
     protected String title;
     public String getTitle() {
