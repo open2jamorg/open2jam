@@ -11,11 +11,12 @@ public class NoteEntity extends AnimatedEntity
     protected Render render;
 
     protected Event.SoundSample sample_value;
-    private boolean played = false;
+
+    private int played = 0;
 
     protected Event.Channel channel = Event.Channel.NONE;
 
-    protected double hit = 0;
+    private double hit = 0;
 
     public NoteEntity(Render r, SpriteList sl, Event.Channel ch, double x, double y)
     {
@@ -47,6 +48,9 @@ public class NoteEntity extends AnimatedEntity
 
     public void setHit(double hit) { this.hit = hit; }
     public double getHit() { return hit; }
+
+    public void setPlayed(int value) { played = value; }
+    public int getPlayed() { return played; }
 
     public double testHit(double jy1, double jy2)
     {

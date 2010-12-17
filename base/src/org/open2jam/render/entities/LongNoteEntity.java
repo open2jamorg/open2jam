@@ -12,8 +12,6 @@ public class LongNoteEntity extends NoteEntity
 
     protected Double end_y = null;
 
-    boolean played = false;
-
     public LongNoteEntity(Render r, SpriteList head_frames, SpriteList body_frames, Event.Channel ch, double x, double y)
     {
             super(r,head_frames,ch, x,y);
@@ -27,7 +25,6 @@ public class LongNoteEntity extends NoteEntity
         this.body_frames = org.body_frames;
         this.body_sprite = org.body_sprite;
         this.end_y = org.end_y;
-        this.played = org.played;
     }
 
     public void setEndY(double ey)
@@ -49,9 +46,9 @@ public class LongNoteEntity extends NoteEntity
             y1 = end_y;
         }
         y2 = y1 + sprite.getHeight();
-        double hit = testHit(y1, y2, jy1, jy2);
-        if(hit > 0)head_hit = true;
-        return hit;
+        double p = testHit(y1, y2, jy1, jy2);
+        if(p > 0)head_hit = true;
+        return p;
     }
 
     @Override
