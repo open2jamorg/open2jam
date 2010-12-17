@@ -27,6 +27,8 @@ public class OJNChart extends Chart
     protected short level;
     public int getLevel(){ return level; }
 
+    public int getKeys(){ return 7; }
+
     protected String title;
     public String getTitle() { return title; }
 
@@ -73,8 +75,6 @@ public class OJNChart extends Chart
         }
         return null;
     }
-
-    public int getKeys() { return 7; }
 
     public List<Event> getEvents() {
         return OJNParser.parseChart(this);

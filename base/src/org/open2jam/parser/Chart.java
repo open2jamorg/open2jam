@@ -2,8 +2,8 @@ package org.open2jam.parser;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 import java.awt.image.BufferedImage;
+import java.util.Map;
 /** this encapsulates a song chart.
 *** in case there's more than one rank(difficulty)
 *** for the song, the rank integer follows this pattern:
@@ -21,6 +21,9 @@ public abstract class Chart implements Comparable<Chart>
     *** and normalize the others to this rule
     **/
     public abstract int getLevel();
+
+    /** the number of keys in this chart */
+    public abstract int getKeys();
 
     public abstract String getTitle();
     public abstract String getArtist();
@@ -43,9 +46,6 @@ public abstract class Chart implements Comparable<Chart>
 
     /** this should return the list of events from this chart at this rank */
     public abstract List<Event> getEvents();
-
-    /** the key number */
-    public abstract int getKeys();
 
     public int compareTo(Chart c)
     {

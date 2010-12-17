@@ -50,7 +50,8 @@ public class BMSParser
         {
             try{
                 list.add(parseBMSHeader(bms_files[i]));
-            } catch (Exception e) {
+            } catch (UnsupportedOperationException e){}
+              catch (Exception e) {
                 logger.log(Level.WARNING, null, e);
             }
         }
@@ -74,128 +75,102 @@ public class BMSParser
         StringTokenizer st = null;
         chart.sample_files = new HashMap<String, Integer>();
 
-	/* hack-ish way to get the keys number */
-	Pattern note_line = Pattern.compile("^#(\\d\\d\\d)(\\d\\d):(.+)$");
-	int keys = 0;
-	int last_keys = 0;
-	try{
+        Pattern note_line = Pattern.compile("^#(\\d\\d\\d)(\\d\\d):(.+)$");
+
+        int max_key = 0;
+
+        try{
         while((line = r.readLine()) != null)
         {
             line = line.trim();
-            if(!line.startsWith("#")) continue;
+            if(!line.startsWith("#"))continue;
+            st = new StringTokenizer(line);
 
-	    Matcher matcher = note_line.matcher(line);
+            String cmd = st.nextToken().toUpperCase();
 
-	    if(matcher.find())
-	    {
-		int channel = Integer.parseInt(matcher.group(2));
+            try{
+                if(cmd.equals("#PLAYLEVEL")){
+                        chart.level = Integer.parseInt(st.nextToken());
+                        continue;
+                }
+                if(cmd.equals("#RANK")){
+                        //int rank = Integer.parseInt(st.nextToken());
+                        continue;
+                }
+                if(cmd.equals("#TITLE")){
+                        chart.title = st.nextToken("").trim();
+                        continue;
+                }
+                if(cmd.equals("#ARTIST")){
+                        chart.artist = st.nextToken("").trim();
+                        continue;
+                }
+                if(cmd.equals("#GENRE")){
+                        chart.genre = st.nextToken("").trim();
+                        continue;
+                }
+                if(cmd.equals("#PLAYER")){
+                        int player = Integer.parseInt(st.nextToken());
+                        if(player != 1)throw new UnsupportedOperationException("Not supported yet.");
+                        continue;
+                }
+                if(cmd.equals("#BPM")){
+                        chart.bpm = Integer.parseInt(st.nextToken());
+                        continue;
+                }
+                if(cmd.equals("#LNTYPE")){
+                        chart.lntype = Integer.parseInt(st.nextToken());
+                        continue;
+                }
+                if(cmd.equals("#LNOBJ")){
+                        chart.lnobj = Integer.parseInt(st.nextToken(), 36);
+                }
+                if(cmd.equals("#STAGEFILE")){
+                        chart.image_cover = new File(f.getParent(),st.nextToken("").trim());
+                }
+                if(cmd.startsWith("#WAV")){
+                        int id = Integer.parseInt(cmd.replaceFirst("#WAV",""), 36);
+                        String name = st.nextToken("").trim();
+                        int idx = name.lastIndexOf('.');
+                        if(idx > 0)name = name.substring(0, idx);
+                        chart.sample_files.put(name, id);
+                        continue;
+                }
+                Matcher note_match = note_line.matcher(cmd);
+                if(note_match.find()){
+                    int measure = Integer.parseInt(note_match.group(1));
+                    int channel = Integer.parseInt(note_match.group(2));
 
-		switch (channel)
-		{
-		    case 11:
-		    case 51:
-			keys=1;
-			break;
-		    case 12:
-		    case 52:
-			keys=2;
-			break;
-		    case 13:
-		    case 53:
-			keys=3;
-			break;
-		    case 14:
-		    case 54:
-			keys=4;
-			break;
-		    case 15:
-		    case 55:
-			keys=5;
-			break;
-		    case 18:
-		    case 58:
-			keys=6;
-			break;
-		    case 19:
-		    case 59:
-			keys=7;
-			break;
-		    default:
-			continue;
-		}
-	    }
-	    if(last_keys == 0)
-		last_keys = keys;
-	    if(keys >= last_keys)
-		last_keys = keys;
-	    else
-		keys = last_keys;
-	    
-	    chart.keys = keys;
-	    /* /hack-ish way to get the keys number */
-
-
-	    st = new StringTokenizer(line);
-
-	    String cmd = st.nextToken().toUpperCase();
-
-	    try{
-		if(cmd.equals("#PLAYLEVEL")){
-			chart.level = Integer.parseInt(st.nextToken());
-			continue;
-		}
-		if(cmd.equals("#RANK")){
-			//int rank = Integer.parseInt(st.nextToken());
-			continue;
-		}
-		if(cmd.equals("#TITLE")){
-			chart.title = st.nextToken("").trim();
-			continue;
-		}
-		if(cmd.equals("#ARTIST")){
-			chart.artist = st.nextToken("").trim();
-			continue;
-		}
-		if(cmd.equals("#GENRE")){
-			chart.genre = st.nextToken("").trim();
-			continue;
-		}
-		if(cmd.equals("#PLAYER")){
-			int player = Integer.parseInt(st.nextToken());
-			if(player != 1)
-			    logger.log(Level.WARNING, "File {0}: player not supported yet !!", f.getName());
-			continue;
-		}
-		if(cmd.equals("#BPM")){
-			chart.bpm = Integer.parseInt(st.nextToken());
-			continue;
-		}
-		if(cmd.equals("#LNTYPE")){
-			chart.lntype = Integer.parseInt(st.nextToken());
-			continue;
-		}
-		if(cmd.equals("#LNOBJ")){
-			chart.lnobj = Integer.parseInt(st.nextToken(), 36);
-		}
-		if(cmd.equals("#STAGEFILE")){
-			chart.image_cover = new File(f.getParent(),st.nextToken("").trim());
-		}
-		if(cmd.startsWith("#WAV")){
-			int id = Integer.parseInt(cmd.replaceFirst("#WAV",""), 36);
-			String name = st.nextToken("").trim();
-			int idx = name.lastIndexOf('.');
-			if(idx > 0)name = name.substring(0, idx);
-			chart.sample_files.put(name, id);
-			continue;
-		}
-	    }catch(NoSuchElementException e){}
-	     catch(NumberFormatException e){
-		 logger.log(Level.WARNING, "unparsable number @ {0}", cmd);
-		    }
+                    if(channel > 50)channel -= 40;
+                    if(channel > max_key)max_key = channel;
+                }
+            }catch(NoSuchElementException e){}
+             catch(NumberFormatException e){ throw new BadFileException("unparsable number @ "+cmd); }
         }
         }catch(IOException e){
             logger.log(Level.WARNING, "IO exception on file parsing ! {0}", e.getMessage());
         }
+        switch(max_key)
+        {
+            case 15:
+            case 16:
+                chart.keys = 5;
+                break;
+            case 19:
+                chart.keys = 7;
+                break;
+            case 25:
+            case 26:
+                chart.keys = 10;
+                break;
+            case 27:
+            case 28:
+                chart.keys = 14;
+                break;
+            default:
+                logger.log(Level.WARNING, "Unknown key number {0} on file {1}", new Object[]{max_key, f.getName()});
+        }
+        if(chart.keys != 7)throw new UnsupportedOperationException("Not supported yet.");
         return chart;
     }
 
@@ -213,6 +188,7 @@ public class BMSParser
 
         HashMap<Integer, Double> bpm_map = new HashMap<Integer, Double>();
         HashMap<Integer, Boolean> ln_buffer = new HashMap<Integer, Boolean>();
+        HashMap<Integer, Event> lnobj_buffer = new HashMap<Integer, Event>();
 
         Pattern note_line = Pattern.compile("^#(\\d\\d\\d)(\\d\\d):(.+)$");
         Pattern bpm_line = Pattern.compile("^#BPM(\\w\\w)\\s+(.+)$");
@@ -269,129 +245,31 @@ public class BMSParser
                         break;
                     case 11:
                     case 51:
-			switch(chart.keys)
-			{
-			    case 4:
-				ec = Event.Channel.NOTE_2;
-				break;
-			    case 5:
-				ec = Event.Channel.NOTE_2;
-				break;
-			    case 6:
-				ec = Event.Channel.NOTE_1;
-				break;
-			    default:
-				ec = Event.Channel.NOTE_1;
-				break;
-			}
+                        ec = Event.Channel.NOTE_1;
                         break;
                     case 12:
                     case 52:
-			switch(chart.keys)
-			{
-			    case 4:
-				ec = Event.Channel.NOTE_3;
-				break;
-			    case 5:
-				ec = Event.Channel.NOTE_3;
-				break;
-			    case 6:
-				ec = Event.Channel.NOTE_2;
-				break;
-			    default:
-				ec = Event.Channel.NOTE_2;
-				break;
-			}
+                        ec = Event.Channel.NOTE_2;
                         break;
                     case 13:
                     case 53:
- 			switch(chart.keys)
-			{
-			    case 4:
-				ec = Event.Channel.NOTE_5;
-				break;
-			    case 5:
-				ec = Event.Channel.NOTE_4;
-				break;
-			    case 6:
-				ec = Event.Channel.NOTE_3;
-				break;
-			    default:
-				ec = Event.Channel.NOTE_3;
-				break;
-			}
+                        ec = Event.Channel.NOTE_3;
                         break;
                     case 14:
                     case 54:
-			switch(chart.keys)
-			{
-			    case 4:
-				ec = Event.Channel.NOTE_6;
-				break;
-			    case 5:
-				ec = Event.Channel.NOTE_5;
-				break;
-			    case 6:
-				ec = Event.Channel.NOTE_5;
-				break;
-			    default:
-				ec = Event.Channel.NOTE_4;
-				break;
-			}
+                        ec = Event.Channel.NOTE_4;
                         break;
                     case 15:
                     case 55:
-			switch(chart.keys)
-			{
-			    case 4:
-				ec = Event.Channel.NOTE_2;
-				break;
-			    case 5:
-				ec = Event.Channel.NOTE_6;
-				break;
-			    case 6:
-				ec = Event.Channel.NOTE_6;
-				break;
-			    default:
-				ec = Event.Channel.NOTE_5;
-				break;
-			}
+                        ec = Event.Channel.NOTE_5;
                         break;
                     case 18:
                     case 58:
-			switch(chart.keys)
-			{
-			    case 4:
-				ec = Event.Channel.NOTE_2;
-				break;
-			    case 5:
-				ec = Event.Channel.NOTE_2;
-				break;
-			    case 6:
-				ec = Event.Channel.NOTE_7;
-				break;
-			    default:
-				ec = Event.Channel.NOTE_6;
-				break;
-			}
+                        ec = Event.Channel.NOTE_6;
                         break;
                     case 19:
                     case 59:
-			switch(chart.keys)
-			{
-			    case 4:
-				ec = Event.Channel.NOTE_2;
-				break;
-			    case 5:
-				ec = Event.Channel.NOTE_2;
-				break;
-			    case 6:
-				ec = Event.Channel.NOTE_7;
-				break;
-			    default:
-				ec = Event.Channel.NOTE_7;
-				break;
-			}
+                        ec = Event.Channel.NOTE_7;
                         break;
                     default:
                         continue;
@@ -423,7 +301,17 @@ public class BMSParser
                         if (value == 0) {
                             continue;
                         }
-                        event_list.add(new Event(ec, measure, p, value, Event.Flag.NONE));
+                        Event e = new Event(ec, measure, p, value, Event.Flag.NONE);
+                        if(chart.lnobj != 0){
+                            if(value == chart.lnobj){
+                                e.flag = Event.Flag.RELEASE;
+                                lnobj_buffer.get(channel).flag = Event.Flag.HOLD;
+                                lnobj_buffer.put(channel, null);
+                            }else{
+                                lnobj_buffer.put(channel, e);
+                            }
+                        }
+                        event_list.add(e);
                     }
                 }
             }

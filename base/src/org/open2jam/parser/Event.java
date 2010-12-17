@@ -58,7 +58,7 @@ public class Event implements Comparable<Event>
 	private double position;
 	
 	private double value;
-	private Flag flag;
+	protected Flag flag;
         private final SoundSample sound_sample;
 
 	public Event(Channel channel, int measure, double position,
