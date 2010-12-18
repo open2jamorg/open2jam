@@ -54,7 +54,8 @@ public class BMSChart extends Chart
 
     public int getNoteCount() { return 0; }
 
-    public int getDuration() { return 0; }
+    protected int duration;
+    public int getDuration() { return duration; }
 
     protected File image_cover;
     public BufferedImage getCover() {

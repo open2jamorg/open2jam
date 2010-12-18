@@ -112,6 +112,7 @@ public class LWJGLGameWindow implements GameWindow {
         }
 
 	public int getResolutionHeight(){ return height; }
+	public int getResolutionWidth(){ return width; }
 	
 	/**
 	 * Start the rendering process. This method will cause the display to redraw

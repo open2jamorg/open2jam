@@ -79,6 +79,8 @@ public class BMSParser
 
         int max_key = 0;
 
+	int max_measure = 0;
+
         try{
         while((line = r.readLine()) != null)
         {
@@ -143,6 +145,8 @@ public class BMSParser
 
                     if(channel > 50)channel -= 40;
                     if(channel > max_key)max_key = channel;
+
+		    if(measure >= max_measure) max_measure = measure;
                 }
             }catch(NoSuchElementException e){}
              catch(NumberFormatException e){ throw new BadFileException("unparsable number @ "+cmd); }
@@ -150,6 +154,9 @@ public class BMSParser
         }catch(IOException e){
             logger.log(Level.WARNING, "IO exception on file parsing ! {0}", e.getMessage());
         }
+
+	chart.duration = (int) Math.round((240 * max_measure)/chart.bpm);
+
         switch(max_key)
         {
             case 15:
