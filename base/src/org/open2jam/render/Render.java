@@ -209,9 +209,10 @@ public class Render implements GameWindowCallback
 
         entities_matrix = new EntityMatrix(skin.max_layer+1);
 
-        measure_size = 0.8 * hispeed * getViewport();
-        buffer_offset = getViewport();
         bpm = chart.getBPM();
+	measure_size = 0.8 * hispeed * getViewport();
+        buffer_offset = getViewport();
+
         update_note_speed();
 
         note_layer = skin.getEntityMap().get("NOTE_1").getLayer();
@@ -330,11 +331,11 @@ public class Render implements GameWindowCallback
                 {
 		    NoteEntity ne = (NoteEntity) e;
 
-		    String judge = skin.judgment.ratePrecision(ne.getHit());		
+		    String judge = skin.judgment.ratePrecision(ne.getHit());
 
-		    switch (ne.getPlayed())
+		    switch (ne.getState())
 		    {
-			case 0: //you missed it (no keyboard input)
+			case NOT_PLAYED: //you missed it (no keyboard input)
 			    if((ne instanceof LongNoteEntity) &&
 				    ne.isAlive() && ne.getStartY() >= skin.judgment.start+skin.judgment.size*2)
 			    {
@@ -344,7 +345,7 @@ public class Render implements GameWindowCallback
 
 				combo_entity.resetNumber();
 
-				ne.setPlayed(3);
+				ne.setState(NoteEntity.State.KILL);
 			    }
 			    else if(ne.isAlive() && ne.getY() >= skin.judgment.start+skin.judgment.size*2)
 			    {
@@ -354,10 +355,10 @@ public class Render implements GameWindowCallback
 
 				combo_entity.resetNumber();
 
-				ne.setPlayed(3);
+				ne.setState(NoteEntity.State.KILL);
 			    }
 			break;
-			case 1: //LN: Head has been played
+			case LN_HEAD_PLAYED: //LN: Head has been played
 			if(ne.getHit() > 0)
 			    {
 				if(judgment_entity != null)judgment_entity.setAlive(false);
@@ -367,7 +368,7 @@ public class Render implements GameWindowCallback
 				note_counter.get(judge).incNumber();
 				combo_entity.incNumber();
 
-				ne.setPlayed(4);
+				ne.setState(NoteEntity.State.LN_HOLD);
 			    }
 			    else
 			    {
@@ -377,10 +378,10 @@ public class Render implements GameWindowCallback
 
 				combo_entity.resetNumber();
 
-				ne.setPlayed(3);
+				ne.setState(NoteEntity.State.KILL);
 			    }
 			break;
-			case 2: //LN & normal ones: has finished with good result
+			case JUDGE: //LN & normal ones: has finished with good result
 			if(ne.getHit() > 0)
 			{
 			    if(judgment_entity != null)judgment_entity.setAlive(false);
@@ -398,10 +399,10 @@ public class Render implements GameWindowCallback
 
 			    combo_entity.resetNumber();
 
-			    ne.setPlayed(3);
+			    ne.setState(NoteEntity.State.KILL);
 			}
 			break;
-			case 3: //KILL THEM!
+			case KILL: //KILL THEM!
 			if(ne.isAlive() && ne.getY() >= window.getResolutionHeight())
 			{
 			    // kill it
@@ -410,7 +411,7 @@ public class Render implements GameWindowCallback
 			    last_sound.put(ne.getChannel(), ne.getSample());
 			}
 			break;
-			case 4:
+			case LN_HOLD:
 			//Do nothing, the LN is being holded
 			break;
 		    }
@@ -482,7 +483,7 @@ public class Render implements GameWindowCallback
 
                     NoteEntity e = note_channels.get(c).getFirst();
 
-                    if(e.getPlayed() != 3)
+                    if(e.getState() != NoteEntity.State.KILL)
 			queueSample(e.getSample());
 
                     double hit = e.testHit(judgment_line_y1, judgment_line_y2);
@@ -490,15 +491,15 @@ public class Render implements GameWindowCallback
 		    e.setHit(hit);
 		    if(e instanceof LongNoteEntity)
 		    {
-			if(e.getPlayed() == 0)
-			    e.setPlayed(1);
+			if(e.getState() == NoteEntity.State.NOT_PLAYED)
+			    e.setState(NoteEntity.State.LN_HOLD);
 		    }
 		    else
-			e.setPlayed(2);
+			e.setState(NoteEntity.State.JUDGE);
 
                     if(hit > 0){
                         if(e instanceof LongNoteEntity){
-			    if(e.getPlayed() != 3)
+			    if(e.getState() != NoteEntity.State.KILL)
 			    {
 				longnote_holded.put(c, (LongNoteEntity) e);
 				//longnote flare effect
@@ -513,7 +514,7 @@ public class Render implements GameWindowCallback
                             last_sound.put(c, e.getSample());
                         }
 
-			if(e.getPlayed() != 3)
+			if(e.getState() != NoteEntity.State.KILL)
 			{
 			    ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
 			    ee.setPos(e.getX()+e.getWidth()/2-ee.getWidth()/2,
@@ -538,16 +539,16 @@ public class Render implements GameWindowCallback
                 double hit = e.testHit(judgment_line_y1, judgment_line_y2);
 
 		e.setHit(hit);
-		if(e.getPlayed() == 3)
-		    e.setPlayed(3);
+		if(e.getState() == NoteEntity.State.KILL)
+		    e.setState(NoteEntity.State.KILL);
 		else
-		    e.setPlayed(2);
+		    e.setState(NoteEntity.State.JUDGE);
 		if(hit > 0){
                     e.setAlive(false);
                     note_channels.get(c).removeFirst();
                     last_sound.put(c, e.getSample());
 
-		    if(e.getPlayed() != 3)
+		    if(e.getState() != NoteEntity.State.KILL)
 		    {
 			Entity ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
 			ee.setPos(e.getX()+e.getWidth()/2-ee.getWidth()/2,
@@ -573,6 +574,7 @@ public class Render implements GameWindowCallback
         while(buffer_iterator.hasNext() && buffer_offset > buffer_upper_bound)
         {
             Event e = buffer_iterator.next();
+
             while(e.getMeasure() > buffer_measure) // this is the start of a new measure
             {
                 buffer_offset -= measure_size * fractional_measure;
@@ -623,6 +625,7 @@ public class Render implements GameWindowCallback
                 break;
                 
                 case AUTO_PLAY:
+		case NOTE_SC:
                 entities_matrix.add(new SampleEntity(this,e.getSample(),abs_height));
                 break;
             }

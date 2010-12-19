@@ -12,7 +12,15 @@ public class NoteEntity extends AnimatedEntity
 
     protected Event.SoundSample sample_value;
 
-    private int played = 0;
+    public enum State {
+	NOT_PLAYED,
+	LN_HEAD_PLAYED,
+	JUDGE,
+	KILL,
+	LN_HOLD
+    };
+
+    private State state = State.NOT_PLAYED;
 
     protected Event.Channel channel = Event.Channel.NONE;
 
@@ -30,7 +38,7 @@ public class NoteEntity extends AnimatedEntity
         this.channel = org.channel;
         this.render = org.render;
         this.sample_value = org.sample_value;
-        this.played = org.played;
+        this.state = org.state;
     }
     
     public void setSample(Event.SoundSample sample){
@@ -49,8 +57,8 @@ public class NoteEntity extends AnimatedEntity
     public void setHit(double hit) { this.hit = hit; }
     public double getHit() { return hit; }
 
-    public void setPlayed(int value) { played = value; }
-    public int getPlayed() { return played; }
+    public void setState(State value) { state = value; }
+    public State getState() { return state; }
 
     public double testHit(double jy1, double jy2)
     {

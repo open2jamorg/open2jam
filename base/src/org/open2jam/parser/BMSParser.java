@@ -27,7 +27,8 @@ public class BMSParser
     private static final FileFilter bms_filter = new FileFilter(){
         public boolean accept(File f){
             String s = f.getName().toLowerCase();
-            return (!f.isDirectory()) && (s.endsWith(".bms") || s.endsWith(".bme") || s.endsWith(".bml"));
+            return (!f.isDirectory()) && (s.endsWith(".bms") || s.endsWith(".bme") || s.endsWith(".bml")
+		    || (s.endsWith(".pms")));
         }
     };
 
@@ -120,7 +121,7 @@ public class BMSParser
                         continue;
                 }
                 if(cmd.equals("#BPM")){
-                        chart.bpm = Integer.parseInt(st.nextToken());
+                        chart.bpm =Double.parseDouble(st.nextToken());
                         continue;
                 }
                 if(cmd.equals("#LNTYPE")){
@@ -165,7 +166,9 @@ public class BMSParser
 		    }
                 }
             }catch(NoSuchElementException e){}
-             catch(NumberFormatException e){ throw new BadFileException("unparsable number @ "+cmd); }
+             catch(NumberFormatException e){ 
+		 logger.log(Level.WARNING, "unparsable number @ {0} on file {1}", new Object[]{cmd, f.getName()});
+	     }
         }
         }catch(IOException e){
             logger.log(Level.WARNING, "IO exception on file parsing ! {0}", e.getMessage());
@@ -194,7 +197,7 @@ public class BMSParser
             default:
                 logger.log(Level.WARNING, "Unknown key number {0} on file {1}", new Object[]{max_key, f.getName()});
         }
-        if(chart.keys != 7)throw new UnsupportedOperationException("Not supported yet.");
+        //if(chart.keys != 7)throw new UnsupportedOperationException("Not supported yet.");
         return chart;
     }
 
@@ -295,6 +298,10 @@ public class BMSParser
                     case 59:
                         ec = Event.Channel.NOTE_7;
                         break;
+		    case 16:
+		    case 56:
+			ec = Event.Channel.NOTE_SC;
+			break;
                     default:
                         continue;
                 }
