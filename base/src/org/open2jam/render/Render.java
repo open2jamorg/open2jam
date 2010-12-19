@@ -330,20 +330,23 @@ public class Render implements GameWindowCallback
                 {
 		    NoteEntity ne = (NoteEntity) e;
 
-		    String judge = skin.judgment.ratePrecision(ne.getHit());
+		    String judge = skin.judgment.ratePrecision(ne.getHit());		
 
-		    double theY = 0;
-		    if(ne instanceof LongNoteEntity && ne.getPlayed() == 0)
-			theY = ne.getStartY();
-		    else
-			theY = ne.getY();
-
-		    if(theY >= judgment_line_y1)  //NEEED FIIIIIIIX
-		    {
 		    switch (ne.getPlayed())
 		    {
 			case 0: //you missed it (no keyboard input)
-			    if(ne.isAlive() && theY >= skin.judgment.start+skin.judgment.size*2)
+			    if((ne instanceof LongNoteEntity) &&
+				    ne.isAlive() && ne.getStartY() >= skin.judgment.start+skin.judgment.size*2)
+			    {
+				if(judgment_entity != null)judgment_entity.setAlive(false);
+				judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
+				entities_matrix.add(judgment_entity);
+
+				combo_entity.resetNumber();
+
+				ne.setPlayed(3);
+			    }
+			    else if(ne.isAlive() && ne.getY() >= skin.judgment.start+skin.judgment.size*2)
 			    {
 				if(judgment_entity != null)judgment_entity.setAlive(false);
 				judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
@@ -410,7 +413,6 @@ public class Render implements GameWindowCallback
 			case 4:
 			//Do nothing, the LN is being holded
 			break;
-		    }
 		    }
 		}
                 else if(e.getY() >= skin.judgment.start+skin.judgment.size){ // else, if it's on the line, judge it

@@ -76,10 +76,13 @@ public class BMSParser
         chart.sample_files = new HashMap<String, Integer>();
 
         Pattern note_line = Pattern.compile("^#(\\d\\d\\d)(\\d\\d):(.+)$");
+	Pattern bpm_line = Pattern.compile("^#BPM(\\w\\w)\\s+(.+)$");
 
         int max_key = 0;
 
 	int max_measure = 0;
+
+	int total_notes = 0;
 
         try{
         while((line = r.readLine()) != null)
@@ -147,6 +150,19 @@ public class BMSParser
                     if(channel > max_key)max_key = channel;
 
 		    if(measure >= max_measure) max_measure = measure;
+
+		    switch(channel)
+		    {
+			case 11:    case 12:	case 13:    case 14:	case 15:
+			case 18:    case 19:
+			    String[] notes = note_match.group(3).split("(?<=\\G.{2})");
+			    for(int i = 0; i < notes.length; i++)
+			    {
+				if(!notes[i].equals("00"))
+				    total_notes++;
+			    }
+			break;
+		    }
                 }
             }catch(NoSuchElementException e){}
              catch(NumberFormatException e){ throw new BadFileException("unparsable number @ "+cmd); }
@@ -155,6 +171,7 @@ public class BMSParser
             logger.log(Level.WARNING, "IO exception on file parsing ! {0}", e.getMessage());
         }
 
+	chart.notes = total_notes;
 	chart.duration = (int) Math.round((240 * max_measure)/chart.bpm);
 
         switch(max_key)
