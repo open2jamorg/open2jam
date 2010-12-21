@@ -29,6 +29,7 @@ import org.open2jam.render.entities.MeasureEntity;
 import org.open2jam.render.entities.NoteEntity;
 import org.open2jam.render.entities.NumberEntity;
 import org.open2jam.render.entities.SampleEntity;
+import org.open2jam.render.entities.EffectEntity;
 import org.open2jam.render.lwjgl.SoundManager;
 
 
@@ -107,6 +108,8 @@ public class Render implements GameWindowCallback
     /** this holds the actual state of the keyboard,
      * whether each is being pressed or not */
     private EnumMap<Event.Channel,Boolean> keyboard_key_pressed;
+
+    private EnumMap<Event.Channel,EffectEntity> longflare;
 
     /** these are the same notes from the entity_matrix
      * but divided in channels for ease to pull */
@@ -249,6 +252,8 @@ public class Render implements GameWindowCallback
         // reference to long notes being holded
         longnote_holded = new EnumMap<Event.Channel,LongNoteEntity>(Event.Channel.class);
 
+	longflare = new EnumMap<Event.Channel, EffectEntity> (Event.Channel.class);
+
         last_sound = new EnumMap<Event.Channel,Event.SoundSample>(Event.Channel.class);
 
         fps_entity = (NumberEntity) skin.getEntityMap().get("FPS_COUNTER");
@@ -338,6 +343,18 @@ public class Render implements GameWindowCallback
                     e.judgment();
                 }
 
+		if(e instanceof EffectEntity)
+		{
+		    EffectEntity eff = (EffectEntity) e;
+
+		    if(longflare.containsValue(eff))
+			eff.setLoop(true);
+		    else
+		    {
+			if(eff.getLoop() == true)
+			    eff.setAlive(false);
+		    }
+		}
                 if(!e.isAlive())j.remove();
                 else 
                 if(!(e instanceof NoteEntity) || e.getY() < skin.judgment.start+skin.judgment.size)e.draw();
@@ -372,6 +389,10 @@ public class Render implements GameWindowCallback
         return hispeed * skin.judgment.size;
     }
 
+    public double judgmentSize()
+    {
+	return judgment_line_y1 + (hispeed * skin.judgment.size * 2);
+    }
     /** returns the note speed in pixels/milliseconds */
     public double getNoteSpeed() { return note_speed; }
 
@@ -383,16 +404,16 @@ public class Render implements GameWindowCallback
         String judge = skin.judgment.ratePrecision(ne.getHit());
         switch (ne.getState())
         {
-            case NOT_PLAYED: //you missed it (no keyboard input)
-                if(ne.isAlive() && ne.getStartY() >= skin.judgment.start+skin.judgment.size*2){
+            case NOT_JUDGED: //you missed it (no keyboard input)
+                if(ne.isAlive() && ne.getStartY() >= judgmentSize()){
                     if(judgment_entity != null)judgment_entity.setAlive(false);
                     judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
                     entities_matrix.add(judgment_entity);
                     combo_entity.resetNumber();
-                    ne.setState(NoteEntity.State.KILL);
+                    ne.setState(NoteEntity.State.TO_KILL);
                 }
             break;
-            case LN_HEAD_PLAYED: //LN: Head has been played
+            case LN_HEAD_JUDGE: //LN: Head has been played
 
                 if(judgment_entity != null)judgment_entity.setAlive(false);
                 judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
@@ -404,7 +425,7 @@ public class Render implements GameWindowCallback
                     ne.setState(NoteEntity.State.LN_HOLD);
                 }else{
                     combo_entity.resetNumber();
-                    ne.setState(NoteEntity.State.KILL);
+                    ne.setState(NoteEntity.State.TO_KILL);
                 }
             break;
             case JUDGE: //LN & normal ones: has finished with good result
@@ -417,10 +438,10 @@ public class Render implements GameWindowCallback
                     combo_entity.incNumber();
                 } else {
                     combo_entity.resetNumber();
-                    ne.setState(NoteEntity.State.KILL);
+                    ne.setState(NoteEntity.State.TO_KILL);
                 }
             break;
-            case KILL: //KILL THEM!
+            case TO_KILL: //KILL THEM!
             if(ne.isAlive() && ne.getY() >= window.getResolutionHeight())
             {
                 // kill it
@@ -430,7 +451,14 @@ public class Render implements GameWindowCallback
             }
             break;
             case LN_HOLD:
-            //Do nothing, the LN is being holded
+		if(ne.getY() >= judgmentSize()) //You keept too much time the note that it misses
+		{
+		    if(judgment_entity != null)judgment_entity.setAlive(false);
+                    judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_JUDGMENT_MISS").copy();
+                    entities_matrix.add(judgment_entity);
+                    combo_entity.resetNumber();
+                    ne.setState(NoteEntity.State.TO_KILL);
+		 }
             break;
         }
     }
@@ -457,7 +485,7 @@ public class Render implements GameWindowCallback
 
                     NoteEntity e = note_channels.get(c).getFirst();
 
-                    if(e.getState() == NoteEntity.State.KILL)return;
+                    if(e.getState() == NoteEntity.State.TO_KILL)return;
 
                     queueSample(e.getSample());
 
@@ -478,7 +506,11 @@ public class Render implements GameWindowCallback
                             ee.setPos(e.getX()+e.getWidth()/2-ee.getWidth()/2,
                                     getViewport()-ee.getHeight()/2);
                             entities_matrix.add(ee);
-                            if(e.getState() == NoteEntity.State.NOT_PLAYED)e.setState(NoteEntity.State.LN_HOLD);
+			    if(e.getY() < skin.judgment.start+skin.judgment.size)
+				longflare.put(c, (EffectEntity) ee);
+			    else
+				longflare.put(c, null);
+                            if(e.getState() == NoteEntity.State.NOT_JUDGED)e.setState(NoteEntity.State.LN_HEAD_JUDGE);
                         }else{
                             e.setAlive(false);
                             e.setState(NoteEntity.State.JUDGE);
@@ -501,6 +533,7 @@ public class Render implements GameWindowCallback
 
                 LongNoteEntity e = longnote_holded.get(c);
                 longnote_holded.put(c,null);
+		longflare.put(c,null);
 
                 if(e == null || note_channels.get(c).isEmpty()
                         || e != note_channels.get(c).getFirst())continue;
@@ -509,7 +542,7 @@ public class Render implements GameWindowCallback
 
                 e.setHit(hit);
 
-                if(e.getState() == NoteEntity.State.KILL)return;
+                if(e.getState() == NoteEntity.State.TO_KILL)return;
                 else
                     e.setState(NoteEntity.State.JUDGE);
 

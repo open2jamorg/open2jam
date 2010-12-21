@@ -14,15 +14,15 @@ public class NoteEntity extends AnimatedEntity
 
     protected Event.Channel channel = Event.Channel.NONE;
 
-    protected State state = State.NOT_PLAYED;
+    protected State state = State.NOT_JUDGED;
 
     protected double hit = 0;
 
     public enum State {
-        NOT_PLAYED,
-        LN_HEAD_PLAYED,
+        NOT_JUDGED,
+        LN_HEAD_JUDGE,
         JUDGE,
-        KILL,
+        TO_KILL,
         LN_HOLD
     };
 
