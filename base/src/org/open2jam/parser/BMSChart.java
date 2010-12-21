@@ -47,14 +47,15 @@ public class BMSChart extends Chart
         return BMSParser.loadSamples(this);
     }
 
-    protected int bpm = 130;
+    protected double bpm = 130;
     public double getBPM() {
         return bpm;
     }
 
-    public int getNoteCount() { return 0; }
-
-    public int getDuration() { return 0; }
+    protected int notes = 0;
+    public int getNoteCount() { return notes; }
+    protected int duration = 0;
+    public int getDuration() { return duration; }
 
     protected File image_cover;
     public BufferedImage getCover() {

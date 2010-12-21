@@ -13,6 +13,7 @@ public class Event implements Comparable<Event>
             NOTE_5,
             NOTE_6,
             NOTE_7,
+            NOTE_SC,
             AUTO_PLAY;
 
             @Override
@@ -25,6 +26,7 @@ public class Event implements Comparable<Event>
 	            case NOTE_5:return "NOTE_5";
 	            case NOTE_6:return "NOTE_6";
 	            case NOTE_7:return "NOTE_7";
+                    case NOTE_SC:return "NOTE_SC";
 	            case TIME_SIGNATURE:return "TIME_SIGNATURE";
 	            case BPM_CHANGE:return "BPM_CHANGE";
 	        }

@@ -27,7 +27,8 @@ public class BMSParser
     private static final FileFilter bms_filter = new FileFilter(){
         public boolean accept(File f){
             String s = f.getName().toLowerCase();
-            return (!f.isDirectory()) && (s.endsWith(".bms") || s.endsWith(".bme") || s.endsWith(".bml"));
+            return (!f.isDirectory()) && (s.endsWith(".bms") || s.endsWith(".bme") || 
+                    s.endsWith(".bml") || s.endsWith(".pms"));
         }
     };
 
@@ -77,7 +78,7 @@ public class BMSParser
 
         Pattern note_line = Pattern.compile("^#(\\d\\d\\d)(\\d\\d):(.+)$");
 
-        int max_key = 0;
+        int max_key = 0, max_measure = 0, total_notes = 0;
 
         try{
         while((line = r.readLine()) != null)
@@ -115,7 +116,7 @@ public class BMSParser
                         continue;
                 }
                 if(cmd.equals("#BPM")){
-                        chart.bpm = Integer.parseInt(st.nextToken());
+                        chart.bpm = Double.parseDouble(st.nextToken());
                         continue;
                 }
                 if(cmd.equals("#LNTYPE")){
@@ -143,13 +144,28 @@ public class BMSParser
 
                     if(channel > 50)channel -= 40;
                     if(channel > max_key)max_key = channel;
+                    if(measure >= max_measure) max_measure = measure;
+
+                    switch(channel){
+                        case 11:case 12:case 13:
+                        case 14:case 15:case 18:case 19:
+                            String[] notes = note_match.group(3).split("(?<=\\G.{2})");
+                            for(String n : notes)if(!n.equals("00"))total_notes++;
+                    }
                 }
+
             }catch(NoSuchElementException e){}
-             catch(NumberFormatException e){ throw new BadFileException("unparsable number @ "+cmd); }
+             catch(NumberFormatException e){ 
+                 logger.log(Level.WARNING, "unparsable number @ {0} on file {1}", new Object[]{cmd, f.getName()});
+             }
         }
         }catch(IOException e){
             logger.log(Level.WARNING, "IO exception on file parsing ! {0}", e.getMessage());
         }
+
+        chart.notes = total_notes;
+        chart.duration = (int) Math.round((240 * max_measure)/chart.bpm);
+
         switch(max_key)
         {
             case 15:
@@ -271,6 +287,9 @@ public class BMSParser
                     case 59:
                         ec = Event.Channel.NOTE_7;
                         break;
+                    case 16:
+                    case 56:
+                        ec = Event.Channel.NOTE_SC;
                     default:
                         continue;
                 }

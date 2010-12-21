@@ -489,6 +489,8 @@ public class Interface extends javax.swing.JFrame
 
     private void bt_playActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_playActionPerformed
 
+        if(selected_header == null)return;
+
         final double hispeed = (Double) js_hispeed.getValue();
 
         final DisplayMode dm;
