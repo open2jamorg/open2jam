@@ -409,7 +409,9 @@ public class Render implements GameWindowCallback
                     if(judgment_entity != null)judgment_entity.setAlive(false);
                     judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
                     entities_matrix.add(judgment_entity);
-                    combo_entity.resetNumber();
+
+		    note_counter.get(judge).incNumber();
+		    combo_entity.resetNumber();
                     ne.setState(NoteEntity.State.TO_KILL);
                 }
             break;
@@ -418,10 +420,19 @@ public class Render implements GameWindowCallback
                 if(judgment_entity != null)judgment_entity.setAlive(false);
                 judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
                 entities_matrix.add(judgment_entity);
-                if(ne.getHit() > 0)
+
+		note_counter.get(judge).incNumber();
+		if(ne.getHit() > 0)
                 {
-                    note_counter.get(judge).incNumber();
-                    combo_entity.incNumber();
+		    /* In O2Jam, a combo is simply the number of consecutive cools or goods hit by the player
+		     * For example, for the first note, there is no combo, for the second, there is 1 combo,
+		     * and so on.
+		     * http://o2jam.wikia.com/wiki/Combo
+		     */
+		    if(!judge.equals("JUDGMENT_BAD"))
+			combo_entity.incNumber();
+		    else
+			combo_entity.resetNumber();
                     ne.setState(NoteEntity.State.LN_HOLD);
                 }else{
                     combo_entity.resetNumber();
@@ -432,10 +443,19 @@ public class Render implements GameWindowCallback
                 if(judgment_entity != null)judgment_entity.setAlive(false);
                 judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
                 entities_matrix.add(judgment_entity);
-                if(ne.getHit() > 0)
+
+		note_counter.get(judge).incNumber();
+		if(ne.getHit() > 0)
                 {
-                    note_counter.get(judge).incNumber();
-                    combo_entity.incNumber();
+		    /* In O2Jam, a combo is simply the number of consecutive cools or goods hit by the player
+		     * For example, for the first note, there is no combo, for the second, there is 1 combo,
+		     * and so on.
+		     * http://o2jam.wikia.com/wiki/Combo
+		     */
+		    if(!judge.equals("JUDGMENT_BAD"))
+			combo_entity.incNumber();
+		    else
+			combo_entity.resetNumber();
                 } else {
                     combo_entity.resetNumber();
                     ne.setState(NoteEntity.State.TO_KILL);
@@ -456,7 +476,9 @@ public class Render implements GameWindowCallback
 		    if(judgment_entity != null)judgment_entity.setAlive(false);
                     judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_JUDGMENT_MISS").copy();
                     entities_matrix.add(judgment_entity);
-                    combo_entity.resetNumber();
+                    
+		    note_counter.get("JUDGMENT_MISS").incNumber();
+		    combo_entity.resetNumber();
                     ne.setState(NoteEntity.State.TO_KILL);
 		 }
             break;

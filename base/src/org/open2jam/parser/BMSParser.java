@@ -186,7 +186,7 @@ public class BMSParser
             default:
                 logger.log(Level.WARNING, "Unknown key number {0} on file {1}", new Object[]{max_key, f.getName()});
         }
-        if(chart.keys != 7)throw new UnsupportedOperationException("Not supported yet.");
+        //if(chart.keys != 7)throw new UnsupportedOperationException("Not supported yet.");
         return chart;
     }
 

@@ -134,6 +134,12 @@ channels:
 
 27: pedal ????
 
+3x: Invisible notes for player 1 (they are autoplayed???)
+	same as channels 11~19
+	
+4x: Invisible notes for player 2 (they are autoplayed???)
+	same as channels 21~29	
+
 5x: long notes (LNTYPE) notes for player 1
 	same as channels 11~19
 
