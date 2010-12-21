@@ -27,8 +27,8 @@ public class BMSParser
     private static final FileFilter bms_filter = new FileFilter(){
         public boolean accept(File f){
             String s = f.getName().toLowerCase();
-            return (!f.isDirectory()) && (s.endsWith(".bms") || s.endsWith(".bme") || s.endsWith(".bml")
-		    || (s.endsWith(".pms")));
+            return (!f.isDirectory()) && (s.endsWith(".bms") || s.endsWith(".bme") || 
+                    s.endsWith(".bml") || s.endsWith(".pms"));
         }
     };
 
@@ -77,13 +77,8 @@ public class BMSParser
         chart.sample_files = new HashMap<String, Integer>();
 
         Pattern note_line = Pattern.compile("^#(\\d\\d\\d)(\\d\\d):(.+)$");
-	Pattern bpm_line = Pattern.compile("^#BPM(\\w\\w)\\s+(.+)$");
 
-        int max_key = 0;
-
-	int max_measure = 0;
-
-	int total_notes = 0;
+        int max_key = 0, max_measure = 0, total_notes = 0;
 
         try{
         while((line = r.readLine()) != null)
@@ -121,7 +116,7 @@ public class BMSParser
                         continue;
                 }
                 if(cmd.equals("#BPM")){
-                        chart.bpm =Double.parseDouble(st.nextToken());
+                        chart.bpm = Double.parseDouble(st.nextToken());
                         continue;
                 }
                 if(cmd.equals("#LNTYPE")){
@@ -149,55 +144,27 @@ public class BMSParser
 
                     if(channel > 50)channel -= 40;
                     if(channel > max_key)max_key = channel;
+                    if(measure >= max_measure) max_measure = measure;
 
-		    if(measure >= max_measure) max_measure = measure;
-
-		    String[] notes = note_match.group(3).split("(?<=\\G.{2})");
-		    String last = "00";
-		    switch(channel)
-		    {
-			case 11:    case 12:	case 13:    case 14:	case 15:
-			case 18:    case 19:
-//			case 16:    case 17:
-			    for(int i = 0; i < notes.length; i++)
-			    {
-				if(!notes[i].equals("00"))
-				    total_notes++;
-			    }
-			break;
-//			case 51:    case 52:	case 53:    case 54:	case 55:
-//			case 58:    case 59:
-//			case 56:    case 57:
-//			    for(int i = 0; i < notes.length; i++)
-//			    {
-//				if (chart.lntype == 2)
-//				{
-//				    if (!notes[i].equals("00"))
-//					total_notes++;
-//				}
-//				else
-//				{
-//				    if (!notes[i].equals("00") && (!notes[i].equals(last) || !notes[i].equals("FF")))
-//				    {
-//					total_notes++;
-//					last = notes[i];
-//				    }
-//				}
-//			    }
-//			break;
-		    }
+                    switch(channel){
+                        case 11:case 12:case 13:
+                        case 14:case 15:case 18:case 19:
+                            String[] notes = note_match.group(3).split("(?<=\\G.{2})");
+                            for(String n : notes)if(!n.equals("00"))total_notes++;
+                    }
                 }
+
             }catch(NoSuchElementException e){}
              catch(NumberFormatException e){ 
-		 logger.log(Level.WARNING, "unparsable number @ {0} on file {1}", new Object[]{cmd, f.getName()});
-	     }
+                 logger.log(Level.WARNING, "unparsable number @ {0} on file {1}", new Object[]{cmd, f.getName()});
+             }
         }
         }catch(IOException e){
             logger.log(Level.WARNING, "IO exception on file parsing ! {0}", e.getMessage());
         }
 
-	chart.notes = total_notes;
-	chart.duration = (int) Math.round((240 * max_measure)/chart.bpm);
+        chart.notes = total_notes;
+        chart.duration = (int) Math.round((240 * max_measure)/chart.bpm);
 
         switch(max_key)
         {
@@ -219,7 +186,7 @@ public class BMSParser
             default:
                 logger.log(Level.WARNING, "Unknown key number {0} on file {1}", new Object[]{max_key, f.getName()});
         }
-        //if(chart.keys != 7)throw new UnsupportedOperationException("Not supported yet.");
+        if(chart.keys != 7)throw new UnsupportedOperationException("Not supported yet.");
         return chart;
     }
 
@@ -320,16 +287,17 @@ public class BMSParser
                     case 59:
                         ec = Event.Channel.NOTE_7;
                         break;
-		    case 16:
-		    case 56:
-			ec = Event.Channel.NOTE_SC;
-			break;
+                    case 16:
+                    case 56:
+                        ec = Event.Channel.NOTE_SC;
+                        break;
                     default:
                         continue;
                 }
                 for (int i = 0; i < events.length; i++) {
                     int value = Integer.parseInt(events[i], 36);
                     double p = ((double) i) / events.length;
+
                     if (channel > 50) {
                         Boolean b = ln_buffer.get(channel);
                         if (b != null && b == true) {

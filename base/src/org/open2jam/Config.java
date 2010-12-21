@@ -44,7 +44,7 @@ public class Config implements Serializable
         keyboard_map.put(Event.Channel.NOTE_5, KeyEvent.VK_J);
         keyboard_map.put(Event.Channel.NOTE_6, KeyEvent.VK_K);
         keyboard_map.put(Event.Channel.NOTE_7, KeyEvent.VK_L);
-	keyboard_map.put(Event.Channel.NOTE_SC, KeyEvent.VK_SHIFT);
+        keyboard_map.put(Event.Channel.NOTE_SC, KeyEvent.VK_SHIFT);
     }
 
     public EnumMap getKeyboardMap(){

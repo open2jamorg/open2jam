@@ -27,7 +27,7 @@ public interface GameWindow {
         public void setDisplay(DisplayMode dm, boolean vsync, boolean fs);
 
 	public int getResolutionHeight();
-	public int getResolutionWidth();
+        public int getResolutionWidth();
 	
 	/**
 	 * Start the game window rendering the display

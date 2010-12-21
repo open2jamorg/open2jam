@@ -12,25 +12,25 @@ public class NoteEntity extends AnimatedEntity
 
     protected Event.SoundSample sample_value;
 
-    public enum State {
-	NOT_PLAYED,
-	LN_HEAD_PLAYED,
-	JUDGE,
-	KILL,
-	LN_HOLD
-    };
-
-    private State state = State.NOT_PLAYED;
-
     protected Event.Channel channel = Event.Channel.NONE;
 
-    private double hit = 0;
+    protected State state = State.NOT_PLAYED;
+
+    protected double hit = 0;
+
+    public enum State {
+        NOT_PLAYED,
+        LN_HEAD_PLAYED,
+        JUDGE,
+        KILL,
+        LN_HOLD
+    };
 
     public NoteEntity(Render r, SpriteList sl, Event.Channel ch, double x, double y)
     {
-            super(sl, x, y);
-            this.channel = ch;
-            this.render = r;
+        super(sl, x, y);
+        this.channel = ch;
+        this.render = r;
     }
 
     protected NoteEntity(NoteEntity org) {
