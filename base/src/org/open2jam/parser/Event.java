@@ -85,7 +85,7 @@ public class Event implements Comparable<Event>
 
 	public int compareTo(Event e)
 	{
-            return (int) ((measure+position) - (e.getMeasure()+e.getPosition()));
+            return ((measure+position) < (e.getMeasure()+e.getPosition())) ? -1 : 1;
 	}
 
 	public Channel getChannel() { return channel; }

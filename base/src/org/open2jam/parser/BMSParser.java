@@ -290,12 +290,14 @@ public class BMSParser
                     case 16:
                     case 56:
                         ec = Event.Channel.NOTE_SC;
+                        break;
                     default:
                         continue;
                 }
                 for (int i = 0; i < events.length; i++) {
                     int value = Integer.parseInt(events[i], 36);
                     double p = ((double) i) / events.length;
+
                     if (channel > 50) {
                         Boolean b = ln_buffer.get(channel);
                         if (b != null && b == true) {
