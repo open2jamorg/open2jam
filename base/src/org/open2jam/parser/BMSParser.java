@@ -152,17 +152,39 @@ public class BMSParser
 
 		    if(measure >= max_measure) max_measure = measure;
 
+		    String[] notes = note_match.group(3).split("(?<=\\G.{2})");
+		    String last = "00";
 		    switch(channel)
 		    {
 			case 11:    case 12:	case 13:    case 14:	case 15:
 			case 18:    case 19:
-			    String[] notes = note_match.group(3).split("(?<=\\G.{2})");
+//			case 16:    case 17:
 			    for(int i = 0; i < notes.length; i++)
 			    {
 				if(!notes[i].equals("00"))
 				    total_notes++;
 			    }
 			break;
+//			case 51:    case 52:	case 53:    case 54:	case 55:
+//			case 58:    case 59:
+//			case 56:    case 57:
+//			    for(int i = 0; i < notes.length; i++)
+//			    {
+//				if (chart.lntype == 2)
+//				{
+//				    if (!notes[i].equals("00"))
+//					total_notes++;
+//				}
+//				else
+//				{
+//				    if (!notes[i].equals("00") && (!notes[i].equals(last) || !notes[i].equals("FF")))
+//				    {
+//					total_notes++;
+//					last = notes[i];
+//				    }
+//				}
+//			    }
+//			break;
 		    }
                 }
             }catch(NoSuchElementException e){}

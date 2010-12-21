@@ -492,7 +492,7 @@ public class Render implements GameWindowCallback
 		    if(e instanceof LongNoteEntity)
 		    {
 			if(e.getState() == NoteEntity.State.NOT_PLAYED)
-			    e.setState(NoteEntity.State.LN_HOLD);
+			    e.setState(NoteEntity.State.LN_HEAD_PLAYED);
 		    }
 		    else
 			e.setState(NoteEntity.State.JUDGE);
