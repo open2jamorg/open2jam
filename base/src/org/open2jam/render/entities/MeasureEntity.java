@@ -22,7 +22,9 @@ public class MeasureEntity extends AnimatedEntity
     @Override
     public void move(long delta)
     {
-        y += delta * render.getNoteSpeed();
+	setYMove(render.getNoteSpeed());
+	super.move(delta);
+	//y += delta * render.getNoteSpeed();
     }
 
     @Override

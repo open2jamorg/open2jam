@@ -236,10 +236,13 @@ public class SkinHandler extends DefaultHandler
 	else if(id.equals("PILLS")){
 	    //TODO
 	}
-	else if(id.equals("LIFE_GAUGE")){
+	else if(id.equals("LIFE_BAR")){
 	    //TODO
 	}
-	else if(id.equals("JAM_GAUGE")){
+	else if(id.equals("JAM_BAR")){
+	    //TODO
+	}
+	else if(id.equals("TIME_BAR")){
 	    //TODO
 	}
         else{

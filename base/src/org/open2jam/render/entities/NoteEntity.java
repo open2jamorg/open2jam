@@ -50,8 +50,10 @@ public class NoteEntity extends AnimatedEntity
     @Override
     public void move(long delta)
     {
-        dy = render.getNoteSpeed();
-        y += delta * dy;
+	setYMove(render.getNoteSpeed());
+	super.move(delta);
+//	dy = render.getNoteSpeed();
+//        y += delta * dy;
     }
 
     public void setHit(double hit) { this.hit = hit; }
