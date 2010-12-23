@@ -233,6 +233,15 @@ public class SkinHandler extends DefaultHandler
         else if(id.equals("COMBO_COUNTER")){
             e = new ComboCounterEntity(new TreeMap(sprite_buffer).values(), 0, 0);
         }
+	else if(id.equals("PILLS")){
+	    //TODO
+	}
+	else if(id.equals("LIFE_GAUGE")){
+	    //TODO
+	}
+	else if(id.equals("JAM_GAUGE")){
+	    //TODO
+	}
         else{
             logger.log(Level.WARNING, "unpromoted entity [{0}]", id);
         }

@@ -360,6 +360,7 @@ public class Render implements GameWindowCallback
                 if(!(e instanceof NoteEntity) || e.getY() < skin.judgment.start+skin.judgment.size)e.draw();
             }
         }
+
         buffer_offset += note_speed * delta; // walk with the buffer
 
         update_note_speed(); // speed will change if the bpm changed in this frame
@@ -471,7 +472,7 @@ public class Render implements GameWindowCallback
             }
             break;
             case LN_HOLD:
-		if(ne.getY() >= judgmentSize()) //You keept too much time the note that it misses
+		if(ne.getY() >= judgmentSize()) //You keept too much time the note held that it misses
 		{
 		    if(judgment_entity != null)judgment_entity.setAlive(false);
                     judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_JUDGMENT_MISS").copy();
