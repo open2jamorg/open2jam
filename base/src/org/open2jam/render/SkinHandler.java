@@ -48,10 +48,17 @@ public class SkinHandler extends DefaultHandler
     protected boolean on_skin = false;
     protected int auto_draw_id = 0;
 
-    public SkinHandler(Render r, String skin)
+    protected double baseW = 800;
+    protected double baseH = 600;
+    protected double scaleX = 1;
+    protected double scaleY = 1;
+
+    public SkinHandler(Render r, String skin, double width, double height)
     {
         this.render = r;
         this.target_skin = skin;
+	this.scaleX = (width/this.baseW);
+	this.scaleY = (height/this.baseH);
         call_stack = new ArrayDeque<Keyword>();
         atts_stack = new ArrayDeque<Map<String,String>>();
         frame_buffer = new ArrayList<Sprite>();
@@ -74,6 +81,10 @@ public class SkinHandler extends DefaultHandler
         {
             case skin:{
                 if(atts_map.get("name").equals(target_skin))on_skin = true;
+		if(atts_map.containsKey("width"))
+		    this.baseW = Double.parseDouble(atts_map.get("width"));
+		if(atts_map.containsKey("height"))
+		    this.baseH = Double.parseDouble(atts_map.get("height"));
             }break;
 
             case layer:{
@@ -114,14 +125,18 @@ public class SkinHandler extends DefaultHandler
             if(url == null)throw new RuntimeException("Cannot find resource: "+FILE_PATH_PREFIX+atts.get("file"));
 
             Sprite s = ResourceFactory.get().getSprite(url, slice);
-            s.setScale(sx, sy);
+            sx *= this.scaleX;
+	    sy *= this.scaleY;
+	    s.setScale(sx, sy);
             frame_buffer.add(s);
             }break;
 
             case sprite:{
             int x = atts.containsKey("x") ? Integer.parseInt(atts.get("x")) : 0;
             int y = atts.containsKey("y") ? Integer.parseInt(atts.get("y")) : 0;
-            double framespeed = 0;
+ 	    x *= this.scaleX;
+	    y *= this.scaleY;
+	    double framespeed = 0;
             if(atts.containsKey("framespeed"))framespeed = Double.parseDouble(atts.get("framespeed"));
             framespeed /= 1000; // spritelist need framespeed in milliseconds
 
@@ -163,8 +178,10 @@ public class SkinHandler extends DefaultHandler
 
             e.setLayer(this.layer);
             double x = e.getX(), y = e.getY();
-            if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x"));
-            if(atts.containsKey("y"))y = Integer.parseInt(atts.get("y"));
+            if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x")) * this.scaleX;
+            if(atts.containsKey("y"))y = Integer.parseInt(atts.get("y")) * this.scaleY;
+//	    x *= this.scaleX;
+//	    y *= this.scaleY;
             e.setPos(x, y);
             
             if(id != null){
@@ -194,8 +211,8 @@ public class SkinHandler extends DefaultHandler
                 Integer start = Integer.parseInt(atts.get("start"));
                 Integer size = Integer.parseInt(atts.get("size"));
 
-                result.judgment.start = start;
-                result.judgment.size = size;
+                result.judgment.start = (int) Math.round(start * this.scaleY);
+                result.judgment.size = (int) Math.round(size * this.scaleY);
             }break;
         }
     }

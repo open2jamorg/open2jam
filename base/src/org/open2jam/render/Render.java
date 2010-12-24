@@ -193,7 +193,7 @@ public class Render implements GameWindowCallback
         System.gc();
 
         try {
-            SkinHandler sb = new SkinHandler(this,"o2jam");
+            SkinHandler sb = new SkinHandler(this,"o2jam", window.getResolutionWidth(), window.getResolutionHeight());
             SAXParserFactory.newInstance().newSAXParser().parse(resources_xml.openStream(), sb);
             skin = sb.getResult();
         } catch (ParserConfigurationException ex) {
