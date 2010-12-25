@@ -50,8 +50,8 @@ public class SkinHandler extends DefaultHandler
 
     protected double baseW = 800;
     protected double baseH = 600;
-    protected double scaleX = 1;
-    protected double scaleY = 1;
+    protected double scaleX = 1f;
+    protected double scaleY = 1f;
 
     public SkinHandler(Render r, String skin, double width, double height)
     {
@@ -180,8 +180,7 @@ public class SkinHandler extends DefaultHandler
             double x = e.getX(), y = e.getY();
             if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x")) * this.scaleX;
             if(atts.containsKey("y"))y = Integer.parseInt(atts.get("y")) * this.scaleY;
-//	    x *= this.scaleX;
-//	    y *= this.scaleY;
+	    
             e.setPos(x, y);
             
             if(id != null){

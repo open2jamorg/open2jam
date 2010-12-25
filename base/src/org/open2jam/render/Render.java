@@ -53,7 +53,10 @@ public class Render implements GameWindowCallback
     private final Chart chart;
 
     /** the hispeed */
-    private final double hispeed;
+    private double hispeed;
+    private boolean updateHS = false;
+
+    private boolean autoplay = false;
 
     /** skin info and entities */
     private Skin skin;
@@ -150,10 +153,11 @@ public class Render implements GameWindowCallback
         keyboard_map = Config.get().getKeyboardMap();
     }
 
-    public Render(Chart c, double hispeed)
+    public Render(Chart c, double hispeed, boolean autoplay)
     {
         this.chart = c;
         this.hispeed = hispeed;
+	this.autoplay = autoplay;
         window = ResourceFactory.get().getGameWindow();
     }
         
@@ -209,15 +213,17 @@ public class Render implements GameWindowCallback
         judgment_line_y1 = skin.judgment.start;
         judgment_line_y2 = skin.judgment.start + skin.judgment.size;
 
-        if(hispeed > 1){
-            double off = skin.judgment.size * (hispeed-1);
-            judgment_line_y1 -= off;
-        }
+//        if(hispeed > 1){
+//            double off = skin.judgment.size * (hispeed-1);
+//            judgment_line_y1 -= off;
+//        }
+
+	updateHispeed();
 
         entities_matrix = new EntityMatrix(skin.max_layer+1);
 
         bpm = chart.getBPM();
-        measure_size = 0.8 * hispeed * getViewport();
+//        measure_size = 0.8 * hispeed * getViewport();
         buffer_offset = getViewport();
         
         update_note_speed();
@@ -319,7 +325,16 @@ public class Render implements GameWindowCallback
             fps = 0;
         }
 
-        check_keyboard();
+	if(!autoplay)
+	    check_keyboard();
+
+	if(updateHS == true)
+	{
+	    updateHispeed();
+	    check_sources();
+	    update_note_buffer();
+	    update_note_speed();
+	}
 
         check_sources();
         
@@ -337,9 +352,10 @@ public class Render implements GameWindowCallback
 
                 if(e instanceof NoteEntity) // if it's a note
                 {
-                    check_judgment((NoteEntity)e);
-                // else, if it's on the line, judge it
-                } else if (e.getY() >= skin.judgment.start + skin.judgment.size) { // else, if it's on the line, judge it
+		    check_judgment((NoteEntity)e);
+                } 
+		else if (e.getY() >= getViewport()) // else, if it's on the line, judge it
+		{
                     e.judgment();
                 }
 
@@ -357,14 +373,14 @@ public class Render implements GameWindowCallback
 		}
                 if(!e.isAlive())j.remove();
                 else 
-                if(!(e instanceof NoteEntity) || e.getY() < skin.judgment.start+skin.judgment.size)e.draw();
+                if(!(e instanceof NoteEntity) || e.getY() < getViewport())e.draw();
             }
         }
 
         buffer_offset += note_speed * delta; // walk with the buffer
 
         update_note_speed(); // speed will change if the bpm changed in this frame
-        
+
         if(!buffer_iterator.hasNext() && entities_matrix.isEmpty(note_layer)){
             if(sources_playing.isEmpty()){
                 window.destroy();
@@ -385,15 +401,28 @@ public class Render implements GameWindowCallback
         note_speed = ((bpm/240) * measure_size) / 1000.0d;
     }
 
-    public double judgmentArea()
+    public double judgmentSize()
     {
         return hispeed * skin.judgment.size;
     }
 
-    public double judgmentSize()
+    private double judgmentArea()
     {
 	return judgment_line_y1 + (hispeed * skin.judgment.size * 2);
     }
+
+    private void updateHispeed()
+    {
+        if(hispeed > 1){
+            double off = skin.judgment.size * (hispeed-1);
+            judgment_line_y1 -= off;
+        }
+
+        measure_size = 0.8 * hispeed * getViewport();
+
+	updateHS = false;
+    }
+
     /** returns the note speed in pixels/milliseconds */
     public double getNoteSpeed() { return note_speed; }
 
@@ -402,11 +431,13 @@ public class Render implements GameWindowCallback
 
     private void check_judgment(NoteEntity ne)
     {
+	if(autoplay) ne.setState(NoteEntity.State.AUTOPLAY);
+	
         String judge = skin.judgment.ratePrecision(ne.getHit());
         switch (ne.getState())
         {
             case NOT_JUDGED: //you missed it (no keyboard input)
-                if(ne.isAlive() && ne.getStartY() >= judgmentSize()){
+                if(ne.isAlive() && ne.getStartY() >= judgmentArea()){
                     if(judgment_entity != null)judgment_entity.setAlive(false);
                     judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
                     entities_matrix.add(judgment_entity);
@@ -472,7 +503,7 @@ public class Render implements GameWindowCallback
             }
             break;
             case LN_HOLD:
-		if(ne.getY() >= judgmentSize()) //You keept too much time the note held that it misses
+		if(ne.getY() >= judgmentArea()) //You keept too much time the note held that it misses
 		{
 		    if(judgment_entity != null)judgment_entity.setAlive(false);
                     judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_JUDGMENT_MISS").copy();
@@ -483,12 +514,45 @@ public class Render implements GameWindowCallback
                     ne.setState(NoteEntity.State.TO_KILL);
 		 }
             break;
+	    case AUTOPLAY:
+		if(ne.isAlive() && (ne.getStartY() >= getViewport() || ne.getY() >= getViewport()))
+		{
+		    if(judgment_entity != null)judgment_entity.setAlive(false);
+                    judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_JUDGMENT_COOL").copy();
+                    entities_matrix.add(judgment_entity);
+
+		    combo_entity.incNumber();
+		    if(ne.getY() >= getViewport())
+			ne.judgment();
+		}
         }
     }
 
     private void check_keyboard()
     {
-        for(Map.Entry<Event.Channel,Integer> entry : keyboard_map.entrySet())
+		/* Misc keys
+		 * Like up and down
+		 */
+		if(window.isKeyDown(java.awt.event.KeyEvent.VK_UP) && !updateHS)
+		{
+		    if(hispeed > 0.5 || hispeed < 10)
+		    {
+			hispeed += 0.5;
+			updateHS = true;
+		    }
+		    return;
+		}
+		if(window.isKeyDown(java.awt.event.KeyEvent.VK_DOWN) && !updateHS)
+		{
+		    if(hispeed > 0.5 || hispeed < 10)
+		    {
+			hispeed -= 0.5;
+			updateHS = true;
+		    }
+		    return;
+		}
+
+	for(Map.Entry<Event.Channel,Integer> entry : keyboard_map.entrySet())
         {
             Event.Channel c = entry.getKey();
             if(window.isKeyDown(entry.getValue())) // this key is being pressed
@@ -529,7 +593,7 @@ public class Render implements GameWindowCallback
                             ee.setPos(e.getX()+e.getWidth()/2-ee.getWidth()/2,
                                     getViewport()-ee.getHeight()/2);
                             entities_matrix.add(ee);
-			    if(e.getY() < skin.judgment.start+skin.judgment.size)
+			    if(e.getY() < getViewport()	)
 				longflare.put(c, (EffectEntity) ee);
 			    else
 				longflare.put(c, null);
@@ -624,16 +688,22 @@ public class Render implements GameWindowCallback
                 if(e.getFlag() == Event.Flag.NONE){
                     NoteEntity n = (NoteEntity) skin.getEntityMap().get(e.getChannel().toString()).copy();
                     n.setPos(n.getX(), abs_height);
-                    n.setSample(e.getSample());
-                    entities_matrix.add(n);
+                    if(!autoplay)
+			n.setSample(e.getSample());
+		    else
+			entities_matrix.add(new SampleEntity(this,e.getSample(),abs_height));
+		    entities_matrix.add(n);
                     note_channels.get(n.getChannel()).add(n);
                 }
                 else if(e.getFlag() == Event.Flag.HOLD){
                     LongNoteEntity ln = (LongNoteEntity) skin.getEntityMap().get("LONG_"+e.getChannel()).copy();
                     ln.setPos(ln.getX(), abs_height);
-                    ln.setSample(e.getSample());
-                    ln_buffer.put(e.getChannel(),ln);
-                    entities_matrix.add(ln);
+                    if(!autoplay)
+			ln.setSample(e.getSample());
+		    else
+			entities_matrix.add(new SampleEntity(this,e.getSample(),abs_height));
+		    entities_matrix.add(ln);
+		    ln_buffer.put(e.getChannel(),ln);
                     note_channels.get(ln.getChannel()).add(ln);
                 }
                 else if(e.getFlag() == Event.Flag.RELEASE){

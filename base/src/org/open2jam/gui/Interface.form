@@ -98,7 +98,11 @@
                               <Component id="lbl_bpm" alignment="0" pref="171" max="32767" attributes="0"/>
                               <Component id="lbl_artist" alignment="0" pref="171" max="32767" attributes="0"/>
                               <Component id="lbl_title" alignment="0" pref="171" max="32767" attributes="0"/>
-                              <Component id="bt_play" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="bt_play" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Component id="jc_autoplay" min="-2" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
                       </Group>
                       <Component id="lbl_cover" alignment="0" min="-2" pref="146" max="-2" attributes="0"/>
@@ -152,7 +156,10 @@
                       <Component id="lbl_keys" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="15" max="32767" attributes="0"/>
-                  <Component id="bt_play" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="bt_play" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jc_autoplay" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -260,6 +267,11 @@
         <Component class="javax.swing.JLabel" name="lbl_keys">
           <Properties>
             <Property name="text" type="java.lang.String" value="content"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="jc_autoplay">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Autoplay"/>
           </Properties>
         </Component>
       </SubComponents>

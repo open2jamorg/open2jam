@@ -23,7 +23,8 @@ public class NoteEntity extends AnimatedEntity
         LN_HEAD_JUDGE,
         JUDGE,
         TO_KILL,
-        LN_HOLD
+        LN_HOLD,
+	AUTOPLAY
     };
 
     public NoteEntity(Render r, SpriteList sl, Event.Channel ch, double x, double y)
@@ -90,7 +91,7 @@ public class NoteEntity extends AnimatedEntity
     protected double testHit(double y1, double y2, double jy1, double jy2)
     {
         if(y2 < jy1)return 0;
-        double p = (y2 - jy1)/render.judgmentArea();
+        double p = (y2 - jy1)/render.judgmentSize();
         if(p > 2)return 0;
         else if(p > 1)p = Math.max(0, 2 - p);
         return p;

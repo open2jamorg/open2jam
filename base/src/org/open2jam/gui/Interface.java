@@ -93,6 +93,7 @@ public class Interface extends javax.swing.JFrame
         lbl_cover = new javax.swing.JLabel();
         lbl_keys1 = new javax.swing.JLabel();
         lbl_keys = new javax.swing.JLabel();
+        jc_autoplay = new javax.swing.JCheckBox();
         panel_setting = new javax.swing.JPanel();
         lbl_dir = new javax.swing.JLabel();
         jr_rank_hard = new javax.swing.JRadioButton();
@@ -168,6 +169,8 @@ public class Interface extends javax.swing.JFrame
 
         lbl_keys.setText("content");
 
+        jc_autoplay.setText("Autoplay");
+
         javax.swing.GroupLayout panel_infoLayout = new javax.swing.GroupLayout(panel_info);
         panel_info.setLayout(panel_infoLayout);
         panel_infoLayout.setHorizontalGroup(
@@ -195,7 +198,10 @@ public class Interface extends javax.swing.JFrame
                             .addComponent(lbl_bpm, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
                             .addComponent(lbl_artist, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
                             .addComponent(lbl_title, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
-                            .addComponent(bt_play)))
+                            .addGroup(panel_infoLayout.createSequentialGroup()
+                                .addComponent(bt_play)
+                                .addGap(18, 18, 18)
+                                .addComponent(jc_autoplay))))
                     .addComponent(lbl_cover, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
@@ -236,7 +242,9 @@ public class Interface extends javax.swing.JFrame
                     .addComponent(lbl_keys1)
                     .addComponent(lbl_keys))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
-                .addComponent(bt_play)
+                .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bt_play)
+                    .addComponent(jc_autoplay))
                 .addContainerGap())
         );
 
@@ -532,7 +540,9 @@ public class Interface extends javax.swing.JFrame
 	    final boolean vsync = jc_vsync.isSelected();
 	    final boolean fs = jc_full_screen.isSelected();
 
-	    Render r = new Render(selected_header, hispeed);
+	    final boolean autoplay = jc_autoplay.isSelected();
+
+	    Render r = new Render(selected_header, hispeed, autoplay);
 
 	    r.setDisplay(dm, vsync, fs);
 
@@ -551,6 +561,7 @@ public class Interface extends javax.swing.JFrame
     private javax.swing.JComboBox combo_displays;
     private javax.swing.JButton configuration;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JCheckBox jc_autoplay;
     private javax.swing.JCheckBox jc_custom_size;
     private javax.swing.JCheckBox jc_full_screen;
     private javax.swing.JCheckBox jc_vsync;
