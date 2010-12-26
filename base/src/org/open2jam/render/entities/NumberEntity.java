@@ -43,14 +43,21 @@ public class NumberEntity extends Entity
     @Override
     public void draw()
     {
-        char[] chars = String.valueOf(number).toCharArray();
+        //draw from right to left
+	String numberString = String.valueOf(number).toString();
+	String invNumberString = "";
         double tx = x;
+	for(int j = numberString.length()-1; j >= 0; j--)
+	{
+	    invNumberString = invNumberString + numberString.charAt(j);
+	}
+	char[] chars = invNumberString.toCharArray();
         for(char c : chars)
         {
             int i = Integer.parseInt(c+"");
             entity_list.get(i).setPos(tx,y);
             entity_list.get(i).draw();
-            tx += entity_list.get(i).getWidth();
+            tx -= entity_list.get(i).getWidth();
         }
     }
 

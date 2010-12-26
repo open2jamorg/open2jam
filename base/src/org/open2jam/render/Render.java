@@ -56,6 +56,7 @@ public class Render implements GameWindowCallback
     private double hispeed;
     private boolean updateHS = false;
 
+    /** the autoplay */
     private boolean autoplay = false;
 
     /** skin info and entities */
@@ -213,17 +214,11 @@ public class Render implements GameWindowCallback
         judgment_line_y1 = skin.judgment.start;
         judgment_line_y2 = skin.judgment.start + skin.judgment.size;
 
-//        if(hispeed > 1){
-//            double off = skin.judgment.size * (hispeed-1);
-//            judgment_line_y1 -= off;
-//        }
-
 	updateHispeed();
 
         entities_matrix = new EntityMatrix(skin.max_layer+1);
 
         bpm = chart.getBPM();
-//        measure_size = 0.8 * hispeed * getViewport();
         buffer_offset = getViewport();
         
         update_note_speed();
@@ -236,11 +231,11 @@ public class Render implements GameWindowCallback
         }
 
         note_counter = new HashMap<String,NumberEntity>();
-        int off = 0;
         for(String s : skin.judgment.getRates()){
-            NumberEntity e = (NumberEntity)skin.getEntityMap().get("FPS_COUNTER").copy();
+            NumberEntity e = (NumberEntity)skin.getEntityMap().get("COUNTER_"+s).copy();
             note_counter.put(s, e);
-            e.setPos(500, off+=100);
+            e.setPos(e.getX(), e.getY());
+	    entities_matrix.add(note_counter.get(s));
         }
 
         // build long note buffer
@@ -431,7 +426,8 @@ public class Render implements GameWindowCallback
 
     private void check_judgment(NoteEntity ne)
     {
-	if(autoplay) ne.setState(NoteEntity.State.AUTOPLAY);
+	if(autoplay && ne.getState() != NoteEntity.State.LN_AUTOPLAY)
+	    ne.setState(NoteEntity.State.AUTOPLAY);
 	
         String judge = skin.judgment.ratePrecision(ne.getHit());
         switch (ne.getState())
@@ -515,15 +511,30 @@ public class Render implements GameWindowCallback
 		 }
             break;
 	    case AUTOPLAY:
-		if(ne.isAlive() && (ne.getStartY() >= getViewport() || ne.getY() >= getViewport()))
+		if(ne.isAlive() && ne.getStartY() >= getViewport())
 		{
 		    if(judgment_entity != null)judgment_entity.setAlive(false);
                     judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_JUDGMENT_COOL").copy();
                     entities_matrix.add(judgment_entity);
 
 		    combo_entity.incNumber();
+
+		    if(ne instanceof LongNoteEntity)
+			ne.setState(NoteEntity.State.LN_AUTOPLAY);
+
 		    if(ne.getY() >= getViewport())
-			ne.judgment();
+			ne.setAlive(false);
+		}
+	    case LN_AUTOPLAY:
+		if(ne.isAlive() && ne.getY() >= getViewport())
+		{
+		    if(judgment_entity != null)judgment_entity.setAlive(false);
+                    judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_JUDGMENT_COOL").copy();
+                    entities_matrix.add(judgment_entity);
+
+		    combo_entity.incNumber();
+
+		    ne.setAlive(false);
 		}
         }
     }

@@ -24,7 +24,8 @@ public class NoteEntity extends AnimatedEntity
         JUDGE,
         TO_KILL,
         LN_HOLD,
-	AUTOPLAY
+	AUTOPLAY,
+	LN_AUTOPLAY
     };
 
     public NoteEntity(Render r, SpriteList sl, Event.Channel ch, double x, double y)

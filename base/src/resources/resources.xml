@@ -389,7 +389,7 @@
             </sprite>
         </entity>
 
-        <entity id="FPS_COUNTER" x="750" y="5">
+        <entity id="FPS_COUNTER" x="770" y="5">
             <sprite id="0">
                 <frame x="40" y="27" w="46" h="71" scale="0.5" file="numbers_1.png" />
             </sprite>
@@ -443,16 +443,138 @@
                  <frame x="0" y="0" w="128" h="128" file="note_miss_1.png" />
              </sprite>
          </entity>
-<!--
-         <entity id="COUNTER_JUDGMENT_COOL">
-         </entity>
-         <entity id="COUNTER_JUDGMENT_GOOD">
-         </entity>
-         <entity id="COUNTER_JUDGMENT_BAD">
-         </entity>
-         <entity id="COUNTER_JUDGMENT_MISS">
-         </entity>
- -->
+
+        <entity id="COUNTER_JUDGMENT_COOL" x="650" y="573">
+            <sprite id="0">
+                <frame x="126" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="1">
+                <frame x="135" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="2">
+                <frame x="144" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="3">
+                <frame x="153" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="4">
+                <frame x="162" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="5">
+                <frame x="171" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="6">
+                <frame x="180" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="7">
+                <frame x="189" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="8">
+                <frame x="198" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="9">
+                <frame x="207" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+        </entity>
+
+        <entity id="COUNTER_JUDGMENT_GOOD" x="720" y="573">
+            <sprite id="0">
+                <frame x="126" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="1">
+                <frame x="135" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="2">
+                <frame x="144" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="3">
+                <frame x="153" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="4">
+                <frame x="162" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="5">
+                <frame x="171" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="6">
+                <frame x="180" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="7">
+                <frame x="189" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="8">
+                <frame x="198" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="9">
+                <frame x="207" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+        </entity>
+
+        <entity id="COUNTER_JUDGMENT_BAD" x="650" y="582">
+            <sprite id="0">
+                <frame x="126" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="1">
+                <frame x="135" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="2">
+                <frame x="144" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="3">
+                <frame x="153" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="4">
+                <frame x="162" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="5">
+                <frame x="171" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="6">
+                <frame x="180" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="7">
+                <frame x="189" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="8">
+                <frame x="198" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="9">
+                <frame x="207" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+        </entity>
+
+        <entity id="COUNTER_JUDGMENT_MISS" x="720" y="582">
+            <sprite id="0">
+                <frame x="126" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="1">
+                <frame x="135" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="2">
+                <frame x="144" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="3">
+                <frame x="153" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="4">
+                <frame x="162" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="5">
+                <frame x="171" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="6">
+                <frame x="180" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="7">
+                <frame x="189" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="8">
+                <frame x="198" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+            <sprite id="9">
+                <frame x="207" y="39" w="9" h="9" file="font1.png" />
+            </sprite>
+        </entity>
 
 
     </layer>
