@@ -55,9 +55,9 @@ public class NumberEntity extends Entity
         for(char c : chars)
         {
             int i = Integer.parseInt(c+"");
-            entity_list.get(i).setPos(tx,y);
-            entity_list.get(i).draw();
             tx -= entity_list.get(i).getWidth();
+	    entity_list.get(i).setPos(tx,y);
+            entity_list.get(i).draw();
         }
     }
 

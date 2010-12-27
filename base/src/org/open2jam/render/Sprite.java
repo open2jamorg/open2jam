@@ -36,7 +36,9 @@ public interface Sprite {
 
         public float getScaleX();
         public float getScaleY();
-	
+
+	public void setAlpha(float alpha);
+
 	/**
 	 * Draw the sprite onto the graphics context provided
 	 * 

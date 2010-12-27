@@ -389,7 +389,7 @@
             </sprite>
         </entity>
 
-        <entity id="FPS_COUNTER" x="770" y="5">
+        <entity id="FPS_COUNTER" x="798" y="5">
             <sprite id="0">
                 <frame x="40" y="27" w="46" h="71" scale="0.5" file="numbers_1.png" />
             </sprite>
@@ -444,7 +444,7 @@
              </sprite>
          </entity>
 
-        <entity id="COUNTER_JUDGMENT_COOL" x="650" y="573">
+        <entity id="COUNTER_JUDGMENT_COOL" x="658" y="573">
             <sprite id="0">
                 <frame x="126" y="39" w="9" h="9" file="font1.png" />
             </sprite>
@@ -477,7 +477,7 @@
             </sprite>
         </entity>
 
-        <entity id="COUNTER_JUDGMENT_GOOD" x="720" y="573">
+        <entity id="COUNTER_JUDGMENT_GOOD" x="728" y="573">
             <sprite id="0">
                 <frame x="126" y="39" w="9" h="9" file="font1.png" />
             </sprite>
@@ -510,7 +510,7 @@
             </sprite>
         </entity>
 
-        <entity id="COUNTER_JUDGMENT_BAD" x="650" y="582">
+        <entity id="COUNTER_JUDGMENT_BAD" x="658" y="582">
             <sprite id="0">
                 <frame x="126" y="39" w="9" h="9" file="font1.png" />
             </sprite>
@@ -543,7 +543,7 @@
             </sprite>
         </entity>
 
-        <entity id="COUNTER_JUDGMENT_MISS" x="720" y="582">
+        <entity id="COUNTER_JUDGMENT_MISS" x="728" y="582">
             <sprite id="0">
                 <frame x="126" y="39" w="9" h="9" file="font1.png" />
             </sprite>

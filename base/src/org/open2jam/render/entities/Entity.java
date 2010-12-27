@@ -78,6 +78,11 @@ public class Entity implements Copyable
     public double getXMove() { return dx; }
     public double getYMove() { return dy; }
 
+    public void setAlpha(float alpha)
+    {
+	sprite.setAlpha(alpha);
+    }
+
     /**
      * Draw this entity to the graphics context provided
      */

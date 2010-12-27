@@ -50,6 +50,8 @@ public class SkinHandler extends DefaultHandler
 
     protected double baseW = 800;
     protected double baseH = 600;
+    protected double targetW = 800;
+    protected double targetH = 600;
     protected double scaleX = 1f;
     protected double scaleY = 1f;
 
@@ -57,8 +59,8 @@ public class SkinHandler extends DefaultHandler
     {
         this.render = r;
         this.target_skin = skin;
-	this.scaleX = (width/this.baseW);
-	this.scaleY = (height/this.baseH);
+	this.targetW = width;
+	this.targetH = height;
         call_stack = new ArrayDeque<Keyword>();
         atts_stack = new ArrayDeque<Map<String,String>>();
         frame_buffer = new ArrayList<Sprite>();
@@ -85,6 +87,9 @@ public class SkinHandler extends DefaultHandler
 		    this.baseW = Double.parseDouble(atts_map.get("width"));
 		if(atts_map.containsKey("height"))
 		    this.baseH = Double.parseDouble(atts_map.get("height"));
+
+		this.scaleX = (this.targetW/this.baseW);
+		this.scaleY = (this.targetH/this.baseH);
             }break;
 
             case layer:{
@@ -136,6 +141,8 @@ public class SkinHandler extends DefaultHandler
             int y = atts.containsKey("y") ? Integer.parseInt(atts.get("y")) : 0;
  	    x *= this.scaleX;
 	    y *= this.scaleY;
+	    x = (int) Math.round(x);
+	    y = (int) Math.round(y);
 	    double framespeed = 0;
             if(atts.containsKey("framespeed"))framespeed = Double.parseDouble(atts.get("framespeed"));
             framespeed /= 1000; // spritelist need framespeed in milliseconds
@@ -180,7 +187,8 @@ public class SkinHandler extends DefaultHandler
             double x = e.getX(), y = e.getY();
             if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x")) * this.scaleX;
             if(atts.containsKey("y"))y = Integer.parseInt(atts.get("y")) * this.scaleY;
-	    
+	    x = (int) Math.round(x);
+	    y = (int) Math.round(y);
             e.setPos(x, y);
             
             if(id != null){

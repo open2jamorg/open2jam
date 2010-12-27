@@ -37,6 +37,9 @@ public class LWJGLSprite implements Sprite {
 
     /** the scale of the image */
     private float scale_x = 1f, scale_y = 1f;
+
+    /** the alpha */
+    private float alpha = 1f;
 	
     /**
      * Create a new sprite from a specified image.
@@ -103,6 +106,11 @@ public class LWJGLSprite implements Sprite {
             return (int) Math.round(height * scale_y);
     }
 
+    public void setAlpha(float alpha)
+    {
+	this.alpha = alpha;
+    }
+
     /**
      * Draw the sprite at the specified location
      *
@@ -121,7 +129,7 @@ public class LWJGLSprite implements Sprite {
 
         // translate to the right location and prepare to draw
         GL11.glTranslatef(px, py, 0);
-        GL11.glColor3f(1,1,1);
+        GL11.glColor4f(1,1,1,this.alpha);
 
         GL11.glScalef(sx, sy, 1);
 

@@ -348,6 +348,10 @@ public class Render implements GameWindowCallback
                 if(e instanceof NoteEntity) // if it's a note
                 {
 		    check_judgment((NoteEntity)e);
+//		    if (e.getY() >= 100)
+//			e.setAlpha(0.2f);
+//		    else
+//			e.setAlpha(1f);
                 } 
 		else if (e.getY() >= getViewport()) // else, if it's on the line, judge it
 		{
