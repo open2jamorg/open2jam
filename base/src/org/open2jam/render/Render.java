@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,6 +17,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.Config;
+import org.open2jam.parser.Event.Channel;
 import org.open2jam.util.SystemTimer;
 
 import org.open2jam.parser.Chart;
@@ -58,6 +60,9 @@ public class Render implements GameWindowCallback
 
     /** the autoplay */
     private boolean autoplay = false;
+
+    /** the channelMirror, random select */
+    private int channelRandom;
 
     /** skin info and entities */
     private Skin skin;
@@ -103,7 +108,7 @@ public class Render implements GameWindowCallback
 
     /** this iterator is used by the update_note_buffer
      * to go through the events on the chart */
-    private Iterator<Event> buffer_iterator;
+    private ListIterator<Event> buffer_iterator;
 
     /** this is used by the update_note_buffer
      * to remember the "opened" long-notes */
@@ -154,11 +159,12 @@ public class Render implements GameWindowCallback
         keyboard_map = Config.get().getKeyboardMap();
     }
 
-    public Render(Chart c, double hispeed, boolean autoplay)
+    public Render(Chart c, double hispeed, boolean autoplay, int channelRandom)
     {
         this.chart = c;
         this.hispeed = hispeed;
 	this.autoplay = autoplay;
+	this.channelRandom = channelRandom;
         window = ResourceFactory.get().getGameWindow();
     }
         
@@ -269,8 +275,26 @@ public class Render implements GameWindowCallback
             note_channels.put(c, new LinkedList<NoteEntity>());
         }
 
+
         // load up initial buffer
-        buffer_iterator = chart.getEvents().iterator();
+        buffer_iterator = chart.getEvents().listIterator();
+
+	/**Let's randomize "-"
+	 * I don't know any better implementation so...
+	 */
+	if(channelRandom != 0)
+	{
+	    if(channelRandom == 1)
+		channelMirror(buffer_iterator);
+	    if(channelRandom == 2)
+		channelRandom(buffer_iterator);
+
+	    while(buffer_iterator.hasPrevious())
+	    {
+		buffer_iterator.previous();
+	    }
+	}
+
         update_note_buffer();
 
 
@@ -348,10 +372,6 @@ public class Render implements GameWindowCallback
                 if(e instanceof NoteEntity) // if it's a note
                 {
 		    check_judgment((NoteEntity)e);
-//		    if (e.getY() >= 100)
-//			e.setAlpha(0.2f);
-//		    else
-//			e.setAlpha(1f);
                 } 
 		else if (e.getY() >= getViewport()) // else, if it's on the line, judge it
 		{
@@ -430,8 +450,33 @@ public class Render implements GameWindowCallback
 
     private void check_judgment(NoteEntity ne)
     {
-	if(autoplay && ne.getState() != NoteEntity.State.LN_AUTOPLAY)
-	    ne.setState(NoteEntity.State.AUTOPLAY);
+	//autoplay part, maybe need a rewrite, it's pretty messy i think XD
+	if(autoplay && ne.isAlive())
+	{
+	    ne.setHit(1);
+
+	    if(ne instanceof LongNoteEntity)
+	    {
+		if(ne.getState() == NoteEntity.State.NOT_JUDGED && ne.getStartY() >= getViewport())
+		{
+		    ne.setState(NoteEntity.State.LN_HEAD_JUDGE);
+		}
+		else if(ne.getState() == NoteEntity.State.LN_HOLD && ne.getY() >= getViewport())
+		{
+		    ne.setState(NoteEntity.State.JUDGE);
+		    longflare.put(ne.getChannel(), null); //let's kill the longflare effect
+		    ne.setAlive(false);
+		}
+	    }
+	    else
+	    {
+		if(ne.getY() >= getViewport())
+		{
+		    ne.setState(NoteEntity.State.JUDGE);
+		    ne.setAlive(false);
+		}
+	    }
+	}
 	
         String judge = skin.judgment.ratePrecision(ne.getHit());
         switch (ne.getState())
@@ -456,6 +501,23 @@ public class Render implements GameWindowCallback
 		note_counter.get(judge).incNumber();
 		if(ne.getHit() > 0)
                 {
+		    //the note effects (better here than in the check_keyboard() funtion I think =$)
+		    /**This effect should be over the pressed key
+		     * but I don't know how to do it :_
+		     */
+		    Entity ee = skin.getEntityMap().get("EFFECT_LONGFLARE").copy();
+		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
+			    getViewport()-ee.getHeight()/2);
+		    entities_matrix.add(ee);
+		    if(ne.getY() < getViewport())
+			longflare.put(ne.getChannel(), (EffectEntity) ee);
+		    else
+			longflare.put(ne.getChannel(), null);
+		    
+		    ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
+		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
+		    getViewport()-ee.getHeight()/2);
+		    entities_matrix.add(ee);
 		    /* In O2Jam, a combo is simply the number of consecutive cools or goods hit by the player
 		     * For example, for the first note, there is no combo, for the second, there is 1 combo,
 		     * and so on.
@@ -479,6 +541,11 @@ public class Render implements GameWindowCallback
 		note_counter.get(judge).incNumber();
 		if(ne.getHit() > 0)
                 {
+		    //the click effect (better here than in the check_keyboard() funtion I think =$)
+		    Entity ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
+		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
+		    getViewport()-ee.getHeight()/2);
+		    entities_matrix.add(ee);
 		    /* In O2Jam, a combo is simply the number of consecutive cools or goods hit by the player
 		     * For example, for the first note, there is no combo, for the second, there is 1 combo,
 		     * and so on.
@@ -514,32 +581,6 @@ public class Render implements GameWindowCallback
                     ne.setState(NoteEntity.State.TO_KILL);
 		 }
             break;
-	    case AUTOPLAY:
-		if(ne.isAlive() && ne.getStartY() >= getViewport())
-		{
-		    if(judgment_entity != null)judgment_entity.setAlive(false);
-                    judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_JUDGMENT_COOL").copy();
-                    entities_matrix.add(judgment_entity);
-
-		    combo_entity.incNumber();
-
-		    if(ne instanceof LongNoteEntity)
-			ne.setState(NoteEntity.State.LN_AUTOPLAY);
-
-		    if(ne.getY() >= getViewport())
-			ne.setAlive(false);
-		}
-	    case LN_AUTOPLAY:
-		if(ne.isAlive() && ne.getY() >= getViewport())
-		{
-		    if(judgment_entity != null)judgment_entity.setAlive(false);
-                    judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_JUDGMENT_COOL").copy();
-                    entities_matrix.add(judgment_entity);
-
-		    combo_entity.incNumber();
-
-		    ne.setAlive(false);
-		}
         }
     }
 
@@ -603,27 +644,14 @@ public class Render implements GameWindowCallback
                     if(!judge.equals(MISS_JUDGE)){
                         if(e instanceof LongNoteEntity){
                             longnote_holded.put(c, (LongNoteEntity) e);
-                            // longnote flare effect
-                            ee = skin.getEntityMap().get("EFFECT_LONGFLARE").copy();
-                            ee.setPos(e.getX()+e.getWidth()/2-ee.getWidth()/2,
-                                    getViewport()-ee.getHeight()/2);
-                            entities_matrix.add(ee);
-			    if(e.getY() < getViewport()	)
-				longflare.put(c, (EffectEntity) ee);
-			    else
-				longflare.put(c, null);
-                            if(e.getState() == NoteEntity.State.NOT_JUDGED)e.setState(NoteEntity.State.LN_HEAD_JUDGE);
+                            if(e.getState() == NoteEntity.State.NOT_JUDGED)
+				e.setState(NoteEntity.State.LN_HEAD_JUDGE);
                         }else{
                             e.setAlive(false);
                             e.setState(NoteEntity.State.JUDGE);
                             note_channels.get(c).removeFirst();
                             last_sound.put(c, e.getSample());
                         }
-
-                        ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
-                        ee.setPos(e.getX()+e.getWidth()/2-ee.getWidth()/2,
-                        getViewport()-ee.getHeight()/2);
-                        entities_matrix.add(ee);
                     }
                 }
             }
@@ -652,11 +680,6 @@ public class Render implements GameWindowCallback
                     e.setAlive(false);
                     note_channels.get(c).removeFirst();
                     last_sound.put(c, e.getSample());
-
-                    Entity ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
-                    ee.setPos(e.getX()+e.getWidth()/2-ee.getWidth()/2,
-                        getViewport()-ee.getHeight()/2);
-                    entities_matrix.add(ee);
                 }
             }
         }
@@ -687,6 +710,7 @@ public class Render implements GameWindowCallback
             }
 
             double abs_height = buffer_offset - (e.getPosition() * measure_size);
+
             switch(e.getChannel())
             {
                 case TIME_SIGNATURE:
@@ -737,6 +761,72 @@ public class Render implements GameWindowCallback
                 break;
             }
         }
+    }
+
+    /**This function will mirrorize the notes
+     *
+     * @param buffer
+     */
+    public void channelMirror(ListIterator<Event> buffer)
+    {
+	while(buffer.hasNext())
+	{
+	    Event e = buffer.next();
+	    switch(e.getChannel())
+	    {
+		case NOTE_1: e.setChannel(Event.Channel.NOTE_7); break;
+		case NOTE_2: e.setChannel(Event.Channel.NOTE_6); break;
+		case NOTE_3: e.setChannel(Event.Channel.NOTE_5); break;
+		case NOTE_5: e.setChannel(Event.Channel.NOTE_3); break;
+		case NOTE_6: e.setChannel(Event.Channel.NOTE_2); break;
+		case NOTE_7: e.setChannel(Event.Channel.NOTE_1); break;
+	    }
+	}
+    }
+    
+    /**This function will randomize the notes, need more work
+     *
+     * TODO:
+     * * Randomize the LongNotes
+     * * Don't put the notes over each other
+     * 
+     * @param buffer
+     */
+    public void channelRandom(ListIterator<Event> buffer)
+    {
+	while(buffer.hasNext())
+	{
+	    Event e = buffer.next();
+	    switch(e.getChannel())
+	    {
+		    case NOTE_1:case NOTE_2:
+		    case NOTE_3:case NOTE_4:
+		    case NOTE_5:case NOTE_6:case NOTE_7:
+
+		    Channel chan = e.getChannel();
+		    int temp = (int)(Math.random()*7);
+		    switch (temp)
+		    {
+			case 0: chan = Event.Channel.NOTE_1; break;
+			case 1: chan = Event.Channel.NOTE_2; break;
+			case 2: chan = Event.Channel.NOTE_3; break;
+			case 3: chan = Event.Channel.NOTE_4; break;
+			case 4: chan = Event.Channel.NOTE_5; break;
+			case 5: chan = Event.Channel.NOTE_6; break;
+			case 6: chan = Event.Channel.NOTE_7; break;
+		    }
+		    if(e.getFlag() == Event.Flag.NONE){
+			e.setChannel(chan);
+		    }
+		    else if(e.getFlag() == Event.Flag.HOLD){
+
+		    }
+		    else if(e.getFlag() == Event.Flag.RELEASE){
+
+		    }
+		    break;
+	    }
+	}
     }
 
     /**

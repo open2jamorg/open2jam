@@ -94,6 +94,8 @@ public class Interface extends javax.swing.JFrame
         lbl_keys1 = new javax.swing.JLabel();
         lbl_keys = new javax.swing.JLabel();
         jc_autoplay = new javax.swing.JCheckBox();
+        combo_channelRandom = new javax.swing.JComboBox();
+        lbl_channelRandom = new javax.swing.JLabel();
         panel_setting = new javax.swing.JPanel();
         lbl_dir = new javax.swing.JLabel();
         jr_rank_hard = new javax.swing.JRadioButton();
@@ -171,6 +173,10 @@ public class Interface extends javax.swing.JFrame
 
         jc_autoplay.setText("Autoplay");
 
+        combo_channelRandom.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "None", "Mirror", "Random" }));
+
+        lbl_channelRandom.setText("Random:");
+
         javax.swing.GroupLayout panel_infoLayout = new javax.swing.GroupLayout(panel_info);
         panel_info.setLayout(panel_infoLayout);
         panel_infoLayout.setHorizontalGroup(
@@ -202,7 +208,9 @@ public class Interface extends javax.swing.JFrame
                                 .addComponent(bt_play)
                                 .addGap(18, 18, 18)
                                 .addComponent(jc_autoplay))))
-                    .addComponent(lbl_cover, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lbl_cover, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(combo_channelRandom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbl_channelRandom))
                 .addContainerGap())
         );
         panel_infoLayout.setVerticalGroup(
@@ -241,7 +249,11 @@ public class Interface extends javax.swing.JFrame
                 .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbl_keys1)
                     .addComponent(lbl_keys))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(lbl_channelRandom)
+                .addGap(6, 6, 6)
+                .addComponent(combo_channelRandom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
                 .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bt_play)
                     .addComponent(jc_autoplay))
@@ -409,7 +421,7 @@ public class Interface extends javax.swing.JFrame
                     .addComponent(jc_full_screen))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(configuration)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(95, Short.MAX_VALUE))
         );
 
         table_songlist.setAutoCreateRowSorter(true);
@@ -448,7 +460,7 @@ public class Interface extends javax.swing.JFrame
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(panel_setting, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE))
+                            .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txt_filter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -542,7 +554,9 @@ public class Interface extends javax.swing.JFrame
 
 	    final boolean autoplay = jc_autoplay.isSelected();
 
-	    Render r = new Render(selected_header, hispeed, autoplay);
+	    final int channelRandom = combo_channelRandom.getSelectedIndex();
+
+	    Render r = new Render(selected_header, hispeed, autoplay, channelRandom);
 
 	    r.setDisplay(dm, vsync, fs);
 
@@ -558,6 +572,7 @@ public class Interface extends javax.swing.JFrame
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bt_choose_dir;
     private javax.swing.JButton bt_play;
+    private javax.swing.JComboBox combo_channelRandom;
     private javax.swing.JComboBox combo_displays;
     private javax.swing.JButton configuration;
     private javax.swing.JLabel jLabel1;
@@ -573,6 +588,7 @@ public class Interface extends javax.swing.JFrame
     private javax.swing.JLabel lbl_artist1;
     private javax.swing.JLabel lbl_bpm;
     private javax.swing.JLabel lbl_bpm1;
+    private javax.swing.JLabel lbl_channelRandom;
     private javax.swing.JLabel lbl_cover;
     private javax.swing.JLabel lbl_dir;
     private javax.swing.JLabel lbl_display;

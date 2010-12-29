@@ -88,6 +88,7 @@ public class Event implements Comparable<Event>
             return ((measure+position) < (e.getMeasure()+e.getPosition())) ? -1 : 1;
 	}
 
+	public void setChannel(Channel chan) { this.channel = chan; }
 	public Channel getChannel() { return channel; }
 	public int getMeasure() { return measure; }
 	public double getPosition() { return position; }

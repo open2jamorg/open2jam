@@ -54,7 +54,7 @@
                   <Group type="102" alignment="1" attributes="0">
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Component id="panel_setting" alignment="0" max="32767" attributes="1"/>
-                          <Component id="table_scroll" alignment="1" pref="329" max="32767" attributes="1"/>
+                          <Component id="table_scroll" alignment="1" pref="413" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -106,6 +106,8 @@
                           </Group>
                       </Group>
                       <Component id="lbl_cover" alignment="0" min="-2" pref="146" max="-2" attributes="0"/>
+                      <Component id="combo_channelRandom" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="lbl_channelRandom" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -155,7 +157,11 @@
                       <Component id="lbl_keys1" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="lbl_keys" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="15" max="32767" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="lbl_channelRandom" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                  <Component id="combo_channelRandom" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="39" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="bt_play" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jc_autoplay" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -274,6 +280,22 @@
             <Property name="text" type="java.lang.String" value="Autoplay"/>
           </Properties>
         </Component>
+        <Component class="javax.swing.JComboBox" name="combo_channelRandom">
+          <Properties>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="3">
+                <StringItem index="0" value="None"/>
+                <StringItem index="1" value="Mirror"/>
+                <StringItem index="2" value="Random"/>
+              </StringArray>
+            </Property>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="lbl_channelRandom">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Random:"/>
+          </Properties>
+        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="panel_setting">
@@ -376,7 +398,7 @@
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="configuration" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="95" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
