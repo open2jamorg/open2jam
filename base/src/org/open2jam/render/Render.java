@@ -62,7 +62,7 @@ public class Render implements GameWindowCallback
     private boolean autoplay = false;
 
     /** the channelMirror, random select */
-    private int channelRandom;
+    private int channelModifier;
 
     /** skin info and entities */
     private Skin skin;
@@ -159,12 +159,12 @@ public class Render implements GameWindowCallback
         keyboard_map = Config.get().getKeyboardMap();
     }
 
-    public Render(Chart c, double hispeed, boolean autoplay, int channelRandom)
+    public Render(Chart c, double hispeed, boolean autoplay, int channelModifier)
     {
         this.chart = c;
         this.hispeed = hispeed;
 	this.autoplay = autoplay;
-	this.channelRandom = channelRandom;
+	this.channelModifier = channelModifier;
         window = ResourceFactory.get().getGameWindow();
     }
         
@@ -278,15 +278,15 @@ public class Render implements GameWindowCallback
 
         // load up initial buffer
         buffer_iterator = chart.getEvents().listIterator();
-
+	
 	/**Let's randomize "-"
 	 * I don't know any better implementation so...
 	 */
-	if(channelRandom != 0)
+	if(channelModifier != 0)
 	{
-	    if(channelRandom == 1)
+	    if(channelModifier == 1)
 		channelMirror(buffer_iterator);
-	    if(channelRandom == 2)
+	    if(channelModifier == 2)
 		channelRandom(buffer_iterator);
 
 	    while(buffer_iterator.hasPrevious())
@@ -787,43 +787,51 @@ public class Render implements GameWindowCallback
     /**This function will randomize the notes, need more work
      *
      * TODO:
-     * * Randomize the LongNotes
-     * * Don't put the notes over each other
+     * * Don't overlap the notes
      * 
      * @param buffer
      */
     public void channelRandom(ListIterator<Event> buffer)
     {
+	EnumMap<Event.Channel, Event.Channel> ln = new EnumMap<Event.Channel, Event.Channel>(Event.Channel.class);
 	while(buffer.hasNext())
 	{
 	    Event e = buffer.next();
+
 	    switch(e.getChannel())
 	    {
 		    case NOTE_1:case NOTE_2:
 		    case NOTE_3:case NOTE_4:
 		    case NOTE_5:case NOTE_6:case NOTE_7:
 
-		    Channel chan = e.getChannel();
-		    int temp = (int)(Math.random()*7);
-		    switch (temp)
-		    {
-			case 0: chan = Event.Channel.NOTE_1; break;
-			case 1: chan = Event.Channel.NOTE_2; break;
-			case 2: chan = Event.Channel.NOTE_3; break;
-			case 3: chan = Event.Channel.NOTE_4; break;
-			case 4: chan = Event.Channel.NOTE_5; break;
-			case 5: chan = Event.Channel.NOTE_6; break;
-			case 6: chan = Event.Channel.NOTE_7; break;
-		    }
-		    if(e.getFlag() == Event.Flag.NONE){
-			e.setChannel(chan);
-		    }
-		    else if(e.getFlag() == Event.Flag.HOLD){
+			Channel chan = e.getChannel();
 
-		    }
-		    else if(e.getFlag() == Event.Flag.RELEASE){
+			int temp = (int)(Math.random()*7);
+			switch (temp)
+			{
+			    case 0: chan = Event.Channel.NOTE_1; break;
+			    case 1: chan = Event.Channel.NOTE_2; break;
+			    case 2: chan = Event.Channel.NOTE_3; break;
+			    case 3: chan = Event.Channel.NOTE_4; break;
+			    case 4: chan = Event.Channel.NOTE_5; break;
+			    case 5: chan = Event.Channel.NOTE_6; break;
+			    case 6: chan = Event.Channel.NOTE_7; break;
+			}
 
-		    }
+			if(e.getFlag() == Event.Flag.NONE){
+			    e.setChannel(chan);
+			}
+			else if(e.getFlag() == Event.Flag.HOLD){
+			    ln.put(e.getChannel(), chan);
+			    e.setChannel(chan);
+			}
+			else if(e.getFlag() == Event.Flag.RELEASE){
+			    if(ln.get(e.getChannel()) != null)
+			    {
+				e.setChannel(ln.get(e.getChannel()));
+				ln.remove(e.getChannel());
+			    }
+			}
 		    break;
 	    }
 	}

@@ -94,8 +94,8 @@ public class Interface extends javax.swing.JFrame
         lbl_keys1 = new javax.swing.JLabel();
         lbl_keys = new javax.swing.JLabel();
         jc_autoplay = new javax.swing.JCheckBox();
-        combo_channelRandom = new javax.swing.JComboBox();
-        lbl_channelRandom = new javax.swing.JLabel();
+        combo_channelModifier = new javax.swing.JComboBox();
+        lbl_channelModifier = new javax.swing.JLabel();
         panel_setting = new javax.swing.JPanel();
         lbl_dir = new javax.swing.JLabel();
         jr_rank_hard = new javax.swing.JRadioButton();
@@ -173,9 +173,9 @@ public class Interface extends javax.swing.JFrame
 
         jc_autoplay.setText("Autoplay");
 
-        combo_channelRandom.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "None", "Mirror", "Random" }));
+        combo_channelModifier.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--None--", "Mirror", "Random" }));
 
-        lbl_channelRandom.setText("Random:");
+        lbl_channelModifier.setText("Channel Modifier:");
 
         javax.swing.GroupLayout panel_infoLayout = new javax.swing.GroupLayout(panel_info);
         panel_info.setLayout(panel_infoLayout);
@@ -209,8 +209,10 @@ public class Interface extends javax.swing.JFrame
                                 .addGap(18, 18, 18)
                                 .addComponent(jc_autoplay))))
                     .addComponent(lbl_cover, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(combo_channelRandom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbl_channelRandom))
+                    .addGroup(panel_infoLayout.createSequentialGroup()
+                        .addComponent(lbl_channelModifier)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(combo_channelModifier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         panel_infoLayout.setVerticalGroup(
@@ -250,10 +252,10 @@ public class Interface extends javax.swing.JFrame
                     .addComponent(lbl_keys1)
                     .addComponent(lbl_keys))
                 .addGap(18, 18, 18)
-                .addComponent(lbl_channelRandom)
-                .addGap(6, 6, 6)
-                .addComponent(combo_channelRandom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbl_channelModifier)
+                    .addComponent(combo_channelModifier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
                 .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bt_play)
                     .addComponent(jc_autoplay))
@@ -554,9 +556,9 @@ public class Interface extends javax.swing.JFrame
 
 	    final boolean autoplay = jc_autoplay.isSelected();
 
-	    final int channelRandom = combo_channelRandom.getSelectedIndex();
+	    final int channelModifier = combo_channelModifier.getSelectedIndex();
 
-	    Render r = new Render(selected_header, hispeed, autoplay, channelRandom);
+	    Render r = new Render(selected_header, hispeed, autoplay, channelModifier);
 
 	    r.setDisplay(dm, vsync, fs);
 
@@ -572,7 +574,7 @@ public class Interface extends javax.swing.JFrame
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bt_choose_dir;
     private javax.swing.JButton bt_play;
-    private javax.swing.JComboBox combo_channelRandom;
+    private javax.swing.JComboBox combo_channelModifier;
     private javax.swing.JComboBox combo_displays;
     private javax.swing.JButton configuration;
     private javax.swing.JLabel jLabel1;
@@ -588,7 +590,7 @@ public class Interface extends javax.swing.JFrame
     private javax.swing.JLabel lbl_artist1;
     private javax.swing.JLabel lbl_bpm;
     private javax.swing.JLabel lbl_bpm1;
-    private javax.swing.JLabel lbl_channelRandom;
+    private javax.swing.JLabel lbl_channelModifier;
     private javax.swing.JLabel lbl_cover;
     private javax.swing.JLabel lbl_dir;
     private javax.swing.JLabel lbl_display;
