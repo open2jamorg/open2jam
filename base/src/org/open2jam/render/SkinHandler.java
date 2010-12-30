@@ -141,8 +141,6 @@ public class SkinHandler extends DefaultHandler
             int y = atts.containsKey("y") ? Integer.parseInt(atts.get("y")) : 0;
  	    x *= this.scaleX;
 	    y *= this.scaleY;
-	    x = Math.round(x);
-	    y = Math.round(y);
 	    double framespeed = 0;
             if(atts.containsKey("framespeed"))framespeed = Double.parseDouble(atts.get("framespeed"));
             framespeed /= 1000; // spritelist need framespeed in milliseconds

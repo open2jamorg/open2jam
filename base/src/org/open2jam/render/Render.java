@@ -287,6 +287,8 @@ public class Render implements GameWindowCallback
 	    if(channelModifier == 1)
 		channelMirror(buffer_iterator);
 	    if(channelModifier == 2)
+		channelShuffle(buffer_iterator);
+	    if(channelModifier == 3)
 		channelRandom(buffer_iterator);
 
 	    while(buffer_iterator.hasPrevious())
@@ -460,12 +462,17 @@ public class Render implements GameWindowCallback
 		if(ne.getState() == NoteEntity.State.NOT_JUDGED && ne.getStartY() >= getViewport())
 		{
 		    ne.setState(NoteEntity.State.LN_HEAD_JUDGE);
+                    Entity ee = skin.getEntityMap().get("PRESSED_"+ne.getChannel()).copy();
+                    entities_matrix.add(ee);
+                    key_pressed_entity.put(ne.getChannel(), ee);
 		}
 		else if(ne.getState() == NoteEntity.State.LN_HOLD && ne.getY() >= getViewport())
 		{
 		    ne.setState(NoteEntity.State.JUDGE);
 		    longflare.put(ne.getChannel(), null); //let's kill the longflare effect
+		    key_pressed_entity.get(ne.getChannel()).setAlive(false);
 		    ne.setAlive(false);
+		    
 		}
 	    }
 	    else
@@ -477,7 +484,7 @@ public class Render implements GameWindowCallback
 		}
 	    }
 	}
-	
+
         String judge = skin.judgment.ratePrecision(ne.getHit());
         switch (ne.getState())
         {
@@ -763,7 +770,8 @@ public class Render implements GameWindowCallback
         }
     }
 
-    /**This function will mirrorize the notes
+    /**
+     * This function will mirrorize the notes
      *
      * @param buffer
      */
@@ -783,8 +791,44 @@ public class Render implements GameWindowCallback
 	    }
 	}
     }
+
+    /**
+     * This function will shuffle the note lanes
+     *
+     * @param buffer
+     */
+    public void channelShuffle(ListIterator<Event> buffer)
+    {
+	java.util.List channelSwap = new LinkedList();
+
+	channelSwap.add(Event.Channel.NOTE_1);
+	channelSwap.add(Event.Channel.NOTE_2);
+	channelSwap.add(Event.Channel.NOTE_3);
+	channelSwap.add(Event.Channel.NOTE_4);
+	channelSwap.add(Event.Channel.NOTE_5);
+	channelSwap.add(Event.Channel.NOTE_6);
+	channelSwap.add(Event.Channel.NOTE_7);
+
+	java.util.Collections.shuffle(channelSwap);
+
+	while(buffer.hasNext())
+	{
+	    Event e = buffer.next();
+	    switch(e.getChannel())
+	    {
+		case NOTE_1: e.setChannel((Channel) channelSwap.get(0)); break;
+		case NOTE_2: e.setChannel((Channel) channelSwap.get(1)); break;
+		case NOTE_3: e.setChannel((Channel) channelSwap.get(2)); break;
+		case NOTE_4: e.setChannel((Channel) channelSwap.get(3)); break;
+		case NOTE_5: e.setChannel((Channel) channelSwap.get(4)); break;
+		case NOTE_6: e.setChannel((Channel) channelSwap.get(5)); break;
+		case NOTE_7: e.setChannel((Channel) channelSwap.get(6)); break;
+	    }
+	}
+    }
     
-    /**This function will randomize the notes, need more work
+    /**
+     * This function will randomize the notes, need more work
      *
      * TODO:
      * * Don't overlap the notes
@@ -794,6 +838,19 @@ public class Render implements GameWindowCallback
     public void channelRandom(ListIterator<Event> buffer)
     {
 	EnumMap<Event.Channel, Event.Channel> ln = new EnumMap<Event.Channel, Event.Channel>(Event.Channel.class);
+
+	java.util.List channelSwap = new LinkedList();
+
+	channelSwap.add(Event.Channel.NOTE_1);
+	channelSwap.add(Event.Channel.NOTE_2);
+	channelSwap.add(Event.Channel.NOTE_3);
+	channelSwap.add(Event.Channel.NOTE_4);
+	channelSwap.add(Event.Channel.NOTE_5);
+	channelSwap.add(Event.Channel.NOTE_6);
+	channelSwap.add(Event.Channel.NOTE_7);
+
+	java.util.Collections.shuffle(channelSwap);
+
 	while(buffer.hasNext())
 	{
 	    Event e = buffer.next();
@@ -807,17 +864,8 @@ public class Render implements GameWindowCallback
 			Channel chan = e.getChannel();
 
 			int temp = (int)(Math.random()*7);
-			switch (temp)
-			{
-			    case 0: chan = Event.Channel.NOTE_1; break;
-			    case 1: chan = Event.Channel.NOTE_2; break;
-			    case 2: chan = Event.Channel.NOTE_3; break;
-			    case 3: chan = Event.Channel.NOTE_4; break;
-			    case 4: chan = Event.Channel.NOTE_5; break;
-			    case 5: chan = Event.Channel.NOTE_6; break;
-			    case 6: chan = Event.Channel.NOTE_7; break;
-			}
-
+			chan = (Channel) channelSwap.get(temp);
+			
 			if(e.getFlag() == Event.Flag.NONE){
 			    e.setChannel(chan);
 			}

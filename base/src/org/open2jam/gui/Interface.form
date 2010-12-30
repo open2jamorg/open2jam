@@ -287,10 +287,11 @@
         <Component class="javax.swing.JComboBox" name="combo_channelModifier">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="3">
+              <StringArray count="4">
                 <StringItem index="0" value="--None--"/>
                 <StringItem index="1" value="Mirror"/>
-                <StringItem index="2" value="Random"/>
+                <StringItem index="2" value="Shuffle"/>
+                <StringItem index="3" value="Random"/>
               </StringArray>
             </Property>
           </Properties>

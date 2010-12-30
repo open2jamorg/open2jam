@@ -173,7 +173,7 @@ public class Interface extends javax.swing.JFrame
 
         jc_autoplay.setText("Autoplay");
 
-        combo_channelModifier.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--None--", "Mirror", "Random" }));
+        combo_channelModifier.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--None--", "Mirror", "Shuffle", "Random" }));
 
         lbl_channelModifier.setText("Channel Modifier:");
 
