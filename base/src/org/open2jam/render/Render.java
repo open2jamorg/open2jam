@@ -8,6 +8,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -280,7 +281,9 @@ public class Render implements GameWindowCallback
             note_channels.put(c, new LinkedList<NoteEntity>());
         }
 
-        buffer_iterator = chart.getEvents().iterator();
+
+        List<Event> event_list = chart.getEvents();
+        buffer_iterator = event_list.iterator();
 	
 	/**Let's randomize "-"
 	 * I don't know any better implementation so...
@@ -295,7 +298,7 @@ public class Render implements GameWindowCallback
 		channelRandom(buffer_iterator);
 
             // get a new iterator
-            buffer_iterator = chart.getEvents().iterator();
+            buffer_iterator = event_list.iterator();
 	}
         
         // load up initial buffer
