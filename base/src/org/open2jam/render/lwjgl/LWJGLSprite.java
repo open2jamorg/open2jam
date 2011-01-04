@@ -37,6 +37,7 @@ public class LWJGLSprite implements Sprite {
 
     /** the scale of the image */
     private float scale_x = 1f, scale_y = 1f;
+    private float screen_scale_x = 1f, screen_scale_y = 1f;
 
     /** the alpha */
     private float alpha = 1f;
@@ -87,6 +88,11 @@ public class LWJGLSprite implements Sprite {
         w = ((float)(x+width)/texture.getWidth()); // bottom-right x
         z = ((float)(y+height)/texture.getHeight()); // bottom-right y
     }
+
+    public void setScreenScale(float x, float y){
+        this.screen_scale_x = x;
+        this.screen_scale_y = y;
+    }
 	
     /**
      * Get the width of this sprite in pixels
@@ -131,7 +137,7 @@ public class LWJGLSprite implements Sprite {
         GL11.glTranslatef(px, py, 0);
         GL11.glColor4f(1,1,1,this.alpha);
 
-        GL11.glScalef(sx, sy, 1);
+        GL11.glScalef(screen_scale_x * sx, screen_scale_y * sy, 1);
 
         // draw a quad textured to match the sprite
         GL11.glBegin(GL11.GL_QUADS);
@@ -155,7 +161,7 @@ public class LWJGLSprite implements Sprite {
     }
     public void draw(int x, int y)
     {
-        draw(x, y, scale_x, scale_y);
+        this.draw(x, y, scale_x, scale_y);
     }
 
     /** draw the sprite.

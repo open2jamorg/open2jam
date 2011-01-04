@@ -2,7 +2,7 @@
 <Resources>
 <skin name="o2jam" keys="7" width="800" height="600">
 
-    <judgment start="416" size="64">
+    <judgment start="416" size="64" combo_threshold="0.5">
         <type id="JUDGMENT_MISS" hit="0" />
         <type id="JUDGMENT_BAD"  hit="0.2" />
         <type id="JUDGMENT_GOOD" hit="0.5" />

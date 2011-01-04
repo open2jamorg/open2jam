@@ -53,13 +53,13 @@ public class Render implements GameWindowCallback
 
     /** the chart being rendered */
     private final Chart chart;
+    
+    /** is autoplaying ? */
+    private final boolean AUTOPLAY;
 
     /** the hispeed */
     private double hispeed;
     private boolean updateHS = false;
-
-    /** the autoplay */
-    private boolean autoplay = false;
 
     /** the channelMirror, random select */
     private int channelModifier;
@@ -163,7 +163,7 @@ public class Render implements GameWindowCallback
     {
         this.chart = c;
         this.hispeed = hispeed;
-	this.autoplay = autoplay;
+	this.AUTOPLAY = autoplay;
 	this.channelModifier = channelModifier;
         window = ResourceFactory.get().getGameWindow();
     }
@@ -194,7 +194,9 @@ public class Render implements GameWindowCallback
     {
         try{
             BufferedImage img = chart.getCover();
-            ResourceFactory.get().getSprite(img).draw(0,0);
+            Sprite s = ResourceFactory.get().getSprite(img);
+            s.setScreenScale(skin.screen_scale_x,skin.screen_scale_y);
+            s.draw(0, 0);
             window.update();
         } catch (NullPointerException e){
             logger.log(Level.INFO, "No cover image on file: {0}", chart.getSource().getName());
@@ -345,19 +347,12 @@ public class Render implements GameWindowCallback
             lastFpsTime = 0;
             fps = 0;
         }
-
-	if(!autoplay)
-	    check_keyboard();
-
-	if(updateHS == true)
-	{
-	    updateHispeed();
-	    check_sources();
-	    update_note_buffer();
-	    update_note_speed();
-	}
-
+        
         check_sources();
+
+	if(!AUTOPLAY)check_keyboard();
+
+	if(updateHS)updateHispeed();
         
         update_note_buffer();
 
@@ -453,9 +448,11 @@ public class Render implements GameWindowCallback
     private void check_judgment(NoteEntity ne)
     {
 	//autoplay part, maybe need a rewrite, it's pretty messy i think XD
-	if(autoplay && ne.isAlive())
+        // TODO: need change 0.8 to COOL
+	if(AUTOPLAY && ne.isAlive() && ne.testHit(judgment_line_y1, judgment_line_y2) > 0.8)
 	{
 	    ne.setHit(1);
+            queueSample(ne.getSample());
 
 	    if(ne instanceof LongNoteEntity)
 	    {
@@ -513,8 +510,9 @@ public class Render implements GameWindowCallback
 		     * but I don't know how to do it :_
 		     */
 		    Entity ee = skin.getEntityMap().get("EFFECT_LONGFLARE").copy();
-		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
-			    getViewport()-ee.getHeight()/2);
+                    Entity key = key_pressed_entity.get(ne.getChannel());
+		    ee.setPos(key.getX()+key.getWidth()/2-ee.getWidth()/2,
+                            key.getY()-ee.getHeight()/2);
 		    entities_matrix.add(ee);
 		    if(ne.getY() < getViewport())
 			longflare.put(ne.getChannel(), (EffectEntity) ee);
@@ -525,15 +523,9 @@ public class Render implements GameWindowCallback
 		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
 		    getViewport()-ee.getHeight()/2);
 		    entities_matrix.add(ee);
-		    /* In O2Jam, a combo is simply the number of consecutive cools or goods hit by the player
-		     * For example, for the first note, there is no combo, for the second, there is 1 combo,
-		     * and so on.
-		     * http://o2jam.wikia.com/wiki/Combo
-		     */
-		    if(!judge.equals("JUDGMENT_BAD"))
-			combo_entity.incNumber();
-		    else
-			combo_entity.resetNumber();
+
+		    if(ne.getHit() >= skin.judgment.combo_threshold)combo_entity.incNumber();
+		    else combo_entity.resetNumber();
                     ne.setState(NoteEntity.State.LN_HOLD);
                 }else{
                     combo_entity.resetNumber();
@@ -553,15 +545,9 @@ public class Render implements GameWindowCallback
 		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
 		    getViewport()-ee.getHeight()/2);
 		    entities_matrix.add(ee);
-		    /* In O2Jam, a combo is simply the number of consecutive cools or goods hit by the player
-		     * For example, for the first note, there is no combo, for the second, there is 1 combo,
-		     * and so on.
-		     * http://o2jam.wikia.com/wiki/Combo
-		     */
-		    if(!judge.equals("JUDGMENT_BAD"))
-			combo_entity.incNumber();
-		    else
-			combo_entity.resetNumber();
+
+		    if(ne.getHit() >= skin.judgment.combo_threshold)combo_entity.incNumber();
+		    else combo_entity.resetNumber();
                 } else {
                     combo_entity.resetNumber();
                     ne.setState(NoteEntity.State.TO_KILL);
@@ -593,27 +579,27 @@ public class Render implements GameWindowCallback
 
     private void check_keyboard()
     {
-		/* Misc keys
-		 * Like up and down
-		 */
-		if(window.isKeyDown(java.awt.event.KeyEvent.VK_UP) && !updateHS)
-		{
-		    if(hispeed > 0.5 || hispeed < 10)
-		    {
-			hispeed += 0.5;
-			updateHS = true;
-		    }
-		    return;
-		}
-		if(window.isKeyDown(java.awt.event.KeyEvent.VK_DOWN) && !updateHS)
-		{
-		    if(hispeed > 0.5 || hispeed < 10)
-		    {
-			hispeed -= 0.5;
-			updateHS = true;
-		    }
-		    return;
-		}
+        /* Misc keys
+         * Like up and down
+         */
+        if(window.isKeyDown(java.awt.event.KeyEvent.VK_UP) && !updateHS)
+        {
+            if(hispeed > 0.5 || hispeed < 10)
+            {
+                hispeed += 0.5;
+                updateHS = true;
+            }
+            return;
+        }
+        if(window.isKeyDown(java.awt.event.KeyEvent.VK_DOWN) && !updateHS)
+        {
+            if(hispeed > 0.5 || hispeed < 10)
+            {
+                hispeed -= 0.5;
+                updateHS = true;
+            }
+            return;
+        }
 
 	for(Map.Entry<Event.Channel,Integer> entry : keyboard_map.entrySet())
         {
@@ -734,20 +720,14 @@ public class Render implements GameWindowCallback
                 if(e.getFlag() == Event.Flag.NONE){
                     NoteEntity n = (NoteEntity) skin.getEntityMap().get(e.getChannel().toString()).copy();
                     n.setPos(n.getX(), abs_height);
-                    if(!autoplay)
-			n.setSample(e.getSample());
-		    else
-			entities_matrix.add(new SampleEntity(this,e.getSample(),abs_height));
+                    n.setSample(e.getSample());
 		    entities_matrix.add(n);
                     note_channels.get(n.getChannel()).add(n);
                 }
                 else if(e.getFlag() == Event.Flag.HOLD){
                     LongNoteEntity ln = (LongNoteEntity) skin.getEntityMap().get("LONG_"+e.getChannel()).copy();
                     ln.setPos(ln.getX(), abs_height);
-                    if(!autoplay)
-			ln.setSample(e.getSample());
-		    else
-			entities_matrix.add(new SampleEntity(this,e.getSample(),abs_height));
+                    ln.setSample(e.getSample());
 		    entities_matrix.add(ln);
 		    ln_buffer.put(e.getChannel(),ln);
                     note_channels.get(ln.getChannel()).add(ln);

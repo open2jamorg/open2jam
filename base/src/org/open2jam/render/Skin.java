@@ -21,6 +21,9 @@ public class Skin
 
     protected Judgment judgment;
     protected int max_layer = 0;
+    
+    protected float screen_scale_x;
+    protected float screen_scale_y;
 
     public Skin()
     {
@@ -40,7 +43,8 @@ public class Skin
     protected class Judgment {
         int start;
         int size;
-
+        double combo_threshold;
+        
         NavigableMap<Double,String> score_map = new TreeMap<Double,String>().descendingMap();
 
         public String ratePrecision(double p)
