@@ -119,10 +119,7 @@ public class SkinHandler extends DefaultHandler
             float sx = 1, sy = 1;
             if(atts.containsKey("scale_x"))sx = Float.parseFloat(atts.get("scale_x"));
             if(atts.containsKey("scale_y"))sy = Float.parseFloat(atts.get("scale_y"));
-            if(atts.containsKey("scale")){
-                sx = Float.parseFloat(atts.get("scale"));
-                sy = sx;
-            }
+            if(atts.containsKey("scale"))sy = sx = Float.parseFloat(atts.get("scale"));
 
             Rectangle slice = new Rectangle(x,y,w,h);
 

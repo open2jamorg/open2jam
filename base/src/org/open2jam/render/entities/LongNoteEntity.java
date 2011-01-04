@@ -78,19 +78,7 @@ public class LongNoteEntity extends NoteEntity
         double local_y = this.y;
         if(local_y > render.getViewport())local_y = render.getViewport();
 	float sx = body_sprite.getScaleX();
-	float fractional = body_sprite.getScaleY() - (int) (body_sprite.getScaleY());
-	fractional = Math.min(body_sprite.getScaleY()-fractional, fractional);
-	if(fractional >= 0.8f)
-	    fractional -= 0.9f;
-	else if(fractional >= 0.7f)
-	    fractional = -fractional+0.1f;
-//	else if(fractional >= 0.4f)
-//	    fractional -= 0.3f;
-//	else if(fractional >= 0.3f)
-//	    fractional -= 0.8f;
-////	else if(fractional >= 0.2f)
-////	    fractional -= 0.3f;
-	float sy = (float) ((local_y - end) / (body_sprite.getHeight() + fractional));
+	float sy = (float) ((local_y - end) / (body_sprite.getHeight()));
         body_sprite.draw(x, end, sx, sy * body_sprite.getScaleY());
         if(local_y < render.getViewport())sprite.draw(x,local_y);
         sprite.draw(x,end);
