@@ -82,7 +82,7 @@ public class SkinHandler extends DefaultHandler
             case skin:{
                 if(atts_map.get("name").equals(target_skin))on_skin = true;
 		if(atts_map.containsKey("width"))this.baseW = Double.parseDouble(atts_map.get("width"));
-		if(atts_map.containsKey("height")) this.baseH = Double.parseDouble(atts_map.get("height"));
+		if(atts_map.containsKey("height"))this.baseH = Double.parseDouble(atts_map.get("height"));
 
 		result.screen_scale_x = (float) (this.targetW/this.baseW);
 		result.screen_scale_y = (float) (this.targetH/this.baseH);
@@ -131,6 +131,8 @@ public class SkinHandler extends DefaultHandler
             case sprite:{
             int x = atts.containsKey("x") ? Integer.parseInt(atts.get("x")) : 0;
             int y = atts.containsKey("y") ? Integer.parseInt(atts.get("y")) : 0;
+            x = Math.round(x * result.screen_scale_x);
+            y = Math.round(y * result.screen_scale_y);
 	    double framespeed = 0;
             if(atts.containsKey("framespeed"))framespeed = Double.parseDouble(atts.get("framespeed"));
             framespeed /= 1000; // spritelist need framespeed in milliseconds
@@ -173,10 +175,8 @@ public class SkinHandler extends DefaultHandler
 
             e.setLayer(this.layer);
             double x = e.getX(), y = e.getY();
-            if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x"));
-            if(atts.containsKey("y"))y = Integer.parseInt(atts.get("y"));
-	    x = Math.round(x);
-	    y = Math.round(y);
+            if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x")) * result.screen_scale_x;
+            if(atts.containsKey("y"))y = Integer.parseInt(atts.get("y")) * result.screen_scale_y;
             e.setPos(x, y);
             
             if(id != null){
@@ -232,6 +232,11 @@ public class SkinHandler extends DefaultHandler
         else if(id.startsWith("EFFECT_JUDGMENT_")){
             Entity t = sprite_buffer.values().iterator().next();
             e = new JudgmentEntity(t.getFrames(),t.getX(), t.getY());
+        }
+        // TODO: change the name of this ???
+        else if(id.startsWith("EFFECT_LONGFLARE")){
+            Entity t = sprite_buffer.values().iterator().next();
+            e = new AnimatedEntity(t.getFrames(),t.getX(), t.getY());
         }
         else if(id.startsWith("EFFECT_")){
             Entity t = sprite_buffer.values().iterator().next();
