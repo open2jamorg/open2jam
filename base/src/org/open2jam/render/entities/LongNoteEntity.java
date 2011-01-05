@@ -33,13 +33,11 @@ public class LongNoteEntity extends NoteEntity
             height = y - end_y;
     }
 
-
-    protected boolean head_hit = false;
     @Override
     public double testHit(double jy1, double jy2)
     {
         double y1, y2;
-        if(!head_hit){
+        if(state == State.NOT_JUDGED){
             y1 = y;
         }else{
             if(end_y == null)return 0;
@@ -47,7 +45,6 @@ public class LongNoteEntity extends NoteEntity
         }
         y2 = y1 + sprite.getHeight();
         double p = testHit(y1, y2, jy1, jy2);
-        if(p > 0)head_hit = true;
         return p;
     }
 

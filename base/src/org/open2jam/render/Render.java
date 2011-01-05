@@ -54,7 +54,7 @@ public class Render implements GameWindowCallback
     /** the chart being rendered */
     private final Chart chart;
 
-    private final double AUTOPLAY_THRESHOLD = 0.9;
+    private final double AUTOPLAY_THRESHOLD = 0.8;
     
     /** is autoplaying ? */
     private final boolean AUTOPLAY;
@@ -462,14 +462,9 @@ public class Render implements GameWindowCallback
 		note_counter.get(judge).incNumber();
 		if(ne.getHit() > 0)
                 {
-		    //the note effects (better here than in the check_keyboard() funtion I think =$)
-		    /**This effect should be over the pressed key
-		     * but I don't know how to do it :_
-		     */
 		    Entity ee = skin.getEntityMap().get("EFFECT_LONGFLARE").copy();
-                    Entity key = key_pressed_entity.get(ne.getChannel());
-		    ee.setPos(key.getX()+key.getWidth()/2-ee.getWidth()/2,
-                            key.getY()-ee.getHeight()/2);
+		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
+                            ne.getStartY());
 		    entities_matrix.add(ee);
 		    if(ne.getY() < getViewport())
 			longflare.put(ne.getChannel(),(AnimatedEntity) ee);
@@ -495,7 +490,6 @@ public class Render implements GameWindowCallback
 		note_counter.get(judge).incNumber();
 		if(ne.getHit() > 0)
                 {
-		    //the click effect (better here than in the check_keyboard() funtion I think =$)
 		    Entity ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
 		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
 		    getViewport()-ee.getHeight()/2);
@@ -503,6 +497,9 @@ public class Render implements GameWindowCallback
 
 		    if(ne.getHit() >= skin.judgment.combo_threshold)combo_entity.incNumber();
 		    else combo_entity.resetNumber();
+
+                    note_channels.get(ne.getChannel()).removeFirst();
+                    ne.setAlive(false);
                 } else {
                     combo_entity.resetNumber();
                     ne.setState(NoteEntity.State.TO_KILL);
@@ -541,16 +538,17 @@ public class Render implements GameWindowCallback
 
             NoteEntity ne = note_channels.get(c).getFirst();
 
+            if(ne.getState() == NoteEntity.State.TO_KILL)return;
+
             double hit = ne.testHit(judgment_line_y1, judgment_line_y2);
             if(hit < AUTOPLAY_THRESHOLD)continue;
-
             ne.setHit(hit);
-            queueSample(ne.getSample());
 
             if(ne instanceof LongNoteEntity)
             {
                 if(ne.getState() == NoteEntity.State.NOT_JUDGED)
                 {
+                    queueSample(ne.getSample());
                     ne.setState(NoteEntity.State.LN_HEAD_JUDGE);
                     Entity ee = skin.getEntityMap().get("PRESSED_"+ne.getChannel()).copy();
                     entities_matrix.add(ee);
@@ -561,15 +559,12 @@ public class Render implements GameWindowCallback
                     ne.setState(NoteEntity.State.JUDGE);
                     longflare.get(ne.getChannel()).setAlive(false); //let's kill the longflare effect
                     key_pressed_entity.get(ne.getChannel()).setAlive(false);
-                    ne.setAlive(false);
-                    note_channels.get(c).removeFirst();
                 }
             }
             else
             {
+                queueSample(ne.getSample());
                 ne.setState(NoteEntity.State.JUDGE);
-                ne.setAlive(false);
-                note_channels.get(c).removeFirst();
             }
         }
     }
@@ -637,9 +632,7 @@ public class Render implements GameWindowCallback
                             if(e.getState() == NoteEntity.State.NOT_JUDGED)
 				e.setState(NoteEntity.State.LN_HEAD_JUDGE);
                         }else{
-                            e.setAlive(false);
                             e.setState(NoteEntity.State.JUDGE);
-                            note_channels.get(c).removeFirst();
                             last_sound.put(c, e.getSample());
                         }
                     }
@@ -653,7 +646,10 @@ public class Render implements GameWindowCallback
 
                 LongNoteEntity e = longnote_holded.get(c);
                 longnote_holded.put(c,null);
-		longflare.get(c).setAlive(false);
+
+                Entity lf = longflare.get(c);
+                if(lf !=null)lf.setAlive(false);
+                longflare.put(c, null);
 
                 if(e == null || note_channels.get(c).isEmpty()
                         || e != note_channels.get(c).getFirst())continue;
@@ -667,8 +663,6 @@ public class Render implements GameWindowCallback
                     e.setState(NoteEntity.State.JUDGE);
 
                 if(hit > 0){
-                    e.setAlive(false);
-                    note_channels.get(c).removeFirst();
                     last_sound.put(c, e.getSample());
                 }
             }
