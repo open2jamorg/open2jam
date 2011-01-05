@@ -223,9 +223,7 @@ public class Render implements GameWindowCallback
 
         MISS_JUDGE = skin.judgment.ratePrecision(0);
 
-        judgment_line_y1 = skin.judgment.start;
         judgment_line_y2 = skin.judgment.start + skin.judgment.size;
-
 	updateHispeed();
 
         entities_matrix = new EntityMatrix(skin.max_layer+1);
@@ -381,7 +379,7 @@ public class Render implements GameWindowCallback
 
                 if(!e.isAlive())j.remove();
                 else 
-                if(!(e instanceof NoteEntity) || e.getY() < getViewport())e.draw();
+                if(!(e instanceof NoteEntity) || e.getY() < getViewport())e.draw(); // TODO: not sure the IF is needed
             }
         }
 
@@ -421,6 +419,7 @@ public class Render implements GameWindowCallback
 
     private void updateHispeed()
     {
+        judgment_line_y1 = skin.judgment.start;
         if(hispeed > 1){
             double off = skin.judgment.size * (hispeed-1);
             judgment_line_y1 -= off;
@@ -442,19 +441,7 @@ public class Render implements GameWindowCallback
         String judge = skin.judgment.ratePrecision(ne.getHit());
         switch (ne.getState())
         {
-            case NOT_JUDGED: //you missed it (no keyboard input)
-                if(ne.isAlive() && ne.getStartY() >= judgmentArea()){
-                    if(judgment_entity != null)judgment_entity.setAlive(false);
-                    judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
-                    entities_matrix.add(judgment_entity);
-
-		    note_counter.get(judge).incNumber();
-		    combo_entity.resetNumber();
-                    ne.setState(NoteEntity.State.TO_KILL);
-                }
-            break;
             case LN_HEAD_JUDGE: //LN: Head has been played
-
                 if(judgment_entity != null)judgment_entity.setAlive(false);
                 judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
                 entities_matrix.add(judgment_entity);
@@ -500,6 +487,7 @@ public class Render implements GameWindowCallback
 
                     note_channels.get(ne.getChannel()).removeFirst();
                     ne.setAlive(false);
+                    last_sound.put(ne.getChannel(), ne.getSample());
                 } else {
                     combo_entity.resetNumber();
                     ne.setState(NoteEntity.State.TO_KILL);
@@ -514,14 +502,15 @@ public class Render implements GameWindowCallback
                     last_sound.put(ne.getChannel(), ne.getSample());
                 }
             break;
-            case LN_HOLD:
-                if(ne.getY() >= judgmentArea()) //You keept too much time the note held that it misses
+            case NOT_JUDGED: // you missed it (no keyboard input)
+            case LN_HOLD:    // You keept too much time the note held that it misses
+                if(ne.isAlive() && ne.getY() >= judgmentArea())
                 {
                     if(judgment_entity != null)judgment_entity.setAlive(false);
-                    judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_JUDGMENT_MISS").copy();
+                    judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+MISS_JUDGE).copy();
                     entities_matrix.add(judgment_entity);
 
-                    note_counter.get("JUDGMENT_MISS").incNumber();
+                    note_counter.get(MISS_JUDGE).incNumber();
                     combo_entity.resetNumber();
                     ne.setState(NoteEntity.State.TO_KILL);
                  }
@@ -633,7 +622,6 @@ public class Render implements GameWindowCallback
 				e.setState(NoteEntity.State.LN_HEAD_JUDGE);
                         }else{
                             e.setState(NoteEntity.State.JUDGE);
-                            last_sound.put(c, e.getSample());
                         }
                     }
                 }
@@ -661,10 +649,6 @@ public class Render implements GameWindowCallback
                 if(e.getState() == NoteEntity.State.TO_KILL)return;
                 else
                     e.setState(NoteEntity.State.JUDGE);
-
-                if(hit > 0){
-                    last_sound.put(c, e.getSample());
-                }
             }
         }
     }
