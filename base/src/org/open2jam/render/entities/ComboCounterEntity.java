@@ -10,11 +10,11 @@ public class ComboCounterEntity extends NumberEntity
 {
     /** how much the entity will "wobble" down
      * when the count number is increased, in pixels */
-    protected static final int wobble = 50;
+    protected static final int wobble = 10;
 
     /** the speed in which the entity will go
      * back to the base position */
-    protected static final double wobble_dy = -1;
+    protected static final double wobble_dy = -0.5;
 
     /** the time in milliseconds in which the entity
      * will be displayed when the count is updated */

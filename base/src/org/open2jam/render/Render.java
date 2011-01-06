@@ -438,10 +438,11 @@ public class Render implements GameWindowCallback
 
     private void check_judgment(NoteEntity ne)
     {
-        String judge = skin.judgment.ratePrecision(ne.getHit());
+        String judge;
         switch (ne.getState())
         {
             case LN_HEAD_JUDGE: //LN: Head has been played
+                judge = skin.judgment.ratePrecision(ne.getHit());
                 if(judgment_entity != null)judgment_entity.setAlive(false);
                 judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
                 entities_matrix.add(judgment_entity);
@@ -470,6 +471,7 @@ public class Render implements GameWindowCallback
                 }
             break;
             case JUDGE: //LN & normal ones: has finished with good result
+                judge = skin.judgment.ratePrecision(ne.getHit());
                 if(judgment_entity != null)judgment_entity.setAlive(false);
                 judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
                 entities_matrix.add(judgment_entity);
@@ -527,7 +529,8 @@ public class Render implements GameWindowCallback
 
             NoteEntity ne = note_channels.get(c).getFirst();
 
-            if(ne.getState() == NoteEntity.State.TO_KILL)return;
+            if(ne.getState() != NoteEntity.State.NOT_JUDGED &&
+                    ne.getState() != NoteEntity.State.LN_HOLD)continue;
 
             double hit = ne.testHit(judgment_line_y1, judgment_line_y2);
             if(hit < AUTOPLAY_THRESHOLD)continue;
