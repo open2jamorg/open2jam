@@ -1,18 +1,14 @@
 - create a config screen to the interface
-
-- make the score & ranking system
-
-- fix the long note flare animation
-
-- finish the bms implementation
 	- add support to choose different key number
-	- test LNOBJ
 
-- branch implement JOGL - see if it's worth the trouble
+- ranking system
 
 - rescale textures if the resolution isn't 800x600
 
+- fix the long note flare animation
+
+- branch implement JOGL - see if it's worth the trouble
+
 - make a ChartWriter
 
-- add MP3 support (javazoom's javalayer probably) -- is this really needed ?
 

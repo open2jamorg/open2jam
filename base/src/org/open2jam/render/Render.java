@@ -194,7 +194,6 @@ public class Render implements GameWindowCallback
     */
     public void initialise()
     {
-        System.gc();
         lastLoopTime = SystemTimer.getTime();
 
         // skin load
@@ -354,7 +353,8 @@ public class Render implements GameWindowCallback
 	if(AUTOPLAY)do_autoplay();
         else check_keyboard();
 
-	if(updateHS)updateHispeed();
+        if(updateHS)updateHispeed();
+        update_note_speed(); // speed will change if the bpm changed in the last frame
         
         update_note_buffer();
 
@@ -385,8 +385,6 @@ public class Render implements GameWindowCallback
 
         buffer_offset += note_speed * delta; // walk with the buffer
 
-        update_note_speed(); // speed will change if the bpm changed in this frame
-
         if(!buffer_iterator.hasNext() && entities_matrix.isEmpty(note_layer)){
             if(sources_playing.isEmpty()){
                 window.destroy();
@@ -407,11 +405,12 @@ public class Render implements GameWindowCallback
         note_speed = ((bpm/240) * measure_size) / 1000.0d;
     }
 
-    public double judgmentSize()
-    {
-        return hispeed * skin.judgment.size;
-    }
+//    public double judgmentSize()
+//    {
+//        return hispeed * skin.judgment.size;
+//    }
 
+    // TODO: derive from judgment_line_y2 ?
     private double judgmentArea()
     {
 	return judgment_line_y1 + (hispeed * skin.judgment.size * 2);
@@ -711,11 +710,11 @@ public class Render implements GameWindowCallback
                     note_channels.get(ln.getChannel()).add(ln);
                 }
                 else if(e.getFlag() == Event.Flag.RELEASE){
-                    if(ln_buffer.get(e.getChannel()) == null){
+                    LongNoteEntity lne = ln_buffer.remove(e.getChannel());
+                    if(lne == null){
                         logger.log(Level.WARNING, "Attempted to RELEASE note {0}", e.getChannel());
                     }else{
-                        ln_buffer.get(e.getChannel()).setEndY(abs_height);
-                        ln_buffer.remove(e.getChannel());
+                        lne.setEndY(abs_height);
                     }
                 }
                 break;

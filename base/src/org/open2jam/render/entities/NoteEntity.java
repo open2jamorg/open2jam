@@ -65,15 +65,16 @@ public class NoteEntity extends AnimatedEntity
         return testHit(y, y + height, jy1, jy2);
     }
 
-    protected double testHit(double y1, double y2, double jy1, double jy2)
+    protected static double testHit(double y1, double y2, double jy1, double jy2)
     {
         if(y2 < jy1)return 0;
-        double p = (y2 - jy1)/render.judgmentSize();
+        double p = (y2 - jy1)/(jy2 - jy1); // TODO: test this
+        //double p = (y2 - jy1)/render.judgmentSize();
         if(p > 2)return 0;
         else if(p > 1)p = Math.max(0, 2 - p);
         return p;
     }
-
+    
     @Override
     public void judgment()
     {
