@@ -404,12 +404,7 @@ public class Render implements GameWindowCallback
     private void update_note_speed(){
         note_speed = ((bpm/240) * measure_size) / 1000.0d;
     }
-
-//    public double judgmentSize()
-//    {
-//        return hispeed * skin.judgment.size;
-//    }
-
+    
     // TODO: derive from judgment_line_y2 ?
     private double judgmentArea()
     {
@@ -453,8 +448,7 @@ public class Render implements GameWindowCallback
 		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
                             ne.getStartY());
 		    entities_matrix.add(ee);
-		    if(ne.getY() < getViewport())
-			longflare.put(ne.getChannel(),(AnimatedEntity) ee);
+                    longflare.put(ne.getChannel(),(AnimatedEntity) ee);
 		    
 		    ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
 		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
@@ -464,10 +458,13 @@ public class Render implements GameWindowCallback
 		    if(ne.getHit() >= skin.judgment.combo_threshold)combo_entity.incNumber();
 		    else combo_entity.resetNumber();
                     ne.setState(NoteEntity.State.LN_HOLD);
-                }else{
+                }else
+                { // TODO: this else will ever be executed ???
                     combo_entity.resetNumber();
+                    note_channels.get(ne.getChannel()).removeFirst();
                     ne.setState(NoteEntity.State.TO_KILL);
                 }
+                last_sound.put(ne.getChannel(), ne.getSample());
             break;
             case JUDGE: //LN & normal ones: has finished with good result
                 judge = skin.judgment.ratePrecision(ne.getHit());
@@ -476,7 +473,7 @@ public class Render implements GameWindowCallback
                 entities_matrix.add(judgment_entity);
 
 		note_counter.get(judge).incNumber();
-		if(ne.getHit() > 0)
+		if(ne.getHit() > 0) // TODO: compare with MISS ?
                 {
 		    Entity ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
 		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
@@ -486,21 +483,19 @@ public class Render implements GameWindowCallback
 		    if(ne.getHit() >= skin.judgment.combo_threshold)combo_entity.incNumber();
 		    else combo_entity.resetNumber();
 
-                    note_channels.get(ne.getChannel()).removeFirst();
                     ne.setAlive(false);
-                    last_sound.put(ne.getChannel(), ne.getSample());
                 } else {
                     combo_entity.resetNumber();
                     ne.setState(NoteEntity.State.TO_KILL);
                 }
+                last_sound.put(ne.getChannel(), ne.getSample());
+                note_channels.get(ne.getChannel()).removeFirst();
             break;
-            case TO_KILL: //KILL THEM!
+            case TO_KILL: // this is the "garbage collector", it just removes the notes off window
                 if(ne.isAlive() && ne.getY() >= window.getResolutionHeight())
                 {
                     // kill it
                     ne.setAlive(false);
-                    note_channels.get(ne.getChannel()).removeFirst();
-                    last_sound.put(ne.getChannel(), ne.getSample());
                 }
             break;
             case NOT_JUDGED: // you missed it (no keyboard input)
@@ -513,6 +508,7 @@ public class Render implements GameWindowCallback
 
                     note_counter.get(MISS_JUDGE).incNumber();
                     combo_entity.resetNumber();
+                    note_channels.get(ne.getChannel()).removeFirst();
                     ne.setState(NoteEntity.State.TO_KILL);
                  }
             break;
@@ -634,23 +630,18 @@ public class Render implements GameWindowCallback
                 keyboard_key_pressed.put(c, false);
                 key_pressed_entity.get(c).setAlive(false);
 
-                LongNoteEntity e = longnote_holded.get(c);
-                longnote_holded.put(c,null);
+                LongNoteEntity e = longnote_holded.remove(c);
 
-                Entity lf = longflare.get(c);
+                Entity lf = longflare.remove(c);
                 if(lf !=null)lf.setAlive(false);
-                longflare.put(c, null);
 
-                if(e == null || note_channels.get(c).isEmpty()
-                        || e != note_channels.get(c).getFirst())continue;
+                // TODO: necessary ?? --> note_channels.get(c).isEmpty() || e != note_channels.get(c).getFirst()
+                if(e == null || e.getState() != NoteEntity.State.LN_HOLD)continue;
 
                 double hit = e.testHit(judgment_line_y1, judgment_line_y2);
 
                 e.setHit(hit);
-
-                if(e.getState() == NoteEntity.State.TO_KILL)return;
-                else
-                    e.setState(NoteEntity.State.JUDGE);
+                e.setState(NoteEntity.State.JUDGE);
             }
         }
     }
