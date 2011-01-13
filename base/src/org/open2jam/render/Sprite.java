@@ -25,6 +25,7 @@ public interface Sprite {
 	 */
 	public int getHeight();
 
+        public float getTheFuckingRealHeight();
 
         /**
          * set the scale of the image
