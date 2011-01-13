@@ -33,13 +33,11 @@ public class LongNoteEntity extends NoteEntity
             height = y - end_y;
     }
 
-
-    protected boolean head_hit = false;
     @Override
     public double testHit(double jy1, double jy2)
     {
         double y1, y2;
-        if(!head_hit){
+        if(state == State.NOT_JUDGED){
             y1 = y;
         }else{
             if(end_y == null)return 0;
@@ -47,7 +45,6 @@ public class LongNoteEntity extends NoteEntity
         }
         y2 = y1 + sprite.getHeight();
         double p = testHit(y1, y2, jy1, jy2);
-        if(p > 0)head_hit = true;
         return p;
     }
 
@@ -77,21 +74,8 @@ public class LongNoteEntity extends NoteEntity
         double end = getY();
         double local_y = this.y;
         if(local_y > render.getViewport())local_y = render.getViewport();
-	float sx = body_sprite.getScaleX();
-	float fractional = body_sprite.getScaleY() - (int) (body_sprite.getScaleY());
-	fractional = Math.min(body_sprite.getScaleY()-fractional, fractional);
-	if(fractional >= 0.8f)
-	    fractional -= 0.9f;
-	else if(fractional >= 0.7f)
-	    fractional = -fractional+0.1f;
-//	else if(fractional >= 0.4f)
-//	    fractional -= 0.3f;
-//	else if(fractional >= 0.3f)
-//	    fractional -= 0.8f;
-////	else if(fractional >= 0.2f)
-////	    fractional -= 0.3f;
-	float sy = (float) ((local_y - end) / (body_sprite.getHeight() + fractional));
-        body_sprite.draw(x, end, sx, sy * body_sprite.getScaleY());
+	float sy = (float) ((local_y - end) / (body_sprite.getHeight()));
+        body_sprite.draw(x, end, body_sprite.getScaleX(), sy);
         if(local_y < render.getViewport())sprite.draw(x,local_y);
         sprite.draw(x,end);
     }

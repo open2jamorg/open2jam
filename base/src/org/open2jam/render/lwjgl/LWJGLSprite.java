@@ -9,13 +9,7 @@ import java.util.logging.Logger;
 import org.lwjgl.opengl.GL11;
 import org.open2jam.render.Sprite;
 
-/**
- * Implementation of sprite that uses an OpenGL quad and a texture
- * to render a given image to the screen.
- * 
- * @author Kevin Glass
- * @author Brian Matzon
- */
+
 public class LWJGLSprite implements Sprite {
 
     static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -37,6 +31,7 @@ public class LWJGLSprite implements Sprite {
 
     /** the scale of the image */
     private float scale_x = 1f, scale_y = 1f;
+    private float screen_scale_x = 1f, screen_scale_y = 1f;
 
     /** the alpha */
     private float alpha = 1f;
@@ -87,6 +82,12 @@ public class LWJGLSprite implements Sprite {
         w = ((float)(x+width)/texture.getWidth()); // bottom-right x
         z = ((float)(y+height)/texture.getHeight()); // bottom-right y
     }
+
+    
+    public void setScreenScale(float x, float y){
+        this.screen_scale_x = x;
+        this.screen_scale_y = y;
+    }
 	
     /**
      * Get the width of this sprite in pixels
@@ -94,7 +95,7 @@ public class LWJGLSprite implements Sprite {
      * @return The width of this sprite in pixels
      */
     public int getWidth() {
-            return (int) Math.round(width * scale_x);
+        return (int) Math.round(width * scale_x * screen_scale_x);
     }
 
     /**
@@ -103,7 +104,7 @@ public class LWJGLSprite implements Sprite {
      * @return The height of this sprite in pixels
      */
     public int getHeight() {
-            return (int) Math.round(height * scale_y);
+        return (int) Math.round(height * scale_y * screen_scale_y);
     }
 
     public void setAlpha(float alpha)
@@ -131,7 +132,7 @@ public class LWJGLSprite implements Sprite {
         GL11.glTranslatef(px, py, 0);
         GL11.glColor4f(1,1,1,this.alpha);
 
-        GL11.glScalef(sx, sy, 1);
+        GL11.glScalef(screen_scale_x * sx, screen_scale_y * sy, 1);
 
         // draw a quad textured to match the sprite
         GL11.glBegin(GL11.GL_QUADS);
@@ -155,7 +156,7 @@ public class LWJGLSprite implements Sprite {
     }
     public void draw(int x, int y)
     {
-        draw(x, y, scale_x, scale_y);
+        this.draw(x, y, scale_x, scale_y);
     }
 
     /** draw the sprite.

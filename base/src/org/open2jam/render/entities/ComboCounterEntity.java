@@ -10,11 +10,11 @@ public class ComboCounterEntity extends NumberEntity
 {
     /** how much the entity will "wobble" down
      * when the count number is increased, in pixels */
-    protected static final int wobble = 50;
+    protected static final int wobble = 10;
 
     /** the speed in which the entity will go
      * back to the base position */
-    protected static final double wobble_dy = -1;
+    protected static final double wobble_dy = -0.5;
 
     /** the time in milliseconds in which the entity
      * will be displayed when the count is updated */
@@ -67,30 +67,27 @@ public class ComboCounterEntity extends NumberEntity
     @Override
     public void draw()
     {
-        if(to_show < 0)return;
+        if(to_show < 0 || number < 2)return;
 	/* In O2Jam, a combo is simply the number of consecutive cools or goods hit by the player
 	 * For example, for the first note, there is no combo, for the second, there is 1 combo, and so on.
 	 * http://o2jam.wikia.com/wiki/Combo
 	 *
 	 * Maybe this is not the best place to do this ·-·
 	 */
-	if(number > 1)
-	{
-	    char[] chars = String.valueOf(number-1).toCharArray();
-	    x = 0;
-	    for(char c : chars){
-		 int i = Integer.parseInt(c+"");
-		 x += entity_list.get(i).getWidth();
-	    }
-	    x = base_x - (x/2);
-	    double tx = x;
-	    for(char c : chars)
-	    {
-		int i = Integer.parseInt(c+"");
-		entity_list.get(i).setPos(tx, y);
-		entity_list.get(i).draw();
-		tx += entity_list.get(i).getWidth();
-	    }
-	}
+        char[] chars = String.valueOf(number-1).toCharArray();
+        x = 0;
+        for(char c : chars){
+             int i = Integer.parseInt(c+"");
+             x += entity_list.get(i).getWidth();
+        }
+        x = base_x - (x/2);
+        double tx = x;
+        for(char c : chars)
+        {
+            int i = Integer.parseInt(c+"");
+            entity_list.get(i).setPos(tx, y);
+            entity_list.get(i).draw();
+            tx += entity_list.get(i).getWidth();
+        }
     }
 }

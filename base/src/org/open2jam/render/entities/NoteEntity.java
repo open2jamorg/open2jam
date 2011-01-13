@@ -52,8 +52,6 @@ public class NoteEntity extends AnimatedEntity
     {
 	setYMove(render.getNoteSpeed());
 	super.move(delta);
-//	dy = render.getNoteSpeed();
-//        y += delta * dy;
     }
 
     public void setHit(double hit) { this.hit = hit; }
@@ -67,35 +65,15 @@ public class NoteEntity extends AnimatedEntity
         return testHit(y, y + height, jy1, jy2);
     }
 
-    /**
-     * y1 < y2 < jy1 < jy2 - no intersection
-     * y1 < jy1 < y2 < jy2 - half intersection of y2 - jy1
-     * jy1 < y1 < y2 < jy2 - full intersection
-     * jy1 < y1 < jy2 < y2 - half intersection of jy2 - y1
-     * jy1 < jy2 < y1 < y2 - no intersection
-     */
-//    protected double testHit(double y1, double y2, double jy1, double jy2)
-//    {
-//        if(y1 < jy1){
-//            if(jy1 < y2)return (y2 - jy1)/height;
-//        }
-//        else{
-//            if(y2 < jy2)return 1;
-//            else
-//            if(y1 < jy2)return (jy2 - y1)/height;
-//        }
-//        return 0;
-//    }
-
-    protected double testHit(double y1, double y2, double jy1, double jy2)
+    protected static double testHit(double y1, double y2, double jy1, double jy2)
     {
         if(y2 < jy1)return 0;
-        double p = (y2 - jy1)/render.judgmentSize();
+        double p = (y2 - jy1)/(jy2 - jy1);
         if(p > 2)return 0;
         else if(p > 1)p = Math.max(0, 2 - p);
         return p;
     }
-
+    
     @Override
     public void judgment()
     {
