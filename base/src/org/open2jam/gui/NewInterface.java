@@ -108,7 +108,6 @@ public class NewInterface extends javax.swing.JFrame
         table_scroll2 = new javax.swing.JScrollPane();
         table_songlist2 = new javax.swing.JTable();
         panel_setting = new javax.swing.JPanel();
-        lbl_dir = new javax.swing.JLabel();
         jr_rank_hard = new javax.swing.JRadioButton();
         combo_displays = new javax.swing.JComboBox();
         txt_res_height = new javax.swing.JTextField();
@@ -132,10 +131,14 @@ public class NewInterface extends javax.swing.JFrame
         jLabel1 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        mitem_exit = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
+        menu_about = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Open2Jam");
 
         lbl_title.setFont(new java.awt.Font("Tahoma", 0, 18));
         lbl_title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -300,13 +303,11 @@ public class NewInterface extends javax.swing.JFrame
                     .addComponent(combo_channelModifier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(combo_visibilityModifier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbl_visibilityModifier))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
                 .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jc_autoplay)
                     .addComponent(bt_play)))
         );
-
-        lbl_dir.setText("choose a dir..");
 
         rank_group.add(jr_rank_hard);
         jr_rank_hard.setText("Hard");
@@ -399,43 +400,38 @@ public class NewInterface extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jr_rank_hard))
                     .addComponent(lbl_rank)
-                    .addComponent(lbl_dir)
                     .addGroup(panel_settingLayout.createSequentialGroup()
                         .addComponent(lbl_hispeed)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(js_hispeed, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
-                        .addGap(102, 102, 102))
+                        .addGap(72, 72, 72))
                     .addGroup(panel_settingLayout.createSequentialGroup()
                         .addComponent(configuration)
-                        .addContainerGap(85, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lbl_display)
                     .addGroup(panel_settingLayout.createSequentialGroup()
-                        .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(lbl_display, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panel_settingLayout.createSequentialGroup()
-                                .addComponent(jc_vsync)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jc_full_screen))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panel_settingLayout.createSequentialGroup()
-                                .addComponent(jc_custom_size, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txt_res_width, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lbl_res_x)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txt_res_height, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(combo_displays, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panel_settingLayout.createSequentialGroup()
-                                .addComponent(bt_choose_dir)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(load_progress, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(30, 30, 30))))
+                        .addComponent(jc_vsync)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jc_full_screen))
+                    .addGroup(panel_settingLayout.createSequentialGroup()
+                        .addComponent(jc_custom_size, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txt_res_width, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lbl_res_x)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txt_res_height, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(combo_displays, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(panel_settingLayout.createSequentialGroup()
+                        .addComponent(bt_choose_dir)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(load_progress, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(30, 30, 30))
         );
         panel_settingLayout.setVerticalGroup(
             panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel_settingLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lbl_dir)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(load_progress, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
                     .addComponent(bt_choose_dir))
@@ -466,7 +462,7 @@ public class NewInterface extends javax.swing.JFrame
                     .addComponent(jc_full_screen))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(configuration)
-                .addContainerGap(90, Short.MAX_VALUE))
+                .addGap(112, 112, 112))
         );
 
         table_songlist.setAutoCreateRowSorter(true);
@@ -479,14 +475,36 @@ public class NewInterface extends javax.swing.JFrame
         jLabel1.setText("Source");
 
         jMenu1.setText("File");
+
+        mitem_exit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
+        mitem_exit.setText("Exit");
+        mitem_exit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mitem_exitActionPerformed(evt);
+            }
+        });
+        jMenu1.add(mitem_exit);
+
         jMenuBar1.add(jMenu1);
 
         jMenu3.setText("Tools");
+
+        jMenuItem1.setText("OJM Dumper");
+        jMenu3.add(jMenuItem1);
+
+        jMenuItem2.setText("OJN <-> BMS");
+        jMenu3.add(jMenuItem2);
+
         jMenuBar1.add(jMenu3);
 
-        jMenu2.setText("About");
-        jMenu2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jMenuBar1.add(jMenu2);
+        menu_about.setText("About");
+        menu_about.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        menu_about.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                menu_aboutMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(menu_about);
 
         setJMenuBar(jMenuBar1);
 
@@ -499,7 +517,7 @@ public class NewInterface extends javax.swing.JFrame
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jLabel1))
-                    .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(panel_info, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -514,7 +532,7 @@ public class NewInterface extends javax.swing.JFrame
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panel_info, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
+                        .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_filter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -624,6 +642,17 @@ public class NewInterface extends javax.swing.JFrame
 	new Configuration().setVisible(true);
     }//GEN-LAST:event_configurationActionPerformed
 
+    private void mitem_exitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mitem_exitActionPerformed
+        System.exit(0); //TODO Not a good idea XD
+    }//GEN-LAST:event_mitem_exitActionPerformed
+
+    private void menu_aboutMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menu_aboutMouseClicked
+        String about = "Open2Jam\n"
+                + "Main programmer: ChaosFox\n"
+                + "Main code destroyer: CdK"    ;
+        JOptionPane.showMessageDialog(this, about, "About", JOptionPane.ERROR_MESSAGE, null);
+    }//GEN-LAST:event_menu_aboutMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bt_choose_dir;
@@ -634,9 +663,10 @@ public class NewInterface extends javax.swing.JFrame
     private javax.swing.JButton configuration;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JCheckBox jc_autoplay;
     private javax.swing.JCheckBox jc_custom_size;
     private javax.swing.JCheckBox jc_full_screen;
@@ -650,7 +680,6 @@ public class NewInterface extends javax.swing.JFrame
     private javax.swing.JLabel lbl_bpm1;
     private javax.swing.JLabel lbl_channelModifier;
     private javax.swing.JLabel lbl_cover;
-    private javax.swing.JLabel lbl_dir;
     private javax.swing.JLabel lbl_display;
     private javax.swing.JLabel lbl_filename;
     private javax.swing.JLabel lbl_genre;
@@ -669,6 +698,8 @@ public class NewInterface extends javax.swing.JFrame
     private javax.swing.JLabel lbl_title;
     private javax.swing.JLabel lbl_visibilityModifier;
     private javax.swing.JProgressBar load_progress;
+    private javax.swing.JMenu menu_about;
+    private javax.swing.JMenuItem mitem_exit;
     private javax.swing.JPanel panel_info;
     private javax.swing.JPanel panel_setting;
     private javax.swing.ButtonGroup rank_group;
@@ -692,7 +723,7 @@ public class NewInterface extends javax.swing.JFrame
     }
 
     private void updateSelection() {
-        lbl_dir.setText(cwd);
+        this.setTitle("Open2Jam - "+cwd);
         bt_choose_dir.setEnabled(false);
         load_progress.setValue(0);
         load_progress.setVisible(true);
