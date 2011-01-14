@@ -108,12 +108,12 @@ public class LWJGLSprite implements Sprite {
     }
 
     /**
-     * Get the fucking real height for the longnotes
+     * Get height for the longnotes
      *
-     * @return the fucking real height minus 0.1f because I want
+     * @return the height
      */
-    public float getTheFuckingRealHeight() {
-        return (height * scale_y * screen_scale_y)-0.1f;
+    public float getFloatHeight() {
+        return height * scale_y * screen_scale_y;
     }
 
     public void setAlpha(float alpha)
