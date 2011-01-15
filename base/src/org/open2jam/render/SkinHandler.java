@@ -53,12 +53,15 @@ public class SkinHandler extends DefaultHandler
     protected final double targetW;
     protected final double targetH;
 
-    public SkinHandler(Render r, String skin, double width, double height)
+    protected boolean aspect_ratio = false;
+
+    public SkinHandler(Render r, String skin, double width, double height, boolean aspect_ratio)
     {
         this.render = r;
         this.target_skin = skin;
 	this.targetW = width;
 	this.targetH = height;
+        this.aspect_ratio = aspect_ratio;
         call_stack = new ArrayDeque<Keyword>();
         atts_stack = new ArrayDeque<Map<String,String>>();
         frame_buffer = new ArrayList<Sprite>();
@@ -86,6 +89,11 @@ public class SkinHandler extends DefaultHandler
 
 		result.screen_scale_x = (float) (this.targetW/this.baseW);
 		result.screen_scale_y = (float) (this.targetH/this.baseH);
+                if(aspect_ratio)
+                {
+                    result.screen_scale_x = Math.min(result.screen_scale_x,result.screen_scale_y);
+                    result.screen_scale_y = result.screen_scale_x;
+                }
             }break;
 
             case layer:{
@@ -177,6 +185,10 @@ public class SkinHandler extends DefaultHandler
             double x = e.getX(), y = e.getY();
             if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x")) * result.screen_scale_x;
             if(atts.containsKey("y"))y = Integer.parseInt(atts.get("y")) * result.screen_scale_y;
+            if(aspect_ratio)
+            {
+                //TODO how? I don't want to use my brain XD
+            }
             e.setPos(x, y);
             
             if(id != null){

@@ -66,6 +66,12 @@ public class Render implements GameWindowCallback
     /** the channelMirror, random select */
     private int channelModifier = 0;
 
+    /** will keep the aspect ratio of the skin */
+    private boolean aspect_ratio = false;
+
+    /** the visibility modifier */
+    private int visibilityModifier = 0;
+
     /** skin info and entities */
     private Skin skin;
 
@@ -161,16 +167,18 @@ public class Render implements GameWindowCallback
         keyboard_map = Config.get().getKeyboardMap();
     }
 
-    public Render(Chart c, double hispeed, boolean autoplay, int channelModifier)
+    public Render(Chart c, double hispeed, boolean autoplay, int channelModifier, int visibilityModifier)
     {
         this.chart = c;
         this.hispeed = hispeed;
 	this.AUTOPLAY = autoplay;
 	this.channelModifier = channelModifier;
+        this.visibilityModifier = visibilityModifier;
         window = ResourceFactory.get().getGameWindow();
     }
         
-    public void setDisplay(DisplayMode dm, boolean vsync, boolean fs) {
+    public void setDisplay(DisplayMode dm, boolean vsync, boolean fs, boolean aspect_ratio) {
+        this.aspect_ratio = aspect_ratio;
         window.setDisplay(dm,vsync,fs);
     }
 
@@ -198,7 +206,7 @@ public class Render implements GameWindowCallback
 
         // skin load
         try {
-            SkinHandler sb = new SkinHandler(this,"o2jam", window.getResolutionWidth(), window.getResolutionHeight());
+            SkinHandler sb = new SkinHandler(this,"o2jam", window.getResolutionWidth(), window.getResolutionHeight(), aspect_ratio);
             SAXParserFactory.newInstance().newSAXParser().parse(resources_xml.openStream(), sb);
             skin = sb.getResult();
         } catch (ParserConfigurationException ex) {

@@ -165,7 +165,7 @@
                       <Component id="lbl_channelModifier" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="combo_channelModifier" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="59" max="32767" attributes="0"/>
+                  <EmptySpace pref="61" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="bt_play" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jc_autoplay" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -356,7 +356,7 @@
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="configuration" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="144" max="32767" attributes="0"/>
+                          <EmptySpace pref="146" max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -403,7 +403,7 @@
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="configuration" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="95" max="32767" attributes="0"/>
+                  <EmptySpace pref="97" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
