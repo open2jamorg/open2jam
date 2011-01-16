@@ -445,8 +445,7 @@ public class Render implements GameWindowCallback
 		if(ne.getHit() > 0)
                 {
 		    Entity ee = skin.getEntityMap().get("EFFECT_LONGFLARE").copy();
-		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
-                            ne.getStartY());
+		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,ee.getY());
 		    entities_matrix.add(ee);
                     longflare.put(ne.getChannel(),(AnimatedEntity) ee);
 		    

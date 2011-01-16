@@ -798,6 +798,7 @@ public class NewInterface extends javax.swing.JFrame
 
     private String resizeString(String string, int size)
     {
+        if(string == null)return "";
         if(string.length() > size)
             string = string.substring(0, size)+"...";
         return string;

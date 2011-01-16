@@ -5,7 +5,7 @@ import java.awt.EventQueue;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
-import org.open2jam.gui.NewInterface;
+import org.open2jam.gui.Interface;
 
 public class Main
 {
@@ -27,7 +27,7 @@ public class Main
 
         EventQueue.invokeLater(new Runnable() {
             public void run() {
-                 new NewInterface().setVisible(true);
+                 new Interface().setVisible(true);
             }
         });
     }

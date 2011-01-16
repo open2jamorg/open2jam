@@ -335,7 +335,7 @@
         </entity>
 
         <entity id="EFFECT_LONGFLARE">
-            <sprite framespeed="33.3">
+            <sprite framespeed="33.3" y="460">
                 <frame x="0"    y="0"   w="128" h="128" file="longflare.png" />
                 <frame x="128"  y="0"   w="128" h="128" file="longflare.png" />
                 <frame x="256"  y="0"   w="128" h="128" file="longflare.png" />
