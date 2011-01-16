@@ -405,9 +405,9 @@ public class Render implements GameWindowCallback
         note_speed = ((bpm/240) * measure_size) / 1000.0d;
     }
     
-    // TODO: derive from judgment_line_y2 ?
     private double judgmentArea()
     {
+        //return judgment_line_y2;
 	return judgment_line_y1 + (hispeed * skin.judgment.size * 2);
     }
 

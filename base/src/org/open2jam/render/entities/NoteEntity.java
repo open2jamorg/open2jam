@@ -73,6 +73,18 @@ public class NoteEntity extends AnimatedEntity
         else if(p > 1)p = Math.max(0, 2 - p);
         return p;
     }
+
+//    protected static double testHit(double y1, double y2, double jy1, double jy2)
+//    {
+//        if(y1 > jy2 || y2 < jy1)return 0;
+//        if(y1 > jy1 && y2 < jy2)return 1;
+//        if(y1 < jy1){ // first case, before middle
+//            return (y2-jy1)/(jy2-jy1);
+//        }
+//        else{ // second case, after middle
+//            return (jy2-y1)/(jy2-jy1);
+//        }
+//    }
     
     @Override
     public void judgment()
