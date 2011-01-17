@@ -40,11 +40,13 @@ public class NewInterface extends javax.swing.JFrame
 
     static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    private ChartTableModel model_songlist;
+    private ChartListTableModel model_songlist;
+    private ChartTableModel model_chartlist;
     private String cwd;
     private DisplayMode[] display_modes;
     private ChartModelLoader task;
     private int rank = 0;
+    private ChartList selected_chart;
     private Chart selected_header;
     private int last_model_idx;
     private final TableRowSorter table_sorter;
@@ -106,7 +108,7 @@ public class NewInterface extends javax.swing.JFrame
         lbl_visibilityModifier = new javax.swing.JLabel();
         lbl_filename = new javax.swing.JLabel();
         table_scroll2 = new javax.swing.JScrollPane();
-        table_songlist2 = new javax.swing.JTable();
+        table_chartlist = new javax.swing.JTable();
         panel_setting = new javax.swing.JPanel();
         jr_rank_hard = new javax.swing.JRadioButton();
         combo_displays = new javax.swing.JComboBox();
@@ -203,15 +205,9 @@ public class NewInterface extends javax.swing.JFrame
         lbl_filename.setFont(new java.awt.Font("Tahoma", 0, 10));
         lbl_filename.setText("filename");
 
-        table_songlist2.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-
-            }
-        ));
-        table_scroll2.setViewportView(table_songlist2);
+        table_chartlist.setModel(model_chartlist);
+        table_chartlist.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        table_scroll2.setViewportView(table_chartlist);
 
         javax.swing.GroupLayout panel_infoLayout = new javax.swing.GroupLayout(panel_info);
         panel_info.setLayout(panel_infoLayout);
@@ -219,44 +215,43 @@ public class NewInterface extends javax.swing.JFrame
             panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_infoLayout.createSequentialGroup()
                 .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(table_scroll2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
+                    .addComponent(lbl_title, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panel_infoLayout.createSequentialGroup()
+                        .addComponent(lbl_cover, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(panel_infoLayout.createSequentialGroup()
+                                .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lbl_bpm1)
+                                    .addComponent(lbl_genre1)
+                                    .addComponent(lbl_level1)
+                                    .addComponent(lbl_notes1)
+                                    .addComponent(lbl_time1)
+                                    .addComponent(lbl_keys1))
+                                .addGap(18, 18, 18)
+                                .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lbl_keys)
+                                    .addComponent(lbl_level, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
+                                    .addComponent(lbl_notes, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
+                                    .addComponent(lbl_time, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
+                                    .addComponent(lbl_genre, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
+                                    .addComponent(lbl_bpm, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)))
+                            .addComponent(lbl_filename)))
+                    .addComponent(lbl_artist, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
                     .addGroup(panel_infoLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jc_autoplay)
+                        .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(panel_infoLayout.createSequentialGroup()
+                                .addComponent(lbl_channelModifier)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(combo_channelModifier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(lbl_visibilityModifier))
+                            .addComponent(jc_autoplay))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bt_play))
-                    .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(lbl_title, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
-                        .addGroup(panel_infoLayout.createSequentialGroup()
-                            .addComponent(lbl_cover, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addGroup(panel_infoLayout.createSequentialGroup()
-                                    .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(lbl_bpm1)
-                                        .addComponent(lbl_genre1)
-                                        .addComponent(lbl_level1)
-                                        .addComponent(lbl_notes1)
-                                        .addComponent(lbl_time1)
-                                        .addComponent(lbl_keys1))
-                                    .addGap(18, 18, 18)
-                                    .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(lbl_keys)
-                                        .addComponent(lbl_level, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
-                                        .addComponent(lbl_notes, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
-                                        .addComponent(lbl_time, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
-                                        .addComponent(lbl_genre, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
-                                        .addComponent(lbl_bpm, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)))
-                                .addComponent(lbl_filename)))
-                        .addComponent(lbl_artist, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
-                        .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
-                        .addGroup(panel_infoLayout.createSequentialGroup()
-                            .addContainerGap()
-                            .addComponent(lbl_channelModifier)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(combo_channelModifier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(7, 7, 7)
-                            .addComponent(lbl_visibilityModifier)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 5, Short.MAX_VALUE)
+                        .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(bt_play)
                             .addComponent(combo_visibilityModifier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
@@ -296,14 +291,14 @@ public class NewInterface extends javax.swing.JFrame
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbl_artist)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(table_scroll2, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbl_channelModifier)
-                    .addComponent(combo_channelModifier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbl_visibilityModifier)
                     .addComponent(combo_visibilityModifier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbl_visibilityModifier))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                    .addComponent(combo_channelModifier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbl_channelModifier))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jc_autoplay)
                     .addComponent(bt_play)))
@@ -403,11 +398,11 @@ public class NewInterface extends javax.swing.JFrame
                     .addGroup(panel_settingLayout.createSequentialGroup()
                         .addComponent(lbl_hispeed)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(js_hispeed, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
+                        .addComponent(js_hispeed, javax.swing.GroupLayout.PREFERRED_SIZE, 57, Short.MAX_VALUE)
                         .addGap(72, 72, 72))
                     .addGroup(panel_settingLayout.createSequentialGroup()
                         .addComponent(configuration)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(lbl_display)
                     .addGroup(panel_settingLayout.createSequentialGroup()
                         .addComponent(jc_vsync)
@@ -433,7 +428,7 @@ public class NewInterface extends javax.swing.JFrame
             .addGroup(panel_settingLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(load_progress, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
+                    .addComponent(load_progress, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE)
                     .addComponent(bt_choose_dir))
                 .addGap(18, 18, 18)
                 .addComponent(lbl_rank)
@@ -522,8 +517,8 @@ public class NewInterface extends javax.swing.JFrame
                 .addComponent(panel_info, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
-                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)))
+                    .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
+                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -532,7 +527,7 @@ public class NewInterface extends javax.swing.JFrame
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panel_info, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)
+                        .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_filter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -703,10 +698,10 @@ public class NewInterface extends javax.swing.JFrame
     private javax.swing.JPanel panel_info;
     private javax.swing.JPanel panel_setting;
     private javax.swing.ButtonGroup rank_group;
+    private javax.swing.JTable table_chartlist;
     private javax.swing.JScrollPane table_scroll;
     private javax.swing.JScrollPane table_scroll2;
     private javax.swing.JTable table_songlist;
-    private javax.swing.JTable table_songlist2;
     private javax.swing.JTextField txt_filter;
     private javax.swing.JTextField txt_res_height;
     private javax.swing.JTextField txt_res_width;
@@ -719,7 +714,8 @@ public class NewInterface extends javax.swing.JFrame
         } catch (LWJGLException ex) {
             logger.log(Level.WARNING, "Could not get the display modes !! {0}", ex.getMessage());
         }
-        model_songlist = new ChartTableModel();
+        model_songlist = new ChartListTableModel();
+        model_chartlist = new ChartTableModel();
     }
 
     private void updateSelection() {
@@ -764,8 +760,13 @@ public class NewInterface extends javax.swing.JFrame
         }else{
             i = table_songlist.convertRowIndexToModel(i);
         }
-        ChartList cl = model_songlist.getRow(i);
-        if(cl.size() > rank)selected_header = cl.get(rank);
+        selected_chart = model_songlist.getRow(i);
+        if(selected_chart.size() > rank)selected_header = selected_chart.get(rank);
+        if(selected_chart != model_chartlist.getChartList()){
+            model_chartlist.clear();
+            model_chartlist.setChartList(selected_chart);
+        }
+        table_chartlist.getSelectionModel().setSelectionInterval(0, rank);
         updateInfo();
     }
 

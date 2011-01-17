@@ -14,19 +14,19 @@ import org.open2jam.parser.ChartParser;
  *
  * @author fox
  */
-public class ChartModelLoader extends SwingWorker<ChartTableModel,ChartList>
+public class ChartModelLoader extends SwingWorker<ChartListTableModel,ChartList>
 {
     static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    private ChartTableModel table_model;
+    private ChartListTableModel table_model;
     private File dir;
 
-    public ChartModelLoader(ChartTableModel table_model, File dir){
+    public ChartModelLoader(ChartListTableModel table_model, File dir){
         this.table_model = table_model;
         this.dir = dir;
     }
 
-    protected ChartTableModel doInBackground() {
+    protected ChartListTableModel doInBackground() {
         try{
         table_model.clear();
         ArrayList<File> files = new ArrayList(Arrays.asList(dir.listFiles()));

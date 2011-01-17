@@ -40,7 +40,7 @@ public class Interface extends javax.swing.JFrame
 
     static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    private ChartTableModel model_songlist;
+    private ChartListTableModel model_songlist;
     private String cwd;
     private DisplayMode[] display_modes;
     private ChartModelLoader task;
@@ -628,7 +628,7 @@ public class Interface extends javax.swing.JFrame
         } catch (LWJGLException ex) {
             logger.log(Level.WARNING, "Could not get the display modes !! {0}", ex.getMessage());
         }
-        model_songlist = new ChartTableModel();
+        model_songlist = new ChartListTableModel();
     }
 
     private void updateSelection() {
