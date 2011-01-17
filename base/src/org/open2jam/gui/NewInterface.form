@@ -45,7 +45,7 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="About"/>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-              <Color id="Cursor predeterminado"/>
+              <Color id="Default Cursor"/>
             </Property>
           </Properties>
           <Events>
@@ -90,8 +90,8 @@
               <Component id="panel_info" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="txt_filter" pref="331" max="32767" attributes="1"/>
-                  <Component id="table_scroll" pref="331" max="32767" attributes="1"/>
+                  <Component id="txt_filter" pref="326" max="32767" attributes="1"/>
+                  <Component id="table_scroll" pref="326" max="32767" attributes="1"/>
               </Group>
           </Group>
       </Group>
@@ -103,7 +103,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="panel_info" alignment="1" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="table_scroll" pref="403" max="32767" attributes="1"/>
+                      <Component id="table_scroll" pref="419" max="32767" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="txt_filter" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -126,51 +126,51 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <Group type="103" groupAlignment="1" attributes="0">
+                      <Component id="table_scroll2" alignment="0" pref="404" max="32767" attributes="0"/>
+                      <Component id="lbl_title" alignment="0" pref="404" max="32767" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="lbl_cover" min="-2" pref="146" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="lbl_bpm1" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="lbl_genre1" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="lbl_level1" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="lbl_notes1" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="lbl_time1" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="lbl_keys1" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="lbl_keys" min="-2" max="-2" attributes="0"/>
+                                      <Component id="lbl_level" alignment="0" pref="186" max="32767" attributes="0"/>
+                                      <Component id="lbl_notes" alignment="0" pref="186" max="32767" attributes="0"/>
+                                      <Component id="lbl_time" alignment="0" pref="186" max="32767" attributes="0"/>
+                                      <Component id="lbl_genre" alignment="0" pref="186" max="32767" attributes="0"/>
+                                      <Component id="lbl_bpm" alignment="0" pref="186" max="32767" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <Component id="lbl_filename" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <Component id="lbl_artist" alignment="1" pref="404" max="32767" attributes="0"/>
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jc_autoplay" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="bt_play" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="103" alignment="1" groupAlignment="0" attributes="0">
-                          <Component id="lbl_title" alignment="0" pref="324" max="32767" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="lbl_cover" min="-2" pref="146" max="-2" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="1" attributes="0">
-                                  <Group type="102" attributes="0">
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="lbl_bpm1" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="lbl_genre1" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="lbl_level1" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="lbl_notes1" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="lbl_time1" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="lbl_keys1" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="lbl_keys" min="-2" max="-2" attributes="0"/>
-                                          <Component id="lbl_level" alignment="0" pref="117" max="32767" attributes="0"/>
-                                          <Component id="lbl_notes" alignment="0" pref="117" max="32767" attributes="0"/>
-                                          <Component id="lbl_time" alignment="0" pref="117" max="32767" attributes="0"/>
-                                          <Component id="lbl_genre" alignment="0" pref="117" max="32767" attributes="0"/>
-                                          <Component id="lbl_bpm" alignment="0" pref="117" max="32767" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                  <Component id="lbl_filename" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Group type="102" alignment="1" attributes="0">
+                                  <Component id="lbl_channelModifier" min="-2" max="-2" attributes="1"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="combo_channelModifier" min="-2" max="-2" attributes="1"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="lbl_visibilityModifier" min="-2" max="-2" attributes="0"/>
                               </Group>
+                              <Component id="jc_autoplay" alignment="1" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="lbl_artist" alignment="1" pref="324" max="32767" attributes="0"/>
-                          <Component id="table_scroll2" alignment="0" pref="324" max="32767" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="lbl_channelModifier" min="-2" max="-2" attributes="1"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="combo_channelModifier" min="-2" max="-2" attributes="1"/>
-                              <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
-                              <Component id="lbl_visibilityModifier" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="5" max="32767" attributes="0"/>
-                              <Component id="combo_visibilityModifier" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Component id="bt_play" min="-2" max="-2" attributes="0"/>
+                              <Component id="combo_visibilityModifier" alignment="1" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -222,15 +222,15 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="lbl_artist" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="table_scroll2" min="-2" pref="101" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="table_scroll2" pref="159" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="lbl_channelModifier" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="combo_channelModifier" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="combo_visibilityModifier" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="lbl_visibilityModifier" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="combo_visibilityModifier" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="combo_channelModifier" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="lbl_channelModifier" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="37" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
                       <Component id="jc_autoplay" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="bt_play" alignment="2" min="-2" max="-2" attributes="0"/>
@@ -398,13 +398,16 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JTable" name="table_songlist2">
+            <Component class="javax.swing.JTable" name="table_chartlist">
               <Properties>
-                <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                  <Table columnCount="0" rowCount="0"/>
+                <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="model_chartlist" type="code"/>
                 </Property>
                 <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                   <TableColumnModel selectionModel="0"/>
+                </Property>
+                <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
+                  <JTableSelectionModel selectionMode="0"/>
                 </Property>
                 <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                   <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
@@ -421,10 +424,6 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Component id="configuration" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="123" max="32767" attributes="0"/>
-              </Group>
-              <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
@@ -438,10 +437,19 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="lbl_hispeed" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="js_hispeed" pref="61" max="32767" attributes="0"/>
+                          <Component id="js_hispeed" pref="57" max="32767" attributes="0"/>
                           <EmptySpace min="-2" pref="72" max="-2" attributes="0"/>
                       </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="configuration" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="80" max="-2" attributes="0"/>
+                      </Group>
                       <Component id="lbl_display" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="jc_vsync" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jc_full_screen" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="jc_custom_size" min="-2" pref="85" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -457,16 +465,8 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="load_progress" min="-2" pref="91" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="jc_vsync" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jc_aspect_ratio" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jc_full_screen" alignment="0" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
                   </Group>
-                  <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -475,7 +475,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="load_progress" pref="23" max="32767" attributes="1"/>
+                      <Component id="load_progress" pref="27" max="32767" attributes="1"/>
                       <Component id="bt_choose_dir" alignment="1" min="-2" max="-2" attributes="1"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -507,11 +507,9 @@
                       <Component id="jc_vsync" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jc_full_screen" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jc_aspect_ratio" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="configuration" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="112" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -567,10 +565,7 @@
         </Component>
         <Component class="javax.swing.JCheckBox" name="jc_custom_size">
           <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="10" style="0"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="Custom size:"/>
+            <Property name="text" type="java.lang.String" value="custom size:"/>
           </Properties>
           <Events>
             <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="custom_size_clicked"/>
@@ -645,11 +640,6 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="configurationActionPerformed"/>
           </Events>
-        </Component>
-        <Component class="javax.swing.JCheckBox" name="jc_aspect_ratio">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Keep aspect ratio"/>
-          </Properties>
         </Component>
       </SubComponents>
     </Container>

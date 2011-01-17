@@ -16,14 +16,14 @@ public interface Sprite {
 	 * 
 	 * @return The width in pixels of this sprite
 	 */
-	public int getWidth();
+	public double getWidth();
 
 	/**
 	 * Get the height of the drawn sprite
 	 * 
 	 * @return The height in pixels of this sprite
 	 */
-	public int getHeight();
+	public double getHeight();
 
         public float getFloatHeight();
 

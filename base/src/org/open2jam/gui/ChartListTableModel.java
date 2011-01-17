@@ -12,18 +12,18 @@ import org.open2jam.parser.ChartList;
  *
  * @author fox
  */
-public class ChartTableModel implements TableModel
+public class ChartListTableModel implements TableModel
 {
-    private List<Chart> items;
+    private List<ChartList> items;
     private String[] col_names = new String[] { "Name", "Level", "Genre" };
-    private ChartList chartlist;
+    private int rank;
     
     private List<TableModelListener> listeners;
 
-    public ChartTableModel()
+    public ChartListTableModel()
     {
         listeners = new ArrayList<TableModelListener>();
-        items = new ArrayList<Chart>();
+        items = new ArrayList<ChartList>();
     }
     
     public void clear()
@@ -31,24 +31,19 @@ public class ChartTableModel implements TableModel
         items.clear();
     }
 
-    public void addRow(Chart h)
+    public void addRow(ChartList h)
     {
         items.add(h);
         fireListeners();
     }
 
-    public void setChartList(ChartList c)
+    public void setRank(int rank)
     {
-        this.chartlist = c;
-        for(Chart h : this.chartlist)addRow(h);
+        this.rank = rank;
         fireListeners();
     }
 
-    public ChartList getChartList(){
-        return chartlist;
-    }
-
-    public Chart getRow(int row)
+    public ChartList getRow(int row)
     {
         return items.get(row);
     }
@@ -80,7 +75,7 @@ public class ChartTableModel implements TableModel
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Chart c = items.get(rowIndex);
+        Chart c = items.get(rowIndex).get(rank);
         switch(columnIndex)
         {
             case 0:return c.getTitle();

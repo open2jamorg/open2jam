@@ -94,8 +94,8 @@ public class LWJGLSprite implements Sprite {
      *
      * @return The width of this sprite in pixels
      */
-    public int getWidth() {
-        return (int) Math.round(width * scale_x * screen_scale_x);
+    public double getWidth() {
+        return width * scale_x * screen_scale_x;
     }
 
     /**
@@ -103,8 +103,8 @@ public class LWJGLSprite implements Sprite {
      *
      * @return The height of this sprite in pixels
      */
-    public int getHeight() {
-        return (int) Math.round(height * scale_y * screen_scale_y);
+    public double getHeight() {
+        return height * scale_y * screen_scale_y;
     }
 
     /**

@@ -413,9 +413,9 @@ public class Render implements GameWindowCallback
         note_speed = ((bpm/240) * measure_size) / 1000.0d;
     }
     
-    // TODO: derive from judgment_line_y2 ?
     private double judgmentArea()
     {
+        //return judgment_line_y2;
 	return judgment_line_y1 + (hispeed * skin.judgment.size * 2);
     }
 
@@ -453,8 +453,7 @@ public class Render implements GameWindowCallback
 		if(ne.getHit() > 0)
                 {
 		    Entity ee = skin.getEntityMap().get("EFFECT_LONGFLARE").copy();
-		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
-                            ne.getStartY());
+		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,ee.getY());
 		    entities_matrix.add(ee);
                     longflare.put(ne.getChannel(),(AnimatedEntity) ee);
 		    

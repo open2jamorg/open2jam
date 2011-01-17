@@ -18,7 +18,7 @@ sub pp_header
 	my $h = unpack2hash(join(' ',qw/
 	i:$songid
 	a4:$signature
-	c4:@encoder_value
+	f:$encode_version
 	i:$genre
 	f:$bpm
 	s4:@level
@@ -26,18 +26,19 @@ sub pp_header
 	i3:@note_count
 	i3:@measure_count
 	i3:@package_count
-	s:$unk_1D
-	s:$unk_songid
-	a20:$unk_oldgenre
+	s:$old_encode_version
+	s:$old_songid
+	a20:$old_genre
 	i:$bmp_size
-	s2:@unk_a
+	i:$file_version
 	Z64:$title
 	Z32:$artist
 	a32:$noter
 	Z32:$ojm_file
 	i:$cover_size
 	i3:@time
-	i4:@note_offset
+	i3:@note_offset
+    i:$cover_offset
 	/), $data);
 
 	print Dumper $h;
