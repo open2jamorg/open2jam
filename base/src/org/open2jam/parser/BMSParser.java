@@ -1,5 +1,6 @@
 package org.open2jam.parser;
 
+import java.io.BufferedInputStream;
 import java.util.logging.Level;
 import org.open2jam.util.OggInputStream;
 import java.io.BufferedReader;
@@ -13,11 +14,16 @@ import java.util.NoSuchElementException;
 import java.io.FileNotFoundException;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
+import org.mozilla.intl.chardet.nsDetector;
+import org.mozilla.intl.chardet.nsICharsetDetectionObserver;
+import org.mozilla.intl.chardet.nsPSMDetector;
 import org.open2jam.render.lwjgl.SoundManager;
 
 public class BMSParser
@@ -53,23 +59,58 @@ public class BMSParser
                 list.add(parseBMSHeader(bms_files[i]));
             } catch (UnsupportedOperationException e){}
               catch (Exception e) {
-                logger.log(Level.WARNING, null, e);
+                logger.log(Level.WARNING, "{0}", e);
             }
         }
         Collections.sort(list);
         return list;
     }
 
-    private static BMSChart parseBMSHeader(File f) throws BadFileException
+    private static String last_charset;
+    private static String detectCharset(File f) throws FileNotFoundException, IOException
     {
+        nsDetector det = new nsDetector(nsPSMDetector.ALL);
+        last_charset = "US-ASCII";
+        det.Init(new nsICharsetDetectionObserver() {
+            public void Notify(String c) {
+                last_charset = c;
+                logger.log(Level.SEVERE, "Detected charset {0}", c);
+            }
+        });
+        BufferedInputStream imp = new BufferedInputStream(new FileInputStream(f));
+        byte[] buf = new byte[1024] ;
+        int len;
+        boolean done = false ;
+        boolean isAscii = true ;
+        while( (len=imp.read(buf,0,buf.length)) != -1) {
+
+                // Check if the stream is only ascii.
+                if (isAscii)
+                    isAscii = det.isAscii(buf,len);
+
+                // DoIt if non-ascii and not done yet.
+                if (!isAscii && !done)
+                    done = det.DoIt(buf,len, false);
+        }
+        det.DataEnd();
+        return last_charset;
+    }
+
+    private static BMSChart parseBMSHeader(File f) throws BadFileException, FileNotFoundException, IOException
+    {
+        String charset = detectCharset(f);
+
         BMSChart chart = new BMSChart();
         chart.source = f;
         BufferedReader r = null;
         try{
-            r = new BufferedReader(new FileReader(f));
+            r = new BufferedReader(new InputStreamReader(new FileInputStream(f),charset));
         }catch(FileNotFoundException e){
             logger.log(Level.WARNING, "File {0} not found !!", f.getName());
             return null;
+        }catch(UnsupportedEncodingException e2){
+            logger.warning("Encoding not supported !");
+            r = new BufferedReader(new FileReader(f));
         }
         
         String line = null;
@@ -127,7 +168,23 @@ public class BMSParser
                         chart.lnobj = Integer.parseInt(st.nextToken(), 36);
                 }
                 if(cmd.equals("#STAGEFILE")){
-                        chart.image_cover = new File(f.getParent(),st.nextToken("").trim());
+                    chart.image_cover = new File(f.getParent(),st.nextToken("").trim());
+                    if(!chart.image_cover.exists())
+                    {
+                        String target = chart.image_cover.getName();
+                        int idx = target.lastIndexOf('.');
+                        if(idx > 0)target = target.substring(idx);
+                        for(File ff : chart.source.getParentFile().listFiles())
+                        {
+                            String s = f.getName();
+                            idx = s.lastIndexOf('.');
+                            if(idx > 0)s = s.substring(0, idx);
+                            if(target.equals(s)){
+                                chart.image_cover = ff;
+                                break;
+                            }
+                        }
+                    }
                 }
                 if(cmd.startsWith("#WAV")){
                         int id = Integer.parseInt(cmd.replaceFirst("#WAV",""), 36);
