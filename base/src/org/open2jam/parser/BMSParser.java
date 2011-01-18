@@ -1,6 +1,5 @@
 package org.open2jam.parser;
 
-import java.io.BufferedInputStream;
 import java.util.logging.Level;
 import org.open2jam.util.OggInputStream;
 import java.io.BufferedReader;
@@ -21,10 +20,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
-import org.mozilla.intl.chardet.nsDetector;
-import org.mozilla.intl.chardet.nsICharsetDetectionObserver;
-import org.mozilla.intl.chardet.nsPSMDetector;
 import org.open2jam.render.lwjgl.SoundManager;
+import org.open2jam.util.CharsetDetector;
 
 public class BMSParser
 {
@@ -66,39 +63,9 @@ public class BMSParser
         return list;
     }
 
-    private static String last_charset;
-    private static String detectCharset(File f) throws FileNotFoundException, IOException
-    {
-        nsDetector det = new nsDetector(nsPSMDetector.ALL);
-        last_charset = "US-ASCII";
-        det.Init(new nsICharsetDetectionObserver() {
-            public void Notify(String c) {
-                last_charset = c;
-                logger.log(Level.SEVERE, "Detected charset {0}", c);
-            }
-        });
-        BufferedInputStream imp = new BufferedInputStream(new FileInputStream(f));
-        byte[] buf = new byte[1024] ;
-        int len;
-        boolean done = false ;
-        boolean isAscii = true ;
-        while( (len=imp.read(buf,0,buf.length)) != -1) {
-
-                // Check if the stream is only ascii.
-                if (isAscii)
-                    isAscii = det.isAscii(buf,len);
-
-                // DoIt if non-ascii and not done yet.
-                if (!isAscii && !done)
-                    done = det.DoIt(buf,len, false);
-        }
-        det.DataEnd();
-        return last_charset;
-    }
-
     private static BMSChart parseBMSHeader(File f) throws BadFileException, FileNotFoundException, IOException
     {
-        String charset = detectCharset(f);
+        String charset = CharsetDetector.analyze(f);
 
         BMSChart chart = new BMSChart();
         chart.source = f;
@@ -109,7 +76,7 @@ public class BMSParser
             logger.log(Level.WARNING, "File {0} not found !!", f.getName());
             return null;
         }catch(UnsupportedEncodingException e2){
-            logger.warning("Encoding not supported !");
+            logger.log(Level.WARNING, "Encoding [{0}] not supported !", charset);
             r = new BufferedReader(new FileReader(f));
         }
         

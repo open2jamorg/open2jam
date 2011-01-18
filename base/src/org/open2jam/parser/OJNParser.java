@@ -1,6 +1,7 @@
 package org.open2jam.parser;
 
 import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.io.File;
@@ -10,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.open2jam.util.CharsetDetector;
 
 public class OJNParser
 {
@@ -59,8 +61,7 @@ public class OJNParser
         int signature = buffer.getInt();
         if(signature != OJN_SIGNATURE)throw new BadFileException("Not a OJN file");
 
-        byte encoder_value[] = new byte[4];
-        buffer.get(encoder_value);
+        float encode_version = buffer.getFloat();
         
         int genre = buffer.getInt();
         String str_genre = genre_map[(genre<0||genre>10)?10:genre];
@@ -95,16 +96,13 @@ public class OJNParser
         package_count[0] = buffer.getInt();
         package_count[1] = buffer.getInt();
         package_count[2] = buffer.getInt();
-        short unk_id[] = new short[2];
-        unk_id[0] = buffer.getShort();
-        unk_id[1] = buffer.getShort();
-        byte unk_oldgenre[] = new byte[20];
-        buffer.get(unk_oldgenre);
+        short old_encode_version = buffer.getShort();
+        short old_songid = buffer.getShort();
+        byte old_genre[] = new byte[20];
+        buffer.get(old_genre);
         int bmp_size = buffer.getInt();
-        short unk_a[] = new short[2];
-        unk_a[0] = buffer.getShort();
-        unk_a[1] = buffer.getShort();
-        
+        int file_version = buffer.getInt();
+
         byte title[] = new byte[64];
         buffer.get(title);
         String str_title = bytes2string(title);
@@ -268,6 +266,12 @@ public class OJNParser
     {
         int i = 0;
         while(ch[i]!=0 && i<ch.length)i++; // find \0 terminator
-        return new String(ch,0,i);
+        String charset = CharsetDetector.analyze(ch);
+        try {
+            return new String(ch,0,i,charset);
+        } catch (UnsupportedEncodingException ex) {
+            logger.log(Level.WARNING, "Encoding [{0}] not supported !", charset);
+            return new String(ch,0,i);
+        }
     }
 }
