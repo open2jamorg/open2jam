@@ -11,8 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.mozilla.intl.chardet.*;
+import org.open2jam.util.CharsetDetector;
 
 public class OJNParser
 {
@@ -41,7 +40,7 @@ public class OJNParser
 //        return false;
     }
 
-    public static ChartList parseFile(File file) throws UnsupportedEncodingException
+    public static ChartList parseFile(File file)
     {
         ByteBuffer buffer = null;
         RandomAccessFile f = null;
@@ -62,8 +61,7 @@ public class OJNParser
         int signature = buffer.getInt();
         if(signature != OJN_SIGNATURE)throw new BadFileException("Not a OJN file");
 
-        byte encoder_value[] = new byte[4];
-        buffer.get(encoder_value);
+        float encode_version = buffer.getFloat();
         
         int genre = buffer.getInt();
         String str_genre = genre_map[(genre<0||genre>10)?10:genre];
@@ -98,16 +96,13 @@ public class OJNParser
         package_count[0] = buffer.getInt();
         package_count[1] = buffer.getInt();
         package_count[2] = buffer.getInt();
-        short unk_id[] = new short[2];
-        unk_id[0] = buffer.getShort();
-        unk_id[1] = buffer.getShort();
-        byte unk_oldgenre[] = new byte[20];
-        buffer.get(unk_oldgenre);
+        short old_encode_version = buffer.getShort();
+        short old_songid = buffer.getShort();
+        byte old_genre[] = new byte[20];
+        buffer.get(old_genre);
         int bmp_size = buffer.getInt();
-        short unk_a[] = new short[2];
-        unk_a[0] = buffer.getShort();
-        unk_a[1] = buffer.getShort();
-        
+        int file_version = buffer.getInt();
+
         byte title[] = new byte[64];
         buffer.get(title);
         String str_title = bytes2string(title);
@@ -267,35 +262,16 @@ public class OJNParser
         Collections.sort(event_list);
     }
 
-    private static String bytes2string(byte[] ch) throws UnsupportedEncodingException
+    private static String bytes2string(byte[] ch)
     {
         int i = 0;
         while(ch[i]!=0 && i<ch.length)i++; // find \0 terminator
-        getCharset(ch);
-        return new String(ch,0,i, charSet);
-    }
-
-    private static String charSet;
-    private static void getCharset(byte[] str)
-    {
-        nsDetector det = new nsDetector(nsPSMDetector.ALL);
-        charSet = "US-ASCII";
-	det.Init(new nsICharsetDetectionObserver() {
-		public void Notify(String charset) {
-                    charSet = charset;
-                    logger.log(Level.SEVERE, "Detected charset {0}", charset);
-		}
-    	});
-
-        boolean done = false;
-        boolean isAscii = true;
-
-        if(isAscii)
-            isAscii = det.isAscii(str, str.length);
-
-        if(!isAscii && !done)
-            done = det.DoIt(str, str.length, false);
-
-        det.DataEnd();
+        String charset = CharsetDetector.analyze(ch);
+        try {
+            return new String(ch,0,i,charset);
+        } catch (UnsupportedEncodingException ex) {
+            logger.log(Level.WARNING, "Encoding [{0}] not supported !", charset);
+            return new String(ch,0,i);
+        }
     }
 }
