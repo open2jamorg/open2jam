@@ -85,6 +85,14 @@ public class NewInterface extends javax.swing.JFrame
                 int selectedRow = lsm.getMinSelectionIndex();
                 if(selectedRow < 0) return;
                 selected_header = selected_chart.get(selectedRow);
+                if(selectedRow != rank)
+                {
+                    lbl_rank.setText("Overriden rank!!!");
+                }
+                else
+                {
+                    lbl_rank.setText("Rank:");
+                }
                 updateInfo();
             }
         });
@@ -163,7 +171,7 @@ public class NewInterface extends javax.swing.JFrame
         lbl_title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbl_title.setText("Title");
 
-        lbl_artist.setFont(new java.awt.Font("Tahoma", 2, 11));
+        lbl_artist.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         lbl_artist.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbl_artist.setText("Artist");
 
@@ -187,7 +195,7 @@ public class NewInterface extends javax.swing.JFrame
 
         lbl_time1.setText("Time:");
 
-        bt_play.setFont(new java.awt.Font("Tahoma", 0, 18));
+        bt_play.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         bt_play.setText("Play !");
         bt_play.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -487,7 +495,7 @@ public class NewInterface extends javax.swing.JFrame
         table_songlist.getSelectionModel().addListSelectionListener(this);
         table_scroll.setViewportView(table_songlist);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12));
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel1.setText("Source");
 
         jMenu1.setText("File");
@@ -787,6 +795,10 @@ public class NewInterface extends javax.swing.JFrame
     }
 
     public void valueChanged(ListSelectionEvent e) {
+        if(!task.isDone())
+        {
+            return;//TODO look for a better place to wait until everything is loaded
+        }
         int i = table_songlist.getSelectedRow();
         if(i < 0 && last_model_idx >= 0){
             i = last_model_idx;
@@ -802,8 +814,10 @@ public class NewInterface extends javax.swing.JFrame
             model_chartlist.clear();
             model_chartlist.setChartList(selected_chart);
         }
-
-        table_chartlist.getSelectionModel().setSelectionInterval(0, rank);
+        if(selected_chart.size()-1 < rank)
+            table_chartlist.getSelectionModel().setSelectionInterval(0, 0);
+        else
+            table_chartlist.getSelectionModel().setSelectionInterval(0, rank);
         updateInfo();
     }
 

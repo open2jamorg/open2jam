@@ -75,10 +75,18 @@ public class ChartListTableModel implements TableModel
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Chart c = items.get(rowIndex).get(rank);
+        Chart c = null;
+        if(items.get(rowIndex).size()-1 < rank)
+            c = items.get(rowIndex).get(0);
+        else
+            c = items.get(rowIndex).get(rank);
         switch(columnIndex)
         {
-            case 0:return c.getTitle();
+            case 0:
+                String str = c.getTitle();
+                if(items.get(rowIndex).size()-1 < rank)
+                    str = "[AUTO-EASY] "+str;
+                return str;
             case 1:return c.getLevel();
             case 2:return c.getGenre();
         }
