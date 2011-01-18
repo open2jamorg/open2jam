@@ -1,6 +1,7 @@
 package org.open2jam.parser;
 
 import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.io.File;
@@ -10,6 +11,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.mozilla.intl.chardet.*;
 
 public class OJNParser
 {
@@ -38,7 +41,7 @@ public class OJNParser
 //        return false;
     }
 
-    public static ChartList parseFile(File file)
+    public static ChartList parseFile(File file) throws UnsupportedEncodingException
     {
         ByteBuffer buffer = null;
         RandomAccessFile f = null;
@@ -264,10 +267,48 @@ public class OJNParser
         Collections.sort(event_list);
     }
 
-    private static String bytes2string(byte[] ch)
+    private static String bytes2string(byte[] ch) throws UnsupportedEncodingException
     {
         int i = 0;
         while(ch[i]!=0 && i<ch.length)i++; // find \0 terminator
-        return new String(ch,0,i);
+        getCharset(ch);
+        return new String(ch,0,i, charSet);
+    }
+
+    private static boolean charset_found;
+    private static String charSet;
+    private static void getCharset(byte[] str)
+    {
+        nsDetector det = new nsDetector(nsPSMDetector.ALL);
+	det.Init(new nsICharsetDetectionObserver() {
+		public void Notify(String charset) {
+                    charset_found = true ;
+                    charSet = charset;
+                    logger.log(Level.INFO, "CHARSET: {0}", charset);
+		}
+    	});
+
+        boolean done = false;
+        boolean isAscii = true;
+
+        if(isAscii)
+            isAscii = det.isAscii(str, str.length);
+
+        if(!isAscii && !done)
+            done = det.DoIt(str, str.length, false);
+
+        det.DataEnd();
+
+        if(isAscii)
+        {
+            logger.log(Level.INFO, "CHARSET: ASCII");
+            charset_found = true;
+            charSet = "ASCII";
+        }
+
+	if (!charset_found) {
+		logger.log(Level.INFO, "CHARSET: NOTFOUNDED");
+                charSet = "ASCII";
+	}
     }
 }
