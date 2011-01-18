@@ -61,22 +61,6 @@ public class BMSChart extends Chart
     protected File image_cover;
     public BufferedImage getCover() {
         if(image_cover == null)return null;
-        if(!image_cover.exists())
-        {
-            String target = image_cover.getName();
-            int idx = target.lastIndexOf('.');
-            if(idx > 0)target = target.substring(idx);
-            for(File f : source.getParentFile().listFiles())
-            {
-                String s = f.getName();
-                idx = s.lastIndexOf('.');
-                if(idx > 0)s = s.substring(0, idx);
-                if(target.equals(s)){
-                    image_cover = f;
-                    break;
-                }
-            }
-        }
         try {
             return ImageIO.read(image_cover);
         } catch (IOException ex) {
