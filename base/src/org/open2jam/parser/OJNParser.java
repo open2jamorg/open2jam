@@ -275,16 +275,15 @@ public class OJNParser
         return new String(ch,0,i, charSet);
     }
 
-    private static boolean charset_found;
     private static String charSet;
     private static void getCharset(byte[] str)
     {
         nsDetector det = new nsDetector(nsPSMDetector.ALL);
+        charSet = "US-ASCII";
 	det.Init(new nsICharsetDetectionObserver() {
 		public void Notify(String charset) {
-                    charset_found = true ;
                     charSet = charset;
-                    logger.log(Level.INFO, "CHARSET: {0}", charset);
+                    logger.log(Level.SEVERE, "Detected charset {0}", charset);
 		}
     	});
 
@@ -298,17 +297,5 @@ public class OJNParser
             done = det.DoIt(str, str.length, false);
 
         det.DataEnd();
-
-        if(isAscii)
-        {
-            logger.log(Level.INFO, "CHARSET: ASCII");
-            charset_found = true;
-            charSet = "ASCII";
-        }
-
-	if (!charset_found) {
-		logger.log(Level.INFO, "CHARSET: NOTFOUNDED");
-                charSet = "ASCII";
-	}
     }
 }

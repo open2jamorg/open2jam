@@ -165,39 +165,38 @@ public class NewInterface extends javax.swing.JFrame
         menu_about = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("org/open2jam/gui/Bundle"); // NOI18N
-        setTitle(bundle.getString("NewInterface.title")); // NOI18N
+        setTitle("Open2Jam");
 
-        lbl_title.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        lbl_title.setFont(new java.awt.Font("Tahoma", 0, 18));
         lbl_title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbl_title.setText(bundle.getString("NewInterface.lbl_title.text")); // NOI18N
+        lbl_title.setText("Title");
 
         lbl_artist.setFont(new java.awt.Font("Tahoma", 2, 11));
         lbl_artist.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbl_artist.setText(bundle.getString("NewInterface.lbl_artist.text")); // NOI18N
+        lbl_artist.setText("Artist");
 
-        lbl_bpm.setText(bundle.getString("NewInterface.lbl_bpm.text")); // NOI18N
+        lbl_bpm.setText("content");
 
-        lbl_level.setText(bundle.getString("NewInterface.lbl_level.text")); // NOI18N
+        lbl_level.setText("content");
 
-        lbl_notes.setText(bundle.getString("NewInterface.lbl_notes.text")); // NOI18N
+        lbl_notes.setText("content");
 
-        lbl_time.setText(bundle.getString("NewInterface.lbl_time.text")); // NOI18N
+        lbl_time.setText("content");
 
-        lbl_genre.setText(bundle.getString("NewInterface.lbl_genre.text")); // NOI18N
+        lbl_genre.setText("content");
 
-        lbl_bpm1.setText(bundle.getString("NewInterface.lbl_bpm1.text")); // NOI18N
+        lbl_bpm1.setText("BPM:");
 
-        lbl_genre1.setText(bundle.getString("NewInterface.lbl_genre1.text")); // NOI18N
+        lbl_genre1.setText("Genre:");
 
-        lbl_level1.setText(bundle.getString("NewInterface.lbl_level1.text")); // NOI18N
+        lbl_level1.setText("Level:");
 
-        lbl_notes1.setText(bundle.getString("NewInterface.lbl_notes1.text")); // NOI18N
+        lbl_notes1.setText("Notes:");
 
-        lbl_time1.setText(bundle.getString("NewInterface.lbl_time1.text")); // NOI18N
+        lbl_time1.setText("Time:");
 
         bt_play.setFont(new java.awt.Font("Tahoma", 0, 18));
-        bt_play.setText(bundle.getString("NewInterface.bt_play.text")); // NOI18N
+        bt_play.setText("Play !");
         bt_play.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bt_playActionPerformed(evt);
@@ -214,22 +213,22 @@ public class NewInterface extends javax.swing.JFrame
             }
         });
 
-        lbl_keys1.setText(bundle.getString("NewInterface.lbl_keys1.text")); // NOI18N
+        lbl_keys1.setText("Keys:");
 
-        lbl_keys.setText(bundle.getString("NewInterface.lbl_keys.text")); // NOI18N
+        lbl_keys.setText("content");
 
-        jc_autoplay.setText(bundle.getString("NewInterface.jc_autoplay.text")); // NOI18N
+        jc_autoplay.setText("Autoplay");
 
         combo_channelModifier.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--None--", "Mirror", "Shuffle", "Random" }));
 
-        lbl_channelModifier.setText(bundle.getString("NewInterface.lbl_channelModifier.text")); // NOI18N
+        lbl_channelModifier.setText("Channel Modifier:");
 
         combo_visibilityModifier.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--None--", "Hidden", "Sudden", "Dark" }));
 
-        lbl_visibilityModifier.setText(bundle.getString("NewInterface.lbl_visibilityModifier.text")); // NOI18N
+        lbl_visibilityModifier.setText("Visibility Modifier:");
 
         lbl_filename.setFont(new java.awt.Font("Tahoma", 0, 10));
-        lbl_filename.setText(bundle.getString("NewInterface.lbl_filename.text")); // NOI18N
+        lbl_filename.setText("filename");
 
         table_chartlist.setModel(model_chartlist);
         table_chartlist.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
@@ -331,7 +330,7 @@ public class NewInterface extends javax.swing.JFrame
         );
 
         rank_group.add(jr_rank_hard);
-        jr_rank_hard.setText(bundle.getString("NewInterface.jr_rank_hard.text")); // NOI18N
+        jr_rank_hard.setText("Hard");
         jr_rank_hard.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jr_rank_hard.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jr_rank_hard.addActionListener(new java.awt.event.ActionListener() {
@@ -342,21 +341,21 @@ public class NewInterface extends javax.swing.JFrame
 
         combo_displays.setModel(new javax.swing.DefaultComboBoxModel(display_modes));
 
-        txt_res_height.setText(bundle.getString("NewInterface.txt_res_height.text")); // NOI18N
+        txt_res_height.setText("600");
         txt_res_height.setEnabled(false);
 
-        txt_res_width.setText(bundle.getString("NewInterface.txt_res_width.text")); // NOI18N
+        txt_res_width.setText("800");
         txt_res_width.setEnabled(false);
 
         jc_vsync.setSelected(true);
-        jc_vsync.setText(bundle.getString("NewInterface.jc_vsync.text")); // NOI18N
+        jc_vsync.setText("Use VSync");
 
-        lbl_rank.setText(bundle.getString("NewInterface.lbl_rank.text")); // NOI18N
+        lbl_rank.setText("Rank:");
 
-        lbl_display.setText(bundle.getString("NewInterface.lbl_display.text")); // NOI18N
+        lbl_display.setText("Display:");
 
         jc_custom_size.setFont(new java.awt.Font("Tahoma", 0, 10));
-        jc_custom_size.setText(bundle.getString("NewInterface.jc_custom_size.text")); // NOI18N
+        jc_custom_size.setText("Custom size:");
         jc_custom_size.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 custom_size_clicked(evt);
@@ -365,7 +364,7 @@ public class NewInterface extends javax.swing.JFrame
 
         rank_group.add(jr_rank_easy);
         jr_rank_easy.setSelected(true);
-        jr_rank_easy.setText(bundle.getString("NewInterface.jr_rank_easy.text")); // NOI18N
+        jr_rank_easy.setText("Easy");
         jr_rank_easy.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jr_rank_easy.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jr_rank_easy.addActionListener(new java.awt.event.ActionListener() {
@@ -374,12 +373,12 @@ public class NewInterface extends javax.swing.JFrame
             }
         });
 
-        lbl_hispeed.setText(bundle.getString("NewInterface.lbl_hispeed.text")); // NOI18N
+        lbl_hispeed.setText("Hi-Speed:");
 
-        lbl_res_x.setText(bundle.getString("NewInterface.lbl_res_x.text")); // NOI18N
+        lbl_res_x.setText("x");
 
         rank_group.add(jr_rank_normal);
-        jr_rank_normal.setText(bundle.getString("NewInterface.jr_rank_normal.text")); // NOI18N
+        jr_rank_normal.setText("Normal");
         jr_rank_normal.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jr_rank_normal.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jr_rank_normal.addActionListener(new java.awt.event.ActionListener() {
@@ -388,9 +387,9 @@ public class NewInterface extends javax.swing.JFrame
             }
         });
 
-        jc_full_screen.setText(bundle.getString("NewInterface.jc_full_screen.text")); // NOI18N
+        jc_full_screen.setText("Full screen");
 
-        bt_choose_dir.setText(bundle.getString("NewInterface.bt_choose_dir.text")); // NOI18N
+        bt_choose_dir.setText("Choose dir");
         bt_choose_dir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bt_choose_dirActionPerformed(evt);
@@ -401,14 +400,14 @@ public class NewInterface extends javax.swing.JFrame
 
         js_hispeed.setModel(new javax.swing.SpinnerNumberModel(1.0d, 0.5d, 10.0d, 0.5d));
 
-        configuration.setText(bundle.getString("NewInterface.configuration.text")); // NOI18N
+        configuration.setText("Configuration");
         configuration.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 configurationActionPerformed(evt);
             }
         });
 
-        jc_aspect_ratio.setText(bundle.getString("NewInterface.jc_aspect_ratio.text")); // NOI18N
+        jc_aspect_ratio.setText("Keep aspect ratio");
 
         javax.swing.GroupLayout panel_settingLayout = new javax.swing.GroupLayout(panel_setting);
         panel_setting.setLayout(panel_settingLayout);
@@ -497,12 +496,12 @@ public class NewInterface extends javax.swing.JFrame
         table_scroll.setViewportView(table_songlist);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12));
-        jLabel1.setText(bundle.getString("NewInterface.jLabel1.text")); // NOI18N
+        jLabel1.setText("Source");
 
-        jMenu1.setText(bundle.getString("NewInterface.jMenu1.text")); // NOI18N
+        jMenu1.setText("File");
 
         mitem_exit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
-        mitem_exit.setText(bundle.getString("NewInterface.mitem_exit.text")); // NOI18N
+        mitem_exit.setText("Exit");
         mitem_exit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mitem_exitActionPerformed(evt);
@@ -512,17 +511,17 @@ public class NewInterface extends javax.swing.JFrame
 
         jMenuBar1.add(jMenu1);
 
-        jMenu3.setText(bundle.getString("NewInterface.jMenu3.text")); // NOI18N
+        jMenu3.setText("Tools");
 
-        jMenuItem1.setText(bundle.getString("NewInterface.jMenuItem1.text")); // NOI18N
+        jMenuItem1.setText("OJM Dumper");
         jMenu3.add(jMenuItem1);
 
-        jMenuItem2.setText(bundle.getString("NewInterface.jMenuItem2.text")); // NOI18N
+        jMenuItem2.setText("OJN <-> BMS");
         jMenu3.add(jMenuItem2);
 
         jMenuBar1.add(jMenu3);
 
-        menu_about.setText(bundle.getString("NewInterface.menu_about.text")); // NOI18N
+        menu_about.setText("About");
         menu_about.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         menu_about.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
