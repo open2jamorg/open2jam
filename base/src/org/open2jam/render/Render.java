@@ -2,7 +2,6 @@ package org.open2jam.render;
 
 import java.awt.image.BufferedImage;
 import java.net.URL;
-import java.util.ArrayDeque;
 import java.util.Map;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -141,11 +140,8 @@ public class Render implements GameWindowCallback
 
     /** this queue hold the available sources
      * that may be used to play sounds */
-    private ArrayDeque<Integer> source_queue;
-
-    /** this list hold the sources that are playing
-     * sounds at the moment */
-    private LinkedList<Integer> sources_playing;
+    private LinkedList<Integer> source_queue;
+    private Iterator<Integer> source_queue_iterator;
 
     /** number to display the fps, and note counters on the screen */
     private NumberEntity fps_entity;
@@ -303,15 +299,16 @@ public class Render implements GameWindowCallback
 
 
         // create sound sources
-        source_queue = new ArrayDeque<Integer>(MAX_SOURCES);
-        sources_playing = new LinkedList<Integer>();
+        source_queue = new LinkedList<Integer>();
 
         try{
             for(int i=0;i<MAX_SOURCES;i++)
-                source_queue.push(SoundManager.newSource()); // creates sources
+                source_queue.add(SoundManager.newSource()); // creates sources
         }catch(org.lwjgl.openal.OpenALException e){
             logger.log(Level.WARNING, "Couldn''t create enough sources({0})", MAX_SOURCES);
         }
+
+        source_queue_iterator = source_queue.iterator();
 
         // get the chart sound samples
         samples = chart.getSamples();
@@ -347,8 +344,6 @@ public class Render implements GameWindowCallback
             lastFpsTime = 0;
             fps = 0;
         }
-        
-        check_sources();
 
 	if(AUTOPLAY)do_autoplay();
         else check_keyboard();
@@ -386,13 +381,16 @@ public class Render implements GameWindowCallback
         buffer_offset += note_speed * delta; // walk with the buffer
 
         if(!buffer_iterator.hasNext() && entities_matrix.isEmpty(note_layer)){
-            if(sources_playing.isEmpty()){
-                window.destroy();
-                return;
+            for(Integer source : source_queue)
+            {
+                // this source is still playing, remove the sounds from the player
+                if(SoundManager.isPlaying(source)){
+                    last_sound.clear();
+                    return;
+                }
             }
-            else{
-                last_sound.clear();
-            }
+            // all sources have finished playing
+            window.destroy();
         }
     }
 
@@ -472,7 +470,7 @@ public class Render implements GameWindowCallback
                 entities_matrix.add(judgment_entity);
 
 		note_counter.get(judge).incNumber();
-		if(ne.getHit() > 0) // TODO: compare with MISS ?
+		if(judge.equals(MISS_JUDGE))
                 {
 		    Entity ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
 		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
@@ -843,28 +841,28 @@ public class Render implements GameWindowCallback
     {
         Integer buffer = samples.get(sample.sample_id);
         if(buffer == null)return;
-        if(source_queue.isEmpty()){
-            logger.warning("Source queue exausted !");
-            return;
+
+
+        if(!source_queue_iterator.hasNext())
+            source_queue_iterator = source_queue.iterator();
+        Integer head = source_queue_iterator.next();
+
+        Integer source = head;
+
+        while(SoundManager.isPlaying(source)){
+            if(!source_queue_iterator.hasNext())
+                source_queue_iterator = source_queue.iterator();
+            source = source_queue_iterator.next();
+
+            if(source.equals(head)){
+                logger.warning("Source queue exausted !");
+                return;
+            }
         }
-        Integer source = source_queue.pollFirst();
+
         SoundManager.setGain(source, sample.volume);
         SoundManager.setPan(source, sample.pan);
         SoundManager.play(source, buffer);
-        sources_playing.add(source);
-    }
-
-    private void check_sources()
-    {
-        Iterator<Integer> it = sources_playing.iterator();
-        while(it.hasNext())
-        {
-            Integer i = it.next();
-            if(!SoundManager.isPlaying(i)){
-                it.remove();
-                source_queue.addLast(i);
-            }
-        }
     }
 }
 

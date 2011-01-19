@@ -41,8 +41,8 @@ public class Skin
     }
 
     protected class Judgment {
-        int start;
-        int size;
+        double start;
+        double size;
         double combo_threshold;
         
         NavigableMap<Double,String> score_map = new TreeMap<Double,String>().descendingMap();

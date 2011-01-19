@@ -130,10 +130,11 @@ public class LWJGLGameWindow implements GameWindow {
                 return;
             }
 
-            setTitle(title);
+            Display.setTitle(title);
 
             // grab the mouse, dont want that hideous cursor when we're playing!
-            if(Display.isFullscreen())Mouse.setGrabbed(true);
+            // only when in fullscreen mode
+            Mouse.setGrabbed(Display.isFullscreen());
 
             // enable textures since we're going to use these for our sprites
             GL11.glEnable(GL11.GL_TEXTURE_2D);
