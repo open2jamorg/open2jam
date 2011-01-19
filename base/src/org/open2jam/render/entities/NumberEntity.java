@@ -40,6 +40,11 @@ public class NumberEntity extends Entity
         number++;
     }
 
+    public void addNumber(int add)
+    {
+        number += add;
+    }
+
     @Override
     public void draw()
     {

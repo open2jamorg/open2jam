@@ -157,6 +157,16 @@ public class Render implements GameWindowCallback
     /** number to display the fps, and note counters on the screen */
     private NumberEntity fps_entity;
     private HashMap<String,NumberEntity> note_counter;
+    private NumberEntity ranking_entity;
+    /** JamCombo variables */
+    private ComboCounterEntity jamcombo_entity;
+    /**
+     * Cools: +2
+     * Goods: +1
+     * Everything else: reset to 0
+     * >=50 to add a jam
+     */
+    int jamcombo_counter; 
 
     private JudgmentEntity judgment_entity;
 
@@ -278,6 +288,16 @@ public class Render implements GameWindowCallback
         fps_entity = (NumberEntity) skin.getEntityMap().get("FPS_COUNTER");
         entities_matrix.add(fps_entity);
 
+        ranking_entity = (NumberEntity) skin.getEntityMap().get("COUNTER_RANKING");
+        entities_matrix.add(ranking_entity);
+
+        /**
+         * TODO It's a combo counter, but because our combo counter substract 1 when it draws
+         * the real number and the drawed number are different
+         */
+        jamcombo_entity = (ComboCounterEntity) skin.getEntityMap().get("COUNTER_JAM");
+        entities_matrix.add(jamcombo_entity);
+        
         combo_entity = (ComboCounterEntity) skin.getEntityMap().get("COMBO_COUNTER");
         entities_matrix.add(combo_entity);
 
@@ -439,6 +459,26 @@ public class Render implements GameWindowCallback
     public double getMeasureSize() { return measure_size; }
     public double getViewport() { return skin.judgment.start+skin.judgment.size; }
 
+    private int computeRanking(String judge)
+    {
+        if(judge.equals("JUDGMENT_COOL"))
+        {
+            /**
+             * Your current jam combo also affects the score you get for each Cool hit.
+             * For each jam combo, the score is increased by 10.
+             * If you fail to hit a note, the jam combo will be reset to 0 and also the score/cool to 200.
+             * http://o2jam.wikia.com/wiki/Jam_combo
+             */
+            return 200 + (jamcombo_entity.getNumber()*10);
+        }
+        else if(judge.equals("JUDGMENT_GOOD"))
+        {
+            return 128; //i don't know :/
+        }
+        else
+            return 0;
+    }
+
     private void check_judgment(NoteEntity ne)
     {
         String judge;
@@ -451,6 +491,16 @@ public class Render implements GameWindowCallback
                 entities_matrix.add(judgment_entity);
 
 		note_counter.get(judge).incNumber();
+                ranking_entity.addNumber(computeRanking(judge));
+                if(judge.equals("JUDGMENT_COOL"))
+                    jamcombo_counter += 2;
+                else if(judge.equals("JUDGMENT_GOOD"))
+                    jamcombo_counter++;
+                else
+                {
+                    jamcombo_counter = 0;
+                    jamcombo_entity.resetNumber();
+                }
 		if(ne.getHit() > 0)
                 {
 		    Entity ee = skin.getEntityMap().get("EFFECT_LONGFLARE").copy();
@@ -481,6 +531,16 @@ public class Render implements GameWindowCallback
                 entities_matrix.add(judgment_entity);
 
 		note_counter.get(judge).incNumber();
+                ranking_entity.addNumber(computeRanking(judge));
+                if(judge.equals("JUDGMENT_COOL"))
+                    jamcombo_counter += 2;
+                else if(judge.equals("JUDGMENT_GOOD"))
+                    jamcombo_counter++;
+                else
+                {
+                    jamcombo_counter = 0;
+                    jamcombo_entity.resetNumber();
+                }
 		if(ne.getHit() > 0) // TODO: compare with MISS ?
                 {
 		    Entity ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
@@ -534,6 +594,12 @@ public class Render implements GameWindowCallback
                     ne.setState(NoteEntity.State.TO_KILL);
                  }
             break;
+        }
+
+        if(jamcombo_counter >= 50)
+        {
+            jamcombo_counter = 0; //reset
+            jamcombo_entity.incNumber();
         }
     }
 
