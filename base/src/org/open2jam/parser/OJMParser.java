@@ -94,6 +94,7 @@ public class OJMParser
                     break;
 
                 default:
+                    logger.warning("Unknown OJM signature !!");
                     ret = new HashMap<Integer,Integer>();
             }
             f.close();
@@ -109,16 +110,12 @@ public class OJMParser
         buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
 
         // header
-        byte[] unk_fixed = new byte[4];
-        buffer.get(unk_fixed);
-        byte nami_encoded = buffer.get();
-        byte[] unk_fixed2 = new byte[3];
-        buffer.get(unk_fixed2);
-        short sample_count = buffer.getShort();
-        byte[] unk_fixed3 = new byte[6];
-        buffer.get(unk_fixed3);
+        int file_format_version = buffer.getInt();
+        int encryption_flag = buffer.getInt();
+        int sample_count = buffer.getInt();
+        int sample_offset = buffer.getInt();
         int payload_size = buffer.getInt();
-        int unk_zero2 = buffer.getInt();
+        int padding = buffer.getInt();
 
         buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 28, payload_size);
         buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
@@ -135,29 +132,30 @@ public class OJMParser
             byte[] sample_name = new byte[32];
             buffer.get(sample_name);
             int sample_size = buffer.getInt();
-            byte unk_sample_type = buffer.get();
-            byte unk_off = buffer.get();
-            short fixed_2 = buffer.getShort();
-            int unk_sample_type2 = buffer.getInt();
+            
+            short codec_code = buffer.getShort();
+            short codec_code2 = buffer.getShort();
+
+            int music_flag = buffer.getInt();
             short ref = buffer.getShort();
             short unk_zero = buffer.getShort();
-            byte[] unk_wut = new byte[3];
-            buffer.get(unk_wut);
-            byte unk_counter = buffer.get();
+            int pcm_samples = buffer.getInt();
 
             byte[] sample_data = new byte[sample_size];
             buffer.get(sample_data);
-            if(nami_encoded > 0)nami_xor(sample_data);
+            if(encryption_flag == 16)nami_xor(sample_data);
+            else
+            if(encryption_flag < 16)logger.log(Level.WARNING, "Unknown encryption flag({0}) !", encryption_flag);
 
             int id = SoundManager.newBuffer(
                 new OggInputStream(new ByteArrayInputStream(sample_data))
             );
             int value = ref;
-            if(unk_sample_type == 0){
+            if(codec_code == 0){
                 value = 1000 + ref;
             }
-            else if(unk_sample_type != 5){
-               logger.log(Level.WARNING, "Unknown sample id type [{0}] on OJM : {1}", new Object[]{unk_sample_type, file.getName()});
+            else if(codec_code != 5){
+               logger.log(Level.WARNING, "Unknown codec code [{0}] on OJM : {1}", new Object[]{codec_code, file.getName()});
             }
             samples.put(value, id);
         }

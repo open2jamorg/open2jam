@@ -137,10 +137,10 @@ public class SkinHandler extends DefaultHandler
             }break;
 
             case sprite:{
-            int x = atts.containsKey("x") ? Integer.parseInt(atts.get("x")) : 0;
-            int y = atts.containsKey("y") ? Integer.parseInt(atts.get("y")) : 0;
-            x = Math.round(x * result.screen_scale_x);
-            y = Math.round(y * result.screen_scale_y);
+            double x = atts.containsKey("x") ? Integer.parseInt(atts.get("x")) : 0;
+            double y = atts.containsKey("y") ? Integer.parseInt(atts.get("y")) : 0;
+            x = x * result.screen_scale_x;
+            y = y * result.screen_scale_y;
 	    double framespeed = 0;
             if(atts.containsKey("framespeed"))framespeed = Double.parseDouble(atts.get("framespeed"));
             framespeed /= 1000; // spritelist need framespeed in milliseconds
@@ -219,8 +219,8 @@ public class SkinHandler extends DefaultHandler
                 Integer size = Integer.parseInt(atts.get("size"));
 
                 result.judgment.combo_threshold = Double.parseDouble(atts.get("combo_threshold"));
-                result.judgment.start = (int) Math.round(start * result.screen_scale_y);
-                result.judgment.size = (int) Math.round(size * result.screen_scale_y);
+                result.judgment.start = start * result.screen_scale_y;
+                result.judgment.size = size * result.screen_scale_y;
             }break;
         }
     }

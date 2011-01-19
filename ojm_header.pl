@@ -12,8 +12,8 @@ read DATA, $header, 20 or die $!;
 
 my $h = unpack2hash(join(' ',qw/
 Z4:$signature
-s:$unk1
-s:$unk2
+s:$wav_count
+s:$ogg_count
 i:$wav_start
 i:$ogg_start
 I:$filesize
@@ -200,7 +200,7 @@ sub arrange_blocks
 		$key2 = $key2 + 1;											#Remember that key2, let's add 1
 		$key = $table[$key2];										#Where is the key? :O
 		#printf("Key: %02x\n",$key);
-		$counter = $counter + 1;									#Keep the loop looping ·-·
+		$counter = $counter + 1;									#Keep the loop looping ï¿½-ï¿½
 	}
 	
 	return $buf;
