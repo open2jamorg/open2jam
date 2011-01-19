@@ -3,6 +3,7 @@ package org.open2jam.render;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.ArrayDeque;
+import java.util.Collections;
 import java.util.Map;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -506,6 +507,20 @@ public class Render implements GameWindowCallback
                 }
             break;
             case NOT_JUDGED: // you missed it (no keyboard input)
+                if(ne.isAlive() 
+                        && ((ne instanceof LongNoteEntity && ne.getStartY() >= judgmentArea()) //needed by the ln head
+                        || (ne.getY() >= judgmentArea())))
+                {
+                    if(judgment_entity != null)judgment_entity.setAlive(false);
+                    judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+MISS_JUDGE).copy();
+                    entities_matrix.add(judgment_entity);
+
+                    note_counter.get(MISS_JUDGE).incNumber();
+                    combo_entity.resetNumber();
+                    note_channels.get(ne.getChannel()).removeFirst();
+                    ne.setState(NoteEntity.State.TO_KILL);
+                 }
+            break;
             case LN_HOLD:    // You keept too much time the note held that it misses
                 if(ne.isAlive() && ne.getY() >= judgmentArea())
                 {
@@ -754,7 +769,7 @@ public class Render implements GameWindowCallback
      */
     public void channelShuffle(Iterator<Event> buffer)
     {
-	java.util.List channelSwap = new LinkedList();
+	List channelSwap = new LinkedList();
 
 	channelSwap.add(Event.Channel.NOTE_1);
 	channelSwap.add(Event.Channel.NOTE_2);
@@ -764,7 +779,7 @@ public class Render implements GameWindowCallback
 	channelSwap.add(Event.Channel.NOTE_6);
 	channelSwap.add(Event.Channel.NOTE_7);
 
-	java.util.Collections.shuffle(channelSwap);
+	Collections.shuffle(channelSwap);
 
 	while(buffer.hasNext())
 	{
@@ -794,7 +809,7 @@ public class Render implements GameWindowCallback
     {
 	EnumMap<Event.Channel, Event.Channel> ln = new EnumMap<Event.Channel, Event.Channel>(Event.Channel.class);
 
-	java.util.List channelSwap = new LinkedList();
+	List channelSwap = new LinkedList();
 
 	channelSwap.add(Event.Channel.NOTE_1);
 	channelSwap.add(Event.Channel.NOTE_2);
@@ -804,7 +819,7 @@ public class Render implements GameWindowCallback
 	channelSwap.add(Event.Channel.NOTE_6);
 	channelSwap.add(Event.Channel.NOTE_7);
 
-	java.util.Collections.shuffle(channelSwap);
+	Collections.shuffle(channelSwap);
 
 	while(buffer.hasNext())
 	{
@@ -824,16 +839,18 @@ public class Render implements GameWindowCallback
 			if(e.getFlag() == Event.Flag.NONE){
 			    e.setChannel(chan);
 			}
-			else if(e.getFlag() == Event.Flag.HOLD){
-			    ln.put(e.getChannel(), chan);
-			    e.setChannel(chan);
-			}
-			else if(e.getFlag() == Event.Flag.RELEASE){
+                        //WTF it seems that the release flag can be BEFORE the hold one :/
+			else if(e.getFlag() == Event.Flag.HOLD || e.getFlag() == Event.Flag.RELEASE){
 			    if(ln.get(e.getChannel()) != null)
 			    {
 				e.setChannel(ln.get(e.getChannel()));
 				ln.remove(e.getChannel());
 			    }
+                            else
+                            {
+                                ln.put(e.getChannel(), chan);
+                                e.setChannel(chan);
+                            }
 			}
 		    break;
 	    }
