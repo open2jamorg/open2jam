@@ -43,14 +43,8 @@ public interface Sprite {
 	 * 
 	 * @param x The x location at which to draw the sprite
 	 * @param y The y location at which to draw the sprite
+         * @param scale_x, scale_y re-scale the sprite, 0 ~ 1(normal)
 	 */
-	public void draw(int x,int y);
-        public void draw(int x, int y, float scale_x, float scale_y);
-
-	/** draw the sprite.
-	** the same as draw(int,int)
-	** but attempts to draw at the closest point
-	*/
 	public void draw(double x, double y);
         public void draw(double x, double y, float scale_x, float scale_y);
 }
