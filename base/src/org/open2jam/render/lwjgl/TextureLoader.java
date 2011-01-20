@@ -96,11 +96,14 @@ public class TextureLoader {
 
     public Texture createTexture(BufferedImage image) throws IOException
     {
+        /**
+         * TODO !!! find another way to make the scale smoooooth and without gaps
+         */
        return createTexture(image,
                          GL11.GL_TEXTURE_2D, // target
                          GL11.GL_RGBA,     // dst pixel format
-                         GL11.GL_LINEAR, // min filter (unused)
-                         GL11.GL_LINEAR);
+                         GL11.GL_NEAREST, // min filter (unused)
+                         GL11.GL_NEAREST);
     }
     
     /**
@@ -145,17 +148,17 @@ public class TextureLoader {
         
         if (target == GL11.GL_TEXTURE_2D)
         {
-            GL11.glTexParameteri(target, GL11.GL_TEXTURE_MIN_FILTER, minFilter); 
-            GL11.glTexParameteri(target, GL11.GL_TEXTURE_MAG_FILTER, magFilter); 
+            GL11.glTexParameteri(target, GL11.GL_TEXTURE_MIN_FILTER, minFilter);
+            GL11.glTexParameteri(target, GL11.GL_TEXTURE_MAG_FILTER, magFilter);
         }
  
         // produce a texture from the byte buffer
         GL11.glTexImage2D(target, 
                       0, 
                       dstPixelFormat, 
-                      texw, 
+                      texw,
                       texh,
-                      0, 
+                      0,
                       srcPixelFormat, 
                       GL11.GL_UNSIGNED_BYTE, 
                       textureBuffer ); 
