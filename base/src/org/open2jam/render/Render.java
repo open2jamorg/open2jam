@@ -446,7 +446,8 @@ public class Render implements GameWindowCallback
 		    Entity ee = skin.getEntityMap().get("EFFECT_LONGFLARE").copy();
 		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,ee.getY());
 		    entities_matrix.add(ee);
-                    longflare.put(ne.getChannel(),(AnimatedEntity) ee);
+                    Entity to_kill = longflare.put(ne.getChannel(),(AnimatedEntity) ee);
+                    if(to_kill != null)to_kill.setAlive(false);
 		    
 		    ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
 		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
@@ -471,7 +472,7 @@ public class Render implements GameWindowCallback
                 entities_matrix.add(judgment_entity);
 
 		note_counter.get(judge).incNumber();
-		if(judge.equals(MISS_JUDGE))
+		if(!judge.equals(MISS_JUDGE))
                 {
 		    Entity ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
 		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
@@ -551,7 +552,8 @@ public class Render implements GameWindowCallback
                     ne.setState(NoteEntity.State.LN_HEAD_JUDGE);
                     Entity ee = skin.getEntityMap().get("PRESSED_"+ne.getChannel()).copy();
                     entities_matrix.add(ee);
-                    key_pressed_entity.put(ne.getChannel(), ee);
+                    Entity to_kill = key_pressed_entity.put(ne.getChannel(), ee);
+                    if(to_kill != null)to_kill.setAlive(false);
                 }
                 else if(ne.getState() == NoteEntity.State.LN_HOLD)
                 {
@@ -602,7 +604,8 @@ public class Render implements GameWindowCallback
 
                     Entity ee = skin.getEntityMap().get("PRESSED_"+c).copy();
                     entities_matrix.add(ee);
-                    key_pressed_entity.put(c, ee);
+                    Entity to_kill = key_pressed_entity.put(c, ee);
+                    if(to_kill != null)to_kill.setAlive(false);
 
                     if(note_channels.get(c).isEmpty()){
                         Event.SoundSample i = last_sound.get(c);

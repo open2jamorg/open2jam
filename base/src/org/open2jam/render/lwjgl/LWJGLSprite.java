@@ -120,7 +120,7 @@ public class LWJGLSprite implements Sprite {
      * @param sx the scale of the image width
      * @param sy the scale of the image height
      */
-    public void draw(int px, int py, float sx, float sy)
+    public void draw(float px, float py, float sx, float sy)
     {
         // store the current model matrix
         GL11.glPushMatrix();
@@ -153,10 +153,6 @@ public class LWJGLSprite implements Sprite {
 
         // restore the model view matrix to prevent contamination
         GL11.glPopMatrix();
-    }
-    public void draw(int x, int y)
-    {
-        this.draw(x, y, scale_x, scale_y);
     }
 
     /** draw the sprite.
