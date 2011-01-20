@@ -444,7 +444,7 @@
              </sprite>
          </entity>
 
-         <entity id="COUNTER_RANKING" x="192" y="567">
+         <entity id="SCORE_COUNTER" x="192" y="567">
              <sprite id="0">
                  <frame x="126" y="1" w="23" h="18" file="font1.png" />
              </sprite>
@@ -477,7 +477,7 @@
              </sprite>
          </entity>
 
-         <entity id="COUNTER_JAM" x="192" y="10">
+         <entity id="JAM_COUNTER" x="192" y="10">
              <sprite id="0">
                  <frame x="126" y="1" w="23" h="18" file="font1.png" />
              </sprite>
@@ -509,6 +509,72 @@
                  <frame x="225" y="20" w="24" h="18" file="font1.png" />
              </sprite>
          </entity>
+
+        <entity id="MINUTE_COUNTER" x="344" y="569">
+            <sprite id="0">
+                <frame x="40" y="27" w="46" h="71" scale="0.3" file="numbers_1.png" />
+            </sprite>
+            <sprite id="1">
+                <frame x="177" y="28" w="46" h="71" scale="0.3" file="numbers_1.png" />
+            </sprite>
+            <sprite id="2">
+                <frame x="298" y="27" w="46" h="71" scale="0.3" file="numbers_1.png" />
+            </sprite>
+            <sprite id="3">
+                <frame x="427" y="27" w="46" h="71" scale="0.3" file="numbers_1.png" />
+            </sprite>
+            <sprite id="4">
+                <frame x="553" y="28" w="46" h="71" scale="0.3" file="numbers_1.png" />
+            </sprite>
+            <sprite id="5">
+                <frame x="41" y="155" w="46" h="71" scale="0.3" file="numbers_1.png" />
+            </sprite>
+            <sprite id="6">
+                <frame x="169" y="155" w="46" h="71" scale="0.3" file="numbers_1.png" />
+            </sprite>
+            <sprite id="7">
+                <frame x="300" y="156" w="46" h="71" scale="0.3" file="numbers_1.png" />
+            </sprite>
+            <sprite id="8">
+                <frame x="426" y="155" w="46" h="71" scale="0.3" file="numbers_1.png" />
+            </sprite>
+            <sprite id="9">
+                <frame x="553" y="155" w="46" h="71" scale="0.3" file="numbers_1.png" />
+            </sprite>
+        </entity>
+
+        <entity id="SECOND_COUNTER" x="385" y="571">
+            <sprite id="0">
+                <frame x="40" y="27" w="46" h="71" scale="0.27" file="numbers_1.png" />
+            </sprite>
+            <sprite id="1">
+                <frame x="177" y="28" w="46" h="71" scale="0.27" file="numbers_1.png" />
+            </sprite>
+            <sprite id="2">
+                <frame x="298" y="27" w="46" h="71" scale="0.27" file="numbers_1.png" />
+            </sprite>
+            <sprite id="3">
+                <frame x="427" y="27" w="46" h="71" scale="0.27" file="numbers_1.png" />
+            </sprite>
+            <sprite id="4">
+                <frame x="553" y="28" w="46" h="71" scale="0.27" file="numbers_1.png" />
+            </sprite>
+            <sprite id="5">
+                <frame x="41" y="155" w="46" h="71" scale="0.27" file="numbers_1.png" />
+            </sprite>
+            <sprite id="6">
+                <frame x="169" y="155" w="46" h="71" scale="0.27" file="numbers_1.png" />
+            </sprite>
+            <sprite id="7">
+                <frame x="300" y="156" w="46" h="71" scale="0.27" file="numbers_1.png" />
+            </sprite>
+            <sprite id="8">
+                <frame x="426" y="155" w="46" h="71" scale="0.27" file="numbers_1.png" />
+            </sprite>
+            <sprite id="9">
+                <frame x="553" y="155" w="46" h="71" scale="0.27" file="numbers_1.png" />
+            </sprite>
+        </entity>
 
         <entity id="COUNTER_JUDGMENT_COOL" x="658" y="573">
             <sprite id="0">

@@ -153,7 +153,7 @@ public class Render implements GameWindowCallback
     /** number to display the fps, and note counters on the screen */
     private NumberEntity fps_entity;
     private HashMap<String,NumberEntity> note_counter;
-    private NumberEntity ranking_entity;
+    private NumberEntity score_entity;
     /** JamCombo variables */
     private ComboCounterEntity jamcombo_entity;
     /**
@@ -162,7 +162,10 @@ public class Render implements GameWindowCallback
      * Everything else: reset to 0
      * >=50 to add a jam
      */
-    int jamcombo_counter; 
+    int jamcombo_counter;
+
+    private NumberEntity minute_entity;
+    private NumberEntity second_entity;
 
     private JudgmentEntity judgment_entity;
 
@@ -288,18 +291,25 @@ public class Render implements GameWindowCallback
         fps_entity = (NumberEntity) skin.getEntityMap().get("FPS_COUNTER");
         entities_matrix.add(fps_entity);
 
-        ranking_entity = (NumberEntity) skin.getEntityMap().get("COUNTER_RANKING");
-        entities_matrix.add(ranking_entity);
+        score_entity = (NumberEntity) skin.getEntityMap().get("SCORE_COUNTER");
+        entities_matrix.add(score_entity);
 
         /**
          * TODO It's a combo counter, but because our combo counter substract 1 when it draws
          * the real number and the drawed number are different
          */
-        jamcombo_entity = (ComboCounterEntity) skin.getEntityMap().get("COUNTER_JAM");
+        jamcombo_entity = (ComboCounterEntity) skin.getEntityMap().get("JAM_COUNTER");
         entities_matrix.add(jamcombo_entity);
         
         combo_entity = (ComboCounterEntity) skin.getEntityMap().get("COMBO_COUNTER");
         entities_matrix.add(combo_entity);
+
+        minute_entity = (NumberEntity) skin.getEntityMap().get("MINUTE_COUNTER");
+        entities_matrix.add(minute_entity);
+
+        second_entity = (NumberEntity) skin.getEntityMap().get("SECOND_COUNTER");
+        entities_matrix.add(second_entity);
+        second_entity.showDigits(2);//show 2 digits
 
         for(Event.Channel c : keyboard_map.keySet())
         {
@@ -376,6 +386,15 @@ public class Render implements GameWindowCallback
             fps_entity.setNumber(fps);
             lastFpsTime = 0;
             fps = 0;
+
+            //the timer counter
+            if(second_entity.getNumber() >= 59)
+            {
+                second_entity.setNumber(0);
+                minute_entity.incNumber();
+            }
+            else
+                second_entity.incNumber();
         }
 
 	if(AUTOPLAY)do_autoplay();
@@ -461,7 +480,7 @@ public class Render implements GameWindowCallback
     public double getMeasureSize() { return measure_size; }
     public double getViewport() { return skin.judgment.start+skin.judgment.size; }
 
-    private int computeRanking(String judge)
+    private int computeScore(String judge)
     {
         if(judge.equals("JUDGMENT_COOL"))
         {
@@ -493,7 +512,7 @@ public class Render implements GameWindowCallback
                 entities_matrix.add(judgment_entity);
 
 		note_counter.get(judge).incNumber();
-                ranking_entity.addNumber(computeRanking(judge));
+                score_entity.addNumber(computeScore(judge));
                 if(judge.equals("JUDGMENT_COOL"))
                     jamcombo_counter += 2;
                 else if(judge.equals("JUDGMENT_GOOD"))
@@ -534,7 +553,7 @@ public class Render implements GameWindowCallback
                 entities_matrix.add(judgment_entity);
 
 		note_counter.get(judge).incNumber();
-                ranking_entity.addNumber(computeRanking(judge));
+                score_entity.addNumber(computeScore(judge));
                 if(judge.equals("JUDGMENT_COOL"))
                     jamcombo_counter += 2;
                 else if(judge.equals("JUDGMENT_GOOD"))

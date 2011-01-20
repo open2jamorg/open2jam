@@ -10,6 +10,7 @@ import java.util.Collection;
 public class NumberEntity extends Entity
 {
     protected int number = 0;
+    protected int show_digits = 1;
     protected ArrayList<Entity> entity_list;
     
     public NumberEntity(Collection<Entity> list, double x, double y)
@@ -45,11 +46,22 @@ public class NumberEntity extends Entity
         number += add;
     }
 
+    public void showDigits(int number)
+    {
+        show_digits = number;
+    }
+
     @Override
     public void draw()
     {
         //draw from right to left
 	String numberString = String.valueOf(number).toString();
+        if(numberString.length() < show_digits)
+        {
+            String zeros = "";
+            for(int i = 1; i<show_digits;i++) zeros += "0";
+            numberString = zeros+numberString;
+        }
 	String invNumberString = "";
         double tx = x;
 	for(int j = numberString.length()-1; j >= 0; j--)
