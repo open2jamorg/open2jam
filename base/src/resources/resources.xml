@@ -641,8 +641,6 @@
                 <frame x="207" y="39" w="9" h="9" file="font1.png" />
             </sprite>
         </entity>
-
-
     </layer>
 </skin>
 </Resources>

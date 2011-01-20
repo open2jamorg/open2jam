@@ -2,7 +2,6 @@ package org.open2jam.render;
 
 import java.awt.image.BufferedImage;
 import java.net.URL;
-import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Map;
 import java.util.EnumMap;
@@ -214,7 +213,7 @@ public class Render implements GameWindowCallback
 
         // skin load
         try {
-            SkinHandler sb = new SkinHandler(this,"o2jam", window.getResolutionWidth(), window.getResolutionHeight(), aspect_ratio);
+            SkinHandler sb = new SkinHandler(this,"o2jam", window.getResolutionWidth(), window.getResolutionHeight());
             SAXParserFactory.newInstance().newSAXParser().parse(resources_xml.openStream(), sb);
             skin = sb.getResult();
         } catch (ParserConfigurationException ex) {
@@ -225,11 +224,15 @@ public class Render implements GameWindowCallback
             logger.log(Level.SEVERE, null, ex);
         }
 
+        //scale
+        window.setScreenScale(skin.screen_scale_x, skin.screen_scale_y, aspect_ratio);
+        window.update();
+
         // cover image load
         try{
             BufferedImage img = chart.getCover();
             Sprite s = ResourceFactory.get().getSprite(img);
-            s.setScreenScale(skin.screen_scale_x,skin.screen_scale_y);
+            s.setScale(skin.screen_scale_x,skin.screen_scale_y);
             s.draw(0, 0);
             window.update();
         } catch (NullPointerException e){

@@ -40,6 +40,9 @@ public class LWJGLGameWindow implements GameWindow {
 	/** The height of the game display area */
 	private int height;
 
+        private float screen_scale_x = 1f, screen_scale_y = 1f;
+        private boolean aspect_ratio = false;
+
 	/** The loader responsible for converting images into OpenGL textures */
 	private TextureLoader textureLoader;
   
@@ -189,7 +192,21 @@ public class LWJGLGameWindow implements GameWindow {
             if(code == null)code = keyCode; // use raw key
             return Keyboard.isKeyDown(code);
 	}
-  
+
+        public void setScreenScale(float x, float y, boolean aspect_ratio){
+            if(aspect_ratio)
+            {
+                this.screen_scale_x = Math.min(x,y);
+                this.screen_scale_y = this.screen_scale_x;
+                this.aspect_ratio = aspect_ratio;
+            }
+            else
+            {
+                this.screen_scale_x = x;
+                this.screen_scale_y = y;
+            }
+        }
+
 	/**
 	 * Run the main game loop. This method keeps rendering the scene
 	 * and requesting that the callback update its screen.
@@ -202,6 +219,9 @@ public class LWJGLGameWindow implements GameWindow {
                     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
                     GL11.glMatrixMode(GL11.GL_MODELVIEW);
                     GL11.glLoadIdentity();
+
+                    //scale
+                    GL11.glScalef(screen_scale_x,screen_scale_y,1);
 
                     // let subsystem paint
                     callback.frameRendering();

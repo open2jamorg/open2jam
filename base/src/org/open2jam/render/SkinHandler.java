@@ -53,15 +53,13 @@ public class SkinHandler extends DefaultHandler
     protected final double targetW;
     protected final double targetH;
 
-    protected boolean aspect_ratio = false;
 
-    public SkinHandler(Render r, String skin, double width, double height, boolean aspect_ratio)
+    public SkinHandler(Render r, String skin, double width, double height)
     {
         this.render = r;
         this.target_skin = skin;
 	this.targetW = width;
 	this.targetH = height;
-        this.aspect_ratio = aspect_ratio;
         call_stack = new ArrayDeque<Keyword>();
         atts_stack = new ArrayDeque<Map<String,String>>();
         frame_buffer = new ArrayList<Sprite>();
@@ -89,11 +87,6 @@ public class SkinHandler extends DefaultHandler
 
 		result.screen_scale_x = (float) (this.targetW/this.baseW);
 		result.screen_scale_y = (float) (this.targetH/this.baseH);
-                if(aspect_ratio)
-                {
-                    result.screen_scale_x = Math.min(result.screen_scale_x,result.screen_scale_y);
-                    result.screen_scale_y = result.screen_scale_x;
-                }
             }break;
 
             case layer:{
@@ -131,7 +124,6 @@ public class SkinHandler extends DefaultHandler
             if(url == null)throw new RuntimeException("Cannot find resource: "+FILE_PATH_PREFIX+atts.get("file"));
 
             Sprite s = ResourceFactory.get().getSprite(url, slice);
-            s.setScreenScale(result.screen_scale_x,result.screen_scale_y);
 	    s.setScale(sx, sy);
             frame_buffer.add(s);
             }break;
@@ -139,8 +131,6 @@ public class SkinHandler extends DefaultHandler
             case sprite:{
             double x = atts.containsKey("x") ? Integer.parseInt(atts.get("x")) : 0;
             double y = atts.containsKey("y") ? Integer.parseInt(atts.get("y")) : 0;
-            x = x * result.screen_scale_x;
-            y = y * result.screen_scale_y;
 	    double framespeed = 0;
             if(atts.containsKey("framespeed"))framespeed = Double.parseDouble(atts.get("framespeed"));
             framespeed /= 1000; // spritelist need framespeed in milliseconds
@@ -183,12 +173,8 @@ public class SkinHandler extends DefaultHandler
 
             e.setLayer(this.layer);
             double x = e.getX(), y = e.getY();
-            if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x")) * result.screen_scale_x;
-            if(atts.containsKey("y"))y = Integer.parseInt(atts.get("y")) * result.screen_scale_y;
-            if(aspect_ratio)
-            {
-                //TODO how? I don't want to use my brain XD
-            }
+            if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x"));
+            if(atts.containsKey("y"))y = Integer.parseInt(atts.get("y"));
             e.setPos(x, y);
             
             if(id != null){
@@ -215,12 +201,10 @@ public class SkinHandler extends DefaultHandler
             }break;
 
             case judgment:{
-                Integer start = Integer.parseInt(atts.get("start"));
-                Integer size = Integer.parseInt(atts.get("size"));
+                result.judgment.start = Integer.parseInt(atts.get("start"));
+                result.judgment.size = Integer.parseInt(atts.get("size"));
 
                 result.judgment.combo_threshold = Double.parseDouble(atts.get("combo_threshold"));
-                result.judgment.start = start * result.screen_scale_y;
-                result.judgment.size = size * result.screen_scale_y;
             }break;
         }
     }
