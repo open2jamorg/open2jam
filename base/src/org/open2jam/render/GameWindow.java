@@ -33,6 +33,8 @@ public interface GameWindow {
 	 * Start the game window rendering the display
 	 */
 	public void startRendering();
+
+        public void setScale(float x, float y);
 	
 	/**
 	 * Set the callback that should be notified of the window

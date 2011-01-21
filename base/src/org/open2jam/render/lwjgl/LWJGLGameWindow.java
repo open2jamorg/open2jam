@@ -46,6 +46,9 @@ public class LWJGLGameWindow implements GameWindow {
 	/** Title of window, we get it before our window is ready, so store it till needed */
 	private String title;
 
+
+        private float scale_x = 1f, scale_y = 1f;
+
         static {
             key_map.put(KeyEvent.VK_S, Keyboard.KEY_S);
             key_map.put(KeyEvent.VK_D, Keyboard.KEY_D);
@@ -189,6 +192,11 @@ public class LWJGLGameWindow implements GameWindow {
             if(code == null)code = keyCode; // use raw key
             return Keyboard.isKeyDown(code);
 	}
+
+        public void setScale(float x, float y){
+            scale_x = x;
+            scale_y = y;
+        }
   
 	/**
 	 * Run the main game loop. This method keeps rendering the scene
@@ -202,6 +210,8 @@ public class LWJGLGameWindow implements GameWindow {
                     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
                     GL11.glMatrixMode(GL11.GL_MODELVIEW);
                     GL11.glLoadIdentity();
+
+                    GL11.glScalef(scale_x, scale_y, 1);
 
                     // let subsystem paint
                     callback.frameRendering();

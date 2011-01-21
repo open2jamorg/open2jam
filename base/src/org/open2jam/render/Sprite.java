@@ -34,8 +34,6 @@ public interface Sprite {
          */
         public void setScale(float x, float y);
 
-        /** to set the screen scale */
-        public void setScreenScale(float x, float y);
 
         public float getScaleX();
         public float getScaleY();

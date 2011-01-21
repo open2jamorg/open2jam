@@ -210,7 +210,7 @@ public class Render implements GameWindowCallback
         try{
             BufferedImage img = chart.getCover();
             Sprite s = ResourceFactory.get().getSprite(img);
-            s.setScreenScale(skin.screen_scale_x,skin.screen_scale_y);
+            s.setScale(skin.screen_scale_x,skin.screen_scale_y);
             s.draw(0, 0);
             window.update();
         } catch (NullPointerException e){

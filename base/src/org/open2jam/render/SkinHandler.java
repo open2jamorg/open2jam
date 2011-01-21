@@ -123,7 +123,7 @@ public class SkinHandler extends DefaultHandler
             if(url == null)throw new RuntimeException("Cannot find resource: "+FILE_PATH_PREFIX+atts.get("file"));
 
             Sprite s = ResourceFactory.get().getSprite(url, slice);
-            s.setScreenScale(result.screen_scale_x,result.screen_scale_y);
+            ResourceFactory.get().getGameWindow().setScale(result.screen_scale_x,result.screen_scale_y);
 	    s.setScale(sx, sy);
             frame_buffer.add(s);
             }break;
@@ -131,8 +131,6 @@ public class SkinHandler extends DefaultHandler
             case sprite:{
             double x = atts.containsKey("x") ? Integer.parseInt(atts.get("x")) : 0;
             double y = atts.containsKey("y") ? Integer.parseInt(atts.get("y")) : 0;
-            x = x * result.screen_scale_x;
-            y = y * result.screen_scale_y;
 	    double framespeed = 0;
             if(atts.containsKey("framespeed"))framespeed = Double.parseDouble(atts.get("framespeed"));
             framespeed /= 1000; // spritelist need framespeed in milliseconds
@@ -175,8 +173,8 @@ public class SkinHandler extends DefaultHandler
 
             e.setLayer(this.layer);
             double x = e.getX(), y = e.getY();
-            if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x")) * result.screen_scale_x;
-            if(atts.containsKey("y"))y = Integer.parseInt(atts.get("y")) * result.screen_scale_y;
+            if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x"));
+            if(atts.containsKey("y"))y = Integer.parseInt(atts.get("y"));
             e.setPos(x, y);
             
             if(id != null){
@@ -207,8 +205,8 @@ public class SkinHandler extends DefaultHandler
                 Integer size = Integer.parseInt(atts.get("size"));
 
                 result.judgment.combo_threshold = Double.parseDouble(atts.get("combo_threshold"));
-                result.judgment.start = start * result.screen_scale_y;
-                result.judgment.size = size * result.screen_scale_y;
+                result.judgment.start = start;// * result.screen_scale_y;
+                result.judgment.size = size;// * result.screen_scale_y;
             }break;
         }
     }

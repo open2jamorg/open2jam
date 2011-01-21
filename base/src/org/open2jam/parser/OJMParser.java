@@ -99,7 +99,8 @@ public class OJMParser
             }
             f.close();
         }catch(IOException e) {
-            logger.log(Level.WARNING, "IO expeption on file {0} : {1}", new Object[]{file.getName(), e.getMessage()});
+            logger.log(Level.WARNING, "IO exception on file {0} : {1}", new Object[]{file.getName(), e.getMessage()});
+            ret = new HashMap<Integer,Integer>();
         }
         return ret;
     }
