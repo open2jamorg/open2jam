@@ -256,6 +256,9 @@ public class SkinHandler extends DefaultHandler
 	else if(id.equals("COUNTER_JUDGMENT_MISS")){
 	    e = new NumberEntity(new TreeMap(sprite_buffer).values(), 0, 0);
 	}
+	else if(id.equals("MAXCOMBO_COUNTER")){
+	    e = new NumberEntity(new TreeMap(sprite_buffer).values(), 0, 0);
+	}
 	else if(id.equals("SCORE_COUNTER")){
 	    e = new NumberEntity(new TreeMap(sprite_buffer).values(), 0, 0);
 	}

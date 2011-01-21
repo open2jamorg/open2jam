@@ -510,69 +510,102 @@
              </sprite>
          </entity>
 
-        <entity id="MINUTE_COUNTER" x="344" y="569">
+        <entity id="MINUTE_COUNTER" x="346" y="569">
             <sprite id="0">
-                <frame x="40" y="27" w="46" h="71" scale="0.3" file="numbers_1.png" />
+                <frame x="121" y="59" w="27" h="21" file="font1.png" />
             </sprite>
             <sprite id="1">
-                <frame x="177" y="28" w="46" h="71" scale="0.3" file="numbers_1.png" />
+                <frame x="148" y="59" w="27" h="21" file="font1.png" />
             </sprite>
             <sprite id="2">
-                <frame x="298" y="27" w="46" h="71" scale="0.3" file="numbers_1.png" />
+                <frame x="175" y="59" w="27" h="21" file="font1.png" />
             </sprite>
             <sprite id="3">
-                <frame x="427" y="27" w="46" h="71" scale="0.3" file="numbers_1.png" />
+                <frame x="202" y="59" w="27" h="21" file="font1.png" />
             </sprite>
             <sprite id="4">
-                <frame x="553" y="28" w="46" h="71" scale="0.3" file="numbers_1.png" />
+                <frame x="229" y="59" w="27" h="21" file="font1.png" />
             </sprite>
             <sprite id="5">
-                <frame x="41" y="155" w="46" h="71" scale="0.3" file="numbers_1.png" />
+                <frame x="121" y="81" w="27" h="21" file="font1.png" />
             </sprite>
             <sprite id="6">
-                <frame x="169" y="155" w="46" h="71" scale="0.3" file="numbers_1.png" />
+                <frame x="148" y="81" w="27" h="21" file="font1.png" />
             </sprite>
             <sprite id="7">
-                <frame x="300" y="156" w="46" h="71" scale="0.3" file="numbers_1.png" />
+                <frame x="175" y="81" w="27" h="21" file="font1.png" />
             </sprite>
             <sprite id="8">
-                <frame x="426" y="155" w="46" h="71" scale="0.3" file="numbers_1.png" />
+                <frame x="202" y="81" w="27" h="21" file="font1.png" />
             </sprite>
             <sprite id="9">
-                <frame x="553" y="155" w="46" h="71" scale="0.3" file="numbers_1.png" />
+                <frame x="229" y="81" w="27" h="21" file="font1.png" />
             </sprite>
         </entity>
 
-        <entity id="SECOND_COUNTER" x="385" y="571">
+        <entity id="SECOND_COUNTER" x="410" y="569">
             <sprite id="0">
-                <frame x="40" y="27" w="46" h="71" scale="0.27" file="numbers_1.png" />
+                <frame x="121" y="59" w="27" h="21" file="font1.png" />
             </sprite>
             <sprite id="1">
-                <frame x="177" y="28" w="46" h="71" scale="0.27" file="numbers_1.png" />
+                <frame x="148" y="59" w="27" h="21" file="font1.png" />
             </sprite>
             <sprite id="2">
-                <frame x="298" y="27" w="46" h="71" scale="0.27" file="numbers_1.png" />
+                <frame x="175" y="59" w="27" h="21" file="font1.png" />
             </sprite>
             <sprite id="3">
-                <frame x="427" y="27" w="46" h="71" scale="0.27" file="numbers_1.png" />
+                <frame x="202" y="59" w="27" h="21" file="font1.png" />
             </sprite>
             <sprite id="4">
-                <frame x="553" y="28" w="46" h="71" scale="0.27" file="numbers_1.png" />
+                <frame x="229" y="59" w="27" h="21" file="font1.png" />
             </sprite>
             <sprite id="5">
-                <frame x="41" y="155" w="46" h="71" scale="0.27" file="numbers_1.png" />
+                <frame x="121" y="81" w="27" h="21" file="font1.png" />
             </sprite>
             <sprite id="6">
-                <frame x="169" y="155" w="46" h="71" scale="0.27" file="numbers_1.png" />
+                <frame x="148" y="81" w="27" h="21" file="font1.png" />
             </sprite>
             <sprite id="7">
-                <frame x="300" y="156" w="46" h="71" scale="0.27" file="numbers_1.png" />
+                <frame x="175" y="81" w="27" h="21" file="font1.png" />
             </sprite>
             <sprite id="8">
-                <frame x="426" y="155" w="46" h="71" scale="0.27" file="numbers_1.png" />
+                <frame x="202" y="81" w="27" h="21" file="font1.png" />
             </sprite>
             <sprite id="9">
-                <frame x="553" y="155" w="46" h="71" scale="0.27" file="numbers_1.png" />
+                <frame x="229" y="81" w="27" h="21" file="font1.png" />
+            </sprite>
+        </entity>
+
+        <entity id="MAXCOMBO_COUNTER" x="671" y="556">
+            <sprite id="0">
+                <frame x="126" y="106" w="11" h="11" file="font1.png" />
+            </sprite>
+            <sprite id="1">
+                <frame x="137" y="106" w="11" h="11" file="font1.png" />
+            </sprite>
+            <sprite id="2">
+                <frame x="148" y="106" w="11" h="11" file="font1.png" />
+            </sprite>
+            <sprite id="3">
+                <frame x="159" y="106" w="11" h="11" file="font1.png" />
+            </sprite>
+            <sprite id="4">
+                <frame x="170" y="106" w="11" h="11" file="font1.png" />
+            </sprite>
+            <sprite id="5">
+                <frame x="181" y="106" w="11" h="11" file="font1.png" />
+            </sprite>
+            <sprite id="6">
+                <frame x="192" y="106" w="11" h="11" file="font1.png" />
+            </sprite>
+            <sprite id="7">
+                <frame x="203" y="106" w="11" h="11" file="font1.png" />
+            </sprite>
+            <sprite id="8">
+                <frame x="214" y="106" w="11" h="11" file="font1.png" />
+            </sprite>
+            <sprite id="9">
+                <frame x="225" y="106" w="11" h="11" file="font1.png" />
             </sprite>
         </entity>
 

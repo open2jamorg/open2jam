@@ -171,6 +171,8 @@ public class Render implements GameWindowCallback
 
     /** the combo counter */
     private ComboCounterEntity combo_entity;
+    /** the maxcombo counter */
+    private NumberEntity maxcombo_entity;
 
     static{
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
@@ -303,6 +305,9 @@ public class Render implements GameWindowCallback
         
         combo_entity = (ComboCounterEntity) skin.getEntityMap().get("COMBO_COUNTER");
         entities_matrix.add(combo_entity);
+
+        maxcombo_entity = (NumberEntity) skin.getEntityMap().get("MAXCOMBO_COUNTER");
+        entities_matrix.add(maxcombo_entity);
 
         minute_entity = (NumberEntity) skin.getEntityMap().get("MINUTE_COUNTER");
         entities_matrix.add(minute_entity);
@@ -622,6 +627,11 @@ public class Render implements GameWindowCallback
         {
             jamcombo_counter = 0; //reset
             jamcombo_entity.incNumber();
+        }
+
+        if(combo_entity.getNumber() > 1 && maxcombo_entity.getNumber()<(combo_entity.getNumber()-1))
+        {
+            maxcombo_entity.incNumber();
         }
     }
 
