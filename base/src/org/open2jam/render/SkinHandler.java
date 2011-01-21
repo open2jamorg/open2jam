@@ -1,6 +1,7 @@
 package org.open2jam.render;
 
 import java.awt.Rectangle;
+import java.io.IOException;
 import java.util.Map;
 import java.net.URL;
 import java.util.ArrayDeque;
@@ -122,7 +123,13 @@ public class SkinHandler extends DefaultHandler
             URL url = SkinHandler.class.getResource(FILE_PATH_PREFIX+atts.get("file"));
             if(url == null)throw new RuntimeException("Cannot find resource: "+FILE_PATH_PREFIX+atts.get("file"));
 
-            Sprite s = ResourceFactory.get().getSprite(url, slice);
+            Sprite s = null;
+            try {
+                s = ResourceFactory.get().getSprite(url, slice);
+            } catch(IOException e) {
+                logger.log(Level.WARNING, "Sprite resource load error !! {0}", e);
+                break;
+            }
             ResourceFactory.get().getGameWindow().setScale(result.screen_scale_x,result.screen_scale_y);
 	    s.setScale(sx, sy);
             frame_buffer.add(s);

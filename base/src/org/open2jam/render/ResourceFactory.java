@@ -93,7 +93,7 @@ public class ResourceFactory {
 	 * @param ref A reference to the image to load
 	 * @return A sprite that can be drawn onto the current graphics context.
 	 */
-	public Sprite getSprite(URL ref, Rectangle slice) {
+	public Sprite getSprite(URL ref, Rectangle slice) throws java.io.IOException {
 		if (window == null) {
 			throw new RuntimeException("Attempt to retrieve sprite before game window was created");
 		}

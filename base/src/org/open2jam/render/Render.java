@@ -199,18 +199,17 @@ public class Render implements GameWindowCallback
             SAXParserFactory.newInstance().newSAXParser().parse(resources_xml.openStream(), sb);
             skin = sb.getResult();
         } catch (ParserConfigurationException ex) {
-            logger.log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, "Skin load error {0}", ex);
         } catch (org.xml.sax.SAXException ex) {
-            logger.log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, "Skin load error {0}", ex);
         } catch (java.io.IOException ex) {
-            logger.log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, "Skin load error {0}", ex);
         }
 
         // cover image load
         try{
             BufferedImage img = chart.getCover();
             Sprite s = ResourceFactory.get().getSprite(img);
-            s.setScale(skin.screen_scale_x,skin.screen_scale_y);
             s.draw(0, 0);
             window.update();
         } catch (NullPointerException e){

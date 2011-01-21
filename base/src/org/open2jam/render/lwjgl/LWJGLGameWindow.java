@@ -134,6 +134,9 @@ public class LWJGLGameWindow implements GameWindow {
             }
 
             Display.setTitle(title);
+            
+            // center the display on the screen
+            Display.setLocation(-1, -1);
 
             // grab the mouse, dont want that hideous cursor when we're playing!
             // only when in fullscreen mode
@@ -159,6 +162,8 @@ public class LWJGLGameWindow implements GameWindow {
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glLoadIdentity();
+
+            GL11.glScalef(scale_x, scale_y, 1);
 
             callback.initialise();
 
@@ -207,8 +212,8 @@ public class LWJGLGameWindow implements GameWindow {
             gameRunning = true;
             while (gameRunning) {
                     // clear screen
-                    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-                    GL11.glMatrixMode(GL11.GL_MODELVIEW);
+                    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);// | GL11.GL_DEPTH_BUFFER_BIT); there's no depth buffer, duh
+                    GL11.glMatrixMode(GL11.GL_MODELVIEW); // TODO: is this necessary ?
                     GL11.glLoadIdentity();
 
                     GL11.glScalef(scale_x, scale_y, 1);

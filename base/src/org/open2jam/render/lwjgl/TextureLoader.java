@@ -94,7 +94,7 @@ public class TextureLoader {
         return tex;
     }
 
-    public Texture createTexture(BufferedImage image) throws IOException
+    public Texture createTexture(BufferedImage image)
     {
        return createTexture(image,
                          GL11.GL_TEXTURE_2D, // target
@@ -119,7 +119,7 @@ public class TextureLoader {
                               int target, 
                               int dstPixelFormat, 
                               int minFilter, 
-                              int magFilter) throws IOException 
+                              int magFilter)
     {
         int srcPixelFormat = 0;
 
