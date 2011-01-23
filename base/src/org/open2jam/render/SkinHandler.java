@@ -16,7 +16,7 @@ import org.open2jam.render.entities.ComboCounterEntity;
 import org.open2jam.render.entities.CompositeEntity;
 import org.open2jam.render.entities.EffectEntity;
 import org.open2jam.render.entities.Entity;
-import org.open2jam.render.entities.JamBarEntity;
+import org.open2jam.render.entities.BarEntity;
 import org.open2jam.render.entities.JudgmentEntity;
 import org.open2jam.render.entities.LongNoteEntity;
 import org.open2jam.render.entities.MeasureEntity;
@@ -290,7 +290,7 @@ public class SkinHandler extends DefaultHandler
 	    //TODO
 	}
 	else if(id.equals("JAM_BAR")){
-	    e = new JamBarEntity(new TreeMap(sprite_buffer).values(), 0, 0);
+	    e = new BarEntity(new TreeMap(sprite_buffer).values(), 0, 0);
 	}
 	else if(id.equals("TIME_BAR")){
 	    //TODO

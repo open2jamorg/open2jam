@@ -252,7 +252,7 @@
     
     <!-- jam bar -->
     <layer id="8">
-	<entity id="JAM_BAR" x="4" y="536">
+	<entity id="JAM_BAR" x="4" y="536" direction="LEFT_TO_RIGHT">
 	    <sprite>
 		<frame x="1" y="391" w="191" h="12" file="main.png" />
 	    </sprite>

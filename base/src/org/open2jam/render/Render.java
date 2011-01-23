@@ -26,7 +26,7 @@ import org.open2jam.render.entities.AnimatedEntity;
 import org.open2jam.render.entities.BPMEntity;
 import org.open2jam.render.entities.ComboCounterEntity;
 import org.open2jam.render.entities.Entity;
-import org.open2jam.render.entities.JamBarEntity;
+import org.open2jam.render.entities.BarEntity;
 import org.open2jam.render.entities.JudgmentEntity;
 import org.open2jam.render.entities.LongNoteEntity;
 import org.open2jam.render.entities.MeasureEntity;
@@ -160,7 +160,7 @@ public class Render implements GameWindowCallback
      * Everything else: reset to 0
      * >=50 to add a jam
      */
-    JamBarEntity jamcombo_counter;
+    BarEntity jamcombo_counter;
 
     private NumberEntity minute_entity;
     private NumberEntity second_entity;
@@ -296,7 +296,8 @@ public class Render implements GameWindowCallback
         jamcombo_entity = (ComboCounterEntity) skin.getEntityMap().get("JAM_COUNTER");
         entities_matrix.add(jamcombo_entity);
 
-        jamcombo_counter = (JamBarEntity) skin.getEntityMap().get("JAM_BAR");
+        jamcombo_counter = (BarEntity) skin.getEntityMap().get("JAM_BAR");
+        jamcombo_counter.setLimit(50);
         entities_matrix.add(jamcombo_counter);
         
         combo_entity = (ComboCounterEntity) skin.getEntityMap().get("COMBO_COUNTER");
@@ -614,7 +615,7 @@ public class Render implements GameWindowCallback
             break;
         }
 
-        if(jamcombo_counter.getNumber() >= JamBarEntity.JAM_LIMIT)
+        if(jamcombo_counter.getNumber() >= jamcombo_counter.getLimit())
         {
             jamcombo_counter.setNumber(0); //reset
             jamcombo_entity.incNumber();
@@ -635,13 +636,14 @@ public class Render implements GameWindowCallback
 
             NoteEntity ne = note_channels.get(c).getFirst();
 
+            if(ne.getStartY() < judgment_line_y2)continue; //sync
             if(ne.getState() != NoteEntity.State.NOT_JUDGED &&
                     ne.getState() != NoteEntity.State.LN_HOLD)continue;
 
             double hit = ne.testHit(judgment_line_y1, judgment_line_y2);
             if(hit < AUTOPLAY_THRESHOLD)continue;
             ne.setHit(hit);
-
+            
             if(ne instanceof LongNoteEntity)
             {
                 if(ne.getState() == NoteEntity.State.NOT_JUDGED)
