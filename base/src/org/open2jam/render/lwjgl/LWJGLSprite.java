@@ -22,9 +22,6 @@ public class LWJGLSprite implements Sprite {
     /** The width and height in pixels of this sprite */
     private final int width, height;
 
-    /** the coordinates for the texture */
-    //private float u, v, w, z;
-
     private final int list_id = GL11.glGenLists(1);
 
     /** the scale of the image */

@@ -210,6 +210,7 @@ public class Render implements GameWindowCallback
         try{
             BufferedImage img = chart.getCover();
             Sprite s = ResourceFactory.get().getSprite(img);
+            s.setScale(skin.screen_scale_x, skin.screen_scale_y);
             s.draw(0, 0);
             window.update();
         } catch (NullPointerException e){
@@ -373,8 +374,7 @@ public class Render implements GameWindowCallback
                 }
 
                 if(!e.isAlive())j.remove();
-                else 
-                if(!(e instanceof NoteEntity) || e.getY() < getViewport())e.draw(); // TODO: not sure the IF is needed
+                else e.draw();
             }
         }
 
@@ -405,8 +405,11 @@ public class Render implements GameWindowCallback
     
     private double judgmentArea()
     {
-        //return judgment_line_y2;
-	return judgment_line_y1 + (hispeed * skin.judgment.size * 2);
+        // y2-y1 is the the upper half of the judgment area
+        // 2*(y2-y1) is the total area
+        // y1 + 2*(y2-y1) is the end line of the area
+        // simplifying: y1 + 2*y2 - 2*y1 == 2*y2 - y1
+        return 2 * judgment_line_y2 - judgment_line_y1;
     }
 
     private void updateHispeed()
@@ -481,7 +484,8 @@ public class Render implements GameWindowCallback
 		    if(ne.getHit() >= skin.judgment.combo_threshold)combo_entity.incNumber();
 		    else combo_entity.resetNumber();
 
-                    ne.setAlive(false);
+                    if(ne instanceof LongNoteEntity)ne.setState(NoteEntity.State.TO_KILL);
+                    else ne.setAlive(false);
                 } else {
                     combo_entity.resetNumber();
                     ne.setState(NoteEntity.State.TO_KILL);
