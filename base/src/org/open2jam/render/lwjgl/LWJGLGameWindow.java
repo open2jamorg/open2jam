@@ -48,6 +48,9 @@ public class LWJGLGameWindow implements GameWindow {
 	/** Title of window, we get it before our window is ready, so store it till needed */
 	private String title;
 
+
+        private float scale_x = 1f, scale_y = 1f;
+
         static {
             key_map.put(KeyEvent.VK_S, Keyboard.KEY_S);
             key_map.put(KeyEvent.VK_D, Keyboard.KEY_D);
@@ -133,6 +136,9 @@ public class LWJGLGameWindow implements GameWindow {
             }
 
             Display.setTitle(title);
+            
+            // center the display on the screen
+            Display.setLocation(-1, -1);
 
             // grab the mouse, dont want that hideous cursor when we're playing!
             // only when in fullscreen mode
@@ -155,7 +161,7 @@ public class LWJGLGameWindow implements GameWindow {
 
             textureLoader = new TextureLoader();
 
-            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glLoadIdentity();
 
@@ -192,11 +198,11 @@ public class LWJGLGameWindow implements GameWindow {
             return Keyboard.isKeyDown(code);
 	}
 
-        public void setScreenScale(float x, float y){
-            this.screen_scale_x = x;
-            this.screen_scale_y = y;
+        public void setScale(float x, float y){
+            scale_x = x;
+            scale_y = y;
         }
-
+  
 	/**
 	 * Run the main game loop. This method keeps rendering the scene
 	 * and requesting that the callback update its screen.
@@ -206,12 +212,11 @@ public class LWJGLGameWindow implements GameWindow {
             gameRunning = true;
             while (gameRunning) {
                     // clear screen
-                    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-                    GL11.glMatrixMode(GL11.GL_MODELVIEW);
+                    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
                     GL11.glLoadIdentity();
 
-                    //scale
-                    GL11.glScalef(screen_scale_x,screen_scale_y,1);
+                    // scale
+                    GL11.glScalef(scale_x, scale_y, 1);
 
                     // let subsystem paint
                     callback.frameRendering();

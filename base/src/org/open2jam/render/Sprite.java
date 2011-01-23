@@ -32,6 +32,7 @@ public interface Sprite {
          * 
          */
         public void setScale(float x, float y);
+        public void setSlice(float x, float y);
 
         public float getScaleX();
         public float getScaleY();

@@ -26,6 +26,7 @@ import org.open2jam.render.entities.AnimatedEntity;
 import org.open2jam.render.entities.BPMEntity;
 import org.open2jam.render.entities.ComboCounterEntity;
 import org.open2jam.render.entities.Entity;
+import org.open2jam.render.entities.JamBarEntity;
 import org.open2jam.render.entities.JudgmentEntity;
 import org.open2jam.render.entities.LongNoteEntity;
 import org.open2jam.render.entities.MeasureEntity;
@@ -159,7 +160,7 @@ public class Render implements GameWindowCallback
      * Everything else: reset to 0
      * >=50 to add a jam
      */
-    int jamcombo_counter; // TODO when the jam graphic bar is done, change this 
+    JamBarEntity jamcombo_counter;
 
     private NumberEntity minute_entity;
     private NumberEntity second_entity;
@@ -218,22 +219,18 @@ public class Render implements GameWindowCallback
             SAXParserFactory.newInstance().newSAXParser().parse(resources_xml.openStream(), sb);
             skin = sb.getResult();
         } catch (ParserConfigurationException ex) {
-            logger.log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, "Skin load error {0}", ex);
         } catch (org.xml.sax.SAXException ex) {
-            logger.log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, "Skin load error {0}", ex);
         } catch (java.io.IOException ex) {
-            logger.log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, "Skin load error {0}", ex);
         }
-
-        //scale
-        window.setScreenScale(skin.screen_scale_x, skin.screen_scale_y);
-        window.update();
 
         // cover image load
         try{
             BufferedImage img = chart.getCover();
             Sprite s = ResourceFactory.get().getSprite(img);
-            s.setScale(skin.screen_scale_x,skin.screen_scale_y);
+            s.setScale(skin.screen_scale_x, skin.screen_scale_y);
             s.draw(0, 0);
             window.update();
         } catch (NullPointerException e){
@@ -298,6 +295,9 @@ public class Render implements GameWindowCallback
          */
         jamcombo_entity = (ComboCounterEntity) skin.getEntityMap().get("JAM_COUNTER");
         entities_matrix.add(jamcombo_entity);
+
+        jamcombo_counter = (JamBarEntity) skin.getEntityMap().get("JAM_BAR");
+        entities_matrix.add(jamcombo_counter);
         
         combo_entity = (ComboCounterEntity) skin.getEntityMap().get("COMBO_COUNTER");
         entities_matrix.add(combo_entity);
@@ -426,8 +426,7 @@ public class Render implements GameWindowCallback
                 }
 
                 if(!e.isAlive())j.remove();
-                else 
-                if(!(e instanceof NoteEntity) || e.getY() < getViewport())e.draw(); // TODO: not sure the IF is needed
+                else e.draw();
             }
         }
 
@@ -458,8 +457,11 @@ public class Render implements GameWindowCallback
     
     private double judgmentArea()
     {
-        //return judgment_line_y2;
-	return judgment_line_y1 + (hispeed * skin.judgment.size * 2);
+        // y2-y1 is the the upper half of the judgment area
+        // 2*(y2-y1) is the total area
+        // y1 + 2*(y2-y1) is the end line of the area
+        // simplifying: y1 + 2*y2 - 2*y1 == 2*y2 - y1
+        return 2 * judgment_line_y2 - judgment_line_y1;
     }
 
     private void updateHispeed()
@@ -491,7 +493,7 @@ public class Render implements GameWindowCallback
          */
         if     (judge.equals("JUDGMENT_COOL"))  return 200 + (jamcombo_entity.getNumber()*10);
         else if(judge.equals("JUDGMENT_GOOD"))  return 100;
-        else if(judge.equals("JUDGMENT_BAD"))   return 4; //?? Only?
+        else if(judge.equals("JUDGMENT_BAD"))   return 4;
         else if(judge.equals("JUDGMENT_MISS")){ if(score_entity.getNumber() >= 10) return -10; else return -score_entity.getNumber(); }
         else                                    return 0;
     }
@@ -510,12 +512,12 @@ public class Render implements GameWindowCallback
 		note_counter.get(judge).incNumber();
                 score_entity.addNumber(computeScore(judge));
                 if(judge.equals("JUDGMENT_COOL"))
-                    jamcombo_counter += 2;
+                    jamcombo_counter.addNumber(2);
                 else if(judge.equals("JUDGMENT_GOOD"))
-                    jamcombo_counter++;
+                    jamcombo_counter.addNumber(1);
                 else
                 {
-                    jamcombo_counter = 0;
+                    jamcombo_counter.setNumber(0);
                     jamcombo_entity.resetNumber();
                 }
 		if(ne.getHit() > 0)
@@ -546,12 +548,12 @@ public class Render implements GameWindowCallback
 		note_counter.get(judge).incNumber();
                 score_entity.addNumber(computeScore(judge));
                 if(judge.equals("JUDGMENT_COOL"))
-                    jamcombo_counter += 2;
+                    jamcombo_counter.addNumber(2);
                 else if(judge.equals("JUDGMENT_GOOD"))
-                    jamcombo_counter++;
+                    jamcombo_counter.addNumber(1);
                 else
                 {
-                    jamcombo_counter = 0;
+                    jamcombo_counter.setNumber(0);
                     jamcombo_entity.resetNumber();
                 }
 		if(!judge.equals(MISS_JUDGE))
@@ -564,7 +566,8 @@ public class Render implements GameWindowCallback
 		    if(ne.getHit() >= skin.judgment.combo_threshold)combo_entity.incNumber();
 		    else combo_entity.resetNumber();
 
-                    ne.setAlive(false);
+                    if(ne instanceof LongNoteEntity)ne.setState(NoteEntity.State.TO_KILL);
+                    else ne.setAlive(false);
                 } else {
                     combo_entity.resetNumber();
                     ne.setState(NoteEntity.State.TO_KILL);
@@ -611,9 +614,9 @@ public class Render implements GameWindowCallback
             break;
         }
 
-        if(jamcombo_counter >= 50)
+        if(jamcombo_counter.getNumber() >= JamBarEntity.JAM_LIMIT)
         {
-            jamcombo_counter = 0; //reset
+            jamcombo_counter.setNumber(0); //reset
             jamcombo_entity.incNumber();
         }
 

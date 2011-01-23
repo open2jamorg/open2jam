@@ -1,6 +1,7 @@
 package org.open2jam.render;
 
 import java.awt.Rectangle;
+import java.io.IOException;
 import java.util.Map;
 import java.net.URL;
 import java.util.ArrayDeque;
@@ -15,6 +16,7 @@ import org.open2jam.render.entities.ComboCounterEntity;
 import org.open2jam.render.entities.CompositeEntity;
 import org.open2jam.render.entities.EffectEntity;
 import org.open2jam.render.entities.Entity;
+import org.open2jam.render.entities.JamBarEntity;
 import org.open2jam.render.entities.JudgmentEntity;
 import org.open2jam.render.entities.LongNoteEntity;
 import org.open2jam.render.entities.MeasureEntity;
@@ -123,7 +125,14 @@ public class SkinHandler extends DefaultHandler
             URL url = SkinHandler.class.getResource(FILE_PATH_PREFIX+atts.get("file"));
             if(url == null)throw new RuntimeException("Cannot find resource: "+FILE_PATH_PREFIX+atts.get("file"));
 
-            Sprite s = ResourceFactory.get().getSprite(url, slice);
+            Sprite s = null;
+            try {
+                s = ResourceFactory.get().getSprite(url, slice);
+            } catch(IOException e) {
+                logger.log(Level.WARNING, "Sprite resource load error !! {0}", e);
+                break;
+            }
+            ResourceFactory.get().getGameWindow().setScale(result.screen_scale_x,result.screen_scale_y);
 	    s.setScale(sx, sy);
             frame_buffer.add(s);
             }break;
@@ -281,7 +290,7 @@ public class SkinHandler extends DefaultHandler
 	    //TODO
 	}
 	else if(id.equals("JAM_BAR")){
-	    //TODO
+	    e = new JamBarEntity(new TreeMap(sprite_buffer).values(), 0, 0);
 	}
 	else if(id.equals("TIME_BAR")){
 	    //TODO

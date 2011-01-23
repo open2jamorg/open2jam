@@ -28,13 +28,13 @@ public interface GameWindow {
 
 	public int getResolutionHeight();
         public int getResolutionWidth();
-
-        public void setScreenScale(float x, float y);
 	
 	/**
 	 * Start the game window rendering the display
 	 */
 	public void startRendering();
+
+        public void setScale(float x, float y);
 	
 	/**
 	 * Set the callback that should be notified of the window

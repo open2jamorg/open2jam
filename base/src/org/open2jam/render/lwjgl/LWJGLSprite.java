@@ -4,7 +4,6 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.lwjgl.opengl.GL11;
 import org.open2jam.render.Sprite;
@@ -15,38 +14,31 @@ public class LWJGLSprite implements Sprite {
     static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     /** The texture that stores the image for this sprite */
-    private Texture texture;
+    private final Texture texture;
 
     /** the position inside the texture of the sprite */
-    private int x, y;
+    private final int x, y;
 
-    /** The width in pixels of this sprite */
-    private int width;
+    /** The width and height in pixels of this sprite */
+    private final int width, height;
 
-    /** The height in pixels of this sprite */
-    private int height;
-
-    /** the coordinates for the texture */
-    private float u, v, w, z;
+    private final int list_id = GL11.glGenLists(1);
 
     /** the scale of the image */
     private float scale_x = 1f, scale_y = 1f;
 
     /** the alpha */
     private float alpha = 1f;
-	
+
     /**
      * Create a new sprite from a specified image.
      *
      * @param window The window in which the sprite will be displayed
      * @param ref A reference to the image on which this sprite should be based
      */
-    public LWJGLSprite(LWJGLGameWindow window,URL ref, Rectangle slice) {
-            try {
-                    texture = window.getTextureLoader().getTexture(ref);
-            } catch (IOException e) {
-                logger.log(Level.WARNING, "IO Exception on loading texture: {0}", e.getMessage());
-            }
+    public LWJGLSprite(LWJGLGameWindow window,URL ref, Rectangle slice) throws IOException
+    {
+            texture = window.getTextureLoader().getTexture(ref);
             if(slice == null){
                     x = 0;
                     y = 0;
@@ -58,28 +50,42 @@ public class LWJGLSprite implements Sprite {
                     width = slice.width;
                     height = slice.height;
             }
-            init();
+            init(x,y,width,height);
     }
 
-    public LWJGLSprite(LWJGLGameWindow window, BufferedImage image) {
-        try{
-            texture = window.getTextureLoader().createTexture(image);
-        }catch(IOException e){
-            logger.log(Level.WARNING, "IO Exception on loading texture: {0}", e.getMessage());
-        }
-        
+    public LWJGLSprite(LWJGLGameWindow window, BufferedImage image)
+    {
+        texture = window.getTextureLoader().createTexture(image);
         x = 0; y = 0;
         width = texture.getWidth();
         height = texture.getHeight();
-        init();
+        init(x,y,width,height);
     }
 
-    private void init(){
-        u = ((float)x/texture.getWidth()); // top-left x
-        v = ((float)y/texture.getHeight()); // top-left y
+    private void init(int x, int y, int width, int height)
+    {
+        float u = ((float)x/texture.getWidth()); // top-left x
+        float v = ((float)y/texture.getHeight()); // top-left y
+        float w = ((float)(x+width)/texture.getWidth()); // bottom-right x
+        float z = ((float)(y+height)/texture.getHeight()); // bottom-right y
 
-        w = ((float)(x+width)/texture.getWidth()); // bottom-right x
-        z = ((float)(y+height)/texture.getHeight()); // bottom-right y
+        GL11.glNewList(list_id, GL11.GL_COMPILE);
+            GL11.glBegin(GL11.GL_QUADS);
+
+            GL11.glTexCoord2f(u, v);
+            GL11.glVertex2f(0, 0);
+
+            GL11.glTexCoord2f(u, z);
+            GL11.glVertex2f(0, height);
+
+            GL11.glTexCoord2f(w, z);
+            GL11.glVertex2f(width,height);
+
+            GL11.glTexCoord2f(w, v);
+            GL11.glVertex2f(width,0);
+            
+            GL11.glEnd();
+        GL11.glEndList();
     }
 	
     /**
@@ -98,6 +104,14 @@ public class LWJGLSprite implements Sprite {
      */
     public double getHeight() {
         return height * scale_y;
+    }
+
+    /** set the width and height percentage
+     * to be draw of the sprite
+     */
+    public void setSlice(float sx, float sy)
+    {
+        init(x,y,Math.round(sx * width),Math.round(sy * height));
     }
 
     public void setAlpha(float alpha)
@@ -123,42 +137,26 @@ public class LWJGLSprite implements Sprite {
 
         // translate to the right location and prepare to draw
         GL11.glTranslatef(px, py, 0);
+        
         GL11.glColor4f(1,1,1,this.alpha);
 
         GL11.glScalef(sx, sy, 1);
 
         // draw a quad textured to match the sprite
-        GL11.glBegin(GL11.GL_QUADS);
-
-        GL11.glTexCoord2f(u, v);
-        GL11.glVertex2f(0, 0);
-
-        GL11.glTexCoord2f(u, z);
-        GL11.glVertex2f(0, height);
-
-        GL11.glTexCoord2f(w, z);
-        GL11.glVertex2f(width,height);
-
-        GL11.glTexCoord2f(w, v);
-        GL11.glVertex2f(width,0);
-
-        GL11.glEnd();
+        GL11.glCallList(list_id);
 
         // restore the model view matrix to prevent contamination
         GL11.glPopMatrix();
     }
 
-    /** draw the sprite.
-    ** the same as draw(int,int)
-    ** but attempts to draw at the closest point
-    */
     public void draw(double x, double y, float scale_x, float scale_y)
     {
-         this.draw((int)Math.round(x),(int)Math.round(y), scale_x, scale_y);
+         this.draw((float)x,(float)y, scale_x, scale_y);
     }
+
     public void draw(double x, double y)
     {
-        this.draw((int)Math.round(x),(int)Math.round(y), scale_x, scale_y);
+        this.draw((float)x,(float)y, scale_x, scale_y);
     }
 
     public void setScale(float x, float y) {

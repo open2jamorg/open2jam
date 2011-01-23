@@ -99,7 +99,8 @@ public class OJMParser
             }
             f.close();
         }catch(IOException e) {
-            logger.log(Level.WARNING, "IO expeption on file {0} : {1}", new Object[]{file.getName(), e.getMessage()});
+            logger.log(Level.WARNING, "IO exception on file {0} : {1}", new Object[]{file.getName(), e.getMessage()});
+            ret = new HashMap<Integer,Integer>();
         }
         return ret;
     }
@@ -143,9 +144,10 @@ public class OJMParser
 
             byte[] sample_data = new byte[sample_size];
             buffer.get(sample_data);
+
             if(encryption_flag == 16)nami_xor(sample_data);
-            else
-            if(encryption_flag < 16)logger.log(Level.WARNING, "Unknown encryption flag({0}) !", encryption_flag);
+            else if(encryption_flag == 0); // let it pass
+            else if(encryption_flag < 16)logger.log(Level.WARNING, "Unknown encryption flag({0}) !", encryption_flag);
 
             int id = SoundManager.newBuffer(
                 new OggInputStream(new ByteArrayInputStream(sample_data))

@@ -19,6 +19,7 @@ public class NumberEntity extends Entity
         entity_list.addAll(list);
         this.x = x;
         this.y = y;
+        sprite = entity_list.get(0).sprite;
     }
 
     private NumberEntity(NumberEntity org) {
