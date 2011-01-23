@@ -825,8 +825,7 @@ public class NewInterface extends javax.swing.JFrame
         lbl_notes.setText(selected_header.getNoteCount()+"");
 	lbl_keys.setText(selected_header.getKeys()+"");
         int d = selected_header.getDuration();
-
-        lbl_time.setText((d/60)+":"+(d%60));
+        lbl_time.setText((d/60)+":"+(d%60 < 10 ? "0"+(d%60) : (d%60)));
 
         BufferedImage i = selected_header.getCover();
 
