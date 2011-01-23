@@ -25,7 +25,6 @@ public interface Sprite {
 	 */
 	public double getHeight();
 
-
         /**
          * set the scale of the image
          * which will be used on the draw(x,y) call
@@ -33,7 +32,7 @@ public interface Sprite {
          * 
          */
         public void setScale(float x, float y);
-
+        public void setSlice(float x, float y);
 
         public float getScaleX();
         public float getScaleY();

@@ -7,7 +7,7 @@ package org.open2jam.util;
  */
 public class SystemTimer {
     /** The number of "timer ticks" per second */
-    private static long timerTicksPerSecond = 1000000000L;// 10^9
+    private static final long timerTicksPerMilli = 1000000L;// 10^6
     private static long ticks = 0;
     private static long start;
 
@@ -33,10 +33,9 @@ public class SystemTimer {
      */
     public static long getTime() {
         // we get the "timer ticks" from the high resolution timer
-        // multiply by 1000 so our end result is in milliseconds
-        // then divide by the number of ticks in a second giving
+        // then divide by the number of ticks in a millisecond giving
         // us a nice clear time in milliseconds
-        return (getClockTicks() * 1000) / timerTicksPerSecond;
+        return getClockTicks() / timerTicksPerMilli;
     }
 
     /**

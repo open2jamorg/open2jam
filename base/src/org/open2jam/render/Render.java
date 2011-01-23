@@ -26,6 +26,7 @@ import org.open2jam.render.entities.AnimatedEntity;
 import org.open2jam.render.entities.BPMEntity;
 import org.open2jam.render.entities.ComboCounterEntity;
 import org.open2jam.render.entities.Entity;
+import org.open2jam.render.entities.JamBarEntity;
 import org.open2jam.render.entities.JudgmentEntity;
 import org.open2jam.render.entities.LongNoteEntity;
 import org.open2jam.render.entities.MeasureEntity;
@@ -65,6 +66,9 @@ public class Render implements GameWindowCallback
 
     /** the channelMirror, random select */
     private int channelModifier = 0;
+
+    /** the visibility modifier */
+    private int visibilityModifier = 0;
 
     /** skin info and entities */
     private Skin skin;
@@ -147,23 +151,39 @@ public class Render implements GameWindowCallback
     /** number to display the fps, and note counters on the screen */
     private NumberEntity fps_entity;
     private HashMap<String,NumberEntity> note_counter;
+    private NumberEntity score_entity;
+    /** JamCombo variables */
+    private ComboCounterEntity jamcombo_entity;
+    /**
+     * Cools: +2
+     * Goods: +1
+     * Everything else: reset to 0
+     * >=50 to add a jam
+     */
+    JamBarEntity jamcombo_counter;
+
+    private NumberEntity minute_entity;
+    private NumberEntity second_entity;
 
     private JudgmentEntity judgment_entity;
 
     /** the combo counter */
     private ComboCounterEntity combo_entity;
+    /** the maxcombo counter */
+    private NumberEntity maxcombo_entity;
 
     static{
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
         keyboard_map = Config.get().getKeyboardMap();
     }
 
-    public Render(Chart c, double hispeed, boolean autoplay, int channelModifier)
+    public Render(Chart c, double hispeed, boolean autoplay, int channelModifier, int visibilityModifier)
     {
         this.chart = c;
         this.hispeed = hispeed;
 	this.AUTOPLAY = autoplay;
 	this.channelModifier = channelModifier;
+        this.visibilityModifier = visibilityModifier;
         window = ResourceFactory.get().getGameWindow();
     }
         
@@ -266,8 +286,31 @@ public class Render implements GameWindowCallback
         fps_entity = (NumberEntity) skin.getEntityMap().get("FPS_COUNTER");
         entities_matrix.add(fps_entity);
 
+        score_entity = (NumberEntity) skin.getEntityMap().get("SCORE_COUNTER");
+        entities_matrix.add(score_entity);
+
+        /**
+         * TODO It's a combo counter, but because our combo counter substract 1 when it draws
+         * the real number and the drawed number are different
+         */
+        jamcombo_entity = (ComboCounterEntity) skin.getEntityMap().get("JAM_COUNTER");
+        entities_matrix.add(jamcombo_entity);
+
+        jamcombo_counter = (JamBarEntity) skin.getEntityMap().get("JAM_BAR");
+        entities_matrix.add(jamcombo_counter);
+        
         combo_entity = (ComboCounterEntity) skin.getEntityMap().get("COMBO_COUNTER");
         entities_matrix.add(combo_entity);
+
+        maxcombo_entity = (NumberEntity) skin.getEntityMap().get("MAXCOMBO_COUNTER");
+        entities_matrix.add(maxcombo_entity);
+
+        minute_entity = (NumberEntity) skin.getEntityMap().get("MINUTE_COUNTER");
+        entities_matrix.add(minute_entity);
+
+        second_entity = (NumberEntity) skin.getEntityMap().get("SECOND_COUNTER");
+        entities_matrix.add(second_entity);
+        second_entity.showDigits(2);//show 2 digits
 
         for(Event.Channel c : keyboard_map.keySet())
         {
@@ -304,7 +347,7 @@ public class Render implements GameWindowCallback
 
         try{
             for(int i=0;i<MAX_SOURCES;i++)
-                source_queue.add(SoundManager.newSource()); // creates sources
+                source_queue.push(SoundManager.newSource()); // creates sources
         }catch(org.lwjgl.openal.OpenALException e){
             logger.log(Level.WARNING, "Couldn''t create enough sources({0})", MAX_SOURCES);
         }
@@ -344,6 +387,15 @@ public class Render implements GameWindowCallback
             fps_entity.setNumber(fps);
             lastFpsTime = 0;
             fps = 0;
+
+            //the timer counter
+            if(second_entity.getNumber() >= 59)
+            {
+                second_entity.setNumber(0);
+                minute_entity.incNumber();
+            }
+            else
+                second_entity.incNumber();
         }
 
 	if(AUTOPLAY)do_autoplay();
@@ -431,6 +483,21 @@ public class Render implements GameWindowCallback
     public double getMeasureSize() { return measure_size; }
     public double getViewport() { return skin.judgment.start+skin.judgment.size; }
 
+    private int computeScore(String judge)
+    {
+        /**
+         * Your current jam combo also affects the score you get for each Cool hit.
+         * For each jam combo, the score is increased by 10.
+         * If you fail to hit a note, the jam combo will be reset to 0 and also the score/cool to 200.
+         * http://o2jam.wikia.com/wiki/Jam_combo
+         */
+        if     (judge.equals("JUDGMENT_COOL"))  return 200 + (jamcombo_entity.getNumber()*10);
+        else if(judge.equals("JUDGMENT_GOOD"))  return 100;
+        else if(judge.equals("JUDGMENT_BAD"))   return 4;
+        else if(judge.equals("JUDGMENT_MISS")){ if(score_entity.getNumber() >= 10) return -10; else return -score_entity.getNumber(); }
+        else                                    return 0;
+    }
+
     private void check_judgment(NoteEntity ne)
     {
         String judge;
@@ -443,6 +510,16 @@ public class Render implements GameWindowCallback
                 entities_matrix.add(judgment_entity);
 
 		note_counter.get(judge).incNumber();
+                score_entity.addNumber(computeScore(judge));
+                if(judge.equals("JUDGMENT_COOL"))
+                    jamcombo_counter.addNumber(2);
+                else if(judge.equals("JUDGMENT_GOOD"))
+                    jamcombo_counter.addNumber(1);
+                else
+                {
+                    jamcombo_counter.setNumber(0);
+                    jamcombo_entity.resetNumber();
+                }
 		if(ne.getHit() > 0)
                 {
 		    Entity ee = skin.getEntityMap().get("EFFECT_LONGFLARE").copy();
@@ -457,13 +534,8 @@ public class Render implements GameWindowCallback
 		    entities_matrix.add(ee);
 
 		    if(ne.getHit() >= skin.judgment.combo_threshold)combo_entity.incNumber();
-		    else combo_entity.resetNumber();
+		    else {combo_entity.resetNumber(); score_entity.addNumber(computeScore(judge));}
                     ne.setState(NoteEntity.State.LN_HOLD);
-                }else
-                { // TODO: this else will ever be executed ???
-                    combo_entity.resetNumber();
-                    note_channels.get(ne.getChannel()).removeFirst();
-                    ne.setState(NoteEntity.State.TO_KILL);
                 }
                 last_sound.put(ne.getChannel(), ne.getSample());
             break;
@@ -474,6 +546,16 @@ public class Render implements GameWindowCallback
                 entities_matrix.add(judgment_entity);
 
 		note_counter.get(judge).incNumber();
+                score_entity.addNumber(computeScore(judge));
+                if(judge.equals("JUDGMENT_COOL"))
+                    jamcombo_counter.addNumber(2);
+                else if(judge.equals("JUDGMENT_GOOD"))
+                    jamcombo_counter.addNumber(1);
+                else
+                {
+                    jamcombo_counter.setNumber(0);
+                    jamcombo_entity.resetNumber();
+                }
 		if(!judge.equals(MISS_JUDGE))
                 {
 		    Entity ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
@@ -511,6 +593,7 @@ public class Render implements GameWindowCallback
 
                     note_counter.get(MISS_JUDGE).incNumber();
                     combo_entity.resetNumber();
+                    score_entity.addNumber(computeScore(MISS_JUDGE));
                     note_channels.get(ne.getChannel()).removeFirst();
                     ne.setState(NoteEntity.State.TO_KILL);
                  }
@@ -524,10 +607,22 @@ public class Render implements GameWindowCallback
 
                     note_counter.get(MISS_JUDGE).incNumber();
                     combo_entity.resetNumber();
+                    score_entity.addNumber(computeScore(MISS_JUDGE));
                     note_channels.get(ne.getChannel()).removeFirst();
                     ne.setState(NoteEntity.State.TO_KILL);
                  }
             break;
+        }
+
+        if(jamcombo_counter.getNumber() >= JamBarEntity.JAM_LIMIT)
+        {
+            jamcombo_counter.setNumber(0); //reset
+            jamcombo_entity.incNumber();
+        }
+
+        if(combo_entity.getNumber() > 1 && maxcombo_entity.getNumber()<(combo_entity.getNumber()-1))
+        {
+            maxcombo_entity.incNumber();
         }
     }
 

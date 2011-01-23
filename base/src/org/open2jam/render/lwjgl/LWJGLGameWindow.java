@@ -40,6 +40,8 @@ public class LWJGLGameWindow implements GameWindow {
 	/** The height of the game display area */
 	private int height;
 
+        private float screen_scale_x = 1f, screen_scale_y = 1f;
+
 	/** The loader responsible for converting images into OpenGL textures */
 	private TextureLoader textureLoader;
   
@@ -213,6 +215,7 @@ public class LWJGLGameWindow implements GameWindow {
                     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
                     GL11.glLoadIdentity();
 
+                    // scale
                     GL11.glScalef(scale_x, scale_y, 1);
 
                     // let subsystem paint

@@ -56,6 +56,13 @@ public class ComboCounterEntity extends NumberEntity
         to_show = 0;
     }
 
+    public void resetNumberTo(int i)
+    {
+        number = i;
+        y = base_y + wobble;
+        to_show = show_time;
+    }
+
     @Override
     public void move(long delta)
     {

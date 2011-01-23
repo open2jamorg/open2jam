@@ -559,7 +559,7 @@ public class Interface extends javax.swing.JFrame
 
 	    final int channelModifier = combo_channelModifier.getSelectedIndex();
 
-	    Render r = new Render(selected_header, hispeed, autoplay, channelModifier);
+	    Render r = new Render(selected_header, hispeed, autoplay, channelModifier, 0);
 
 	    r.setDisplay(dm, vsync, fs);
 

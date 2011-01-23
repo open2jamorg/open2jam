@@ -16,6 +16,7 @@ import org.open2jam.render.entities.ComboCounterEntity;
 import org.open2jam.render.entities.CompositeEntity;
 import org.open2jam.render.entities.EffectEntity;
 import org.open2jam.render.entities.Entity;
+import org.open2jam.render.entities.JamBarEntity;
 import org.open2jam.render.entities.JudgmentEntity;
 import org.open2jam.render.entities.LongNoteEntity;
 import org.open2jam.render.entities.MeasureEntity;
@@ -53,6 +54,7 @@ public class SkinHandler extends DefaultHandler
     protected double baseH = 600;
     protected final double targetW;
     protected final double targetH;
+
 
     public SkinHandler(Render r, String skin, double width, double height)
     {
@@ -208,12 +210,10 @@ public class SkinHandler extends DefaultHandler
             }break;
 
             case judgment:{
-                Integer start = Integer.parseInt(atts.get("start"));
-                Integer size = Integer.parseInt(atts.get("size"));
+                result.judgment.start = Integer.parseInt(atts.get("start"));
+                result.judgment.size = Integer.parseInt(atts.get("size"));
 
                 result.judgment.combo_threshold = Double.parseDouble(atts.get("combo_threshold"));
-                result.judgment.start = start;// * result.screen_scale_y;
-                result.judgment.size = size;// * result.screen_scale_y;
             }break;
         }
     }
@@ -265,8 +265,23 @@ public class SkinHandler extends DefaultHandler
 	else if(id.equals("COUNTER_JUDGMENT_MISS")){
 	    e = new NumberEntity(new TreeMap(sprite_buffer).values(), 0, 0);
 	}
+	else if(id.equals("MAXCOMBO_COUNTER")){
+	    e = new NumberEntity(new TreeMap(sprite_buffer).values(), 0, 0);
+	}
+	else if(id.equals("SCORE_COUNTER")){
+	    e = new NumberEntity(new TreeMap(sprite_buffer).values(), 0, 0);
+	}
+	else if(id.equals("JAM_COUNTER")){
+	    e = new ComboCounterEntity(new TreeMap(sprite_buffer).values(), 0, 0);
+	}
         else if(id.equals("COMBO_COUNTER")){
             e = new ComboCounterEntity(new TreeMap(sprite_buffer).values(), 0, 0);
+        }
+        else if(id.equals("MINUTE_COUNTER")){
+            e = new NumberEntity(new TreeMap(sprite_buffer).values(), 0, 0);
+        }
+        else if(id.equals("SECOND_COUNTER")){
+            e = new NumberEntity(new TreeMap(sprite_buffer).values(), 0, 0);
         }
 	else if(id.equals("PILLS")){
 	    //TODO
@@ -275,7 +290,7 @@ public class SkinHandler extends DefaultHandler
 	    //TODO
 	}
 	else if(id.equals("JAM_BAR")){
-	    //TODO
+	    e = new JamBarEntity(new TreeMap(sprite_buffer).values(), 0, 0);
 	}
 	else if(id.equals("TIME_BAR")){
 	    //TODO

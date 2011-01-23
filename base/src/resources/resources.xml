@@ -48,19 +48,19 @@
     <layer id="2">
         <!-- pills -->
 	<entity>
-            <sprite x="200" y="2">
-                <frame x="0" y="52" w="28" h="28" file="main.png" />
-            </sprite>
-            <sprite x="200" y="33">
-                <frame x="0" y="52" w="28" h="28" file="main.png" />
-            </sprite>
-            <sprite x="200" y="64">
+            <sprite x="200" y="127"> <!-- this is the first pill even is the lower one -->
                 <frame x="0" y="52" w="28" h="28" file="main.png" />
             </sprite>
             <sprite x="200" y="95">
                 <frame x="0" y="52" w="28" h="28" file="main.png" />
             </sprite>
-            <sprite x="200" y="127">
+            <sprite x="200" y="64">
+                <frame x="0" y="52" w="28" h="28" file="main.png" />
+            </sprite>
+            <sprite x="200" y="33">
+                <frame x="0" y="52" w="28" h="28" file="main.png" />
+            </sprite>
+            <sprite x="200" y="2">
                 <frame x="0" y="52" w="28" h="28" file="main.png" />
             </sprite>
 	</entity>
@@ -79,7 +79,7 @@
 		<frame x="183" y="1"  w="13" h="302" file="main.png" />
             </sprite>
         </entity>
-	<!-- time bar -->
+	<!-- time bar / o2 combo bar (don't know what way will we go)-->
 	<entity>
 	    <sprite x="226" y="515">
 		<frame x="0"  y="183"  w="226" h="72" file="font1.png" />
@@ -252,8 +252,8 @@
     
     <!-- jam bar -->
     <layer id="8">
-	<entity>
-	    <sprite x="4" y="536">
+	<entity id="JAM_BAR" x="4" y="536">
+	    <sprite>
 		<frame x="1" y="391" w="191" h="12" file="main.png" />
 	    </sprite>
 	</entity>
@@ -444,6 +444,171 @@
              </sprite>
          </entity>
 
+         <entity id="SCORE_COUNTER" x="192" y="567">
+             <sprite id="0">
+                 <frame x="126" y="1" w="23" h="18" file="font1.png" />
+             </sprite>
+             <sprite id="1">
+                 <frame x="150" y="1" w="12" h="18" file="font1.png" />
+             </sprite>
+             <sprite id="2">
+                 <frame x="163" y="1" w="23" h="18" file="font1.png" />
+             </sprite>
+             <sprite id="3">
+                 <frame x="187" y="1" w="23" h="18" file="font1.png" />
+             </sprite>
+             <sprite id="4">
+                 <frame x="211" y="1" w="24" h="18" file="font1.png" />
+             </sprite>
+             <sprite id="5">
+                 <frame x="126" y="20" w="24" h="18" file="font1.png" />
+             </sprite>
+             <sprite id="6">
+                 <frame x="151" y="20" w="24" h="18" file="font1.png" />
+             </sprite>
+             <sprite id="7">
+                 <frame x="176" y="20" w="23" h="18" file="font1.png" />
+             </sprite>
+             <sprite id="8">
+                 <frame x="200" y="20" w="24" h="18" file="font1.png" />
+             </sprite>
+             <sprite id="9">
+                 <frame x="225" y="20" w="24" h="18" file="font1.png" />
+             </sprite>
+         </entity>
+
+         <entity id="JAM_COUNTER" x="192" y="10">
+             <sprite id="0">
+                 <frame x="126" y="1" w="23" h="18" file="font1.png" />
+             </sprite>
+             <sprite id="1">
+                 <frame x="150" y="1" w="12" h="18" file="font1.png" />
+             </sprite>
+             <sprite id="2">
+                 <frame x="163" y="1" w="23" h="18" file="font1.png" />
+             </sprite>
+             <sprite id="3">
+                 <frame x="187" y="1" w="23" h="18" file="font1.png" />
+             </sprite>
+             <sprite id="4">
+                 <frame x="211" y="1" w="24" h="18" file="font1.png" />
+             </sprite>
+             <sprite id="5">
+                 <frame x="126" y="20" w="24" h="18" file="font1.png" />
+             </sprite>
+             <sprite id="6">
+                 <frame x="151" y="20" w="24" h="18" file="font1.png" />
+             </sprite>
+             <sprite id="7">
+                 <frame x="176" y="20" w="23" h="18" file="font1.png" />
+             </sprite>
+             <sprite id="8">
+                 <frame x="200" y="20" w="24" h="18" file="font1.png" />
+             </sprite>
+             <sprite id="9">
+                 <frame x="225" y="20" w="24" h="18" file="font1.png" />
+             </sprite>
+         </entity>
+
+        <entity id="MINUTE_COUNTER" x="346" y="569">
+            <sprite id="0">
+                <frame x="121" y="59" w="27" h="21" file="font1.png" />
+            </sprite>
+            <sprite id="1">
+                <frame x="148" y="59" w="27" h="21" file="font1.png" />
+            </sprite>
+            <sprite id="2">
+                <frame x="175" y="59" w="27" h="21" file="font1.png" />
+            </sprite>
+            <sprite id="3">
+                <frame x="202" y="59" w="27" h="21" file="font1.png" />
+            </sprite>
+            <sprite id="4">
+                <frame x="229" y="59" w="27" h="21" file="font1.png" />
+            </sprite>
+            <sprite id="5">
+                <frame x="121" y="81" w="27" h="21" file="font1.png" />
+            </sprite>
+            <sprite id="6">
+                <frame x="148" y="81" w="27" h="21" file="font1.png" />
+            </sprite>
+            <sprite id="7">
+                <frame x="175" y="81" w="27" h="21" file="font1.png" />
+            </sprite>
+            <sprite id="8">
+                <frame x="202" y="81" w="27" h="21" file="font1.png" />
+            </sprite>
+            <sprite id="9">
+                <frame x="229" y="81" w="27" h="21" file="font1.png" />
+            </sprite>
+        </entity>
+
+        <entity id="SECOND_COUNTER" x="410" y="569">
+            <sprite id="0">
+                <frame x="121" y="59" w="27" h="21" file="font1.png" />
+            </sprite>
+            <sprite id="1">
+                <frame x="148" y="59" w="27" h="21" file="font1.png" />
+            </sprite>
+            <sprite id="2">
+                <frame x="175" y="59" w="27" h="21" file="font1.png" />
+            </sprite>
+            <sprite id="3">
+                <frame x="202" y="59" w="27" h="21" file="font1.png" />
+            </sprite>
+            <sprite id="4">
+                <frame x="229" y="59" w="27" h="21" file="font1.png" />
+            </sprite>
+            <sprite id="5">
+                <frame x="121" y="81" w="27" h="21" file="font1.png" />
+            </sprite>
+            <sprite id="6">
+                <frame x="148" y="81" w="27" h="21" file="font1.png" />
+            </sprite>
+            <sprite id="7">
+                <frame x="175" y="81" w="27" h="21" file="font1.png" />
+            </sprite>
+            <sprite id="8">
+                <frame x="202" y="81" w="27" h="21" file="font1.png" />
+            </sprite>
+            <sprite id="9">
+                <frame x="229" y="81" w="27" h="21" file="font1.png" />
+            </sprite>
+        </entity>
+
+        <entity id="MAXCOMBO_COUNTER" x="671" y="556">
+            <sprite id="0">
+                <frame x="126" y="106" w="11" h="11" file="font1.png" />
+            </sprite>
+            <sprite id="1">
+                <frame x="137" y="106" w="11" h="11" file="font1.png" />
+            </sprite>
+            <sprite id="2">
+                <frame x="148" y="106" w="11" h="11" file="font1.png" />
+            </sprite>
+            <sprite id="3">
+                <frame x="159" y="106" w="11" h="11" file="font1.png" />
+            </sprite>
+            <sprite id="4">
+                <frame x="170" y="106" w="11" h="11" file="font1.png" />
+            </sprite>
+            <sprite id="5">
+                <frame x="181" y="106" w="11" h="11" file="font1.png" />
+            </sprite>
+            <sprite id="6">
+                <frame x="192" y="106" w="11" h="11" file="font1.png" />
+            </sprite>
+            <sprite id="7">
+                <frame x="203" y="106" w="11" h="11" file="font1.png" />
+            </sprite>
+            <sprite id="8">
+                <frame x="214" y="106" w="11" h="11" file="font1.png" />
+            </sprite>
+            <sprite id="9">
+                <frame x="225" y="106" w="11" h="11" file="font1.png" />
+            </sprite>
+        </entity>
+
         <entity id="COUNTER_JUDGMENT_COOL" x="658" y="573">
             <sprite id="0">
                 <frame x="126" y="39" w="9" h="9" file="font1.png" />
@@ -575,8 +740,6 @@
                 <frame x="207" y="39" w="9" h="9" file="font1.png" />
             </sprite>
         </entity>
-
-
     </layer>
 </skin>
 </Resources>

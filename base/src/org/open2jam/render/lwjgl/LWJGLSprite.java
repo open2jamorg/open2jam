@@ -50,7 +50,7 @@ public class LWJGLSprite implements Sprite {
                     width = slice.width;
                     height = slice.height;
             }
-            init();
+            init(x,y,width,height);
     }
 
     public LWJGLSprite(LWJGLGameWindow window, BufferedImage image)
@@ -59,10 +59,11 @@ public class LWJGLSprite implements Sprite {
         x = 0; y = 0;
         width = texture.getWidth();
         height = texture.getHeight();
-        init();
+        init(x,y,width,height);
     }
 
-    private void init(){
+    private void init(int x, int y, int width, int height)
+    {
         float u = ((float)x/texture.getWidth()); // top-left x
         float v = ((float)y/texture.getHeight()); // top-left y
         float w = ((float)(x+width)/texture.getWidth()); // bottom-right x
@@ -103,6 +104,14 @@ public class LWJGLSprite implements Sprite {
      */
     public double getHeight() {
         return height * scale_y;
+    }
+
+    /** set the width and height percentage
+     * to be draw of the sprite
+     */
+    public void setSlice(float sx, float sy)
+    {
+        init(x,y,Math.round(sx * width),Math.round(sy * height));
     }
 
     public void setAlpha(float alpha)
