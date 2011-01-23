@@ -66,9 +66,6 @@ public class Render implements GameWindowCallback
     /** the channelMirror, random select */
     private int channelModifier = 0;
 
-    /** will keep the aspect ratio of the skin */
-    private boolean aspect_ratio = false;
-
     /** the visibility modifier */
     private int visibilityModifier = 0;
 
@@ -162,7 +159,7 @@ public class Render implements GameWindowCallback
      * Everything else: reset to 0
      * >=50 to add a jam
      */
-    int jamcombo_counter;
+    int jamcombo_counter; // TODO when the jam graphic bar is done, change this 
 
     private NumberEntity minute_entity;
     private NumberEntity second_entity;
@@ -189,8 +186,7 @@ public class Render implements GameWindowCallback
         window = ResourceFactory.get().getGameWindow();
     }
         
-    public void setDisplay(DisplayMode dm, boolean vsync, boolean fs, boolean aspect_ratio) {
-        this.aspect_ratio = aspect_ratio;
+    public void setDisplay(DisplayMode dm, boolean vsync, boolean fs) {
         window.setDisplay(dm,vsync,fs);
     }
 
@@ -230,7 +226,7 @@ public class Render implements GameWindowCallback
         }
 
         //scale
-        window.setScreenScale(skin.screen_scale_x, skin.screen_scale_y, aspect_ratio);
+        window.setScreenScale(skin.screen_scale_x, skin.screen_scale_y);
         window.update();
 
         // cover image load
@@ -487,22 +483,17 @@ public class Render implements GameWindowCallback
 
     private int computeScore(String judge)
     {
-        if(judge.equals("JUDGMENT_COOL"))
-        {
-            /**
-             * Your current jam combo also affects the score you get for each Cool hit.
-             * For each jam combo, the score is increased by 10.
-             * If you fail to hit a note, the jam combo will be reset to 0 and also the score/cool to 200.
-             * http://o2jam.wikia.com/wiki/Jam_combo
-             */
-            return 200 + (jamcombo_entity.getNumber()*10);
-        }
-        else if(judge.equals("JUDGMENT_GOOD"))
-        {
-            return 128; //i don't know :/
-        }
-        else
-            return 0;
+        /**
+         * Your current jam combo also affects the score you get for each Cool hit.
+         * For each jam combo, the score is increased by 10.
+         * If you fail to hit a note, the jam combo will be reset to 0 and also the score/cool to 200.
+         * http://o2jam.wikia.com/wiki/Jam_combo
+         */
+        if     (judge.equals("JUDGMENT_COOL"))  return 200 + (jamcombo_entity.getNumber()*10);
+        else if(judge.equals("JUDGMENT_GOOD"))  return 100;
+        else if(judge.equals("JUDGMENT_BAD"))   return 4; //?? Only?
+        else if(judge.equals("JUDGMENT_MISS")){ if(score_entity.getNumber() >= 10) return -10; else return -score_entity.getNumber(); }
+        else                                    return 0;
     }
 
     private void check_judgment(NoteEntity ne)
@@ -541,13 +532,8 @@ public class Render implements GameWindowCallback
 		    entities_matrix.add(ee);
 
 		    if(ne.getHit() >= skin.judgment.combo_threshold)combo_entity.incNumber();
-		    else combo_entity.resetNumber();
+		    else {combo_entity.resetNumber(); score_entity.addNumber(computeScore(judge));}
                     ne.setState(NoteEntity.State.LN_HOLD);
-                }else
-                { // TODO: this else will ever be executed ???
-                    combo_entity.resetNumber();
-                    note_channels.get(ne.getChannel()).removeFirst();
-                    ne.setState(NoteEntity.State.TO_KILL);
                 }
                 last_sound.put(ne.getChannel(), ne.getSample());
             break;
@@ -604,6 +590,7 @@ public class Render implements GameWindowCallback
 
                     note_counter.get(MISS_JUDGE).incNumber();
                     combo_entity.resetNumber();
+                    score_entity.addNumber(computeScore(MISS_JUDGE));
                     note_channels.get(ne.getChannel()).removeFirst();
                     ne.setState(NoteEntity.State.TO_KILL);
                  }
@@ -617,6 +604,7 @@ public class Render implements GameWindowCallback
 
                     note_counter.get(MISS_JUDGE).incNumber();
                     combo_entity.resetNumber();
+                    score_entity.addNumber(computeScore(MISS_JUDGE));
                     note_channels.get(ne.getChannel()).removeFirst();
                     ne.setState(NoteEntity.State.TO_KILL);
                  }

@@ -41,7 +41,6 @@ public class LWJGLGameWindow implements GameWindow {
 	private int height;
 
         private float screen_scale_x = 1f, screen_scale_y = 1f;
-        private boolean aspect_ratio = false;
 
 	/** The loader responsible for converting images into OpenGL textures */
 	private TextureLoader textureLoader;
@@ -193,18 +192,9 @@ public class LWJGLGameWindow implements GameWindow {
             return Keyboard.isKeyDown(code);
 	}
 
-        public void setScreenScale(float x, float y, boolean aspect_ratio){
-            if(aspect_ratio)
-            {
-                this.screen_scale_x = Math.min(x,y);
-                this.screen_scale_y = this.screen_scale_x;
-                this.aspect_ratio = aspect_ratio;
-            }
-            else
-            {
-                this.screen_scale_x = x;
-                this.screen_scale_y = y;
-            }
+        public void setScreenScale(float x, float y){
+            this.screen_scale_x = x;
+            this.screen_scale_y = y;
         }
 
 	/**

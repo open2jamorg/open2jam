@@ -29,7 +29,7 @@ public interface GameWindow {
 	public int getResolutionHeight();
         public int getResolutionWidth();
 
-        public void setScreenScale(float x, float y, boolean aspect_ratio);
+        public void setScreenScale(float x, float y);
 	
 	/**
 	 * Start the game window rendering the display

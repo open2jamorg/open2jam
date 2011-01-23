@@ -561,7 +561,7 @@ public class Interface extends javax.swing.JFrame
 
 	    Render r = new Render(selected_header, hispeed, autoplay, channelModifier, 0);
 
-	    r.setDisplay(dm, vsync, fs, false);
+	    r.setDisplay(dm, vsync, fs);
 
 	    r.startRendering();
 	}
