@@ -47,19 +47,27 @@
     <!-- pills, life bar & time bar -->
     <layer id="2">
         <!-- pills -->
-	<entity>
+	<entity id="PILL_1">
             <sprite x="200" y="127"> <!-- this is the first pill even is the lower one -->
                 <frame x="0" y="52" w="28" h="28" file="main.png" />
             </sprite>
+        </entity>
+        <entity id="PILL_2">
             <sprite x="200" y="95">
                 <frame x="0" y="52" w="28" h="28" file="main.png" />
             </sprite>
+        </entity>
+        <entity id="PILL_3">
             <sprite x="200" y="64">
                 <frame x="0" y="52" w="28" h="28" file="main.png" />
             </sprite>
+        </entity>
+        <entity id="PILL_4">
             <sprite x="200" y="33">
                 <frame x="0" y="52" w="28" h="28" file="main.png" />
             </sprite>
+        </entity>
+        <entity id="PILL_5">
             <sprite x="200" y="2">
                 <frame x="0" y="52" w="28" h="28" file="main.png" />
             </sprite>

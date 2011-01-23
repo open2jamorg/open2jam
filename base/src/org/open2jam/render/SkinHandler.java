@@ -283,8 +283,8 @@ public class SkinHandler extends DefaultHandler
         else if(id.equals("SECOND_COUNTER")){
             e = new NumberEntity(new TreeMap(sprite_buffer).values(), 0, 0);
         }
-	else if(id.equals("PILLS")){
-	    //TODO
+	else if(id.startsWith("PILL_")){
+	    e = new CompositeEntity(sprite_buffer.values());
 	}
 	else if(id.equals("LIFE_BAR")){
 	    //TODO
