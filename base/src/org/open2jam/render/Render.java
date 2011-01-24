@@ -307,8 +307,8 @@ public class Render implements GameWindowCallback
         entities_matrix.add(jambar_entity);
 
         lifebar_entity = (BarEntity) skin.getEntityMap().get("LIFE_BAR");
-        lifebar_entity.setLimit(110);
-        lifebar_entity.setNumber(110);
+        lifebar_entity.setLimit(1000);
+        lifebar_entity.setNumber(1000);
         lifebar_entity.setFillDirection(BarEntity.fillDirection.UP_TO_DOWN);
         entities_matrix.add(lifebar_entity);
         
@@ -532,10 +532,7 @@ public class Render implements GameWindowCallback
                     combo_entity.resetNumber();
                     score_entity.addNumber(computeScore(MISS_JUDGE));
 
-                    jambar_entity.setNumber(0);
-                    jamcombo_entity.resetNumber();
-
-                    if(lifebar_entity.getNumber() >= 10)lifebar_entity.addNumber(-10);
+                    update_bars(MISS_JUDGE);
                     
                     note_channels.get(ne.getChannel()).removeFirst();
                     ne.setState(NoteEntity.State.TO_KILL);
@@ -544,38 +541,7 @@ public class Render implements GameWindowCallback
             case JUDGE: //LN & normal ones: has finished with good result
                 judge = skin.judgment.ratePrecision(ne.getHit());
 
-                if(judge.equals("JUDGMENT_COOL"))
-                {
-                    jambar_entity.addNumber(2);
-                    consecutive_cools++;
-                }
-                else if(judge.equals("JUDGMENT_GOOD"))
-                {
-                    jambar_entity.addNumber(1);
-                    consecutive_cools = 0;
-                }
-                else if(judge.equals("JUDGMENT_BAD"))
-                {
-                    if(pills > 0)
-                    {
-                        judge = "JUDGMENT_COOL";
-                        jambar_entity.addNumber(2);
-                        pills--;
-                        pills_draw.get(pills).setAlive(false);
-                    }
-                    else
-                    {
-                        jambar_entity.setNumber(0);
-                        jamcombo_entity.resetNumber();
-                    }
-                    consecutive_cools = 0;
-                }
-                else if(judge.equals("JUDGMENT_MISS"))
-                {
-                    jambar_entity.setNumber(0);
-                    jamcombo_entity.resetNumber();
-                    consecutive_cools = 0;
-                }
+                judge = update_bars(judge);
 
                 if(judgment_entity != null)judgment_entity.setAlive(false);
                 judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
@@ -606,38 +572,7 @@ public class Render implements GameWindowCallback
             case LN_HEAD_JUDGE: //LN: Head has been played
                 judge = skin.judgment.ratePrecision(ne.getHit());
 
-                if(judge.equals("JUDGMENT_COOL"))
-                {
-                    jambar_entity.addNumber(2);
-                    consecutive_cools++;
-                }
-                else if(judge.equals("JUDGMENT_GOOD"))
-                {
-                    jambar_entity.addNumber(1);
-                    consecutive_cools = 0;
-                }
-                else if(judge.equals("JUDGMENT_BAD"))
-                {
-                    if(pills > 0)
-                    {
-                        judge = "JUDGMENT_COOL";
-                        jambar_entity.addNumber(2);
-                        pills--;
-                        pills_draw.get(pills).setAlive(false);
-                    }
-                    else
-                    {
-                        jambar_entity.setNumber(0);
-                        jamcombo_entity.resetNumber();
-                    }
-                    consecutive_cools = 0;
-                }
-                else if(judge.equals("JUDGMENT_MISS"))
-                {
-                    jambar_entity.setNumber(0);
-                    jamcombo_entity.resetNumber();
-                    consecutive_cools = 0;
-                }
+                judge = update_bars(judge);
 
                 if(judgment_entity != null)judgment_entity.setAlive(false);
                 judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
@@ -645,15 +580,7 @@ public class Render implements GameWindowCallback
 
 		note_counter.get(judge).incNumber();
                 score_entity.addNumber(computeScore(judge));
-                if(judge.equals("JUDGMENT_COOL"))
-                    jambar_entity.addNumber(2);
-                else if(judge.equals("JUDGMENT_GOOD"))
-                    jambar_entity.addNumber(1);
-                else if(judge.equals("JUDGMENT_BAD") || judge.equals("JUDGMENT_MISS"))
-                {
-                    jambar_entity.setNumber(0);
-                    jamcombo_entity.resetNumber();
-                }
+
 		if(!judge.equals(MISS_JUDGE))
                 {
 		    Entity ee = skin.getEntityMap().get("EFFECT_LONGFLARE").copy();
@@ -684,8 +611,7 @@ public class Render implements GameWindowCallback
                     combo_entity.resetNumber();
                     score_entity.addNumber(computeScore(MISS_JUDGE));
                     
-                    jambar_entity.setNumber(0);
-                    jamcombo_entity.resetNumber();
+                    update_bars(MISS_JUDGE);
 
                     note_channels.get(ne.getChannel()).removeFirst();
                     ne.setState(NoteEntity.State.TO_KILL);
@@ -719,6 +645,48 @@ public class Render implements GameWindowCallback
         {
             maxcombo_entity.incNumber();
         }
+    }
+
+    private String update_bars(String judge)
+    {
+        if(judge.equals("JUDGMENT_COOL"))
+        {
+            jambar_entity.addNumber(2);
+            consecutive_cools++;
+            if(lifebar_entity.getNumber() <= lifebar_entity.getLimit()-100)lifebar_entity.addNumber(100);
+        }
+        else if(judge.equals("JUDGMENT_GOOD"))
+        {
+            jambar_entity.addNumber(1);
+            consecutive_cools = 0;
+            if(lifebar_entity.getNumber() <= lifebar_entity.getLimit()-50)lifebar_entity.addNumber(50);
+        }
+        else if(judge.equals("JUDGMENT_BAD"))
+        {
+            if(pills > 0)
+            {
+                judge = "JUDGMENT_COOL";
+                jambar_entity.addNumber(2);
+                pills--;
+                pills_draw.get(pills).setAlive(false);
+            }
+            else
+            {
+                jambar_entity.setNumber(0);
+                jamcombo_entity.resetNumber();
+            }
+            consecutive_cools = 0;
+            if(lifebar_entity.getNumber() <= lifebar_entity.getLimit()-30)lifebar_entity.addNumber(30);
+        }
+        else if(judge.equals("JUDGMENT_MISS"))
+        {
+            jambar_entity.setNumber(0);
+            jamcombo_entity.resetNumber();
+            consecutive_cools = 0;
+
+            if(lifebar_entity.getNumber() >= 30)lifebar_entity.addNumber(-30);
+        }
+        return judge;
     }
 
     private void do_autoplay()
