@@ -558,7 +558,11 @@ public class Render implements GameWindowCallback
 		    entities_matrix.add(ee);
 
 		    if(ne.getHit() >= skin.judgment.combo_threshold)combo_entity.incNumber();
-		    else combo_entity.resetNumber();
+		    else {
+                        if(judge.equals("JUDGMENT_GOOD"))combo_entity.incNumber(); //because of the pills
+                        else combo_entity.resetNumber();
+                        score_entity.addNumber(computeScore(judge));
+                    }
 
                     if(ne instanceof LongNoteEntity)ne.setState(NoteEntity.State.TO_KILL);
                     else ne.setAlive(false);
@@ -595,7 +599,11 @@ public class Render implements GameWindowCallback
 		    entities_matrix.add(ee);
 
 		    if(ne.getHit() >= skin.judgment.combo_threshold)combo_entity.incNumber();
-		    else {combo_entity.resetNumber(); score_entity.addNumber(computeScore(judge));}
+		    else {
+                        if(judge.equals("JUDGMENT_GOOD"))combo_entity.incNumber(); //because of the pills
+                        else combo_entity.resetNumber();
+                        score_entity.addNumber(computeScore(judge));
+                    }
                     ne.setState(NoteEntity.State.LN_HOLD);
                 }
                 last_sound.put(ne.getChannel(), ne.getSample());
@@ -665,10 +673,10 @@ public class Render implements GameWindowCallback
         {
             if(pills > 0)
             {
-                judge = "JUDGMENT_COOL";
-                jambar_entity.addNumber(2);
+                judge = "JUDGMENT_GOOD";
+                jambar_entity.addNumber(1);
                 pills--;
-                pills_draw.get(pills).setAlive(false);
+                pills_draw.getLast().setAlive(false);
             }
             else
             {
