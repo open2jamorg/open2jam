@@ -162,6 +162,8 @@ public class Render implements GameWindowCallback
      */
     private BarEntity jambar_entity;
 
+    private BarEntity lifebar_entity;
+
     private int pills = 0;
     private LinkedList<Entity> pills_draw;
     private int consecutive_cools = 0;
@@ -303,6 +305,12 @@ public class Render implements GameWindowCallback
         jambar_entity = (BarEntity) skin.getEntityMap().get("JAM_BAR");
         jambar_entity.setLimit(50);
         entities_matrix.add(jambar_entity);
+
+        lifebar_entity = (BarEntity) skin.getEntityMap().get("LIFE_BAR");
+        lifebar_entity.setLimit(110);
+        lifebar_entity.setNumber(110);
+        lifebar_entity.setFillDirection(BarEntity.fillDirection.UP_TO_DOWN);
+        entities_matrix.add(lifebar_entity);
         
         combo_entity = (ComboCounterEntity) skin.getEntityMap().get("COMBO_COUNTER");
         entities_matrix.add(combo_entity);
@@ -526,6 +534,8 @@ public class Render implements GameWindowCallback
 
                     jambar_entity.setNumber(0);
                     jamcombo_entity.resetNumber();
+
+                    if(lifebar_entity.getNumber() >= 10)lifebar_entity.addNumber(-10);
                     
                     note_channels.get(ne.getChannel()).removeFirst();
                     ne.setState(NoteEntity.State.TO_KILL);

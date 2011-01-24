@@ -73,7 +73,7 @@
             </sprite>
 	</entity>
 	<!-- life bar -->
-	<entity>
+	<entity id="LIFE_BAR">
             <sprite framespeed="22" x="201" y="246">
                 <frame x="75"  y="1"  w="13" h="302" file="main.png" />
 		<frame x="87"  y="1"  w="13" h="302" file="main.png" />

@@ -287,10 +287,12 @@ public class SkinHandler extends DefaultHandler
 	    e = new CompositeEntity(sprite_buffer.values());
 	}
 	else if(id.equals("LIFE_BAR")){
-	    //TODO
+            Entity t = sprite_buffer.values().iterator().next();
+            e = new BarEntity(t.getFrames(),t.getX(), t.getY());
 	}
 	else if(id.equals("JAM_BAR")){
-	    e = new BarEntity(new TreeMap(sprite_buffer).values(), 0, 0);
+            Entity t = sprite_buffer.values().iterator().next();
+            e = new BarEntity(t.getFrames(),t.getX(), t.getY());
 	}
 	else if(id.equals("TIME_BAR")){
 	    //TODO
