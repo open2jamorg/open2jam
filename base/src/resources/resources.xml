@@ -9,73 +9,35 @@
         <type id="JUDGMENT_COOL" hit="0.8" />
         <!--<type name="EFFECT_PERFECT" hit="1" />-->
     </judgment>
+    
+    <spriteset>
+	<sprite id="background">
+		<frame x="0" y="0" w="600" h="560" file="Playing_BG7.jpg" />
+	</sprite>
+	<sprite id="background2">
+		<frame x="73" y="1" w="284" h="91" file="main2.png" />
+	</sprite>
+	<sprite id="background3">
+		<frame x="73" y="93" w="313" h="91" file="main2.png" />
+	</sprite>
+	
+	<sprite id="border1">
+		<frame x="72" y="4" w="3" h="230" scale_y="2.1" file="main.png" />
+	</sprite>
+	<sprite id="border2">
+		<frame x="203" y="1" w="9" h="250" file="main.png" />
+	</sprite>
+	<sprite id="border3">
+		<frame x="213" y="0" w="9" h="230" scale_y="2.1" file="main.png" />
+	</sprite>
+	
+	<sprite id="pill">
+		<frame x="0" y="52" w="28" h="28" file="main.png" />
+	</sprite>
 
-    <!-- background -->
-    <layer id="0">
-        <entity>
-            <sprite x="204" y="0">
-                <frame x="0" y="0" w="600" h="560" file="Playing_BG7.jpg" />
-            </sprite>
-        </entity>
-	<entity>
-	    <sprite x="204" y="509">
-                <frame x="73" y="1" w="284" h="91" file="main2.png" />
-            </sprite>
-	</entity>
-	<entity>
-	    <sprite x="488" y="509">
-                <frame x="73" y="93" w="313" h="91" file="main2.png" />
-            </sprite>
-	</entity>
-    </layer>
 
-    <!-- borders for the note area -->
-    <layer id="1">
-        <entity>
-            <sprite x="0" y="0">
-                <frame x="72" y="4" w="3" h="230" scale_y="2.1" file="main.png" />
-            </sprite>
-            <sprite x="195" y="0">
-                <frame x="203" y="1" w="9" h="250" file="main.png" />
-            </sprite>
-            <sprite x="195" y="0">
-                <frame x="213" y="0" w="9" h="230" scale_y="2.1" file="main.png" />
-            </sprite>
-        </entity>
-    </layer>
-
-    <!-- pills, life bar & time bar -->
-    <layer id="2">
-        <!-- pills -->
-	<entity id="PILL_1">
-            <sprite x="200" y="127"> <!-- this is the first pill even is the lower one -->
-                <frame x="0" y="52" w="28" h="28" file="main.png" />
-            </sprite>
-        </entity>
-        <entity id="PILL_2">
-            <sprite x="200" y="95">
-                <frame x="0" y="52" w="28" h="28" file="main.png" />
-            </sprite>
-        </entity>
-        <entity id="PILL_3">
-            <sprite x="200" y="64">
-                <frame x="0" y="52" w="28" h="28" file="main.png" />
-            </sprite>
-        </entity>
-        <entity id="PILL_4">
-            <sprite x="200" y="33">
-                <frame x="0" y="52" w="28" h="28" file="main.png" />
-            </sprite>
-        </entity>
-        <entity id="PILL_5">
-            <sprite x="200" y="2">
-                <frame x="0" y="52" w="28" h="28" file="main.png" />
-            </sprite>
-	</entity>
-	<!-- life bar -->
-	<entity id="LIFE_BAR">
-            <sprite framespeed="22" x="201" y="246">
-                <frame x="75"  y="1"  w="13" h="302" file="main.png" />
+	<sprite id="lifebar" framespeed="22" >
+		<frame x="75"  y="1"  w="13" h="302" file="main.png" />
 		<frame x="87"  y="1"  w="13" h="302" file="main.png" />
 		<frame x="99"  y="1"  w="13" h="302" file="main.png" />
 		<frame x="111" y="1"  w="13" h="302" file="main.png" />
@@ -85,669 +47,464 @@
 		<frame x="159" y="1"  w="13" h="302" file="main.png" />
 		<frame x="171" y="1"  w="13" h="302" file="main.png" />
 		<frame x="183" y="1"  w="13" h="302" file="main.png" />
-            </sprite>
-        </entity>
-	<!-- time bar / o2 combo bar (don't know what way will we go)-->
-	<entity>
-	    <sprite x="226" y="515">
+	</sprite>
+
+
+	<sprite id="timebar">
 		<frame x="0"  y="183"  w="226" h="72" file="font1.png" />
-	    </sprite>
-	</entity>
+	</sprite>
+	
+	
+	<sprite id="judgmentarea" framespeed="5">
+		<frame x="224" y="1"  w="192" h="64" file="main.png" />
+		<frame x="224" y="66" w="192" h="64" file="main.png" />
+	</sprite>
+	
+	<sprite id="pressed_note_lane_white">
+		<frame x="425" y="1" w="28" h="266" file="main.png" />
+	</sprite>
+	
+	<sprite id="pressed_note_lane_blue">
+		<frame x="455" y="1" w="22" h="480" file="main.png" />
+	</sprite>
+	
+	<sprite id="pressed_note_lane_yellow">
+		<frame x="478" y="1" w="32" h="480" file="main.png" />
+	</sprite>
+	
+	<sprite framespeed="5" id="measure_mark">
+		<frame x="225" y="134" w="188" h="3" file="main.png" />
+		<frame x="225" y="138" w="188" h="3" file="main.png" />
+	</sprite>
+	
+	
+	<sprite framespeed="12" id="head_note_white">
+		<frame x="225" y="142" w="28" h="7" file="main.png" />
+		<frame x="225" y="150" w="28" h="7" file="main.png" />
+		<frame x="225" y="158" w="28" h="7" file="main.png" />
+	</sprite>
+	<sprite framespeed="12" id="body_note_white">
+		<frame x="225" y="143" w="28" h="5" file="main.png" />
+		<frame x="225" y="151" w="28" h="5" file="main.png" />
+		<frame x="225" y="159" w="28" h="5" file="main.png" />
+	</sprite>
+	<sprite framespeed="12" id="head_note_blue">
+		<frame x="254" y="142" w="22" h="7" file="main.png" />
+		<frame x="254" y="150" w="22" h="7" file="main.png" />
+		<frame x="254" y="158" w="22" h="7" file="main.png" />
+	</sprite>
+	<sprite framespeed="12" id="body_note_blue">
+		<frame x="254" y="143" w="22" h="5" file="main.png" />
+		<frame x="254" y="151" w="22" h="5" file="main.png" />
+		<frame x="254" y="159" w="22" h="5" file="main.png" />
+	</sprite>
+	<sprite framespeed="12" id="head_note_yellow">
+		<frame x="277" y="142" w="32" h="7" file="main.png" />
+		<frame x="277" y="150" w="32" h="7" file="main.png" />
+		<frame x="277" y="158" w="32" h="7" file="main.png" />
+	</sprite>
+	<sprite framespeed="12" id="body_note_yellow">
+		<frame x="277" y="143" w="32" h="5" file="main.png" />
+		<frame x="277" y="151" w="32" h="5" file="main.png" />
+		<frame x="277" y="159" w="32" h="5" file="main.png" />
+	</sprite>
+	
+	<sprite id="static_keyboard">
+		<frame x="208" y="366" w="204" h="120" file="main.png" />
+	</sprite>
+	
+	<sprite id="jam_bar">
+		<frame x="1" y="391" w="191" h="12" file="main.png" />
+	</sprite>
+	
+	
+	<sprite id="pressed_note_keyboard_white1">
+		<frame x="1" y="315" w="31" h="46" file="main.png" />
+	</sprite>
+	<sprite id="pressed_note_keyboard_white2">
+		<frame x="1" y="362" w="10" h="5" file="main.png" />
+	</sprite>
+	
+	<sprite id="pressed_note_keyboard_blue">
+		<frame x="33" y="315" w="22" h="42" file="main.png" />
+	</sprite>
+	
+	<sprite id="pressed_note_keyboard_yellow">
+		<frame x="87" y="315" w="32" h="46" file="main.png" />
+	</sprite>
+	
+	
+	<sprite id="effect_click_1" framespeed="60">
+		<frame x="0"    y="0"   w="256" h="256" file="note_click5_3.png" />
+		<frame x="256"  y="0"   w="256" h="256" file="note_click5_3.png" />
+		<frame x="512"  y="0"   w="256" h="256" file="note_click5_3.png" />
+		<frame x="768"  y="0"   w="256" h="256" file="note_click5_3.png" />
+		<frame x="1024" y="0"   w="256" h="256" file="note_click5_3.png" />
+		<frame x="0"    y="256" w="256" h="256" file="note_click5_3.png" />
+		<frame x="256"  y="256" w="256" h="256" file="note_click5_3.png" />
+		<frame x="512"  y="256" w="256" h="256" file="note_click5_3.png" />
+		<frame x="768"  y="256" w="256" h="256" file="note_click5_3.png" />
+		<frame x="1024" y="256" w="256" h="256" file="note_click5_3.png" />
+		<frame x="0"    y="512" w="256" h="256" file="note_click5_3.png" />
+	</sprite>
+	
+	<sprite framespeed="33.3" id="longflare">
+		<frame x="0"    y="0"   w="128" h="128" file="longflare.png" />
+		<frame x="128"  y="0"   w="128" h="128" file="longflare.png" />
+		<frame x="256"  y="0"   w="128" h="128" file="longflare.png" />
+		<frame x="384"  y="0"   w="128" h="128" file="longflare.png" />
+		<frame x="512"  y="0"   w="128" h="128" file="longflare.png" />
+		<frame x="0"    y="128" w="128" h="128" file="longflare.png" />
+		<frame x="128"  y="128" w="128" h="128" file="longflare.png" />
+		<frame x="256"  y="128" w="128" h="128" file="longflare.png" />
+		<frame x="384"  y="128" w="128" h="128" file="longflare.png" />
+		<frame x="512"  y="128" w="128" h="128" file="longflare.png" />
+		<frame x="0"    y="256" w="128" h="128" file="longflare.png" />
+		<frame x="128"  y="256" w="128" h="128" file="longflare.png" />
+		<frame x="256"  y="256" w="128" h="128" file="longflare.png" />
+		<frame x="384"  y="256" w="128" h="128" file="longflare.png" />
+	</sprite>
+	
+
+	<sprite id="combo_number_0">
+		<frame x="40" y="27" w="46" h="71" file="numbers_1.png" />
+	</sprite>
+	<sprite id="combo_number_1">
+		<frame x="177" y="28" w="46" h="71" file="numbers_1.png" />
+	</sprite>
+	<sprite id="combo_number_2">
+		<frame x="298" y="27" w="46" h="71" file="numbers_1.png" />
+	</sprite>
+	<sprite id="combo_number_3">
+		<frame x="427" y="27" w="46" h="71" file="numbers_1.png" />
+	</sprite>
+	<sprite id="combo_number_4">
+		<frame x="553" y="28" w="46" h="71" file="numbers_1.png" />
+	</sprite>
+	<sprite id="combo_number_5">
+		<frame x="41" y="155" w="46" h="71" file="numbers_1.png" />
+	</sprite>
+	<sprite id="combo_number_6">
+		<frame x="169" y="155" w="46" h="71" file="numbers_1.png" />
+	</sprite>
+	<sprite id="combo_number_7">
+		<frame x="300" y="156" w="46" h="71" file="numbers_1.png" />
+	</sprite>
+	<sprite id="combo_number_8">
+		<frame x="426" y="155" w="46" h="71" file="numbers_1.png" />
+	</sprite>
+	<sprite id="combo_number_9">
+		<frame x="553" y="155" w="46" h="71" file="numbers_1.png" />
+	</sprite>
+	
+	<sprite id="judgment_cool">
+		<frame x="0" y="0" w="128" h="128" file="note_cool_1.png" />
+	</sprite>
+	<sprite id="judgment_good">
+		<frame x="0" y="0" w="128" h="128" file="note_good_1.png" />
+	</sprite>
+	<sprite id="judgment_bad">
+		<frame x="0" y="0" w="128" h="128" file="note_bad_1.png" />
+	</sprite>
+	<sprite id="judgment_miss">
+		<frame x="0" y="0" w="128" h="128" file="note_miss_1.png" />
+	</sprite>
+	
+	
+	<sprite id="score_number_0">
+		<frame x="126" y="1" w="23" h="18" file="font1.png" />
+	</sprite>
+	<sprite id="score_number_1">
+		<frame x="150" y="1" w="12" h="18" file="font1.png" />
+	</sprite>
+	<sprite id="score_number_2">
+		<frame x="163" y="1" w="23" h="18" file="font1.png" />
+	</sprite>
+	<sprite id="score_number_3">
+		<frame x="187" y="1" w="23" h="18" file="font1.png" />
+	</sprite>
+	<sprite id="score_number_4">
+		<frame x="211" y="1" w="24" h="18" file="font1.png" />
+	</sprite>
+	<sprite id="score_number_5">
+		<frame x="126" y="20" w="24" h="18" file="font1.png" />
+	</sprite>
+	<sprite id="score_number_6">
+		<frame x="151" y="20" w="24" h="18" file="font1.png" />
+	</sprite>
+	<sprite id="score_number_7">
+		<frame x="176" y="20" w="23" h="18" file="font1.png" />
+	</sprite>
+	<sprite id="score_number_8">
+		<frame x="200" y="20" w="24" h="18" file="font1.png" />
+	</sprite>
+	<sprite id="score_number_9">
+		<frame x="225" y="20" w="24" h="18" file="font1.png" />
+	</sprite>
+	
+	
+	<sprite id="time_number_0">
+		<frame x="121" y="59" w="27" h="21" file="font1.png" />
+	</sprite>
+	<sprite id="time_number_1">
+		<frame x="148" y="59" w="27" h="21" file="font1.png" />
+	</sprite>
+	<sprite id="time_number_2">
+		<frame x="175" y="59" w="27" h="21" file="font1.png" />
+	</sprite>
+	<sprite id="time_number_3">
+		<frame x="202" y="59" w="27" h="21" file="font1.png" />
+	</sprite>
+	<sprite id="time_number_4">
+		<frame x="229" y="59" w="27" h="21" file="font1.png" />
+	</sprite>
+	<sprite id="time_number_5">
+		<frame x="121" y="81" w="27" h="21" file="font1.png" />
+	</sprite>
+	<sprite id="time_number_6">
+		<frame x="148" y="81" w="27" h="21" file="font1.png" />
+	</sprite>
+	<sprite id="time_number_7">
+		<frame x="175" y="81" w="27" h="21" file="font1.png" />
+	</sprite>
+	<sprite id="time_number_8">
+		<frame x="202" y="81" w="27" h="21" file="font1.png" />
+	</sprite>
+	<sprite id="time_number_9">
+		<frame x="229" y="81" w="27" h="21" file="font1.png" />
+	</sprite>
+	
+	
+	<sprite id="maxcombo_number_0">
+		<frame x="126" y="106" w="11" h="11" file="font1.png" />
+	</sprite>
+	<sprite id="maxcombo_number_1">
+		<frame x="137" y="106" w="11" h="11" file="font1.png" />
+	</sprite>
+	<sprite id="maxcombo_number_2">
+		<frame x="148" y="106" w="11" h="11" file="font1.png" />
+	</sprite>
+	<sprite id="maxcombo_number_3">
+		<frame x="159" y="106" w="11" h="11" file="font1.png" />
+	</sprite>
+	<sprite id="maxcombo_number_4">
+		<frame x="170" y="106" w="11" h="11" file="font1.png" />
+	</sprite>
+	<sprite id="maxcombo_number_5">
+		<frame x="181" y="106" w="11" h="11" file="font1.png" />
+	</sprite>
+	<sprite id="maxcombo_number_6">
+		<frame x="192" y="106" w="11" h="11" file="font1.png" />
+	</sprite>
+	<sprite id="maxcombo_number_7">
+		<frame x="203" y="106" w="11" h="11" file="font1.png" />
+	</sprite>
+	<sprite id="maxcombo_number_8">
+		<frame x="214" y="106" w="11" h="11" file="font1.png" />
+	</sprite>
+	<sprite id="maxcombo_number_9">
+		<frame x="225" y="106" w="11" h="11" file="font1.png" />
+	</sprite>
+	
+	<sprite id="counter_number_0">
+		<frame x="126" y="39" w="9" h="9" file="font1.png" />
+	</sprite>
+	<sprite id="counter_number_1">
+		<frame x="135" y="39" w="9" h="9" file="font1.png" />
+	</sprite>
+	<sprite id="counter_number_2">
+		<frame x="144" y="39" w="9" h="9" file="font1.png" />
+	</sprite>
+	<sprite id="counter_number_3">
+		<frame x="153" y="39" w="9" h="9" file="font1.png" />
+	</sprite>
+	<sprite id="counter_number_4">
+		<frame x="162" y="39" w="9" h="9" file="font1.png" />
+	</sprite>
+	<sprite id="counter_number_5">
+		<frame x="171" y="39" w="9" h="9" file="font1.png" />
+	</sprite>
+	<sprite id="counter_number_6">
+		<frame x="180" y="39" w="9" h="9" file="font1.png" />
+	</sprite>
+	<sprite id="counter_number_7">
+		<frame x="189" y="39" w="9" h="9" file="font1.png" />
+	</sprite>
+	<sprite id="counter_number_8">
+		<frame x="198" y="39" w="9" h="9" file="font1.png" />
+	</sprite>
+	<sprite id="counter_number_9">
+		<frame x="207" y="39" w="9" h="9" file="font1.png" />
+	</sprite>
+</spriteset>
+
+    <!-- background -->
+    <layer id="0">
+	<entity x="204" y="0" sprite="background" />
+	<entity x="204" y="509" sprite="background2" />
+	<entity x="488" y="509" sprite="background3" />
+    </layer>
+
+    <!-- borders for the note area -->
+    <layer id="1">
+	<entity x="0" y="0" sprite="border1" />
+	<entity x="195" y="0" sprite="border3" />
+	<entity x="195" y="0" sprite="border2" />
+    </layer>
+
+    <!-- pills, life bar & time bar -->
+    <layer id="2">
+        <!-- pills -->
+	<entity x="200" y="127" sprite="pill" />
+	<entity x="200" y="95" sprite="pill" />
+	<entity x="200" y="64" sprite="pill" />
+	<entity x="200" y="33" sprite="pill" />
+	<entity x="200" y="2" sprite="pill" />
+
+	<!-- life bar -->
+	<entity x="201" y="246" sprite="lifebar" />
+	
+	<!-- time bar / o2 combo bar (don't know what way will we go)-->
+	<entity x="226" y="515" sprite="timebar" />
     </layer>
 
     <!-- judgment area (line/glow) -->
     <layer id="3">
-        <entity>
-            <!-- the judgment area -->
-            <sprite framespeed="5" x="3" y="416">
-                <frame x="224" y="1"  w="192" h="64" file="main.png" />
-                <frame x="224" y="66" w="192" h="64" file="main.png" />
-            </sprite>
-        </entity>
+	<entity  x="3" y="416" sprite="judgmentarea" />
     </layer>
 
     <!-- note press lane effects -->
     <layer id="4">
-        <entity id="PRESSED_NOTE_1">
-            <sprite x="5" y="215">
-                <frame x="425" y="1" w="28" h="266" file="main.png" />
-            </sprite>
-        </entity>
-
-        <entity id="PRESSED_NOTE_2">
-            <sprite x="33" y="1">
-                <frame x="455" y="1" w="22" h="480" file="main.png" />
-            </sprite>
-        </entity>
-
-        <entity id="PRESSED_NOTE_3">
-            <sprite x="55" y="215">
-                <frame x="425" y="1" w="28" h="266" file="main.png" />
-            </sprite>
-        </entity>
-
-        <entity id="PRESSED_NOTE_4">
-            <sprite x="83" y="1">
-                <frame x="478" y="1" w="32" h="480" file="main.png" />
-            </sprite>
-        </entity>
-
-        <entity id="PRESSED_NOTE_5">
-            <sprite x="115" y="215">
-                <frame x="425" y="1" w="28" h="266" file="main.png" />
-            </sprite>
-        </entity>
-
-        <entity id="PRESSED_NOTE_6">
-            <sprite x="143" y="1">
-                <frame x="455" y="1" w="22" h="480" file="main.png" />
-            </sprite>
-        </entity>
-
-        <entity id="PRESSED_NOTE_7">
-             <sprite x="165" y="215">
-                <frame x="425" y="1" w="28" h="266" file="main.png" />
-            </sprite>
-        </entity>
+	<entity x="5" y="215" id="PRESSED_NOTE_1" sprite="pressed_note_lane_white" />
+	<entity x="33" y="1" id="PRESSED_NOTE_2" sprite="pressed_note_lane_blue" />
+	<entity x="55" y="215" id="PRESSED_NOTE_3" sprite="pressed_note_lane_white" />
+	<entity x="83" y="1" id="PRESSED_NOTE_4" sprite="pressed_note_lane_yellow" />
+	<entity x="115" y="215" id="PRESSED_NOTE_5" sprite="pressed_note_lane_white" />
+	<entity x="143" y="1" id="PRESSED_NOTE_6" sprite="pressed_note_lane_blue" />
+	<entity x="165" y="215" id="PRESSED_NOTE_7" sprite="pressed_note_lane_white" />
     </layer>
 
     <!-- measure mark -->
     <layer id="5">
-        <entity id="MEASURE_MARK">
-            <sprite framespeed="5" x="4">
-                <frame x="225" y="134" w="188" h="3" file="main.png" />
-                <frame x="225" y="138" w="188" h="3" file="main.png" />
-            </sprite>
-        </entity>
+	<entity x="4" id="MEASURE_MARK" sprite="measure_mark" />
     </layer>
 
     <!-- notes -->
     <layer id="6">
-        <entity id="NOTE_1">
-            <sprite id="HEAD" framespeed="12" x="5">
-                <frame x="225" y="142" w="28" h="7" file="main.png" />
-                <frame x="225" y="150" w="28" h="7" file="main.png" />
-                <frame x="225" y="158" w="28" h="7" file="main.png" />
-            </sprite>
-            <sprite id="BODY" framespeed="12">
-                <frame x="225" y="143" w="28" h="5" file="main.png" />
-                <frame x="225" y="151" w="28" h="5" file="main.png" />
-                <frame x="225" y="159" w="28" h="5" file="main.png" />
-            </sprite>
-        </entity>
-        <entity id="NOTE_2">
-            <sprite id="HEAD" framespeed="12" x="33">
-                <frame x="254" y="142" w="22" h="7" file="main.png" />
-                <frame x="254" y="150" w="22" h="7" file="main.png" />
-                <frame x="254" y="158" w="22" h="7" file="main.png" />
-            </sprite>
-            <sprite id="BODY" framespeed="12">
-                <frame x="254" y="143" w="22" h="5" file="main.png" />
-                <frame x="254" y="151" w="22" h="5" file="main.png" />
-                <frame x="254" y="159" w="22" h="5" file="main.png" />
-            </sprite>
-        </entity>
-        <entity id="NOTE_3">
-            <sprite id="HEAD" framespeed="12" x="55">
-                <frame x="225" y="142" w="28" h="7" file="main.png" />
-                <frame x="225" y="150" w="28" h="7" file="main.png" />
-                <frame x="225" y="158" w="28" h="7" file="main.png" />
-            </sprite>
-            <sprite id="BODY" framespeed="12">
-                <frame x="225" y="143" w="28" h="5" file="main.png" />
-                <frame x="225" y="151" w="28" h="5" file="main.png" />
-                <frame x="225" y="159" w="28" h="5" file="main.png" />
-            </sprite>
-            </entity>
-        <entity id="NOTE_4">
-            <sprite id="HEAD" framespeed="12" x="83">
-                <frame x="277" y="142" w="32" h="7" file="main.png" />
-                <frame x="277" y="150" w="32" h="7" file="main.png" />
-                <frame x="277" y="158" w="32" h="7" file="main.png" />
-            </sprite>
-            <sprite id="BODY" framespeed="12">
-                <frame x="277" y="143" w="32" h="5" file="main.png" />
-                <frame x="277" y="151" w="32" h="5" file="main.png" />
-                <frame x="277" y="159" w="32" h="5" file="main.png" />
-            </sprite>
-        </entity>
-        <entity id="NOTE_5">
-            <sprite id="HEAD" framespeed="12" x="115">
-                <frame x="225" y="142" w="28" h="7" file="main.png" />
-                <frame x="225" y="150" w="28" h="7" file="main.png" />
-                <frame x="225" y="158" w="28" h="7" file="main.png" />
-            </sprite>
-            <sprite id="BODY" framespeed="12">
-                <frame x="225" y="143" w="28" h="5" file="main.png" />
-                <frame x="225" y="151" w="28" h="5" file="main.png" />
-                <frame x="225" y="159" w="28" h="5" file="main.png" />
-            </sprite>
-        </entity>
-        <entity id="NOTE_6">
-            <sprite id="HEAD" framespeed="12" x="143">
-                <frame x="254" y="142" w="22" h="7" file="main.png" />
-                <frame x="254" y="150" w="22" h="7" file="main.png" />
-                <frame x="254" y="158" w="22" h="7" file="main.png" />
-            </sprite>
-            <sprite id="BODY" framespeed="12">
-                <frame x="254" y="143" w="22" h="5" file="main.png" />
-                <frame x="254" y="151" w="22" h="5" file="main.png" />
-                <frame x="254" y="159" w="22" h="5" file="main.png" />
-            </sprite>
-        </entity>
-        <entity id="NOTE_7">
-            <sprite id="HEAD" framespeed="12" x="165">
-                <frame x="225" y="142" w="28" h="7" file="main.png" />
-                <frame x="225" y="150" w="28" h="7" file="main.png" />
-                <frame x="225" y="158" w="28" h="7" file="main.png" />
-            </sprite>
-            <sprite id="BODY" framespeed="12">
-                <frame x="225" y="143" w="28" h="5" file="main.png" />
-                <frame x="225" y="151" w="28" h="5" file="main.png" />
-                <frame x="225" y="159" w="28" h="5" file="main.png" />
-            </sprite>
-        </entity>
+	<entity id="NOTE_1" x="5" sprite="head_note_white, body_note_white" />
+
+	<entity id="NOTE_2" x="33" sprite="head_note_blue, body_note_blue" />
+
+	<entity id="NOTE_3" x="55" sprite="head_note_white, body_note_white" />
+
+	<entity id="NOTE_4" x="83" sprite="head_note_yellow, body_note_yellow" />
+
+	<entity id="NOTE_5" x="115" sprite="head_note_white, body_note_white" />
+
+	<entity id="NOTE_6" x="143" sprite="head_note_blue, body_note_blue" />
+
+	<entity id="NOTE_7" x="165" sprite="head_note_white, body_note_white" />
     </layer>
 
     <!-- static keyboard sprite -->
     <layer id="7">
-        <entity>
-            <sprite x="0" y="480">
-                <frame x="208" y="366" w="204" h="120" file="main.png" />
-            </sprite>
-        </entity>
+	<entity x="0" y="480" sprite="static_keyboard" />
     </layer>
     
     <!-- jam bar -->
     <layer id="8">
-	<entity id="JAM_BAR" x="4" y="536" direction="LEFT_TO_RIGHT">
-	    <sprite>
-		<frame x="1" y="391" w="191" h="12" file="main.png" />
-	    </sprite>
-	</entity>
+	<entity id="JAM_BAR" x="4" y="536" sprite="jam_bar" />
     </layer>
 
     <!-- pressed keyboard keys sprites -->
     <layer id="9">
-        <entity id="PRESSED_NOTE_1">
-            <sprite x="3" y="487">
-                <frame x="1" y="315" w="31" h="46" file="main.png" />
-            </sprite>
-            <sprite x="34" y="528">
-                <frame x="1" y="362" w="10" h="5" file="main.png" />
-            </sprite>
-        </entity>
+	<entity id="PRESSED_NOTE_1" x="3" y="487" sprite="pressed_note_keyboard_white1" />
+	<entity id="PRESSED_NOTE_1" x="34" y="528" sprite="pressed_note_keyboard_white2" />
+	
+	<entity id="PRESSED_NOTE_2" x="33" y="487" sprite="pressed_note_keyboard_blue" />
 
-        <entity id="PRESSED_NOTE_2">
-            <sprite x="33" y="487">
-                <frame x="33" y="315" w="22" h="42" file="main.png" />
-            </sprite>
-        </entity>
+	<entity id="PRESSED_NOTE_3" x="54" y="487" sprite="pressed_note_keyboard_white1" />
+	<entity id="PRESSED_NOTE_3" x="45" y="528" sprite="pressed_note_keyboard_white2" />
+	
+	<entity id="PRESSED_NOTE_4" x="83" y="487" sprite="pressed_note_keyboard_yellow" />
 
-        <entity id="PRESSED_NOTE_3">
-            <sprite x="54" y="487">
-                <frame x="56" y="315" w="30" h="46" file="main.png" />
-            </sprite>
-            <sprite x="45" y="528">
-                <frame x="12" y="362" w="10" h="5" file="main.png" />
-            </sprite>
-        </entity>
+       <!-- TODO: there are different sprites for NOTE_1 and NOTE_5, does it make a difference ? -->
+	<entity id="PRESSED_NOTE_5" x="114" y="487" sprite="pressed_note_keyboard_white1" />
+	<entity id="PRESSED_NOTE_5" x="144" y="528" sprite="pressed_note_keyboard_white2" />
 
-        <entity id="PRESSED_NOTE_4">
-            <sprite x="83" y="487">
-                <frame x="87" y="315" w="32" h="46" file="main.png" />
-            </sprite>
-        </entity>
+	<entity id="PRESSED_NOTE_6" x="143" y="487" sprite="pressed_note_keyboard_blue" />
 
-        <entity id="PRESSED_NOTE_5">
-            <sprite x="114" y="487">
-                <frame x="120" y="315" w="30" h="46" file="main.png" />
-            </sprite>
-            <sprite x="144" y="528">
-                <frame x="1" y="362" w="10" h="5" file="main.png" />
-            </sprite>
-        </entity>
-
-        <entity id="PRESSED_NOTE_6">
-            <sprite x="143" y="487">
-                <frame x="151" y="315" w="22" h="42" file="main.png" />
-            </sprite>
-        </entity>
-
-        <entity id="PRESSED_NOTE_7">
-            <sprite x="164" y="487">
-                <frame x="174" y="315" w="31" h="46" file="main.png" />
-            </sprite>
-            <sprite x="154" y="528">
-                <frame x="12" y="362" w="10" h="5" file="main.png" />
-             </sprite>
-        </entity>
+	<entity id="PRESSED_NOTE_7" x="164" y="487" sprite="pressed_note_keyboard_white1" />
+	<entity id="PRESSED_NOTE_7" x="154" y="528" sprite="pressed_note_keyboard_white2" />
     </layer>
 
     <!-- note hit effects -->
     <layer id="10">
-        <entity id="EFFECT_CLICK_1">
-            <sprite framespeed="60">
-                <frame x="0"    y="0"   w="256" h="256" file="note_click5_3.png" />
-                <frame x="256"  y="0"   w="256" h="256" file="note_click5_3.png" />
-                <frame x="512"  y="0"   w="256" h="256" file="note_click5_3.png" />
-                <frame x="768"  y="0"   w="256" h="256" file="note_click5_3.png" />
-                <frame x="1024" y="0"   w="256" h="256" file="note_click5_3.png" />
-                <frame x="0"    y="256" w="256" h="256" file="note_click5_3.png" />
-                <frame x="256"  y="256" w="256" h="256" file="note_click5_3.png" />
-                <frame x="512"  y="256" w="256" h="256" file="note_click5_3.png" />
-                <frame x="768"  y="256" w="256" h="256" file="note_click5_3.png" />
-                <frame x="1024" y="256" w="256" h="256" file="note_click5_3.png" />
-                <frame x="0"    y="512" w="256" h="256" file="note_click5_3.png" />
-            </sprite>
-        </entity>
+	<entity id="EFFECT_CLICK_1" sprite="effect_click_1" />
 
-        <entity id="EFFECT_LONGFLARE">
-            <sprite framespeed="33.3" y="460">
-                <frame x="0"    y="0"   w="128" h="128" file="longflare.png" />
-                <frame x="128"  y="0"   w="128" h="128" file="longflare.png" />
-                <frame x="256"  y="0"   w="128" h="128" file="longflare.png" />
-                <frame x="384"  y="0"   w="128" h="128" file="longflare.png" />
-                <frame x="512"  y="0"   w="128" h="128" file="longflare.png" />
-                <frame x="0"    y="128" w="128" h="128" file="longflare.png" />
-                <frame x="128"  y="128" w="128" h="128" file="longflare.png" />
-                <frame x="256"  y="128" w="128" h="128" file="longflare.png" />
-                <frame x="384"  y="128" w="128" h="128" file="longflare.png" />
-                <frame x="512"  y="128" w="128" h="128" file="longflare.png" />
-                <frame x="0"    y="256" w="128" h="128" file="longflare.png" />
-                <frame x="128"  y="256" w="128" h="128" file="longflare.png" />
-                <frame x="256"  y="256" w="128" h="128" file="longflare.png" />
-                <frame x="384"  y="256" w="128" h="128" file="longflare.png" />
-            </sprite>
-        </entity>
+	<entity y="460" id="EFFECT_LONGFLARE" sprite="longflare" />
     </layer>
 
     <!-- counters and judgment sprites -->
     <layer id="11">
-        <entity id="COMBO_COUNTER" x="99" y="250">
-            <sprite id="0">
-                <frame x="40" y="27" w="46" h="71" file="numbers_1.png" />
-            </sprite>
-            <sprite id="1">
-                <frame x="177" y="28" w="46" h="71" file="numbers_1.png" />
-            </sprite>
-            <sprite id="2">
-                <frame x="298" y="27" w="46" h="71" file="numbers_1.png" />
-            </sprite>
-            <sprite id="3">
-                <frame x="427" y="27" w="46" h="71" file="numbers_1.png" />
-            </sprite>
-            <sprite id="4">
-                <frame x="553" y="28" w="46" h="71" file="numbers_1.png" />
-            </sprite>
-            <sprite id="5">
-                <frame x="41" y="155" w="46" h="71" file="numbers_1.png" />
-            </sprite>
-            <sprite id="6">
-                <frame x="169" y="155" w="46" h="71" file="numbers_1.png" />
-            </sprite>
-            <sprite id="7">
-                <frame x="300" y="156" w="46" h="71" file="numbers_1.png" />
-            </sprite>
-            <sprite id="8">
-                <frame x="426" y="155" w="46" h="71" file="numbers_1.png" />
-            </sprite>
-            <sprite id="9">
-                <frame x="553" y="155" w="46" h="71" file="numbers_1.png" />
-            </sprite>
-        </entity>
+	<entity id="COMBO_COUNTER" x="99" y="250" sprite="combo_number_0, 
+	combo_number_1, combo_number_2, combo_number_3, combo_number_4, combo_number_5, 
+	combo_number_6, combo_number_7, combo_number_8, combo_number_9" />
 
-        <entity id="FPS_COUNTER" x="798" y="5">
-            <sprite id="0">
-                <frame x="40" y="27" w="46" h="71" scale="0.5" file="numbers_1.png" />
-            </sprite>
-            <sprite id="1">
-                <frame x="177" y="28" w="46" h="71" scale="0.5" file="numbers_1.png" />
-            </sprite>
-            <sprite id="2">
-                <frame x="298" y="27" w="46" h="71" scale="0.5" file="numbers_1.png" />
-            </sprite>
-            <sprite id="3">
-                <frame x="427" y="27" w="46" h="71" scale="0.5" file="numbers_1.png" />
-            </sprite>
-            <sprite id="4">
-                <frame x="553" y="28" w="46" h="71" scale="0.5" file="numbers_1.png" />
-            </sprite>
-            <sprite id="5">
-                <frame x="41" y="155" w="46" h="71" scale="0.5" file="numbers_1.png" />
-            </sprite>
-            <sprite id="6">
-                <frame x="169" y="155" w="46" h="71" scale="0.5" file="numbers_1.png" />
-            </sprite>
-            <sprite id="7">
-                <frame x="300" y="156" w="46" h="71" scale="0.5" file="numbers_1.png" />
-            </sprite>
-            <sprite id="8">
-                <frame x="426" y="155" w="46" h="71" scale="0.5" file="numbers_1.png" />
-            </sprite>
-            <sprite id="9">
-                <frame x="553" y="155" w="46" h="71" scale="0.5" file="numbers_1.png" />
-            </sprite>
-        </entity>
+	<entity id="FPS_COUNTER" x="798" y="5" sprite="score_number_0, score_number_1,
+	 score_number_2, score_number_3, score_number_4, score_number_5, score_number_6, 
+	 score_number_7, score_number_8, score_number_9" />
 
-         <entity id="EFFECT_JUDGMENT_COOL">
-             <sprite x="99" y="300">
-                 <frame x="0" y="0" w="128" h="128" file="note_cool_1.png" />
-             </sprite>
-         </entity>
+	<entity id="EFFECT_JUDGMENT_COOL" x="30" y="300" sprite="judgment_cool" />
 
-          <entity id="EFFECT_JUDGMENT_GOOD">
-             <sprite x="99" y="300">
-                 <frame x="0" y="0" w="128" h="128" file="note_good_1.png" />
-             </sprite>
-         </entity>
-          <entity id="EFFECT_JUDGMENT_BAD">
-             <sprite x="99" y="300">
-                 <frame x="0" y="0" w="128" h="128" file="note_bad_1.png" />
-             </sprite>
-         </entity>
-          <entity id="EFFECT_JUDGMENT_MISS">
-             <sprite x="99" y="300">
-                 <frame x="0" y="0" w="128" h="128" file="note_miss_1.png" />
-             </sprite>
-         </entity>
+	<entity id="EFFECT_JUDGMENT_GOOD" x="30" y="300" sprite="judgment_good" />
 
-         <entity id="SCORE_COUNTER" x="192" y="567">
-             <sprite id="0">
-                 <frame x="126" y="1" w="23" h="18" file="font1.png" />
-             </sprite>
-             <sprite id="1">
-                 <frame x="150" y="1" w="12" h="18" file="font1.png" />
-             </sprite>
-             <sprite id="2">
-                 <frame x="163" y="1" w="23" h="18" file="font1.png" />
-             </sprite>
-             <sprite id="3">
-                 <frame x="187" y="1" w="23" h="18" file="font1.png" />
-             </sprite>
-             <sprite id="4">
-                 <frame x="211" y="1" w="24" h="18" file="font1.png" />
-             </sprite>
-             <sprite id="5">
-                 <frame x="126" y="20" w="24" h="18" file="font1.png" />
-             </sprite>
-             <sprite id="6">
-                 <frame x="151" y="20" w="24" h="18" file="font1.png" />
-             </sprite>
-             <sprite id="7">
-                 <frame x="176" y="20" w="23" h="18" file="font1.png" />
-             </sprite>
-             <sprite id="8">
-                 <frame x="200" y="20" w="24" h="18" file="font1.png" />
-             </sprite>
-             <sprite id="9">
-                 <frame x="225" y="20" w="24" h="18" file="font1.png" />
-             </sprite>
-         </entity>
+	<entity id="EFFECT_JUDGMENT_BAD" x="30" y="300" sprite="judgment_bad" />
 
-         <entity id="JAM_COUNTER" x="192" y="10">
-             <sprite id="0">
-                 <frame x="126" y="1" w="23" h="18" file="font1.png" />
-             </sprite>
-             <sprite id="1">
-                 <frame x="150" y="1" w="12" h="18" file="font1.png" />
-             </sprite>
-             <sprite id="2">
-                 <frame x="163" y="1" w="23" h="18" file="font1.png" />
-             </sprite>
-             <sprite id="3">
-                 <frame x="187" y="1" w="23" h="18" file="font1.png" />
-             </sprite>
-             <sprite id="4">
-                 <frame x="211" y="1" w="24" h="18" file="font1.png" />
-             </sprite>
-             <sprite id="5">
-                 <frame x="126" y="20" w="24" h="18" file="font1.png" />
-             </sprite>
-             <sprite id="6">
-                 <frame x="151" y="20" w="24" h="18" file="font1.png" />
-             </sprite>
-             <sprite id="7">
-                 <frame x="176" y="20" w="23" h="18" file="font1.png" />
-             </sprite>
-             <sprite id="8">
-                 <frame x="200" y="20" w="24" h="18" file="font1.png" />
-             </sprite>
-             <sprite id="9">
-                 <frame x="225" y="20" w="24" h="18" file="font1.png" />
-             </sprite>
-         </entity>
+	<entity id="EFFECT_JUDGMENT_MISS" x="30" y="300" sprite="judgment_miss" />
+	 
 
-        <entity id="MINUTE_COUNTER" x="346" y="569">
-            <sprite id="0">
-                <frame x="121" y="59" w="27" h="21" file="font1.png" />
-            </sprite>
-            <sprite id="1">
-                <frame x="148" y="59" w="27" h="21" file="font1.png" />
-            </sprite>
-            <sprite id="2">
-                <frame x="175" y="59" w="27" h="21" file="font1.png" />
-            </sprite>
-            <sprite id="3">
-                <frame x="202" y="59" w="27" h="21" file="font1.png" />
-            </sprite>
-            <sprite id="4">
-                <frame x="229" y="59" w="27" h="21" file="font1.png" />
-            </sprite>
-            <sprite id="5">
-                <frame x="121" y="81" w="27" h="21" file="font1.png" />
-            </sprite>
-            <sprite id="6">
-                <frame x="148" y="81" w="27" h="21" file="font1.png" />
-            </sprite>
-            <sprite id="7">
-                <frame x="175" y="81" w="27" h="21" file="font1.png" />
-            </sprite>
-            <sprite id="8">
-                <frame x="202" y="81" w="27" h="21" file="font1.png" />
-            </sprite>
-            <sprite id="9">
-                <frame x="229" y="81" w="27" h="21" file="font1.png" />
-            </sprite>
-        </entity>
+	<entity id="SCORE_COUNTER" x="192" y="567" sprite="score_number_0, score_number_1,
+	 score_number_2, score_number_3, score_number_4, score_number_5, score_number_6, 
+	 score_number_7, score_number_8, score_number_9" />
 
-        <entity id="SECOND_COUNTER" x="410" y="569">
-            <sprite id="0">
-                <frame x="121" y="59" w="27" h="21" file="font1.png" />
-            </sprite>
-            <sprite id="1">
-                <frame x="148" y="59" w="27" h="21" file="font1.png" />
-            </sprite>
-            <sprite id="2">
-                <frame x="175" y="59" w="27" h="21" file="font1.png" />
-            </sprite>
-            <sprite id="3">
-                <frame x="202" y="59" w="27" h="21" file="font1.png" />
-            </sprite>
-            <sprite id="4">
-                <frame x="229" y="59" w="27" h="21" file="font1.png" />
-            </sprite>
-            <sprite id="5">
-                <frame x="121" y="81" w="27" h="21" file="font1.png" />
-            </sprite>
-            <sprite id="6">
-                <frame x="148" y="81" w="27" h="21" file="font1.png" />
-            </sprite>
-            <sprite id="7">
-                <frame x="175" y="81" w="27" h="21" file="font1.png" />
-            </sprite>
-            <sprite id="8">
-                <frame x="202" y="81" w="27" h="21" file="font1.png" />
-            </sprite>
-            <sprite id="9">
-                <frame x="229" y="81" w="27" h="21" file="font1.png" />
-            </sprite>
-        </entity>
+	<entity id="JAM_COUNTER" x="192" y="10" sprite="score_number_0, score_number_1,
+	 score_number_2, score_number_3, score_number_4, score_number_5, score_number_6, 
+	 score_number_7, score_number_8, score_number_9" />
 
-        <entity id="MAXCOMBO_COUNTER" x="671" y="556">
-            <sprite id="0">
-                <frame x="126" y="106" w="11" h="11" file="font1.png" />
-            </sprite>
-            <sprite id="1">
-                <frame x="137" y="106" w="11" h="11" file="font1.png" />
-            </sprite>
-            <sprite id="2">
-                <frame x="148" y="106" w="11" h="11" file="font1.png" />
-            </sprite>
-            <sprite id="3">
-                <frame x="159" y="106" w="11" h="11" file="font1.png" />
-            </sprite>
-            <sprite id="4">
-                <frame x="170" y="106" w="11" h="11" file="font1.png" />
-            </sprite>
-            <sprite id="5">
-                <frame x="181" y="106" w="11" h="11" file="font1.png" />
-            </sprite>
-            <sprite id="6">
-                <frame x="192" y="106" w="11" h="11" file="font1.png" />
-            </sprite>
-            <sprite id="7">
-                <frame x="203" y="106" w="11" h="11" file="font1.png" />
-            </sprite>
-            <sprite id="8">
-                <frame x="214" y="106" w="11" h="11" file="font1.png" />
-            </sprite>
-            <sprite id="9">
-                <frame x="225" y="106" w="11" h="11" file="font1.png" />
-            </sprite>
-        </entity>
+	<entity id="MINUTE_COUNTER" x="346" y="569" sprite="time_number_0, time_number_1, 
+	time_number_2, time_number_3, time_number_4, time_number_5, time_number_6, 
+	time_number_7, time_number_8, time_number_9" />
 
-        <entity id="COUNTER_JUDGMENT_COOL" x="658" y="573">
-            <sprite id="0">
-                <frame x="126" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="1">
-                <frame x="135" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="2">
-                <frame x="144" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="3">
-                <frame x="153" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="4">
-                <frame x="162" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="5">
-                <frame x="171" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="6">
-                <frame x="180" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="7">
-                <frame x="189" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="8">
-                <frame x="198" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="9">
-                <frame x="207" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-        </entity>
+        <entity id="SECOND_COUNTER" x="410" y="569" sprite="time_number_0, time_number_1, 
+	time_number_2, time_number_3, time_number_4, time_number_5, time_number_6, 
+	time_number_7, time_number_8, time_number_9" />
+	
+	
+	<entity id="MAXCOMBO_COUNTER" x="671" y="556" sprite="maxcombo_number_0, maxcombo_number_1,
+	maxcombo_number_2, maxcombo_number_3, maxcombo_number_4, maxcombo_number_5, maxcombo_number_6,
+	maxcombo_number_7, maxcombo_number_8, maxcombo_number_9" />
 
-        <entity id="COUNTER_JUDGMENT_GOOD" x="728" y="573">
-            <sprite id="0">
-                <frame x="126" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="1">
-                <frame x="135" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="2">
-                <frame x="144" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="3">
-                <frame x="153" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="4">
-                <frame x="162" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="5">
-                <frame x="171" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="6">
-                <frame x="180" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="7">
-                <frame x="189" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="8">
-                <frame x="198" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="9">
-                <frame x="207" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-        </entity>
 
-        <entity id="COUNTER_JUDGMENT_BAD" x="658" y="582">
-            <sprite id="0">
-                <frame x="126" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="1">
-                <frame x="135" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="2">
-                <frame x="144" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="3">
-                <frame x="153" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="4">
-                <frame x="162" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="5">
-                <frame x="171" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="6">
-                <frame x="180" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="7">
-                <frame x="189" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="8">
-                <frame x="198" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="9">
-                <frame x="207" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-        </entity>
+        <entity id="COUNTER_JUDGMENT_COOL" x="658" y="573" sprite="counter_number_0, counter_number_1,
+	counter_number_2, counter_number_3, counter_number_4, counter_number_5, counter_number_6,
+	counter_number_7, counter_number_8, counter_number_9" />
 
-        <entity id="COUNTER_JUDGMENT_MISS" x="728" y="582">
-            <sprite id="0">
-                <frame x="126" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="1">
-                <frame x="135" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="2">
-                <frame x="144" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="3">
-                <frame x="153" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="4">
-                <frame x="162" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="5">
-                <frame x="171" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="6">
-                <frame x="180" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="7">
-                <frame x="189" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="8">
-                <frame x="198" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-            <sprite id="9">
-                <frame x="207" y="39" w="9" h="9" file="font1.png" />
-            </sprite>
-        </entity>
+
+        <entity id="COUNTER_JUDGMENT_GOOD" x="728" y="573" sprite="counter_number_0, counter_number_1,
+	counter_number_2, counter_number_3, counter_number_4, counter_number_5, counter_number_6,
+	counter_number_7, counter_number_8, counter_number_9" />
+          
+
+        <entity id="COUNTER_JUDGMENT_BAD" x="658" y="582" sprite="counter_number_0, counter_number_1,
+	counter_number_2, counter_number_3, counter_number_4, counter_number_5, counter_number_6,
+	counter_number_7, counter_number_8, counter_number_9" />
+            
+
+        <entity id="COUNTER_JUDGMENT_MISS" x="728" y="582" sprite="counter_number_0, counter_number_1,
+	counter_number_2, counter_number_3, counter_number_4, counter_number_5, counter_number_6,
+	counter_number_7, counter_number_8, counter_number_9" />
+	
     </layer>
 </skin>
 </Resources>

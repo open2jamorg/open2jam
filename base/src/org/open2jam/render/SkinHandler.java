@@ -7,7 +7,6 @@ import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.open2jam.parser.Event;
@@ -16,7 +15,7 @@ import org.open2jam.render.entities.ComboCounterEntity;
 import org.open2jam.render.entities.CompositeEntity;
 import org.open2jam.render.entities.EffectEntity;
 import org.open2jam.render.entities.Entity;
-import org.open2jam.render.entities.BarEntity;
+import org.open2jam.render.entities.JamBarEntity;
 import org.open2jam.render.entities.JudgmentEntity;
 import org.open2jam.render.entities.LongNoteEntity;
 import org.open2jam.render.entities.MeasureEntity;
@@ -30,14 +29,14 @@ public class SkinHandler extends DefaultHandler
     static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private enum Keyword {
-        Resources, skin, layer, entity, sprite, frame, judgment, type;
+        Resources, skin, spriteset, sprite, frame, layer, entity, judgment, type;
     }
 
     ArrayDeque<Keyword> call_stack;
     ArrayDeque<Map<String,String>> atts_stack;
 
     ArrayList<Sprite> frame_buffer;
-    HashMap<String, Entity> sprite_buffer;
+    HashMap<String, SpriteList> sprite_buffer;
 
     private Skin result;
 
@@ -65,7 +64,7 @@ public class SkinHandler extends DefaultHandler
         call_stack = new ArrayDeque<Keyword>();
         atts_stack = new ArrayDeque<Map<String,String>>();
         frame_buffer = new ArrayList<Sprite>();
-        sprite_buffer = new HashMap<String, Entity>();
+        sprite_buffer = new HashMap<String, SpriteList>();
         result = new Skin();
     }
 
@@ -110,59 +109,53 @@ public class SkinHandler extends DefaultHandler
         switch(k)
         {
             case frame:{
-            int x = Integer.parseInt(atts.get("x"));
-            int y = Integer.parseInt(atts.get("y"));
-            int w = Integer.parseInt(atts.get("w"));
-            int h = Integer.parseInt(atts.get("h"));
+                int x = Integer.parseInt(atts.get("x"));
+                int y = Integer.parseInt(atts.get("y"));
+                int w = Integer.parseInt(atts.get("w"));
+                int h = Integer.parseInt(atts.get("h"));
 
-            float sx = 1, sy = 1;
-            if(atts.containsKey("scale_x"))sx = Float.parseFloat(atts.get("scale_x"));
-            if(atts.containsKey("scale_y"))sy = Float.parseFloat(atts.get("scale_y"));
-            if(atts.containsKey("scale"))sy = sx = Float.parseFloat(atts.get("scale"));
+                float sx = 1, sy = 1;
+                if(atts.containsKey("scale_x"))sx = Float.parseFloat(atts.get("scale_x"));
+                if(atts.containsKey("scale_y"))sy = Float.parseFloat(atts.get("scale_y"));
+                if(atts.containsKey("scale"))sy = sx = Float.parseFloat(atts.get("scale"));
 
-            Rectangle slice = new Rectangle(x,y,w,h);
+                Rectangle slice = new Rectangle(x,y,w,h);
 
-            URL url = SkinHandler.class.getResource(FILE_PATH_PREFIX+atts.get("file"));
-            if(url == null)throw new RuntimeException("Cannot find resource: "+FILE_PATH_PREFIX+atts.get("file"));
+                URL url = SkinHandler.class.getResource(FILE_PATH_PREFIX+atts.get("file"));
+                if(url == null)throw new RuntimeException("Cannot find resource: "+FILE_PATH_PREFIX+atts.get("file"));
 
-            Sprite s = null;
-            try {
-                s = ResourceFactory.get().getSprite(url, slice);
-            } catch(IOException e) {
-                logger.log(Level.WARNING, "Sprite resource load error !! {0}", e);
-                break;
-            }
-            ResourceFactory.get().getGameWindow().setScale(result.screen_scale_x,result.screen_scale_y);
-	    s.setScale(sx, sy);
-            frame_buffer.add(s);
+                Sprite s = null;
+                try {
+                    s = ResourceFactory.get().getSprite(url, slice);
+                } catch(IOException e) {
+                    logger.log(Level.WARNING, "Sprite resource load error !! {0}", e);
+                    break;
+                }
+                ResourceFactory.get().getGameWindow().setScale(result.screen_scale_x,result.screen_scale_y);
+                s.setScale(sx, sy);
+                frame_buffer.add(s);
             }break;
 
             case sprite:{
-            double x = atts.containsKey("x") ? Integer.parseInt(atts.get("x")) : 0;
-            double y = atts.containsKey("y") ? Integer.parseInt(atts.get("y")) : 0;
-	    double framespeed = 0;
-            if(atts.containsKey("framespeed"))framespeed = Double.parseDouble(atts.get("framespeed"));
-            framespeed /= 1000; // spritelist need framespeed in milliseconds
+                double framespeed = 0;
+                if(atts.containsKey("framespeed"))framespeed = Double.parseDouble(atts.get("framespeed"));
+                framespeed /= 1000; // spritelist need framespeed in milliseconds
 
-            String id = null;
-            if(atts.containsKey("id"))id = atts.get("id");
-            else {
-                id = "AUTODRAW_SPRITE_"+auto_draw_id;
-                auto_draw_id++;
-            }
+                String id = null;
+                if(atts.containsKey("id"))id = atts.get("id");
+                else {
+                    logger.severe("bad resource file ! sprite must have an ID !");
+                    break;
+                }
 
-            SpriteList sl = new SpriteList(framespeed);
-            sl.addAll(frame_buffer);
+                SpriteList sl = new SpriteList(framespeed);
+                sl.addAll(frame_buffer);
 
-            Entity e = null;
-            if(sl.size() == 1)e = new Entity(sl, x, y);
-            else e = new AnimatedEntity(sl, x, y);
+                sprite_buffer.put(id, sl);
 
-            sprite_buffer.put(id, e);
-
-            frame_buffer.clear();
-            }
-            break;
+                frame_buffer.clear();
+            }break;
+           
 
             case entity:{
             Entity e = null;
@@ -170,14 +163,38 @@ public class SkinHandler extends DefaultHandler
             String id = null;
             if(atts.containsKey("id"))id = atts.get("id");
 
+            String sprites[] = null;
+            if(atts.containsKey("sprite"))sprites = atts.get("sprite").split(",");
+            else {
+                logger.log(Level.SEVERE, "bad resource file ! entity [{0}] must have an sprite !", id);
+                break;
+            }
+
+            if(sprites[0].trim().equals("")){
+                logger.log(Level.SEVERE, "bad resource file ! entity [{0}] must have an sprite !", id);
+                break;
+            }
+
+
+
             if(id != null && (e = promoteEntity(id, atts)) != null){
                     // ok
             }
-            else if(sprite_buffer.size() > 1){
-                e = new CompositeEntity(sprite_buffer.values());
+            else if(atts.get("sprite").split(",").length > 1){
+                ArrayList<Entity> list = new ArrayList<Entity>();
+                for(String s : atts.get("sprite").split(",")){
+                    s = s.trim();
+                    list.add( new Entity(sprite_buffer.get(s),0,0));
+                }
+                e = new CompositeEntity(list);
             }
             else{
-                e = sprite_buffer.values().iterator().next();
+                String sprite = atts.get("sprite").trim();
+                SpriteList sl = sprite_buffer.get(sprite);
+                if(sl.size() > 1){
+                    e = new AnimatedEntity(sl, 0, 0);
+                }
+                else e = new Entity(sl, 0, 0);
             }
 
             e.setLayer(this.layer);
@@ -200,7 +217,6 @@ public class SkinHandler extends DefaultHandler
             }
             else result.getEntityList().add(e);
             
-            sprite_buffer.clear();
             }break;
 
             case type:{
@@ -222,77 +238,150 @@ public class SkinHandler extends DefaultHandler
     {
         Entity e = null;
         if(id.startsWith("NOTE_")){
-            Entity head = sprite_buffer.remove("HEAD");
-            Entity body = sprite_buffer.remove("BODY");
 
-            e = new LongNoteEntity(render, head.getFrames(), body.getFrames(), Event.Channel.valueOf(id), head.getX(), head.getY());
+            String sprites[] = atts.get("sprite").split(",");
+
+            SpriteList head = null, body = null;
+            for(String s : sprites){
+                s = s.trim();
+                if(s.startsWith("head")){
+                    head = sprite_buffer.get(s);
+                }
+                else if(s.startsWith("body")){
+                    body = sprite_buffer.get(s);
+                }
+            }
+            int x = 0;
+            if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x"));
+
+            e = new LongNoteEntity(render, head, body, Event.Channel.valueOf(id), x, 0);
             e.setLayer(layer);
             result.getEntityMap().put("LONG_"+id, e);
-            e = new NoteEntity(render, head.getFrames(), Event.Channel.valueOf(id), head.getX(), head.getY());
+            e = new NoteEntity(render, head, Event.Channel.valueOf(id), x, 0);
         }
         else if(id.equals("MEASURE_MARK")){
-            Entity sprite = sprite_buffer.values().iterator().next();
-            e = new MeasureEntity(render, sprite.getFrames(), sprite.getX(), sprite.getY());
+            SpriteList s = sprite_buffer.get(atts.get("sprite"));
+            e = new MeasureEntity(render, s, 0, 0);
         }
         else if(id.startsWith("EFFECT_JUDGMENT_")){
-            Entity t = sprite_buffer.values().iterator().next();
-            e = new JudgmentEntity(t.getFrames(),t.getX(), t.getY());
+            SpriteList s = sprite_buffer.get(atts.get("sprite"));
+            e = new JudgmentEntity(s,0, 0);
         }
         // TODO: change the name of this ???
         else if(id.startsWith("EFFECT_LONGFLARE")){
-            Entity t = sprite_buffer.values().iterator().next();
-            e = new AnimatedEntity(t.getFrames(),t.getX(), t.getY());
+            SpriteList s = sprite_buffer.get(atts.get("sprite"));
+            e = new AnimatedEntity(s,0,0);
         }
         else if(id.startsWith("EFFECT_")){
-            Entity t = sprite_buffer.values().iterator().next();
-            e = new EffectEntity(t.getFrames(),t.getX(), t.getY());
+            SpriteList s = sprite_buffer.get(atts.get("sprite"));
+            e = new EffectEntity(s,0, 0);
         }
         else if(id.startsWith("PRESSED_NOTE_")){
-            e = new CompositeEntity(sprite_buffer.values());
+            SpriteList sl = sprite_buffer.get(atts.get("sprite"));
+            e = new Entity(sl, 0, 0);
         }
         else if(id.equals("FPS_COUNTER")){
-            e = new NumberEntity(new TreeMap(sprite_buffer).values(), 0, 0);
+            //TODO: why not use SpriteList directly ???
+            ArrayList<Entity> list = new ArrayList<Entity>();
+            for(String s : atts.get("sprite").split(",")){
+                s = s.trim();
+                list.add( new Entity(sprite_buffer.get(s),0,0));
+            }
+            e = new NumberEntity(list, 0, 0);
         }
 	else if(id.equals("COUNTER_JUDGMENT_COOL")){
-	    e = new NumberEntity(new TreeMap(sprite_buffer).values(), 0, 0);
+            ArrayList<Entity> list = new ArrayList<Entity>();
+            for(String s : atts.get("sprite").split(",")){
+                s = s.trim();
+                list.add( new Entity(sprite_buffer.get(s),0,0));
+            }
+	    e = new NumberEntity(list, 0, 0);
 	}
 	else if(id.equals("COUNTER_JUDGMENT_GOOD")){
-	    e = new NumberEntity(new TreeMap(sprite_buffer).values(), 0, 0);
+            ArrayList<Entity> list = new ArrayList<Entity>();
+            for(String s : atts.get("sprite").split(",")){
+                s = s.trim();
+                list.add( new Entity(sprite_buffer.get(s),0,0));
+            }
+	    e = new NumberEntity(list, 0, 0);
 	}
 	else if(id.equals("COUNTER_JUDGMENT_BAD")){
-	    e = new NumberEntity(new TreeMap(sprite_buffer).values(), 0, 0);
+            ArrayList<Entity> list = new ArrayList<Entity>();
+            for(String s : atts.get("sprite").split(",")){
+                s = s.trim();
+                list.add( new Entity(sprite_buffer.get(s),0,0));
+            }
+	    e = new NumberEntity(list, 0, 0);
 	}
 	else if(id.equals("COUNTER_JUDGMENT_MISS")){
-	    e = new NumberEntity(new TreeMap(sprite_buffer).values(), 0, 0);
+            ArrayList<Entity> list = new ArrayList<Entity>();
+            for(String s : atts.get("sprite").split(",")){
+                s = s.trim();
+                list.add( new Entity(sprite_buffer.get(s),0,0));
+            }
+	    e = new NumberEntity(list, 0, 0);
 	}
 	else if(id.equals("MAXCOMBO_COUNTER")){
-	    e = new NumberEntity(new TreeMap(sprite_buffer).values(), 0, 0);
+            ArrayList<Entity> list = new ArrayList<Entity>();
+            for(String s : atts.get("sprite").split(",")){
+                s = s.trim();
+                list.add( new Entity(sprite_buffer.get(s),0,0));
+            }
+	    e = new NumberEntity(list, 0, 0);
 	}
 	else if(id.equals("SCORE_COUNTER")){
-	    e = new NumberEntity(new TreeMap(sprite_buffer).values(), 0, 0);
+            ArrayList<Entity> list = new ArrayList<Entity>();
+            for(String s : atts.get("sprite").split(",")){
+                s = s.trim();
+                list.add( new Entity(sprite_buffer.get(s),0,0));
+            }
+	    e = new NumberEntity(list, 0, 0);
 	}
 	else if(id.equals("JAM_COUNTER")){
-	    e = new ComboCounterEntity(new TreeMap(sprite_buffer).values(), 0, 0);
+            ArrayList<Entity> list = new ArrayList<Entity>();
+            for(String s : atts.get("sprite").split(",")){
+                s = s.trim();
+                list.add( new Entity(sprite_buffer.get(s),0,0));
+            }
+	    e = new ComboCounterEntity(list, 0, 0);
 	}
         else if(id.equals("COMBO_COUNTER")){
-            e = new ComboCounterEntity(new TreeMap(sprite_buffer).values(), 0, 0);
+            ArrayList<Entity> list = new ArrayList<Entity>();
+            for(String s : atts.get("sprite").split(",")){
+                s = s.trim();
+                list.add( new Entity(sprite_buffer.get(s),0,0));
+            }
+	    e = new ComboCounterEntity(list, 0, 0);
         }
         else if(id.equals("MINUTE_COUNTER")){
-            e = new NumberEntity(new TreeMap(sprite_buffer).values(), 0, 0);
+            ArrayList<Entity> list = new ArrayList<Entity>();
+            for(String s : atts.get("sprite").split(",")){
+                s = s.trim();
+                list.add( new Entity(sprite_buffer.get(s),0,0));
+            }
+	    e = new NumberEntity(list, 0, 0);
         }
         else if(id.equals("SECOND_COUNTER")){
-            e = new NumberEntity(new TreeMap(sprite_buffer).values(), 0, 0);
+            ArrayList<Entity> list = new ArrayList<Entity>();
+            for(String s : atts.get("sprite").split(",")){
+                s = s.trim();
+                list.add( new Entity(sprite_buffer.get(s),0,0));
+            }
+	    e = new NumberEntity(list, 0, 0);
         }
-	else if(id.startsWith("PILL_")){
-	    e = new CompositeEntity(sprite_buffer.values());
+	else if(id.equals("PILLS")){
+	    //TODO
 	}
 	else if(id.equals("LIFE_BAR")){
-            Entity t = sprite_buffer.values().iterator().next();
-            e = new BarEntity(t.getFrames(),t.getX(), t.getY());
+	    //TODO
 	}
 	else if(id.equals("JAM_BAR")){
-            Entity t = sprite_buffer.values().iterator().next();
-            e = new BarEntity(t.getFrames(),t.getX(), t.getY());
+            ArrayList<Entity> list = new ArrayList<Entity>();
+            for(String s : atts.get("sprite").split(",")){
+                s = s.trim();
+                list.add( new Entity(sprite_buffer.get(s),0,0));
+            }
+	    e = new JamBarEntity(list, 0, 0);
 	}
 	else if(id.equals("TIME_BAR")){
 	    //TODO
