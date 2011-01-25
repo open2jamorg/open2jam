@@ -532,7 +532,7 @@ public class Render implements GameWindowCallback
                     combo_entity.resetNumber();
                     score_entity.addNumber(computeScore(MISS_JUDGE));
 
-                    update_bars(MISS_JUDGE);
+                    update_screen_info(MISS_JUDGE);
                     
                     note_channels.get(ne.getChannel()).removeFirst();
                     ne.setState(NoteEntity.State.TO_KILL);
@@ -541,7 +541,7 @@ public class Render implements GameWindowCallback
             case JUDGE: //LN & normal ones: has finished with good result
                 judge = skin.judgment.ratePrecision(ne.getHit());
 
-                judge = update_bars(judge);
+                judge = update_screen_info(judge);
 
                 if(judgment_entity != null)judgment_entity.setAlive(false);
                 judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
@@ -576,7 +576,7 @@ public class Render implements GameWindowCallback
             case LN_HEAD_JUDGE: //LN: Head has been played
                 judge = skin.judgment.ratePrecision(ne.getHit());
 
-                judge = update_bars(judge);
+                judge = update_screen_info(judge);
 
                 if(judgment_entity != null)judgment_entity.setAlive(false);
                 judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
@@ -619,7 +619,7 @@ public class Render implements GameWindowCallback
                     combo_entity.resetNumber();
                     score_entity.addNumber(computeScore(MISS_JUDGE));
                     
-                    update_bars(MISS_JUDGE);
+                    update_screen_info(MISS_JUDGE);
 
                     note_channels.get(ne.getChannel()).removeFirst();
                     ne.setState(NoteEntity.State.TO_KILL);
@@ -633,41 +633,27 @@ public class Render implements GameWindowCallback
                 }
             break;
         }
-
-        if(consecutive_cools >= 15 && pills < 5)
-        {
-            consecutive_cools -= 15;
-            pills++;
-            Entity ee = skin.getEntityMap().get("PILL_"+pills).copy();
-            entities_matrix.add(ee);
-            pills_draw.add(ee);
-
-        }
-        if(jambar_entity.getNumber() >= jambar_entity.getLimit())
-        {
-            jambar_entity.setNumber(0); //reset
-            jamcombo_entity.incNumber();
-        }
-
-        if(combo_entity.getNumber() > 1 && maxcombo_entity.getNumber()<(combo_entity.getNumber()-1))
-        {
-            maxcombo_entity.incNumber();
-        }
     }
 
-    private String update_bars(String judge)
+    /**
+     * TODO It would be nice to move all the check_judgment non judgment things to this function
+     * (bars, combos, counter, etc)
+     * @param judge
+     * @return judge
+     */
+    private String update_screen_info(String judge)
     {
         if(judge.equals("JUDGMENT_COOL"))
         {
             jambar_entity.addNumber(2);
             consecutive_cools++;
-            if(lifebar_entity.getNumber() <= lifebar_entity.getLimit()-100)lifebar_entity.addNumber(100);
+            if(lifebar_entity.getNumber() <= lifebar_entity.getLimit())lifebar_entity.addNumber(100);
         }
         else if(judge.equals("JUDGMENT_GOOD"))
         {
             jambar_entity.addNumber(1);
             consecutive_cools = 0;
-            if(lifebar_entity.getNumber() <= lifebar_entity.getLimit()-50)lifebar_entity.addNumber(50);
+            if(lifebar_entity.getNumber() <= lifebar_entity.getLimit())lifebar_entity.addNumber(50);
         }
         else if(judge.equals("JUDGMENT_BAD"))
         {
@@ -684,7 +670,7 @@ public class Render implements GameWindowCallback
                 jamcombo_entity.resetNumber();
             }
             consecutive_cools = 0;
-            if(lifebar_entity.getNumber() <= lifebar_entity.getLimit()-30)lifebar_entity.addNumber(30);
+            if(lifebar_entity.getNumber() <= lifebar_entity.getLimit())lifebar_entity.addNumber(30);
         }
         else if(judge.equals("JUDGMENT_MISS"))
         {
@@ -694,6 +680,29 @@ public class Render implements GameWindowCallback
 
             if(lifebar_entity.getNumber() >= 30)lifebar_entity.addNumber(-30);
         }
+
+        if(jambar_entity.getNumber() >= jambar_entity.getLimit())
+        {
+            jambar_entity.setNumber(0); //reset
+            jamcombo_entity.incNumber();
+        }
+
+
+        if(consecutive_cools >= 15 && pills < 5)
+        {
+            consecutive_cools -= 15;
+            pills++;
+            Entity ee = skin.getEntityMap().get("PILL_"+pills).copy();
+            entities_matrix.add(ee);
+            pills_draw.add(ee);
+
+        }
+
+        if(combo_entity.getNumber() > 1 && maxcombo_entity.getNumber()<(combo_entity.getNumber()-1))
+        {
+            maxcombo_entity.incNumber();
+        }
+        
         return judge;
     }
 
@@ -849,6 +858,7 @@ public class Render implements GameWindowCallback
             {
                 buffer_offset -= measure_size * fractional_measure;
                 MeasureEntity m = (MeasureEntity) skin.getEntityMap().get("MEASURE_MARK").copy();
+                //TODO fix the buffer_offset+6, right now is working because the skin we use, but for other skins will be wrong
                 m.setPos(m.getX(), buffer_offset+6);
                 entities_matrix.add(m);
                 buffer_measure++;

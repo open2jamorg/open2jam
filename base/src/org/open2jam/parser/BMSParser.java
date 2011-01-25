@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
+import java.net.URL;
 import org.open2jam.render.lwjgl.SoundManager;
 import org.open2jam.util.CharsetDetector;
 
@@ -372,13 +373,22 @@ public class BMSParser
         HashMap<Integer,Integer> samples = new HashMap<Integer,Integer>();
         for(File f : h.source.getParentFile().listFiles())
         {
-            String s = f.getName();
-            int idx = s.lastIndexOf('.');
-            if(idx > 0)s = s.substring(0, idx);
-            Integer id = h.sample_files.get(s);
-            if(id == null)continue;
             try {
-                int buffer = SoundManager.newBuffer(new OggInputStream(new FileInputStream(f)));
+                String s = f.getName();
+                String st = s;
+                int idx = s.lastIndexOf('.');
+                if (idx > 0) {
+                    s = s.substring(0, idx);
+                    st = st.substring(idx).toLowerCase();
+                }
+                Integer id = h.sample_files.get(s);
+                if (id == null) {
+                    continue;
+                }
+                int buffer = 0;
+                if      (st.equals(".wav")) buffer = SoundManager.newBuffer(f.toURI().toURL());
+                else if (st.equals(".ogg")) buffer = SoundManager.newBuffer(new OggInputStream(new FileInputStream(f)));
+                else                        logger.log(Level.WARNING, "File {0} not supported", f.getName());
                 samples.put(id, buffer);
             } catch (IOException ex) {
                 logger.log(Level.SEVERE, null, ex);
@@ -386,4 +396,5 @@ public class BMSParser
         }
         return samples;
     }
-}
+        
+    }
