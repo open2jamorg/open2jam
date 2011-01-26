@@ -244,10 +244,8 @@ public class Render implements GameWindowCallback
 
         entities_matrix = new EntityMatrix(skin.max_layer+1);
 
-        bpm = chart.getBPM();
+        setBPM(chart.getBPM());
         buffer_offset = getViewport();
-        
-        update_note_speed();
 
         note_layer = skin.getEntityMap().get("NOTE_1").getLayer();
 
@@ -402,7 +400,6 @@ public class Render implements GameWindowCallback
         else check_keyboard();
 
         if(updateHS)updateHispeed();
-        update_note_speed(); // speed will change if the bpm changed in the last frame
         
         update_note_buffer();
 
@@ -449,9 +446,6 @@ public class Render implements GameWindowCallback
     public void setBPM(double e)
     {
         this.bpm = e;
-    }
-
-    private void update_note_speed(){
         note_speed = ((bpm/240) * measure_size) / 1000.0d;
     }
     
