@@ -17,6 +17,7 @@ public class Entity implements Copyable
     /** this object stores the position(x,y) and dimensions (width,height) */
     protected double x, y, width, height;
 
+
     /** when a entity die the render removes it */
     protected boolean alive = true;
 
@@ -53,7 +54,7 @@ public class Entity implements Copyable
     public void setAlive(boolean state){
         alive = state;
     }
-	
+
     /**
      * Request that this entity move itself based on a certain ammount
      * of time passing.
