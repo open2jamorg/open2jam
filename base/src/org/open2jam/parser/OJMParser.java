@@ -224,7 +224,7 @@ public class OJMParser
            buffer.get(buf);
 
            buf = rearrange(buf);
-           buf = acc_xor(buf);
+           buf = acc_dxor(buf);
 
            buffer = ByteBuffer.allocateDirect(buf.length);
            buffer.put(buf);
@@ -283,6 +283,28 @@ public class OJMParser
             key++;
         }
         return buf_plain;
+    }
+
+    /** some weird decryption =p */
+    private static byte[] acc_dxor(byte[] buf)
+    {
+        byte this_byte = 0;
+        for(int i=0;i<buf.length;i++)
+        {
+            this_byte = buf[i];
+
+            if(((acc_keybyte << acc_counter) & 0x80)!=0){
+                this_byte = (byte) ~this_byte;
+            }
+
+            buf[i] = this_byte;
+            acc_counter++;
+            if(acc_counter > 7){
+                acc_counter = 0;
+                acc_keybyte = this_byte;
+            }
+        }
+        return buf;
     }
 
     /** some weird encryption */
