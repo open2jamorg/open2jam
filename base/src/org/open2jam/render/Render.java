@@ -172,6 +172,8 @@ public class Render implements GameWindowCallback
     /** the maxcombo counter */
     private NumberEntity maxcombo_entity;
 
+    private double hit_sum = 0, hit_count = 0, total_notes = 0;
+
     static{
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
         keyboard_map = Config.get().getKeyboardMap();
@@ -203,6 +205,13 @@ public class Render implements GameWindowCallback
             logger.log(Level.SEVERE, "System out of memory ! baillin out !!{0}", e.getMessage());
             System.exit(1);
         }
+        // at this point the game window has gone away
+
+        double precision = (hit_count / total_notes) * 100;
+        double accuracy = (hit_sum / total_notes) * 100;
+        JOptionPane.showMessageDialog(null,
+                String.format("Precision : %.3f, Accuracy : %.3f", precision, accuracy)
+                );
     }
 
     /**
@@ -475,21 +484,34 @@ public class Render implements GameWindowCallback
     public double getNoteSpeed() { return note_speed; }
 
     public double getMeasureSize() { return measure_size; }
-    public double getViewport() { return skin.judgment.start+skin.judgment.size; }
+    public double getViewport() { return judgment_line_y2; }
 
-    private int computeScore(String judge)
+    private void computeScore(String judge, double hit)
     {
+        int value = 0;
         /**
          * Your current jam combo also affects the score you get for each Cool hit.
          * For each jam combo, the score is increased by 10.
          * If you fail to hit a note, the jam combo will be reset to 0 and also the score/cool to 200.
          * http://o2jam.wikia.com/wiki/Jam_combo
          */
-        if     (judge.equals("JUDGMENT_COOL"))  return 200 + (jamcombo_entity.getNumber()*10);
-        else if(judge.equals("JUDGMENT_GOOD"))  return 100;
-        else if(judge.equals("JUDGMENT_BAD"))   return 4;
-        else if(judge.equals("JUDGMENT_MISS")){ if(score_entity.getNumber() >= 10) return -10; else return -score_entity.getNumber(); }
-        else                                    return 0;
+        if     (judge.equals("JUDGMENT_COOL")) value = 200 + (jamcombo_entity.getNumber()*10);
+        else if(judge.equals("JUDGMENT_GOOD")) value = 100;
+        else if(judge.equals("JUDGMENT_BAD"))  value = 4;
+        else if(judge.equals("JUDGMENT_MISS")){ if(score_entity.getNumber() >= 10)value = -10; else value = -score_entity.getNumber(); }
+        score_entity.addNumber(value);
+        if(judge.equals("JUDGMENT_COOL"))
+            jamcombo_counter.addNumber(2);
+        else if(judge.equals("JUDGMENT_GOOD"))
+            jamcombo_counter.addNumber(1);
+        else
+        {
+            jamcombo_counter.setNumber(0);
+            jamcombo_entity.resetNumber();
+        }
+        hit_sum += hit;
+        if(!judge.equals(MISS_JUDGE))hit_count++;
+        total_notes++;
     }
 
     private void check_judgment(NoteEntity ne)
@@ -504,17 +526,9 @@ public class Render implements GameWindowCallback
                 entities_matrix.add(judgment_entity);
 
 		note_counter.get(judge).incNumber();
-                score_entity.addNumber(computeScore(judge));
-                if(judge.equals("JUDGMENT_COOL"))
-                    jamcombo_counter.addNumber(2);
-                else if(judge.equals("JUDGMENT_GOOD"))
-                    jamcombo_counter.addNumber(1);
-                else
-                {
-                    jamcombo_counter.setNumber(0);
-                    jamcombo_entity.resetNumber();
-                }
-		if(ne.getHit() > 0)
+                computeScore(judge, ne.getHit());
+
+		if(!judge.equals(MISS_JUDGE))
                 {
 		    Entity ee = skin.getEntityMap().get("EFFECT_LONGFLARE").copy();
 		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,ee.getY());
@@ -528,8 +542,15 @@ public class Render implements GameWindowCallback
 		    entities_matrix.add(ee);
 
 		    if(ne.getHit() >= skin.judgment.combo_threshold)combo_entity.incNumber();
-		    else {combo_entity.resetNumber(); score_entity.addNumber(computeScore(judge));}
+		    else {
+                        combo_entity.resetNumber();
+                        //computeScore(judge);//TODO: why are we computing the score again ???
+                    }
                     ne.setState(NoteEntity.State.LN_HOLD);
+                }else{
+                    combo_entity.resetNumber();
+                    ne.setState(NoteEntity.State.TO_KILL);
+                    note_channels.get(ne.getChannel()).removeFirst();
                 }
                 last_sound.put(ne.getChannel(), ne.getSample());
             break;
@@ -540,16 +561,8 @@ public class Render implements GameWindowCallback
                 entities_matrix.add(judgment_entity);
 
 		note_counter.get(judge).incNumber();
-                score_entity.addNumber(computeScore(judge));
-                if(judge.equals("JUDGMENT_COOL"))
-                    jamcombo_counter.addNumber(2);
-                else if(judge.equals("JUDGMENT_GOOD"))
-                    jamcombo_counter.addNumber(1);
-                else
-                {
-                    jamcombo_counter.setNumber(0);
-                    jamcombo_entity.resetNumber();
-                }
+                computeScore(judge, ne.getHit());
+
 		if(!judge.equals(MISS_JUDGE))
                 {
 		    Entity ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
@@ -587,7 +600,7 @@ public class Render implements GameWindowCallback
 
                     note_counter.get(MISS_JUDGE).incNumber();
                     combo_entity.resetNumber();
-                    score_entity.addNumber(computeScore(MISS_JUDGE));
+                    computeScore(MISS_JUDGE, ne.getHit());
                     note_channels.get(ne.getChannel()).removeFirst();
                     ne.setState(NoteEntity.State.TO_KILL);
                  }
@@ -601,7 +614,7 @@ public class Render implements GameWindowCallback
 
                     note_counter.get(MISS_JUDGE).incNumber();
                     combo_entity.resetNumber();
-                    score_entity.addNumber(computeScore(MISS_JUDGE));
+                    computeScore(MISS_JUDGE, ne.getHit());
                     note_channels.get(ne.getChannel()).removeFirst();
                     ne.setState(NoteEntity.State.TO_KILL);
                  }
@@ -707,7 +720,7 @@ public class Render implements GameWindowCallback
 
                     NoteEntity e = note_channels.get(c).getFirst();
 
-                    if(e.getState() == NoteEntity.State.TO_KILL)return;
+                    if(e.getState() == NoteEntity.State.TO_KILL)continue;
 
                     queueSample(e.getSample());
 
