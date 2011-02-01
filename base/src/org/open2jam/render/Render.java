@@ -26,7 +26,7 @@ import org.open2jam.render.entities.AnimatedEntity;
 import org.open2jam.render.entities.BPMEntity;
 import org.open2jam.render.entities.ComboCounterEntity;
 import org.open2jam.render.entities.Entity;
-import org.open2jam.render.entities.JamBarEntity;
+import org.open2jam.render.entities.BarEntity;
 import org.open2jam.render.entities.JudgmentEntity;
 import org.open2jam.render.entities.LongNoteEntity;
 import org.open2jam.render.entities.MeasureEntity;
@@ -160,7 +160,13 @@ public class Render implements GameWindowCallback
      * Everything else: reset to 0
      * >=50 to add a jam
      */
-    JamBarEntity jamcombo_counter;
+    private BarEntity jambar_entity;
+
+    private BarEntity lifebar_entity;
+
+    private int pills = 0;
+    private LinkedList<Entity> pills_draw;
+    private int consecutive_cools = 0;
 
     private NumberEntity minute_entity;
     private NumberEntity second_entity;
@@ -253,8 +259,9 @@ public class Render implements GameWindowCallback
 
         entities_matrix = new EntityMatrix(skin.max_layer+1);
 
-        setBPM(chart.getBPM());
         buffer_offset = getViewport();
+        
+        setBPM(chart.getBPM());
 
         note_layer = skin.getEntityMap().get("NOTE_1").getLayer();
 
@@ -303,8 +310,15 @@ public class Render implements GameWindowCallback
         jamcombo_entity = (ComboCounterEntity) skin.getEntityMap().get("JAM_COUNTER");
         entities_matrix.add(jamcombo_entity);
 
-        jamcombo_counter = (JamBarEntity) skin.getEntityMap().get("JAM_BAR");
-        entities_matrix.add(jamcombo_counter);
+        jambar_entity = (BarEntity) skin.getEntityMap().get("JAM_BAR");
+        jambar_entity.setLimit(50);
+        entities_matrix.add(jambar_entity);
+
+        lifebar_entity = (BarEntity) skin.getEntityMap().get("LIFE_BAR");
+        lifebar_entity.setLimit(1000);
+        lifebar_entity.setNumber(1000);
+        lifebar_entity.setFillDirection(BarEntity.fillDirection.UP_TO_DOWN);
+        entities_matrix.add(lifebar_entity);
         
         combo_entity = (ComboCounterEntity) skin.getEntityMap().get("COMBO_COUNTER");
         entities_matrix.add(combo_entity);
@@ -318,6 +332,8 @@ public class Render implements GameWindowCallback
         second_entity = (NumberEntity) skin.getEntityMap().get("SECOND_COUNTER");
         entities_matrix.add(second_entity);
         second_entity.showDigits(2);//show 2 digits
+
+        pills_draw = new LinkedList<Entity>();
 
         for(Event.Channel c : keyboard_map.keySet())
         {
@@ -413,6 +429,7 @@ public class Render implements GameWindowCallback
         update_note_buffer();
 
         Iterator<LinkedList<Entity>> i = entities_matrix.iterator();
+
         while(i.hasNext()) // loop over layers
         {
             // get entity iterator from layer
@@ -486,47 +503,72 @@ public class Render implements GameWindowCallback
     public double getMeasureSize() { return measure_size; }
     public double getViewport() { return judgment_line_y2; }
 
-    private void computeScore(String judge, double hit)
-    {
-        int value = 0;
-        /**
-         * Your current jam combo also affects the score you get for each Cool hit.
-         * For each jam combo, the score is increased by 10.
-         * If you fail to hit a note, the jam combo will be reset to 0 and also the score/cool to 200.
-         * http://o2jam.wikia.com/wiki/Jam_combo
-         */
-        if     (judge.equals("JUDGMENT_COOL")) value = 200 + (jamcombo_entity.getNumber()*10);
-        else if(judge.equals("JUDGMENT_GOOD")) value = 100;
-        else if(judge.equals("JUDGMENT_BAD"))  value = 4;
-        else if(judge.equals("JUDGMENT_MISS")){ if(score_entity.getNumber() >= 10)value = -10; else value = -score_entity.getNumber(); }
-        score_entity.addNumber(value);
-        if(judge.equals("JUDGMENT_COOL"))
-            jamcombo_counter.addNumber(2);
-        else if(judge.equals("JUDGMENT_GOOD"))
-            jamcombo_counter.addNumber(1);
-        else
-        {
-            jamcombo_counter.setNumber(0);
-            jamcombo_entity.resetNumber();
-        }
-        hit_sum += hit;
-        if(!judge.equals(MISS_JUDGE))hit_count++;
-        total_notes++;
-    }
-
     private void check_judgment(NoteEntity ne)
     {
         String judge;
         switch (ne.getState())
         {
-            case LN_HEAD_JUDGE: //LN: Head has been played
+            case NOT_JUDGED: // you missed it (no keyboard input)
+                if(ne.isAlive()
+                        && ((ne instanceof LongNoteEntity && ne.getStartY() >= judgmentArea()) //needed by the ln head
+                        || (ne.getY() >= judgmentArea())))
+                {
+                    if(judgment_entity != null)judgment_entity.setAlive(false);
+                    judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+MISS_JUDGE).copy();
+                    entities_matrix.add(judgment_entity);
+
+                    note_counter.get(MISS_JUDGE).incNumber();
+                    combo_entity.resetNumber();
+
+                    update_screen_info(MISS_JUDGE,ne.getHit());
+                    
+                    note_channels.get(ne.getChannel()).removeFirst();
+                    ne.setState(NoteEntity.State.TO_KILL);
+                 }
+            break;
+            case JUDGE: //LN & normal ones: has finished with good result
                 judge = skin.judgment.ratePrecision(ne.getHit());
+
+                judge = update_screen_info(judge,ne.getHit());
+
                 if(judgment_entity != null)judgment_entity.setAlive(false);
                 judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
                 entities_matrix.add(judgment_entity);
 
 		note_counter.get(judge).incNumber();
-                computeScore(judge, ne.getHit());
+
+		if(!judge.equals(MISS_JUDGE))
+                {
+		    Entity ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
+		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
+		    getViewport()-ee.getHeight()/2);
+		    entities_matrix.add(ee);
+
+		    if(ne.getHit() >= skin.judgment.combo_threshold)combo_entity.incNumber();
+		    else {
+                        if(judge.equals("JUDGMENT_GOOD"))combo_entity.incNumber(); //because of the pills
+                        else combo_entity.resetNumber();
+                    }
+                    if(ne instanceof LongNoteEntity)ne.setState(NoteEntity.State.TO_KILL);
+                    else ne.setAlive(false);
+                } else {
+                    combo_entity.resetNumber();
+                    ne.setState(NoteEntity.State.TO_KILL);
+                    note_channels.get(ne.getChannel()).removeFirst();
+                }
+                last_sound.put(ne.getChannel(), ne.getSample());
+                note_channels.get(ne.getChannel()).removeFirst();
+            break;
+            case LN_HEAD_JUDGE: //LN: Head has been played
+                judge = skin.judgment.ratePrecision(ne.getHit());
+
+                judge = update_screen_info(judge,ne.getHit());
+
+                if(judgment_entity != null)judgment_entity.setAlive(false);
+                judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
+                entities_matrix.add(judgment_entity);
+
+		note_counter.get(judge).incNumber();
 
 		if(!judge.equals(MISS_JUDGE))
                 {
@@ -543,67 +585,12 @@ public class Render implements GameWindowCallback
 
 		    if(ne.getHit() >= skin.judgment.combo_threshold)combo_entity.incNumber();
 		    else {
-                        combo_entity.resetNumber();
-                        //computeScore(judge);//TODO: why are we computing the score again ???
+                        if(judge.equals("JUDGMENT_GOOD"))combo_entity.incNumber(); //because of the pills
+                        else combo_entity.resetNumber();
                     }
                     ne.setState(NoteEntity.State.LN_HOLD);
-                }else{
-                    combo_entity.resetNumber();
-                    ne.setState(NoteEntity.State.TO_KILL);
-                    note_channels.get(ne.getChannel()).removeFirst();
                 }
                 last_sound.put(ne.getChannel(), ne.getSample());
-            break;
-            case JUDGE: //LN & normal ones: has finished with good result
-                judge = skin.judgment.ratePrecision(ne.getHit());
-                if(judgment_entity != null)judgment_entity.setAlive(false);
-                judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
-                entities_matrix.add(judgment_entity);
-
-		note_counter.get(judge).incNumber();
-                computeScore(judge, ne.getHit());
-
-		if(!judge.equals(MISS_JUDGE))
-                {
-		    Entity ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
-		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
-		    getViewport()-ee.getHeight()/2);
-		    entities_matrix.add(ee);
-
-		    if(ne.getHit() >= skin.judgment.combo_threshold)combo_entity.incNumber();
-		    else combo_entity.resetNumber();
-
-                    if(ne instanceof LongNoteEntity)ne.setState(NoteEntity.State.TO_KILL);
-                    else ne.setAlive(false);
-                } else {
-                    combo_entity.resetNumber();
-                    ne.setState(NoteEntity.State.TO_KILL);
-                }
-                last_sound.put(ne.getChannel(), ne.getSample());
-                note_channels.get(ne.getChannel()).removeFirst();
-            break;
-            case TO_KILL: // this is the "garbage collector", it just removes the notes off window
-                if(ne.isAlive() && ne.getY() >= window.getResolutionHeight())
-                {
-                    // kill it
-                    ne.setAlive(false);
-                }
-            break;
-            case NOT_JUDGED: // you missed it (no keyboard input)
-                if(ne.isAlive() 
-                        && ((ne instanceof LongNoteEntity && ne.getStartY() >= judgmentArea()) //needed by the ln head
-                        || (ne.getY() >= judgmentArea())))
-                {
-                    if(judgment_entity != null)judgment_entity.setAlive(false);
-                    judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+MISS_JUDGE).copy();
-                    entities_matrix.add(judgment_entity);
-
-                    note_counter.get(MISS_JUDGE).incNumber();
-                    combo_entity.resetNumber();
-                    computeScore(MISS_JUDGE, ne.getHit());
-                    note_channels.get(ne.getChannel()).removeFirst();
-                    ne.setState(NoteEntity.State.TO_KILL);
-                 }
             break;
             case LN_HOLD:    // You keept too much time the note held that it misses
                 if(ne.isAlive() && ne.getY() >= judgmentArea())
@@ -614,23 +601,108 @@ public class Render implements GameWindowCallback
 
                     note_counter.get(MISS_JUDGE).incNumber();
                     combo_entity.resetNumber();
-                    computeScore(MISS_JUDGE, ne.getHit());
+
+                    update_screen_info(MISS_JUDGE,ne.getHit());
+
                     note_channels.get(ne.getChannel()).removeFirst();
                     ne.setState(NoteEntity.State.TO_KILL);
                  }
             break;
+            case TO_KILL: // this is the "garbage collector", it just removes the notes off window
+                if(ne.isAlive() && ne.getY() >= window.getResolutionHeight())
+                {
+                    // kill it
+                    ne.setAlive(false);
+                }
+            break;
+        }
+    }
+
+    /**
+     * TODO It would be nice to move all the check_judgment non judgment things to this function
+     * (bars, combos, counter, etc)
+     * @param judge
+     * @return judge
+     */
+    private String update_screen_info(String judge, double hit)
+    {
+        int score_value = 0;
+        if(judge.equals("JUDGMENT_COOL"))
+        {
+            jambar_entity.addNumber(2);
+            consecutive_cools++;
+            if(lifebar_entity.getNumber() <= lifebar_entity.getLimit())lifebar_entity.addNumber(100);
+
+            score_value = 200 + (jamcombo_entity.getNumber()*10);
+        }
+        else if(judge.equals("JUDGMENT_GOOD"))
+        {
+            jambar_entity.addNumber(1);
+            consecutive_cools = 0;
+            if(lifebar_entity.getNumber() <= lifebar_entity.getLimit())lifebar_entity.addNumber(50);
+
+             score_value = 100;
+        }
+        else if(judge.equals("JUDGMENT_BAD"))
+        {
+            if(pills > 0)
+            {
+                judge = "JUDGMENT_GOOD";
+                jambar_entity.addNumber(1);
+                pills--;
+                pills_draw.getLast().setAlive(false);
+
+                score_value = 100; // TODO: not sure
+            }
+            else
+            {
+                jambar_entity.setNumber(0);
+                jamcombo_entity.resetNumber();
+
+                score_value = 4;
+            }
+            consecutive_cools = 0;
+            if(lifebar_entity.getNumber() <= lifebar_entity.getLimit())lifebar_entity.addNumber(30);
+        }
+        else if(judge.equals("JUDGMENT_MISS"))
+        {
+            jambar_entity.setNumber(0);
+            jamcombo_entity.resetNumber();
+            consecutive_cools = 0;
+
+            if(lifebar_entity.getNumber() >= 30)lifebar_entity.addNumber(-30);
+
+            if(score_entity.getNumber() >= 10)score_value = -10;
+            else score_value = -score_entity.getNumber();
         }
 
-        if(jamcombo_counter.getNumber() >= JamBarEntity.JAM_LIMIT)
+        score_entity.addNumber(score_value);
+
+        if(jambar_entity.getNumber() >= jambar_entity.getLimit())
         {
-            jamcombo_counter.setNumber(0); //reset
+            jambar_entity.setNumber(0); //reset
             jamcombo_entity.incNumber();
+        }
+
+        if(consecutive_cools >= 15 && pills < 5)
+        {
+            consecutive_cools -= 15;
+            pills++;
+            Entity ee = skin.getEntityMap().get("PILL_"+pills).copy();
+            entities_matrix.add(ee);
+            pills_draw.add(ee);
         }
 
         if(combo_entity.getNumber() > 1 && maxcombo_entity.getNumber()<(combo_entity.getNumber()-1))
         {
             maxcombo_entity.incNumber();
         }
+
+        hit_sum += hit;
+        if(!judge.equals(MISS_JUDGE))hit_count++;
+        total_notes++;
+        
+        return judge;
     }
 
     private void do_autoplay()
@@ -642,13 +714,14 @@ public class Render implements GameWindowCallback
 
             NoteEntity ne = note_channels.get(c).getFirst();
 
+//            if(ne.getStartY() < judgment_line_y2)continue; //sync
             if(ne.getState() != NoteEntity.State.NOT_JUDGED &&
                     ne.getState() != NoteEntity.State.LN_HOLD)continue;
 
             double hit = ne.testHit(judgment_line_y1, judgment_line_y2);
             if(hit < AUTOPLAY_THRESHOLD)continue;
             ne.setHit(hit);
-
+            
             if(ne instanceof LongNoteEntity)
             {
                 if(ne.getState() == NoteEntity.State.NOT_JUDGED)
@@ -784,6 +857,7 @@ public class Render implements GameWindowCallback
             {
                 buffer_offset -= measure_size * fractional_measure;
                 MeasureEntity m = (MeasureEntity) skin.getEntityMap().get("MEASURE_MARK").copy();
+                //TODO fix the buffer_offset+6, right now is working because the skin we use, but for other skins will be wrong
                 m.setPos(m.getX(), buffer_offset+6);
                 entities_matrix.add(m);
                 buffer_measure++;

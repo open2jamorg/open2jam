@@ -111,7 +111,11 @@ public class LWJGLSprite implements Sprite {
      */
     public void setSlice(float sx, float sy)
     {
-        init(x,y,Math.round(sx * width),Math.round(sy * height));
+        int px = x;
+        int py = y;
+        if(sx < 0) px += width;
+        if(sy < 0) py += height;
+        init(px,py,Math.round(sx*width),Math.round(sy*height));
     }
 
     public void setAlpha(float alpha)

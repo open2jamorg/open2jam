@@ -312,10 +312,6 @@ public class OJMDumper
         byte this_byte = 0;
         for(int i=0;i<buf.length;i++)
         {
-            if(acc_counter > 7){
-                acc_counter = 0;
-                acc_keybyte = temp;
-            }
             temp = this_byte = buf[i];
 
             if(((acc_keybyte << acc_counter) & 0x80)!=0){
@@ -324,6 +320,10 @@ public class OJMDumper
 
             buf[i] = this_byte;
             acc_counter++;
+            if(acc_counter > 7){
+                acc_counter = 0;
+                acc_keybyte = temp;
+            }
         }
         return buf;
     }

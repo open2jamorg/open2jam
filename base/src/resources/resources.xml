@@ -148,7 +148,7 @@
 		<frame x="0"    y="512" w="256" h="256" file="note_click5_3.png" />
 	</sprite>
 	
-	<sprite framespeed="33.3" id="longflare">
+	<sprite id="longflare" framespeed="33.3">
 		<frame x="0"    y="0"   w="128" h="128" file="longflare.png" />
 		<frame x="128"  y="0"   w="128" h="128" file="longflare.png" />
 		<frame x="256"  y="0"   w="128" h="128" file="longflare.png" />
@@ -355,14 +355,14 @@
     <!-- pills, life bar & time bar -->
     <layer id="2">
         <!-- pills -->
-	<entity x="200" y="127" sprite="pill" />
-	<entity x="200" y="95" sprite="pill" />
-	<entity x="200" y="64" sprite="pill" />
-	<entity x="200" y="33" sprite="pill" />
-	<entity x="200" y="2" sprite="pill" />
+	<entity id="PILL_1" x="200" y="127" sprite="pill" />
+	<entity id="PILL_2" x="200" y="95" sprite="pill" />
+	<entity id="PILL_3" x="200" y="64" sprite="pill" />
+	<entity id="PILL_4" x="200" y="33" sprite="pill" />
+	<entity id="PILL_5" x="200" y="2" sprite="pill" />
 
 	<!-- life bar -->
-	<entity x="201" y="246" sprite="lifebar" />
+	<entity id="LIFE_BAR" x="201" y="246" sprite="lifebar" />
 	
 	<!-- time bar / o2 combo bar (don't know what way will we go)-->
 	<entity x="226" y="515" sprite="timebar" />

@@ -223,6 +223,7 @@ public class NewInterface extends javax.swing.JFrame
         lbl_channelModifier.setText("Channel Modifier:");
 
         combo_visibilityModifier.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--None--", "Hidden", "Sudden", "Dark" }));
+        combo_visibilityModifier.setEnabled(false);
 
         lbl_visibilityModifier.setText("Visibility Modifier:");
 
@@ -256,11 +257,11 @@ public class NewInterface extends javax.swing.JFrame
                                 .addGap(18, 18, 18)
                                 .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(lbl_keys)
-                                    .addComponent(lbl_level, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
-                                    .addComponent(lbl_notes, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
-                                    .addComponent(lbl_time, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
-                                    .addComponent(lbl_genre, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
-                                    .addComponent(lbl_bpm, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)))
+                                    .addComponent(lbl_level, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
+                                    .addComponent(lbl_notes, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
+                                    .addComponent(lbl_time, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
+                                    .addComponent(lbl_genre, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
+                                    .addComponent(lbl_bpm, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)))
                             .addComponent(lbl_filename)))
                     .addComponent(lbl_artist, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE)
                     .addGroup(panel_infoLayout.createSequentialGroup()
@@ -315,7 +316,7 @@ public class NewInterface extends javax.swing.JFrame
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbl_artist)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbl_visibilityModifier)
@@ -550,7 +551,7 @@ public class NewInterface extends javax.swing.JFrame
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panel_info, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+                        .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_filter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -825,8 +826,7 @@ public class NewInterface extends javax.swing.JFrame
         lbl_notes.setText(selected_header.getNoteCount()+"");
 	lbl_keys.setText(selected_header.getKeys()+"");
         int d = selected_header.getDuration();
-
-        lbl_time.setText((d/60)+":"+(d%60));
+        lbl_time.setText((d/60)+":"+(d%60 < 10 ? "0"+(d%60) : (d%60)));
 
         BufferedImage i = selected_header.getCover();
 

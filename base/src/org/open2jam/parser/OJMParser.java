@@ -88,9 +88,11 @@ public class OJMParser
                     ret = parseM30(f, file);
                     break;
 
-                case OMC_SIGNATURE:
+                case OMC_SIGNATURE:           
+                    ret = parseOMC(f, true);
+                    break;
                 case OJM_SIGNATURE:
-                    ret = parseOMC(f);
+                    ret = parseOMC(f, false);
                     break;
 
                 default:
@@ -176,7 +178,7 @@ public class OJMParser
         }
     }
 
-    private static HashMap<Integer, Integer> parseOMC(RandomAccessFile f) throws IOException
+    private static HashMap<Integer, Integer> parseOMC(RandomAccessFile f, boolean decrypt) throws IOException
     {
        HashMap<Integer, Integer> samples =  new HashMap<Integer, Integer>();
        
@@ -223,8 +225,11 @@ public class OJMParser
            byte[] buf = new byte[buffer.remaining()];
            buffer.get(buf);
 
-           buf = rearrange(buf);
-           buf = acc_xor(buf);
+           if(decrypt)
+           {
+               buf = rearrange(buf);
+               buf = acc_xor(buf);
+           }
 
            buffer = ByteBuffer.allocateDirect(buf.length);
            buffer.put(buf);

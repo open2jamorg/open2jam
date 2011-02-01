@@ -15,7 +15,7 @@ import org.open2jam.render.entities.ComboCounterEntity;
 import org.open2jam.render.entities.CompositeEntity;
 import org.open2jam.render.entities.EffectEntity;
 import org.open2jam.render.entities.Entity;
-import org.open2jam.render.entities.JamBarEntity;
+import org.open2jam.render.entities.BarEntity;
 import org.open2jam.render.entities.JudgmentEntity;
 import org.open2jam.render.entities.LongNoteEntity;
 import org.open2jam.render.entities.MeasureEntity;
@@ -369,19 +369,17 @@ public class SkinHandler extends DefaultHandler
             }
 	    e = new NumberEntity(list, 0, 0);
         }
-	else if(id.equals("PILLS")){
-	    //TODO
+	else if(id.startsWith("PILL_")){
+            SpriteList s = sprite_buffer.get(atts.get("sprite"));
+	    e = new AnimatedEntity(s, 0, 0);
 	}
 	else if(id.equals("LIFE_BAR")){
-	    //TODO
+            SpriteList s = sprite_buffer.get(atts.get("sprite"));
+	    e = new BarEntity(s, 0, 0);
 	}
 	else if(id.equals("JAM_BAR")){
-            ArrayList<Entity> list = new ArrayList<Entity>();
-            for(String s : atts.get("sprite").split(",")){
-                s = s.trim();
-                list.add( new Entity(sprite_buffer.get(s),0,0));
-            }
-	    e = new JamBarEntity(list, 0, 0);
+            SpriteList s = sprite_buffer.get(atts.get("sprite"));
+	    e = new BarEntity(s, 0, 0);
 	}
 	else if(id.equals("TIME_BAR")){
 	    //TODO

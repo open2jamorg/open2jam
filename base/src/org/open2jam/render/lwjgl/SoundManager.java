@@ -9,11 +9,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.net.URL;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
+import org.lwjgl.util.WaveData;
 
 import org.open2jam.util.OggInputStream;
 
@@ -161,6 +163,24 @@ public class SoundManager
         }
 
         AL10.alBufferData(id_buf.get(0), format, buffer, sample_rate);
+
+        org.lwjgl.openal.Util.checkALError();
+
+        sample_buffer.add(id_buf.get(0));
+        return id_buf.get(0);
+    }
+
+    public static int newBuffer(URL wavfile)
+    {
+        IntBuffer id_buf = BufferUtils.createIntBuffer(1);
+        AL10.alGenBuffers(id_buf);
+
+        org.lwjgl.openal.Util.checkALError();
+
+        WaveData waveFile = WaveData.create(wavfile);
+
+        AL10.alBufferData(id_buf.get(0), waveFile.format, waveFile.data, waveFile.samplerate);
+        waveFile.dispose();
 
         org.lwjgl.openal.Util.checkALError();
 

@@ -45,7 +45,7 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="About"/>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-              <Color id="Default Cursor"/>
+              <Color id="Cursor predeterminado"/>
             </Property>
           </Properties>
           <Events>
@@ -103,7 +103,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="panel_info" alignment="1" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="table_scroll" pref="431" max="32767" attributes="1"/>
+                      <Component id="table_scroll" pref="438" max="32767" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="txt_filter" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -144,11 +144,11 @@
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="lbl_keys" min="-2" max="-2" attributes="0"/>
-                                      <Component id="lbl_level" alignment="0" pref="197" max="32767" attributes="0"/>
-                                      <Component id="lbl_notes" alignment="0" pref="197" max="32767" attributes="0"/>
-                                      <Component id="lbl_time" alignment="0" pref="197" max="32767" attributes="0"/>
-                                      <Component id="lbl_genre" alignment="0" pref="197" max="32767" attributes="0"/>
-                                      <Component id="lbl_bpm" alignment="0" pref="197" max="32767" attributes="0"/>
+                                      <Component id="lbl_level" alignment="0" pref="208" max="32767" attributes="0"/>
+                                      <Component id="lbl_notes" alignment="0" pref="208" max="32767" attributes="0"/>
+                                      <Component id="lbl_time" alignment="0" pref="208" max="32767" attributes="0"/>
+                                      <Component id="lbl_genre" alignment="0" pref="208" max="32767" attributes="0"/>
+                                      <Component id="lbl_bpm" alignment="0" pref="208" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                               <Component id="lbl_filename" min="-2" max="-2" attributes="0"/>
@@ -222,7 +222,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="lbl_artist" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="table_scroll2" pref="171" max="32767" attributes="0"/>
+                  <Component id="table_scroll2" pref="179" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="lbl_visibilityModifier" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -376,6 +376,7 @@
                 <StringItem index="3" value="Dark"/>
               </StringArray>
             </Property>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="lbl_visibilityModifier">
