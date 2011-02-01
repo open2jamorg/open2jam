@@ -102,8 +102,8 @@ public class TextureLoader {
        return createTexture(image,
                          GL11.GL_TEXTURE_2D, // target
                          GL11.GL_RGBA,     // dst pixel format
-                         GL11.GL_NEAREST, // min filter (unused)
-                         GL11.GL_NEAREST);
+                         GL11.GL_LINEAR, // min filter (unused)
+                         GL11.GL_LINEAR);
     }
     
     /**
