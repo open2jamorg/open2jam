@@ -49,7 +49,7 @@ public class NewInterface extends javax.swing.JFrame
     private ChartList selected_chart;
     private Chart selected_header;
     private int last_model_idx;
-    private final TableRowSorter table_sorter;
+    private final TableRowSorter<ChartListTableModel> table_sorter;
 
     javax.swing.ListSelectionModel chartLM;
 
@@ -59,7 +59,8 @@ public class NewInterface extends javax.swing.JFrame
         initComponents();
         this.setLocationRelativeTo(null);
         load_progress.setVisible(false);
-        table_sorter = (TableRowSorter) table_songlist.getRowSorter();
+        table_sorter = new TableRowSorter<ChartListTableModel>(model_songlist);
+        table_songlist.setRowSorter(table_sorter);
         txt_filter.getDocument().addDocumentListener(new DocumentListener() {
 
             public void insertUpdate(DocumentEvent e) {updateFilter();}

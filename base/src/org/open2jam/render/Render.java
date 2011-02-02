@@ -22,14 +22,11 @@ import org.open2jam.util.SystemTimer;
 
 import org.open2jam.parser.Chart;
 import org.open2jam.parser.Event;
-import org.open2jam.render.entities.AnimatedEntity;
 import org.open2jam.render.entities.BPMEntity;
 import org.open2jam.render.entities.ComboCounterEntity;
 import org.open2jam.render.entities.Entity;
 import org.open2jam.render.entities.BarEntity;
-import org.open2jam.render.entities.JudgmentEntity;
 import org.open2jam.render.entities.LongNoteEntity;
-import org.open2jam.render.entities.MeasureEntity;
 import org.open2jam.render.entities.NoteEntity;
 import org.open2jam.render.entities.NumberEntity;
 import org.open2jam.render.entities.SampleEntity;
@@ -49,13 +46,13 @@ public class Render implements GameWindowCallback
     /** the mapping of note channels to KeyEvent keys  */
     private static final EnumMap<Event.Channel, Integer> keyboard_map;
 
+    private static final double AUTOPLAY_THRESHOLD = 0.8;
+
     /** The window that is being used to render the game */
     private final GameWindow window;
 
     /** the chart being rendered */
     private final Chart chart;
-
-    private final double AUTOPLAY_THRESHOLD = 0.8;
     
     /** is autoplaying ? */
     private final boolean AUTOPLAY;
@@ -124,7 +121,7 @@ public class Render implements GameWindowCallback
      * whether each is being pressed or not */
     private EnumMap<Event.Channel,Boolean> keyboard_key_pressed;
 
-    private EnumMap<Event.Channel,AnimatedEntity> longflare;
+    private EnumMap<Event.Channel,Entity> longflare;
 
     /** these are the same notes from the entity_matrix
      * but divided in channels for ease to pull */
@@ -171,7 +168,7 @@ public class Render implements GameWindowCallback
     private NumberEntity minute_entity;
     private NumberEntity second_entity;
 
-    private JudgmentEntity judgment_entity;
+    private Entity judgment_entity;
 
     /** the combo counter */
     private ComboCounterEntity combo_entity;
@@ -293,7 +290,7 @@ public class Render implements GameWindowCallback
         // reference to long notes being holded
         longnote_holded = new EnumMap<Event.Channel,LongNoteEntity>(Event.Channel.class);
 
-	longflare = new EnumMap<Event.Channel, AnimatedEntity> (Event.Channel.class);
+	longflare = new EnumMap<Event.Channel, Entity> (Event.Channel.class);
 
         last_sound = new EnumMap<Event.Channel,Event.SoundSample>(Event.Channel.class);
 
@@ -399,8 +396,9 @@ public class Render implements GameWindowCallback
         // work out how long its been since the last update, this
         // will be used to calculate how far the entities should
         // move this loop
-        long delta = SystemTimer.getTime() - lastLoopTime;
-        lastLoopTime = SystemTimer.getTime();
+        long now = SystemTimer.getTime();
+        long delta = now - lastLoopTime;
+        lastLoopTime = now;
         lastFpsTime += delta;
         fps++;
         
@@ -514,7 +512,7 @@ public class Render implements GameWindowCallback
                         || (ne.getY() >= judgmentArea())))
                 {
                     if(judgment_entity != null)judgment_entity.setAlive(false);
-                    judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+MISS_JUDGE).copy();
+                    judgment_entity = skin.getEntityMap().get("EFFECT_"+MISS_JUDGE).copy();
                     entities_matrix.add(judgment_entity);
 
                     note_counter.get(MISS_JUDGE).incNumber();
@@ -522,7 +520,6 @@ public class Render implements GameWindowCallback
 
                     update_screen_info(MISS_JUDGE,ne.getHit());
                     
-                    note_channels.get(ne.getChannel()).removeFirst();
                     ne.setState(NoteEntity.State.TO_KILL);
                  }
             break;
@@ -532,7 +529,7 @@ public class Render implements GameWindowCallback
                 judge = update_screen_info(judge,ne.getHit());
 
                 if(judgment_entity != null)judgment_entity.setAlive(false);
-                judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
+                judgment_entity = skin.getEntityMap().get("EFFECT_"+judge).copy();
                 entities_matrix.add(judgment_entity);
 
 		note_counter.get(judge).incNumber();
@@ -554,10 +551,8 @@ public class Render implements GameWindowCallback
                 } else {
                     combo_entity.resetNumber();
                     ne.setState(NoteEntity.State.TO_KILL);
-                    note_channels.get(ne.getChannel()).removeFirst();
                 }
                 last_sound.put(ne.getChannel(), ne.getSample());
-                note_channels.get(ne.getChannel()).removeFirst();
             break;
             case LN_HEAD_JUDGE: //LN: Head has been played
                 judge = skin.judgment.ratePrecision(ne.getHit());
@@ -565,7 +560,7 @@ public class Render implements GameWindowCallback
                 judge = update_screen_info(judge,ne.getHit());
 
                 if(judgment_entity != null)judgment_entity.setAlive(false);
-                judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+judge).copy();
+                judgment_entity = skin.getEntityMap().get("EFFECT_"+judge).copy();
                 entities_matrix.add(judgment_entity);
 
 		note_counter.get(judge).incNumber();
@@ -575,7 +570,7 @@ public class Render implements GameWindowCallback
 		    Entity ee = skin.getEntityMap().get("EFFECT_LONGFLARE").copy();
 		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,ee.getY());
 		    entities_matrix.add(ee);
-                    Entity to_kill = longflare.put(ne.getChannel(),(AnimatedEntity) ee);
+                    Entity to_kill = longflare.put(ne.getChannel(),ee);
                     if(to_kill != null)to_kill.setAlive(false);
 		    
 		    ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
@@ -596,7 +591,7 @@ public class Render implements GameWindowCallback
                 if(ne.isAlive() && ne.getY() >= judgmentArea())
                 {
                     if(judgment_entity != null)judgment_entity.setAlive(false);
-                    judgment_entity = (JudgmentEntity) skin.getEntityMap().get("EFFECT_"+MISS_JUDGE).copy();
+                    judgment_entity = skin.getEntityMap().get("EFFECT_"+MISS_JUDGE).copy();
                     entities_matrix.add(judgment_entity);
 
                     note_counter.get(MISS_JUDGE).incNumber();
@@ -604,7 +599,6 @@ public class Render implements GameWindowCallback
 
                     update_screen_info(MISS_JUDGE,ne.getHit());
 
-                    note_channels.get(ne.getChannel()).removeFirst();
                     ne.setState(NoteEntity.State.TO_KILL);
                  }
             break;
@@ -710,13 +704,11 @@ public class Render implements GameWindowCallback
         for(Map.Entry<Event.Channel,Integer> entry : keyboard_map.entrySet())
         {
             Event.Channel c = entry.getKey();
-            if(note_channels.get(c).isEmpty())continue;
 
-            NoteEntity ne = note_channels.get(c).getFirst();
+            NoteEntity ne = nextNoteKey(c);
 
+            if(ne == null)continue;
 //            if(ne.getStartY() < judgment_line_y2)continue; //sync
-            if(ne.getState() != NoteEntity.State.NOT_JUDGED &&
-                    ne.getState() != NoteEntity.State.LN_HOLD)continue;
 
             double hit = ne.testHit(judgment_line_y1, judgment_line_y2);
             if(hit < AUTOPLAY_THRESHOLD)continue;
@@ -771,7 +763,6 @@ public class Render implements GameWindowCallback
             }
             return;
         }
-
 	for(Map.Entry<Event.Channel,Integer> entry : keyboard_map.entrySet())
         {
             Event.Channel c = entry.getKey();
@@ -785,15 +776,12 @@ public class Render implements GameWindowCallback
                     Entity to_kill = key_pressed_entity.put(c, ee);
                     if(to_kill != null)to_kill.setAlive(false);
 
-                    if(note_channels.get(c).isEmpty()){
+                    NoteEntity e = nextNoteKey(c);
+                    if(e == null){
                         Event.SoundSample i = last_sound.get(c);
                         if(i != null)queueSample(i);
                         continue;
                     }
-
-                    NoteEntity e = note_channels.get(c).getFirst();
-
-                    if(e.getState() == NoteEntity.State.TO_KILL)continue;
 
                     queueSample(e.getSample());
 
@@ -839,6 +827,23 @@ public class Render implements GameWindowCallback
         }
     }
 
+    /** this returns the next note that needs to be played
+     ** of the defined channel or NULL if there's
+     ** no such note in the moment **/
+    private NoteEntity nextNoteKey(Event.Channel c)
+    {
+        if(note_channels.get(c).isEmpty())return null;
+        NoteEntity ne = note_channels.get(c).getFirst();
+        while(ne.getState() != NoteEntity.State.NOT_JUDGED &&
+            ne.getState() != NoteEntity.State.LN_HOLD)
+        {
+            note_channels.get(c).removeFirst();
+            if(note_channels.get(c).isEmpty())return null;
+            ne = note_channels.get(c).getFirst();
+        }
+        return ne;
+    }
+
     private int buffer_measure = -1;
 
     private double fractional_measure = 1;
@@ -856,7 +861,7 @@ public class Render implements GameWindowCallback
             while(e.getMeasure() > buffer_measure) // this is the start of a new measure
             {
                 buffer_offset -= measure_size * fractional_measure;
-                MeasureEntity m = (MeasureEntity) skin.getEntityMap().get("MEASURE_MARK").copy();
+                Entity m = skin.getEntityMap().get("MEASURE_MARK").copy();
                 //TODO fix the buffer_offset+6, right now is working because the skin we use, but for other skins will be wrong
                 m.setPos(m.getX(), buffer_offset+6);
                 entities_matrix.add(m);
@@ -941,7 +946,7 @@ public class Render implements GameWindowCallback
      */
     public void channelShuffle(Iterator<Event> buffer)
     {
-	List channelSwap = new LinkedList();
+	List<Event.Channel> channelSwap = new LinkedList<Event.Channel>();
 
 	channelSwap.add(Event.Channel.NOTE_1);
 	channelSwap.add(Event.Channel.NOTE_2);
@@ -981,7 +986,7 @@ public class Render implements GameWindowCallback
     {
 	EnumMap<Event.Channel, Event.Channel> ln = new EnumMap<Event.Channel, Event.Channel>(Event.Channel.class);
 
-	List channelSwap = new LinkedList();
+	List<Event.Channel> channelSwap = new LinkedList<Event.Channel>();
 
 	channelSwap.add(Event.Channel.NOTE_1);
 	channelSwap.add(Event.Channel.NOTE_2);

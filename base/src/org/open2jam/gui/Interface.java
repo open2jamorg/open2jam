@@ -47,7 +47,7 @@ public class Interface extends javax.swing.JFrame
     private int rank = 0;
     private Chart selected_header;
     private int last_model_idx;
-    private final TableRowSorter table_sorter;
+    private final TableRowSorter<ChartListTableModel> table_sorter;
 
     /** Creates new form Interface */
     public Interface() {
@@ -55,7 +55,8 @@ public class Interface extends javax.swing.JFrame
         initComponents();
         this.setLocationRelativeTo(null);
         load_progress.setVisible(false);
-        table_sorter = (TableRowSorter) table_songlist.getRowSorter();
+        table_sorter = new TableRowSorter<ChartListTableModel>(model_songlist);
+        table_songlist.setRowSorter(table_sorter);
         txt_filter.getDocument().addDocumentListener(new DocumentListener() {
 
             public void insertUpdate(DocumentEvent e) {updateFilter();}
