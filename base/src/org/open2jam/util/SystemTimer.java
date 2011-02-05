@@ -7,15 +7,21 @@ package org.open2jam.util;
  */
 public class SystemTimer {
     /** The number of "timer ticks" per second */
-    private static final long timerTicksPerMilli = 1000000L;// 10^6
-    private static long ticks = 0;
-    private static long start;
+    private final long timerTicksPerMilli = 1000000L;// 10^6
+    private long ticks = 0;
+    private long start;
 
     /**
     * Starts the timer running. The number of ticks is reset to zero and the timer is synchronized with the
     * leading edge of the wave.
     */
-    static {
+    public void SystemTimer()
+    {
+       startTimer();
+    }
+
+    public void startTimer()
+    {
         long time = System.nanoTime();
         long prev_time = time;
 
@@ -25,13 +31,12 @@ public class SystemTimer {
         while(time == prev_time)time = System.nanoTime();
         start = System.nanoTime();
     }
-	
     /**
      * Get the high resolution time in milliseconds
      *
      * @return The high resolution time in milliseconds
      */
-    public static long getTime() {
+    public long getTime() {
         // we get the "timer ticks" from the high resolution timer
         // then divide by the number of ticks in a millisecond giving
         // us a nice clear time in milliseconds
@@ -46,13 +51,13 @@ public class SystemTimer {
     * @return Number of ticks since the clock started.
     */
 
-    public static long getClockTicks()
+    public long getClockTicks()
     {
         ticks = (System.nanoTime()-start);
         return ticks;
     }
 	
-    public static void sleep(int milli)
+    public void sleep(int milli)
     {
         if(milli <= 0)return;
         try{

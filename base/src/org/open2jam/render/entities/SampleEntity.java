@@ -17,7 +17,7 @@ public class SampleEntity extends Entity
     private Event.SoundSample value;
     private Render render;
 
-    public SampleEntity(Render r, Event.SoundSample value, double y)
+    public SampleEntity(Render r, Event.SoundSample value, double y, double t)
     {
         this.render = r;
         this.value = value;
@@ -25,6 +25,7 @@ public class SampleEntity extends Entity
         this.y = y;
         this.width = 0;
         this.height = 0;
+        this.time = t;
     }
 
     private SampleEntity(SampleEntity org) {

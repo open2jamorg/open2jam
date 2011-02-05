@@ -220,13 +220,15 @@ public class Render implements GameWindowCallback
                 );
     }
 
+    private SystemTimer SysTimer = new SystemTimer();
+    private SystemTimer timer = new SystemTimer();
     /**
     * initialize the common elements for the game.
     * this is called by the window render
     */
     public void initialise()
     {
-        lastLoopTime = SystemTimer.getTime();
+        lastLoopTime = SysTimer.getTime();
 
         // skin load
         try {
@@ -364,7 +366,6 @@ public class Render implements GameWindowCallback
         // load up initial buffer
         update_note_buffer();
 
-
         // create sound sources
         source_queue = new LinkedList<Integer>();
 
@@ -384,12 +385,12 @@ public class Render implements GameWindowCallback
         System.gc();
 
         // wait a bit.. 5 seconds at min
-        SystemTimer.sleep((int) (5000 - (SystemTimer.getTime() - lastLoopTime)));
+        SysTimer.sleep((int) (5000 - (SysTimer.getTime() - lastLoopTime)));
 
-        lastLoopTime = SystemTimer.getTime();
+        lastLoopTime = SysTimer.getTime();
+        timer.startTimer();
     }
 
-    
     /**
     * Notification that a frame is being rendered. Responsible for
     * running game logic and rendering the scene.
@@ -399,8 +400,8 @@ public class Render implements GameWindowCallback
         // work out how long its been since the last update, this
         // will be used to calculate how far the entities should
         // move this loop
-        long delta = SystemTimer.getTime() - lastLoopTime;
-        lastLoopTime = SystemTimer.getTime();
+        long delta = SysTimer.getTime() - lastLoopTime;
+        lastLoopTime = SysTimer.getTime();
         lastFpsTime += delta;
         fps++;
         
@@ -437,6 +438,7 @@ public class Render implements GameWindowCallback
             while(j.hasNext()) // loop over entities
             {
                 Entity e = j.next();
+
                 e.move(delta); // move the entity
 
                 if(e instanceof NoteEntity) // if it's a note
@@ -537,6 +539,8 @@ public class Render implements GameWindowCallback
 
 		note_counter.get(judge).incNumber();
 
+                System.out.println("EVENT "+ne.getTime()+" TIMER "+timer.getTime()+" DIFF "+(ne.getTime()-timer.getTime()));
+
 		if(!judge.equals(MISS_JUDGE))
                 {
 		    Entity ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
@@ -554,7 +558,6 @@ public class Render implements GameWindowCallback
                 } else {
                     combo_entity.resetNumber();
                     ne.setState(NoteEntity.State.TO_KILL);
-                    note_channels.get(ne.getChannel()).removeFirst();
                 }
                 last_sound.put(ne.getChannel(), ne.getSample());
                 note_channels.get(ne.getChannel()).removeFirst();
@@ -714,7 +717,8 @@ public class Render implements GameWindowCallback
 
             NoteEntity ne = note_channels.get(c).getFirst();
 
-//            if(ne.getStartY() < judgment_line_y2)continue; //sync
+            if(ne.getStartY() < judgment_line_y2)continue; //sync
+//            if((long)ne.getTime() <= timer.getTime()) continue;
             if(ne.getState() != NoteEntity.State.NOT_JUDGED &&
                     ne.getState() != NoteEntity.State.LN_HOLD)continue;
 
@@ -845,6 +849,8 @@ public class Render implements GameWindowCallback
 
     private final int buffer_upper_bound = -10;
 
+    private double buffer_measure_pointer = 0.0;
+    private long buffer_timer = 0;
     /** update the note layer of the entities_matrix.
     *** note buffering is equally distributed between the frames
     **/
@@ -855,6 +861,10 @@ public class Render implements GameWindowCallback
             Event e = buffer_iterator.next();
             while(e.getMeasure() > buffer_measure) // this is the start of a new measure
             {
+                buffer_timer += ((this.bpm/240) * (1-buffer_measure_pointer) * (measure_size*fractional_measure/hispeed))*10;
+                buffer_measure_pointer = 0.0;
+
+
                 buffer_offset -= measure_size * fractional_measure;
                 MeasureEntity m = (MeasureEntity) skin.getEntityMap().get("MEASURE_MARK").copy();
                 //TODO fix the buffer_offset+6, right now is working because the skin we use, but for other skins will be wrong
@@ -863,6 +873,9 @@ public class Render implements GameWindowCallback
                 buffer_measure++;
                 fractional_measure = 1;
             }
+
+            buffer_timer += ((this.bpm/240) * (e.getPosition()-buffer_measure_pointer) * (measure_size*fractional_measure/hispeed))*10;
+            buffer_measure_pointer = e.getPosition();
 
             double abs_height = buffer_offset - (e.getPosition() * measure_size);
 
@@ -873,7 +886,7 @@ public class Render implements GameWindowCallback
                 break;
 
                 case BPM_CHANGE:
-                entities_matrix.add(new BPMEntity(this,e.getValue(),abs_height));
+                entities_matrix.add(new BPMEntity(this,e.getValue(),abs_height, buffer_timer));
                 break;
 
                 case NOTE_1:case NOTE_2:
@@ -885,6 +898,7 @@ public class Render implements GameWindowCallback
                     n.setSample(e.getSample());
 		    entities_matrix.add(n);
                     note_channels.get(n.getChannel()).add(n);
+                    n.setTime(buffer_timer);
                 }
                 else if(e.getFlag() == Event.Flag.HOLD){
                     LongNoteEntity ln = (LongNoteEntity) skin.getEntityMap().get("LONG_"+e.getChannel()).copy();
@@ -893,6 +907,7 @@ public class Render implements GameWindowCallback
 		    entities_matrix.add(ln);
 		    ln_buffer.put(e.getChannel(),ln);
                     note_channels.get(ln.getChannel()).add(ln);
+                    ln.setTime(buffer_timer);
                 }
                 else if(e.getFlag() == Event.Flag.RELEASE){
                     LongNoteEntity lne = ln_buffer.remove(e.getChannel());
@@ -900,13 +915,14 @@ public class Render implements GameWindowCallback
                         logger.log(Level.WARNING, "Attempted to RELEASE note {0}", e.getChannel());
                     }else{
                         lne.setEndY(abs_height);
+                        lne.setTime(buffer_timer);
                     }
                 }
                 break;
                 
                 case AUTO_PLAY:
                 case NOTE_SC:
-                entities_matrix.add(new SampleEntity(this,e.getSample(),abs_height));
+                entities_matrix.add(new SampleEntity(this,e.getSample(),abs_height, buffer_timer));
                 break;
             }
         }

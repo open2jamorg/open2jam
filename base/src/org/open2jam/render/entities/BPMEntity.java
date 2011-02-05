@@ -12,7 +12,7 @@ public class BPMEntity extends Entity
     private double bpm;
     protected Render render;
 
-    public BPMEntity(Render r, double bpm, double y)
+    public BPMEntity(Render r, double bpm, double y, double t)
     {
         this.render = r;
         this.bpm = bpm;
@@ -20,6 +20,7 @@ public class BPMEntity extends Entity
         this.y = y;
         this.width = 0;
         this.height = 0;
+        this.time = t;
     }
 
     protected BPMEntity(BPMEntity org) {

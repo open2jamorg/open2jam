@@ -64,10 +64,10 @@ public class LWJGLSprite implements Sprite {
 
     private void init(int x, int y, int width, int height)
     {
-        float u = ((float)(x+0.5f)/texture.getWidth()); // top-left x
-        float v = ((float)(y+0.5f)/texture.getHeight()); // top-left y
-        float w = ((float)(x+width-0.5f)/texture.getWidth()); // bottom-right x
-        float z = ((float)(y+height-0.5f)/texture.getHeight()); // bottom-right y
+        float u = ((float)(x)/texture.getWidth()); // top-left x
+        float v = ((float)(y)/texture.getHeight()); // top-left y
+        float w = ((float)(x+width)/texture.getWidth()); // bottom-right x
+        float z = ((float)(y+height)/texture.getHeight()); // bottom-right y
 
         GL11.glNewList(list_id, GL11.GL_COMPILE);
             GL11.glBegin(GL11.GL_QUADS);
@@ -139,7 +139,6 @@ public class LWJGLSprite implements Sprite {
         // bind to the appropriate texture for this sprite
         texture.bind();
 
-        GL11.glTranslatef(0.375f, 0.375f, 0);
         // translate to the right location and prepare to draw
         GL11.glTranslatef(px, py, 0);
         
