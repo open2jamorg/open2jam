@@ -7,10 +7,11 @@ import org.open2jam.render.Render;
 *** it's only action is changing the bpm
 *** when it reaches the judgment
 ***/
-public class BPMEntity extends Entity
+public class BPMEntity extends Entity implements TimeEntity
 {
     private double bpm;
     protected Render render;
+    private long time_to_hit;
 
     public BPMEntity(Render r, double bpm, double y)
     {
@@ -29,12 +30,6 @@ public class BPMEntity extends Entity
     }
 
     @Override
-    public void move(long delta)
-    {
-        y += delta * render.getNoteSpeed();
-    }
-
-    @Override
     public void judgment()
     {
         render.setBPM(bpm);
@@ -47,5 +42,13 @@ public class BPMEntity extends Entity
     @Override
     public BPMEntity copy(){
         return new BPMEntity(this);
+    }
+
+    public void setTime(long t) {
+        this.time_to_hit = t;
+    }
+
+    public long getTime() {
+        return time_to_hit;
     }
 }

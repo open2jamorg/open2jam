@@ -6,7 +6,7 @@ import org.open2jam.render.Render;
 
 /** a NoteEntity is a animated entity which moves down.
 **/
-public class NoteEntity extends AnimatedEntity
+public class NoteEntity extends AnimatedEntity implements TimeEntity
 {
     protected Render render;
 
@@ -17,6 +17,8 @@ public class NoteEntity extends AnimatedEntity
     protected State state = State.NOT_JUDGED;
 
     protected double hit = 0;
+
+    protected long time_to_hit;
 
     public enum State {
         NOT_JUDGED,
@@ -60,31 +62,13 @@ public class NoteEntity extends AnimatedEntity
     public void setState(State value) { state = value; }
     public State getState() { return state; }
 
-    public double testHit(double jy1, double jy2)
-    {
-        return testHit(y, y + height, jy1, jy2);
-    }
 
-    protected static double testHit(double y1, double y2, double jy1, double jy2)
-    {
-        if(y2 < jy1)return 0;
-        double p = (y2 - jy1)/(jy2 - jy1);
-        if(p > 2)return 0;
-        else if(p > 1)p = Math.max(0, 2 - p);
-        return p;
+    public void setTime(long time){
+        this.time_to_hit = time;
     }
-
-//    protected static double testHit(double y1, double y2, double jy1, double jy2)
-//    {
-//        if(y1 > jy2 || y2 < jy1)return 0;
-//        if(y1 > jy1 && y2 < jy2)return 1;
-//        if(y1 < jy1){ // first case, before middle
-//            return (y2-jy1)/(jy2-jy1);
-//        }
-//        else{ // second case, after middle
-//            return (jy2-y1)/(jy2-jy1);
-//        }
-//    }
+    public long getTime() {
+        return time_to_hit;
+    }
     
     @Override
     public void judgment()
