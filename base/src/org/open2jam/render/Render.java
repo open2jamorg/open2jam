@@ -446,8 +446,9 @@ public class Render implements GameWindowCallback
                 {
                     TimeEntity te = (TimeEntity) e;
                     double y = getViewport() - ((te.getTime() - now) * note_speed);
-                    System.out.println(y);
+//                    System.out.println(y);
                     if(te.getTime() - now <= 0)e.judgment();
+                    if(e instanceof MeasureEntity) y += e.getHeight()*2;
                     e.setPos(e.getX(), y);
 
                     if(e instanceof NoteEntity){
@@ -880,7 +881,7 @@ public class Render implements GameWindowCallback
         while(buffer_iterator.hasNext() && buffer_timer-now < getViewport()/note_speed)
         {
             Event e = buffer_iterator.next();
-            System.out.println(buffer_bpm);
+//            System.out.println(buffer_bpm);
             while(e.getMeasure() > buffer_measure) // this is the start of a new measure
             {
                 buffer_timer += 1000 * ( 240/buffer_bpm * (fractional_measure-buffer_measure_pointer) );

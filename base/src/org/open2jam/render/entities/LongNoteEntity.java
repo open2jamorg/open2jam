@@ -10,7 +10,7 @@ public class LongNoteEntity extends NoteEntity
     protected SpriteList body_frames;
     protected Sprite body_sprite;
 
-    //protected Double end_y = null;
+    protected Double end_y = null;
     protected Long end_time = null;
 
     public LongNoteEntity(Render r, SpriteList head_frames, SpriteList body_frames, Event.Channel ch, double x, double y)
@@ -36,7 +36,11 @@ public class LongNoteEntity extends NoteEntity
 
     public void setEndTime(long time){
         this.end_time = time;
+        end_y = -10d;
+//        System.out.println(end_y);
     }
+
+    public long getEndTime() { return end_time; }
 
     @Override
     public double getStartY()
@@ -45,15 +49,31 @@ public class LongNoteEntity extends NoteEntity
     }
 
     @Override
+    public double getY()
+    {
+        if(end_y == null)
+           return -10;
+        else
+        {
+            if(end_time != null)
+                return end_y = y - (((end_time - time_to_hit) * render.getNoteSpeed()));
+            else
+                return -10;
+        }
+    }
+
+    @Override
+    public void move(long delta)
+    {
+            super.move(delta);
+            body_sprite = body_frames.get((int)sub_frame);
+    }
+
+    @Override
     public void draw()
     {
-        double end = -10;
-        if(end_time != null)
-        {
-            end = y - ((end_time - time_to_hit) * (render.getMeasureSize() / 1000.0));
-        }
+        double end = getY();
         double local_y = y;
-
         if(local_y > render.getViewport())local_y = render.getViewport();
 	float sy = (float) ((local_y - end) / body_sprite.getHeight());
         body_sprite.draw(x, end, body_sprite.getScaleX(), sy);

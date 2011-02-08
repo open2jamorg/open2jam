@@ -21,12 +21,12 @@ public class MeasureEntity extends AnimatedEntity implements TimeEntity
         this.render = org.render;
     }
 
-    @Override
-    public void move(long delta)
-    {
-	setYMove(render.getNoteSpeed());
-	super.move(delta);
-    }
+//    @Override
+//    public void move(long delta)
+//    {
+//	setYMove(render.getNoteSpeed());
+//	super.move(delta);
+//    }
 
     @Override
     public void judgment()
