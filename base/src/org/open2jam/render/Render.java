@@ -33,6 +33,8 @@ import org.open2jam.render.entities.NumberEntity;
 import org.open2jam.render.entities.SampleEntity;
 import org.open2jam.render.entities.TimeEntity;
 import org.open2jam.render.lwjgl.SoundManager;
+import org.open2jam.util.Interval;
+import org.open2jam.util.IntervalTree;
 
 
 public class Render implements GameWindowCallback
@@ -59,6 +61,8 @@ public class Render implements GameWindowCallback
     /** is autoplaying ? */
     private final boolean AUTOPLAY;
 
+    private final IntervalTree<Double> velocity_tree;
+
     /** the hispeed */
     private double hispeed;
     private boolean updateHS = false;
@@ -79,7 +83,7 @@ public class Render implements GameWindowCallback
     private double bpm;
 
     /** the vertical speed of entities pixels/milliseconds */
-    private double note_speed;
+    //private double note_speed;
 
     /** the screen offset of the buffer */
 //    private double buffer_offset;
@@ -193,6 +197,7 @@ public class Render implements GameWindowCallback
 	this.channelModifier = channelModifier;
         this.visibilityModifier = visibilityModifier;
         window = ResourceFactory.get().getGameWindow();
+        velocity_tree = new IntervalTree<Double>();
     }
         
     public void setDisplay(DisplayMode dm, boolean vsync, boolean fs) {
@@ -342,6 +347,9 @@ public class Render implements GameWindowCallback
 
 
         List<Event> event_list = chart.getEvents();
+
+        construct_velocity_tree(event_list.iterator());
+
         buffer_iterator = event_list.iterator();
 	
 	/**Let's randomize "-"
@@ -385,8 +393,7 @@ public class Render implements GameWindowCallback
         // wait a bit.. 5 seconds at min
         SystemTimer.sleep((int) (5000 - (SystemTimer.getTime() - lastLoopTime)));
 
-        lastLoopTime = SystemTimer.getTime();
-        start_time = lastLoopTime;
+        start_time = lastLoopTime = SystemTimer.getTime();
     }
 
     
@@ -445,8 +452,8 @@ public class Render implements GameWindowCallback
                 if(e instanceof TimeEntity)
                 {
                     TimeEntity te = (TimeEntity) e;
-                    double y = getViewport() - ((te.getTime() - now) * note_speed);
-//                    System.out.println(y);
+                    double y = getViewport() - velocity_integral(te.getTime(), now);
+                    System.out.println(y);
                     if(te.getTime() - now <= 0)e.judgment();
                     if(e instanceof MeasureEntity) y += e.getHeight()*2;
                     e.setPos(e.getX(), y);
@@ -482,8 +489,42 @@ public class Render implements GameWindowCallback
     public void setBPM(double e)
     {
         this.bpm = e;
-        note_speed = ((bpm/240) * measure_size) / 1000.0d;
+        //note_speed = ((bpm/240) * measure_size) / 1000.0d;
         //note_speed = bpm/240 / measure_size;
+    }
+
+    /**
+     *  a    t0    b   t1  ->  b - t0
+     * t0     a   t1    b  -> t1 -  a
+     * t0     a    b   t1  ->  b -  a
+     *  a    t0   t1    b  -> t1 - t0
+     */
+    public double velocity_integral(long t0, long t1)
+    {
+        int sign = 1;
+        if(t0 > t1){
+            long tmp = t1;t1 = t0;t0 = tmp; // swap
+            sign = -1;
+        }
+        List<Interval<Double>> list = velocity_tree.getIntervals(t0, t1);
+        double integral = 0;
+        for(Interval<Double> i : list)
+        {
+            if(i.getStart() < t0) // 1st or 4th case
+            {
+                if(i.getEnd() < t1) // 1st case
+                    integral += i.getData() * (i.getEnd() - t0);
+                else // 4th case
+                    integral += i.getData() * (t1 - t0);
+            }
+            else { // 2nd or 3rd case
+                if(t1 < i.getEnd()) // 2nd case
+                    integral += i.getData() * (t1 - i.getStart());
+                else // 3rd case
+                    integral += i.getData() * (i.getEnd() - i.getEnd());
+            }
+        }
+        return sign * integral;
     }
     
     private double judgmentArea()
@@ -509,7 +550,7 @@ public class Render implements GameWindowCallback
     }
 
     /** returns the note speed in pixels/milliseconds */
-    public double getNoteSpeed() { return note_speed; }
+    //public double getNoteSpeed() { return note_speed; }
 
     public double getMeasureSize() { return measure_size; }
     public double getViewport() { return judgment_line_y2; }
@@ -878,7 +919,7 @@ public class Render implements GameWindowCallback
     **/
     private void update_note_buffer(long now)
     {
-        while(buffer_iterator.hasNext() && buffer_timer-now < getViewport()/note_speed)
+        while(buffer_iterator.hasNext() && getViewport() - velocity_integral(buffer_timer, now) < buffer_upper_bound)
         {
             Event e = buffer_iterator.next();
 //            System.out.println(buffer_bpm);
@@ -1097,6 +1138,45 @@ public class Render implements GameWindowCallback
         SoundManager.setGain(source, sample.volume);
         SoundManager.setPan(source, sample.pan);
         SoundManager.play(source, buffer);
+    }
+
+    private void construct_velocity_tree(Iterator<Event> it)
+    {
+        int measure = 0;
+        long last_bpm_change = 0;
+        long timer = 0;
+        double my_bpm = this.bpm;
+        double frac_measure = 1;
+        double measure_pointer = 0;
+        double my_note_speed = ((my_bpm/240) * measure_size) / 1000.0d;
+        while(it.hasNext())
+        {
+            Event e = it.next();
+            while(e.getMeasure() > measure)
+            {
+                timer += 1000 * ( 240/my_bpm * (frac_measure-measure_pointer) );
+                measure++;
+                frac_measure = 1;
+                measure_pointer = 0;
+            }
+            timer += 1000 * ( 240/my_bpm * (e.getPosition()-measure_pointer) );
+            measure_pointer = e.getPosition();
+
+            switch(e.getChannel())
+            {
+                case BPM_CHANGE:
+                    velocity_tree.addInterval(last_bpm_change, timer, my_note_speed);
+                    my_bpm = e.getValue();
+                    my_note_speed = ((my_bpm/240) * measure_size) / 1000.0d;
+                    last_bpm_change = timer;
+                break;
+                case TIME_SIGNATURE:
+                    frac_measure = e.getValue();
+                break;
+            }
+        }
+        velocity_tree.addInterval(last_bpm_change, timer, my_note_speed);
+        velocity_tree.build();
     }
 }
 

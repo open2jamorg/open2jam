@@ -49,12 +49,11 @@ public class NoteEntity extends AnimatedEntity implements TimeEntity
 
     public Event.SoundSample getSample(){ return sample_value; }
 
-//    @Override
-//    public void move(long delta)
-//    {
-//	setYMove(render.getNoteSpeed());
-//	super.move(delta);
-//    }
+    @Override
+    public void move(long delta)
+    {
+	super.move(delta);
+    }
 
     public void setHit(double hit) { this.hit = hit; }
     public double getHit() { return hit; }

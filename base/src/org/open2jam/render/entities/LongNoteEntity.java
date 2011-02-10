@@ -56,7 +56,7 @@ public class LongNoteEntity extends NoteEntity
         else
         {
             if(end_time != null)
-                return end_y = y - (((end_time - time_to_hit) * render.getNoteSpeed()));
+                return end_y = y - render.velocity_integral(end_time,time_to_hit);
             else
                 return -10;
         }
