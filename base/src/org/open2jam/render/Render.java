@@ -22,7 +22,6 @@ import org.open2jam.util.SystemTimer;
 
 import org.open2jam.parser.Chart;
 import org.open2jam.parser.Event;
-import org.open2jam.render.entities.BPMEntity;
 import org.open2jam.render.entities.ComboCounterEntity;
 import org.open2jam.render.entities.Entity;
 import org.open2jam.render.entities.BarEntity;
@@ -263,8 +262,8 @@ public class Render implements GameWindowCallback
 	updateHispeed();
 
         entities_matrix = new EntityMatrix(skin.max_layer+1);
-        
-        setBPM(chart.getBPM());
+
+        bpm = chart.getBPM();
         buffer_bpm = chart.getBPM();
 
         note_layer = skin.getEntityMap().get("NOTE_1").getLayer();
@@ -452,8 +451,7 @@ public class Render implements GameWindowCallback
                 if(e instanceof TimeEntity)
                 {
                     TimeEntity te = (TimeEntity) e;
-                    double y = getViewport() - velocity_integral(te.getTime(), now);
-                    System.out.println(y);
+                    double y = getViewport() - velocity_integral(now,te.getTime());
                     if(te.getTime() - now <= 0)e.judgment();
                     if(e instanceof MeasureEntity) y += e.getHeight()*2;
                     e.setPos(e.getX(), y);
@@ -486,14 +484,11 @@ public class Render implements GameWindowCallback
         }
     }
 
-    public void setBPM(double e)
-    {
-        this.bpm = e;
-        //note_speed = ((bpm/240) * measure_size) / 1000.0d;
-        //note_speed = bpm/240 / measure_size;
-    }
-
     /**
+     * given a time segment, returns the distance, in pixels,
+     * from each segment based on the bpm.
+     *
+     * segment types returned by velocity_tree:
      *  a    t0    b   t1  ->  b - t0
      * t0     a   t1    b  -> t1 -  a
      * t0     a    b   t1  ->  b -  a
@@ -521,7 +516,7 @@ public class Render implements GameWindowCallback
                 if(t1 < i.getEnd()) // 2nd case
                     integral += i.getData() * (t1 - i.getStart());
                 else // 3rd case
-                    integral += i.getData() * (i.getEnd() - i.getEnd());
+                    integral += i.getData() * (i.getEnd() - i.getStart());
             }
         }
         return sign * integral;
@@ -900,7 +895,7 @@ public class Render implements GameWindowCallback
         return ne;
     }
 
-    private int buffer_measure = -1;
+    private int buffer_measure = 0;
 
     private double fractional_measure = 1;
 
@@ -919,7 +914,7 @@ public class Render implements GameWindowCallback
     **/
     private void update_note_buffer(long now)
     {
-        while(buffer_iterator.hasNext() && getViewport() - velocity_integral(buffer_timer, now) < buffer_upper_bound)
+        while(buffer_iterator.hasNext() && getViewport() - velocity_integral(now,buffer_timer) > buffer_upper_bound)
         {
             Event e = buffer_iterator.next();
 //            System.out.println(buffer_bpm);
@@ -937,6 +932,8 @@ public class Render implements GameWindowCallback
             buffer_timer += 1000 * ( 240/buffer_bpm * (e.getPosition()-buffer_measure_pointer) );
             buffer_measure_pointer = e.getPosition();
 
+            System.out.println("t: "+buffer_timer+", "+e.getChannel());
+
             switch(e.getChannel())
             {
                 case TIME_SIGNATURE:
@@ -944,9 +941,6 @@ public class Render implements GameWindowCallback
                 break;
 
                 case BPM_CHANGE:
-                BPMEntity b = new BPMEntity(this,e.getValue(),0);
-                b.setTime(buffer_timer);
-                entities_matrix.add(b);
                 buffer_bpm = e.getValue();
                 break;
 
