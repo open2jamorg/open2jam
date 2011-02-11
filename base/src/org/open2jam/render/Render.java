@@ -49,7 +49,7 @@ public class Render implements GameWindowCallback
     /** the mapping of note channels to KeyEvent keys  */
     private static final EnumMap<Event.Channel, Integer> keyboard_map;
 
-    private static final double AUTOPLAY_THRESHOLD = 50;
+    private static final double AUTOPLAY_THRESHOLD = 0.8;
 
     /** The window that is being used to render the game */
     private final GameWindow window;
@@ -452,7 +452,11 @@ public class Render implements GameWindowCallback
                 {
                     TimeEntity te = (TimeEntity) e;
                     double y = getViewport() - velocity_integral(now,te.getTime());
-                    if(te.getTime() - now <= 0)e.judgment();
+                    if(te.getTime() - now <= 0 && (!(e instanceof LongNoteEntity) || !(e instanceof NoteEntity)))
+                    {
+                        e.judgment();
+//                        System.out.println((te.getTime()-now));
+                    }
                     if(e instanceof MeasureEntity) y += e.getHeight()*2;
                     e.setPos(e.getX(), y);
 
@@ -460,10 +464,10 @@ public class Render implements GameWindowCallback
                         check_judgment((NoteEntity)e);
                     }
                 }
-		else if (e.getY() >= getViewport()) // else, if it's on the line, judge it
-		{
-                    e.judgment();
-                }
+//		else if (e.getY() >= getViewport()) // else, if it's on the line, judge it
+//		{
+//                    e.judgment();
+//                }
 
                 if(!e.isAlive())j.remove();
                 else e.draw();
@@ -760,7 +764,21 @@ public class Render implements GameWindowCallback
 //            if(ne.getStartY() < judgment_line_y2)continue; //sync
 
 
-            if(Math.abs(ne.getTime() - now) > AUTOPLAY_THRESHOLD)continue;
+            double hit = ne.testHit(judgment_line_y1, judgment_line_y2);
+            if(ne instanceof LongNoteEntity)
+            {
+                if(ne.getState() == NoteEntity.State.NOT_JUDGED)
+                {
+                    if(Math.abs(ne.getTime() - now) > 50)continue;
+                }
+                else if(ne.getState() == NoteEntity.State.LN_HOLD)
+                {
+                    if(Math.abs(((LongNoteEntity)ne).getEndTime() - now) > 50)continue;
+                }
+            }
+            else
+                if(Math.abs(ne.getTime() - now) > 50)continue;
+            
             ne.setHit(1);
             
             if(ne instanceof LongNoteEntity)
@@ -834,8 +852,7 @@ public class Render implements GameWindowCallback
 
                     queueSample(e.getSample());
 
-                    double hit = 1 - Math.abs(e.getTime() - now)/1000.0;
-                    if(hit > 1 || hit < 0)hit = 0;
+                    double hit = e.testHit(judgment_line_y1, judgment_line_y2);
                     
                     String judge = skin.judgment.ratePrecision(hit);
                     e.setHit(hit);
@@ -869,8 +886,7 @@ public class Render implements GameWindowCallback
                 // TODO: necessary ?? --> note_channels.get(c).isEmpty() || e != note_channels.get(c).getFirst()
                 if(e == null || e.getState() != NoteEntity.State.LN_HOLD)continue;
 
-                double hit = 1 - Math.abs(e.getTime() - now)/1000.0;
-                if(hit > 1 || hit < 0)hit = 0;
+                double hit = e.testHit(judgment_line_y1, judgment_line_y2);
 
                 e.setHit(hit);
                 e.setState(NoteEntity.State.JUDGE);
@@ -932,7 +948,7 @@ public class Render implements GameWindowCallback
             buffer_timer += 1000 * ( 240/buffer_bpm * (e.getPosition()-buffer_measure_pointer) );
             buffer_measure_pointer = e.getPosition();
 
-            System.out.println("t: "+buffer_timer+", "+e.getChannel());
+//            System.out.println("t: "+buffer_timer+", "+e.getChannel());
 
             switch(e.getChannel())
             {

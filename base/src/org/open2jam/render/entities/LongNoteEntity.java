@@ -40,7 +40,9 @@ public class LongNoteEntity extends NoteEntity
 //        System.out.println(end_y);
     }
 
-    public long getEndTime() { return end_time; }
+    public long getEndTime() {
+        return end_time == null ? -10 : end_time;
+    }
 
     @Override
     public double getStartY()
@@ -60,6 +62,21 @@ public class LongNoteEntity extends NoteEntity
             else
                 return -10;
         }
+    }
+
+    @Override
+    public double testHit(double jy1, double jy2)
+    {
+        double y1, y2;
+        if(state == State.NOT_JUDGED){
+            y1 = y;
+        }else{
+            if(end_y == null)return 0;
+            y1 = end_y;
+        }
+        y2 = y1 + sprite.getHeight();
+        double p = testHit(y1, y2, jy1, jy2);
+        return p;
     }
 
     @Override
