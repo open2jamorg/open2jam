@@ -44,8 +44,10 @@ public class Skin
         double start;
         double size;
         double combo_threshold;
+        long combo_t_threshold;
         
         NavigableMap<Double,String> score_map = new TreeMap<Double,String>().descendingMap();
+        NavigableMap<Long,String> score_t_map = new TreeMap<Long,String>();
 
         public String ratePrecision(double p)
         {
@@ -56,8 +58,21 @@ public class Skin
             return null;
         }
 
+        public String rateTimePrecision(long p)
+        {
+            for(Map.Entry<Long,String> e : score_t_map.entrySet())
+            {
+                if(p <= e.getKey())return e.getValue();
+            }
+            return null;
+        }
+
         public String[] getRates(){
             return score_map.values().toArray(new String[0]);
+        }
+
+        public String[] getTimeRates(){
+            return score_t_map.values().toArray(new String[0]);
         }
     }
 }

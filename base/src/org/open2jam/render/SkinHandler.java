@@ -222,7 +222,9 @@ public class SkinHandler extends DefaultHandler
             case type:{
                 String name = atts.get("id");
                 Double hit = Double.parseDouble(atts.get("hit"));
+                Long t_hit = Long.parseLong(atts.get("t_hit"));
                 result.judgment.score_map.put(hit, name);
+                result.judgment.score_t_map.put(t_hit, name);
             }break;
 
             case judgment:{
@@ -230,6 +232,7 @@ public class SkinHandler extends DefaultHandler
                 result.judgment.size = Integer.parseInt(atts.get("size"));
 
                 result.judgment.combo_threshold = Double.parseDouble(atts.get("combo_threshold"));
+                result.judgment.combo_t_threshold = Long.parseLong(atts.get("combo_t_threshold"));
             }break;
         }
     }

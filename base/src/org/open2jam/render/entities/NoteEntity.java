@@ -66,6 +66,12 @@ public class NoteEntity extends AnimatedEntity implements TimeEntity
         return testHit(y, y + height, jy1, jy2);
     }
 
+    public long testTimeHit(long now)
+    {
+        long p = Math.abs(time_to_hit-now);
+        return p;
+    }
+
     protected static double testHit(double y1, double y2, double jy1, double jy2)
     {
         if(y2 < jy1)return 0;

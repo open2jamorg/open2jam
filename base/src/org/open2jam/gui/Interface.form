@@ -168,7 +168,7 @@
                       <Component id="lbl_channelModifier" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="combo_channelModifier" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="78" max="32767" attributes="0"/>
+                  <EmptySpace pref="83" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="bt_play" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jc_autoplay" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -326,12 +326,12 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="lbl_hispeed" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="js_hispeed" pref="71" max="32767" attributes="0"/>
+                          <Component id="js_hispeed" pref="78" max="32767" attributes="0"/>
                           <EmptySpace min="-2" pref="102" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="configuration" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="127" max="32767" attributes="0"/>
+                          <EmptySpace pref="134" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="1" attributes="0">
@@ -354,7 +354,7 @@
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="lbl_res_x" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="txt_res_height" pref="68" max="32767" attributes="0"/>
+                                  <Component id="txt_res_height" pref="78" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
@@ -404,7 +404,7 @@
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="configuration" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="95" max="32767" attributes="0"/>
+                  <EmptySpace pref="119" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

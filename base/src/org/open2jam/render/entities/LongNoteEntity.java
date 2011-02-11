@@ -80,6 +80,17 @@ public class LongNoteEntity extends NoteEntity
     }
 
     @Override
+    public long testTimeHit(long now)
+    {
+        long p = 1000;
+        if(state == State.NOT_JUDGED)
+            p = Math.abs(time_to_hit-now);
+        else
+            if(end_time != null)p = Math.abs(end_time-now);
+        return p;
+    }
+
+    @Override
     public void move(long delta)
     {
             super.move(delta);

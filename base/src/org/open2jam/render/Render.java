@@ -49,7 +49,7 @@ public class Render implements GameWindowCallback
     /** the mapping of note channels to KeyEvent keys  */
     private static final EnumMap<Event.Channel, Integer> keyboard_map;
 
-    private static final double AUTOPLAY_THRESHOLD = 0.8;
+    private static final double AUTOPLAY_THRESHOLD = 50;
 
     /** The window that is being used to render the game */
     private final GameWindow window;
@@ -59,6 +59,10 @@ public class Render implements GameWindowCallback
     
     /** is autoplaying ? */
     private final boolean AUTOPLAY;
+
+    /** True: Timed
+        False: Graphic */
+    private boolean useTimedJudgment;
 
     private final IntervalTree<Double> velocity_tree;
 
@@ -188,11 +192,13 @@ public class Render implements GameWindowCallback
     }
     private long start_time;
 
-    public Render(Chart c, double hispeed, boolean autoplay, int channelModifier, int visibilityModifier)
+    public Render(Chart c, double hispeed, boolean autoplay, boolean judgment_type, int channelModifier, int visibilityModifier)
     {
         this.chart = c;
         this.hispeed = hispeed;
 	this.AUTOPLAY = autoplay;
+        this.useTimedJudgment = judgment_type;
+        if(this.AUTOPLAY) this.useTimedJudgment = true; //autoplay will play based in a time judgment
 	this.channelModifier = channelModifier;
         this.visibilityModifier = visibilityModifier;
         window = ResourceFactory.get().getGameWindow();
@@ -257,6 +263,7 @@ public class Render implements GameWindowCallback
         }
 
         MISS_JUDGE = skin.judgment.ratePrecision(0);
+        if(useTimedJudgment)MISS_JUDGE = skin.judgment.rateTimePrecision(1000);
 
         judgment_line_y2 = skin.judgment.start + skin.judgment.size;
 	updateHispeed();
@@ -452,7 +459,7 @@ public class Render implements GameWindowCallback
                 {
                     TimeEntity te = (TimeEntity) e;
                     double y = getViewport() - velocity_integral(now,te.getTime());
-                    if(te.getTime() - now <= 0 && (!(e instanceof LongNoteEntity) || !(e instanceof NoteEntity)))
+                    if(te.getTime() - now <= 0 && (!(e instanceof LongNoteEntity) && !(e instanceof NoteEntity)))
                     {
                         e.judgment();
 //                        System.out.println((te.getTime()-now));
@@ -577,7 +584,10 @@ public class Render implements GameWindowCallback
                  }
             break;
             case JUDGE: //LN & normal ones: has finished with good result
-                judge = skin.judgment.ratePrecision(ne.getHit());
+                if(useTimedJudgment)
+                    judge = skin.judgment.rateTimePrecision((long)ne.getHit());
+                else
+                    judge = skin.judgment.ratePrecision(ne.getHit());
 
                 judge = update_screen_info(judge,ne.getHit());
 
@@ -594,7 +604,8 @@ public class Render implements GameWindowCallback
 		    getViewport()-ee.getHeight()/2);
 		    entities_matrix.add(ee);
 
-		    if(ne.getHit() >= skin.judgment.combo_threshold)combo_entity.incNumber();
+		    if((useTimedJudgment && ne.getHit() <= skin.judgment.combo_t_threshold) || ne.getHit() >= skin.judgment.combo_threshold)
+                        combo_entity.incNumber();
 		    else {
                         if(judge.equals("JUDGMENT_GOOD"))combo_entity.incNumber(); //because of the pills
                         else combo_entity.resetNumber();
@@ -608,7 +619,10 @@ public class Render implements GameWindowCallback
                 last_sound.put(ne.getChannel(), ne.getSample());
             break;
             case LN_HEAD_JUDGE: //LN: Head has been played
-                judge = skin.judgment.ratePrecision(ne.getHit());
+                if(useTimedJudgment)
+                    judge = skin.judgment.rateTimePrecision((long)ne.getHit());
+                else
+                    judge = skin.judgment.ratePrecision(ne.getHit());
 
                 judge = update_screen_info(judge,ne.getHit());
 
@@ -631,7 +645,8 @@ public class Render implements GameWindowCallback
 		    getViewport()-ee.getHeight()/2);
 		    entities_matrix.add(ee);
 
-		    if(ne.getHit() >= skin.judgment.combo_threshold)combo_entity.incNumber();
+		    if((useTimedJudgment && ne.getHit() <= skin.judgment.combo_t_threshold) || ne.getHit() >= skin.judgment.combo_threshold)
+                        combo_entity.incNumber();
 		    else {
                         if(judge.equals("JUDGMENT_GOOD"))combo_entity.incNumber(); //because of the pills
                         else combo_entity.resetNumber();
@@ -763,23 +778,27 @@ public class Render implements GameWindowCallback
             if(ne == null)continue;
 //            if(ne.getStartY() < judgment_line_y2)continue; //sync
 
-
-            double hit = ne.testHit(judgment_line_y1, judgment_line_y2);
+            long hit = 0;
             if(ne instanceof LongNoteEntity)
             {
                 if(ne.getState() == NoteEntity.State.NOT_JUDGED)
                 {
-                    if(Math.abs(ne.getTime() - now) > 50)continue;
+                    hit = ne.testTimeHit(ne.getTime());
+                    if(Math.abs(ne.getTime() - now) > AUTOPLAY_THRESHOLD)continue;
                 }
                 else if(ne.getState() == NoteEntity.State.LN_HOLD)
                 {
-                    if(Math.abs(((LongNoteEntity)ne).getEndTime() - now) > 50)continue;
+                    hit = ne.testTimeHit(((LongNoteEntity)ne).getEndTime());
+                    if(Math.abs(((LongNoteEntity)ne).getEndTime() - now) > AUTOPLAY_THRESHOLD)continue;
                 }
             }
             else
-                if(Math.abs(ne.getTime() - now) > 50)continue;
-            
-            ne.setHit(1);
+            {
+                hit = ne.testTimeHit(ne.getTime());
+                if(Math.abs(ne.getTime() - now) > AUTOPLAY_THRESHOLD)continue;
+            }
+
+            ne.setHit(hit);
             
             if(ne instanceof LongNoteEntity)
             {
@@ -851,11 +870,20 @@ public class Render implements GameWindowCallback
                     }
 
                     queueSample(e.getSample());
-
-                    double hit = e.testHit(judgment_line_y1, judgment_line_y2);
-                    
-                    String judge = skin.judgment.ratePrecision(hit);
-                    e.setHit(hit);
+                   
+                    String judge = MISS_JUDGE;
+                    if(useTimedJudgment)
+                    {
+                        long hit = e.testTimeHit(now);
+                        judge = skin.judgment.rateTimePrecision(hit);
+                        e.setHit(hit);
+                    }
+                    else
+                    {
+                        double hit = e.testHit(judgment_line_y1, judgment_line_y2);
+                        judge = skin.judgment.ratePrecision(hit);
+                        e.setHit(hit);
+                    }
 
                     /* we compare the judgment with a MISS, misses should be ignored here,
                      * because this is the case where the player pressed the note so soon
@@ -886,9 +914,17 @@ public class Render implements GameWindowCallback
                 // TODO: necessary ?? --> note_channels.get(c).isEmpty() || e != note_channels.get(c).getFirst()
                 if(e == null || e.getState() != NoteEntity.State.LN_HOLD)continue;
 
-                double hit = e.testHit(judgment_line_y1, judgment_line_y2);
+                if(useTimedJudgment)
+                {
+                    long hit = e.testTimeHit(now);
+                    e.setHit(hit);
+                }
+                else
+                {
+                    double hit = e.testHit(judgment_line_y1, judgment_line_y2);
+                    e.setHit(hit);
+                }                
 
-                e.setHit(hit);
                 e.setState(NoteEntity.State.JUDGE);
             }
         }
