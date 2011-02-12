@@ -292,6 +292,14 @@ public class SkinHandler extends DefaultHandler
             }
             e = new NumberEntity(list, 0, 0);
         }
+	else if(id.equals("COUNTER_JUDGMENT_PERFECT")){
+            ArrayList<Entity> list = new ArrayList<Entity>();
+            for(String s : atts.get("sprite").split(",")){
+                s = s.trim();
+                list.add( new Entity(sprite_buffer.get(s),0,0));
+            }
+	    e = new NumberEntity(list, 0, 0);
+	}
 	else if(id.equals("COUNTER_JUDGMENT_COOL")){
             ArrayList<Entity> list = new ArrayList<Entity>();
             for(String s : atts.get("sprite").split(",")){

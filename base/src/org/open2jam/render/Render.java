@@ -877,6 +877,7 @@ public class Render implements GameWindowCallback
                         long hit = e.testTimeHit(now);
                         judge = skin.judgment.rateTimePrecision(hit);
                         e.setHit(hit);
+                        System.out.println("HIT "+hit+" JUDGE "+judge);
                     }
                     else
                     {

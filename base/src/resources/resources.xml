@@ -7,7 +7,7 @@
         <type id="JUDGMENT_BAD"  hit="0.2" t_hit="173" />
         <type id="JUDGMENT_GOOD" hit="0.5" t_hit="125" />
         <type id="JUDGMENT_COOL" hit="0.8" t_hit="41"  />
-        <!--<type id="JUDGMENT_PERFECT" hit="1"   t_hit="20"  />-->
+        <type id="JUDGMENT_PERFECT" hit="1"   t_hit="20"  />
     </judgment>
     
     <spriteset>
@@ -196,7 +196,10 @@
 	<sprite id="combo_number_9">
 		<frame x="553" y="155" w="46" h="71" file="numbers_1.png" />
 	</sprite>
-	
+
+	<sprite id="judgment_perfect">
+		<frame x="0" y="0" w="128" h="128" file="note_cool_1.png" />
+	</sprite>
 	<sprite id="judgment_cool">
 		<frame x="0" y="0" w="128" h="128" file="note_cool_1.png" />
 	</sprite>
@@ -455,7 +458,9 @@
 	 score_number_2, score_number_3, score_number_4, score_number_5, score_number_6, 
 	 score_number_7, score_number_8, score_number_9" />
 
-	<entity id="EFFECT_JUDGMENT_COOL" x="30" y="300" sprite="judgment_cool" />
+        <entity id="EFFECT_JUDGMENT_PERFECT" x="30" y="300" sprite="judgment_perfect" />
+
+        <entity id="EFFECT_JUDGMENT_COOL" x="30" y="300" sprite="judgment_cool" />
 
 	<entity id="EFFECT_JUDGMENT_GOOD" x="30" y="300" sprite="judgment_good" />
 
@@ -485,6 +490,10 @@
 	maxcombo_number_2, maxcombo_number_3, maxcombo_number_4, maxcombo_number_5, maxcombo_number_6,
 	maxcombo_number_7, maxcombo_number_8, maxcombo_number_9" />
 
+
+        <entity id="COUNTER_JUDGMENT_PERFECT" x="658" y="500" sprite="counter_number_0, counter_number_1,
+	counter_number_2, counter_number_3, counter_number_4, counter_number_5, counter_number_6,
+	counter_number_7, counter_number_8, counter_number_9" />
 
         <entity id="COUNTER_JUDGMENT_COOL" x="658" y="573" sprite="counter_number_0, counter_number_1,
 	counter_number_2, counter_number_3, counter_number_4, counter_number_5, counter_number_6,

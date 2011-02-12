@@ -64,7 +64,7 @@ public class Skin
             {
                 if(p <= e.getKey())return e.getValue();
             }
-            return null;
+            return score_t_map.floorEntry(1000l).getValue().toString();
         }
 
         public String[] getRates(){
