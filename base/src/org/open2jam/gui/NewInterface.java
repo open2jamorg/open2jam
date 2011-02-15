@@ -25,12 +25,14 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableRowSorter;
 
 import org.open2jam.parser.Chart;
-import org.open2jam.render.Render;
+import org.open2jam.render.BeatmaniaRender;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.parser.ChartList;
+import org.open2jam.render.O2jamRender;
+import org.open2jam.render.Render;
 /**
  *
  * @author fox
@@ -667,14 +669,22 @@ public class NewInterface extends javax.swing.JFrame
                         + "Do you want to play it in windowed mode?";
                 if(JOptionPane.showConfirmDialog(this, str, "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE) == JOptionPane.YES_OPTION)
                 {
-                    Render r = new Render(selected_header, hispeed, autoplay, judgment, channelModifier, visibilityModifier);
+                    Render r = null;
+                    if(judgment)
+                        r = new BeatmaniaRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier);
+                    else
+                        r = new O2jamRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier);
                     r.setDisplay(dm, vsync, false);
                     r.startRendering();
                 }
             }
             else
             {
-                Render r = new Render(selected_header, hispeed, autoplay, judgment, channelModifier, visibilityModifier);
+                Render r = null;
+                if(judgment)
+                    r = new BeatmaniaRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier);
+                else
+                    r = new O2jamRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier);
                 r.setDisplay(dm, vsync, fs);
                 r.startRendering();
             }

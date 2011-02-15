@@ -25,12 +25,13 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableRowSorter;
 
 import org.open2jam.parser.Chart;
-import org.open2jam.render.Render;
+import org.open2jam.render.BeatmaniaRender;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.parser.ChartList;
+import org.open2jam.render.O2jamRender;
 /**
  *
  * @author fox
@@ -560,7 +561,7 @@ public class Interface extends javax.swing.JFrame
 
 	    final int channelModifier = combo_channelModifier.getSelectedIndex();
 
-	    Render r = new Render(selected_header, hispeed, autoplay, false, channelModifier, 0);
+	    O2jamRender r = new O2jamRender(selected_header, hispeed, autoplay, channelModifier, 0);
 
 	    r.setDisplay(dm, vsync, fs);
 

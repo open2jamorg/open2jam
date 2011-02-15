@@ -2,23 +2,19 @@ package org.open2jam.render.entities;
 
 
 import org.open2jam.render.SpriteList;
-import org.open2jam.render.Render;
 
 public class MeasureEntity extends AnimatedEntity implements TimeEntity
 {
-    protected Render render;
     
     private long time_to_hit;
 
-    public MeasureEntity(Render r, SpriteList sl, double x, double y)
+    public MeasureEntity(SpriteList sl, double x, double y)
     {
         super(sl, x, y);
-        this.render = r;
     }
 
     protected MeasureEntity(MeasureEntity org) {
         super(org);
-        this.render = org.render;
     }
 
     @Override

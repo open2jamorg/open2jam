@@ -44,7 +44,6 @@ public class SkinHandler extends DefaultHandler
 
     private static String FILE_PATH_PREFIX = "/resources/";
 
-    protected Render render;
     protected String target_skin;
     protected boolean on_skin = false;
     protected int auto_draw_id = 0;
@@ -55,9 +54,8 @@ public class SkinHandler extends DefaultHandler
     protected final double targetH;
 
 
-    public SkinHandler(Render r, String skin, double width, double height)
+    public SkinHandler(String skin, double width, double height)
     {
-        this.render = r;
         this.target_skin = skin;
 	this.targetW = width;
 	this.targetH = height;
@@ -257,14 +255,14 @@ public class SkinHandler extends DefaultHandler
             int x = 0;
             if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x"));
 
-            e = new LongNoteEntity(render, head, body, Event.Channel.valueOf(id), x, 0);
+            e = new LongNoteEntity(head, body, Event.Channel.valueOf(id), x, 0);
             e.setLayer(layer);
             result.getEntityMap().put("LONG_"+id, e);
-            e = new NoteEntity(render, head, Event.Channel.valueOf(id), x, 0);
+            e = new NoteEntity(head, Event.Channel.valueOf(id), x, 0);
         }
         else if(id.equals("MEASURE_MARK")){
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
-            e = new MeasureEntity(render, s, 0, 0);
+            e = new MeasureEntity(s, 0, 0);
         }
         else if(id.startsWith("EFFECT_JUDGMENT_")){
             SpriteList s = sprite_buffer.get(atts.get("sprite"));

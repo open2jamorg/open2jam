@@ -36,10 +36,7 @@ public class SampleEntity extends Entity implements TimeEntity
     }
 
     @Override
-    public void move(long delta)
-    {
-        //y += delta * render.getNoteSpeed();
-    }
+    public void move(long delta) {}
 
     @Override
     public void judgment()

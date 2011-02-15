@@ -2,14 +2,11 @@ package org.open2jam.render.entities;
 
 import org.open2jam.parser.Event;
 import org.open2jam.render.SpriteList;
-import org.open2jam.render.Render;
 
 /** a NoteEntity is a animated entity which moves down.
 **/
 public class NoteEntity extends AnimatedEntity implements TimeEntity
 {
-    protected Render render;
-
     protected Event.SoundSample sample_value;
 
     protected Event.Channel channel = Event.Channel.NONE;
@@ -28,17 +25,15 @@ public class NoteEntity extends AnimatedEntity implements TimeEntity
         LN_HOLD
     };
 
-    public NoteEntity(Render r, SpriteList sl, Event.Channel ch, double x, double y)
+    public NoteEntity(SpriteList sl, Event.Channel ch, double x, double y)
     {
         super(sl, x, y);
         this.channel = ch;
-        this.render = r;
     }
 
     protected NoteEntity(NoteEntity org) {
         super(org);
         this.channel = org.channel;
-        this.render = org.render;
         this.sample_value = org.sample_value;
         this.state = org.state;
     }
