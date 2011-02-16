@@ -16,7 +16,7 @@ public class MeasureEntity extends AnimatedEntity implements TimeEntity
     protected MeasureEntity(MeasureEntity org) {
         super(org);
     }
-
+    
     @Override
     public void move(long delta)
     {

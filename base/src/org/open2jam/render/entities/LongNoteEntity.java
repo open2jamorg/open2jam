@@ -93,14 +93,8 @@ public class LongNoteEntity extends NoteEntity
         //if(local_y > render.getViewport())local_y = render.getViewport();
 	float sy = (float) ((local_y - end) / body_sprite.getHeight());
         body_sprite.draw(x, end, body_sprite.getScaleX(), sy);
-        //if(local_y < render.getViewport())sprite.draw(x,local_y);
+        sprite.draw(x,local_y);
         sprite.draw(x,end);
-    }
-
-    @Override
-    public void judgment()
-    {
-        alive = false;
     }
 
     @Override

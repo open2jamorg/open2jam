@@ -29,7 +29,7 @@ public class SkinHandler extends DefaultHandler
     static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private enum Keyword {
-        Resources, skin, spriteset, sprite, frame, layer, entity, judgment, type;
+        Resources, skin, spriteset, sprite, frame, layer, entity;
     }
 
     ArrayDeque<Keyword> call_stack;
@@ -83,6 +83,7 @@ public class SkinHandler extends DefaultHandler
                 if(atts_map.get("name").equals(target_skin))on_skin = true;
 		if(atts_map.containsKey("width"))this.baseW = Double.parseDouble(atts_map.get("width"));
 		if(atts_map.containsKey("height"))this.baseH = Double.parseDouble(atts_map.get("height"));
+                result.judgment_line = Integer.parseInt(atts_map.get("judgment_line"));
 
 		result.screen_scale_x = (float) (this.targetW/this.baseW);
 		result.screen_scale_y = (float) (this.targetH/this.baseH);
@@ -215,22 +216,6 @@ public class SkinHandler extends DefaultHandler
             }
             else result.getEntityList().add(e);
             
-            }break;
-
-            case type:{
-                String name = atts.get("id");
-                Double hit = Double.parseDouble(atts.get("hit"));
-                Long t_hit = Long.parseLong(atts.get("t_hit"));
-                result.judgment.score_map.put(hit, name);
-                result.judgment.score_t_map.put(t_hit, name);
-            }break;
-
-            case judgment:{
-                result.judgment.start = Integer.parseInt(atts.get("start"));
-                result.judgment.size = Integer.parseInt(atts.get("size"));
-
-                result.judgment.combo_threshold = Double.parseDouble(atts.get("combo_threshold"));
-                result.judgment.combo_t_threshold = Long.parseLong(atts.get("combo_t_threshold"));
             }break;
         }
     }

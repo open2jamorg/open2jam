@@ -84,10 +84,7 @@ public class NoteEntity extends AnimatedEntity implements TimeEntity
     }
     
     @Override
-    public void judgment()
-    {
-        alive = false;
-    }
+    public void judgment() {}
 
     @Override
     public NoteEntity copy(){

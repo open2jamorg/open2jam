@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Resources>
-<skin name="o2jam" keys="7" width="800" height="600">
-
-    <judgment start="416" size="64" combo_threshold="0.5" combo_t_threshold ="125">
-        <type id="JUDGMENT_MISS" hit="0"   t_hit="350" />
-        <type id="JUDGMENT_BAD"  hit="0.2" t_hit="173" />
-        <type id="JUDGMENT_GOOD" hit="0.5" t_hit="125" />
-        <type id="JUDGMENT_COOL" hit="0.8" t_hit="41"  />
-        <type id="JUDGMENT_PERFECT" hit="1"   t_hit="20"  />
-    </judgment>
+<skin name="o2jam" keys="7" width="800" height="600" judgment_line="416">
     
     <spriteset>
 	<sprite id="background">

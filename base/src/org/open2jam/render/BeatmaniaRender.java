@@ -39,7 +39,13 @@ public class BeatmaniaRender extends Render
     private static final URL resources_xml = BeatmaniaRender.class.getResource("/resources/resources.xml");
 
     private static final double AUTOPLAY_THRESHOLD = 50;
-    
+
+    private static final int JUDGMENT_SIZE = 64;
+
+    private static final int COMBO_THRESHOLD = 125; // ms, GOOD
+
+    private static final String[] JUDGES = {"JUDGMENT_MISS","JUDGMENT_BAD","JUDGMENT_GOOD",
+                                            "JUDGMENT_COOL","JUDGMENT_PERFECT"};
     /** is autoplaying ? */
     private final boolean AUTOPLAY;
 
@@ -78,9 +84,6 @@ public class BeatmaniaRender extends Render
 
     /** defines the judgment space */
     private double judgment_line_y1, judgment_line_y2;
-
-    /** miss judge from the skin */
-    private String MISS_JUDGE;
 
     /** maps the Event value to OpenGL sample ID's */
     private Map<Integer, Integer> samples;
@@ -229,9 +232,7 @@ public class BeatmaniaRender extends Render
             logger.log(Level.INFO, "No cover image on file: {0}", chart.getSource().getName());
         }
 
-        MISS_JUDGE = skin.judgment.rateTimePrecision(1000);
-
-        judgment_line_y2 = skin.judgment.start + skin.judgment.size;
+        judgment_line_y2 = skin.judgment_line + JUDGMENT_SIZE;
 	updateHispeed();
 
         entities_matrix = new EntityMatrix(skin.max_layer+1);
@@ -247,7 +248,7 @@ public class BeatmaniaRender extends Render
         }
 
         note_counter = new HashMap<String,NumberEntity>();
-        for(String s : skin.judgment.getRates()){
+        for(String s : JUDGES){
             NumberEntity e = (NumberEntity)skin.getEntityMap().get("COUNTER_"+s).copy();
             note_counter.put(s, e);
             //e.setPos(e.getX(), e.getY()); WTF ?
@@ -425,10 +426,9 @@ public class BeatmaniaRender extends Render
                 {
                     TimeEntity te = (TimeEntity) e;
                     double y = getViewport() - velocity_integral(now,te.getTime());
-                    if(te.getTime() - now <= 0 && (!(e instanceof LongNoteEntity) && !(e instanceof NoteEntity)))
+                    if(te.getTime() - now <= 0)
                     {
                         e.judgment();
-//                        System.out.println((te.getTime()-now));
                     }
                     if(e instanceof MeasureEntity) y += e.getHeight()*2;
                     e.setPos(e.getX(), y);
@@ -437,10 +437,6 @@ public class BeatmaniaRender extends Render
                         check_judgment((NoteEntity)e);
                     }
                 }
-//		else if (e.getY() >= getViewport()) // else, if it's on the line, judge it
-//		{
-//                    e.judgment();
-//                }
 
                 if(!e.isAlive())j.remove();
                 else e.draw();
@@ -510,9 +506,9 @@ public class BeatmaniaRender extends Render
 
     private void updateHispeed()
     {
-        judgment_line_y1 = skin.judgment.start;
+        judgment_line_y1 = skin.judgment_line;
         if(hispeed > 1){
-            double off = skin.judgment.size * (hispeed-1);
+            double off = JUDGMENT_SIZE * (hispeed-1);
             judgment_line_y1 -= off;
         }
 
@@ -520,9 +516,6 @@ public class BeatmaniaRender extends Render
 
 	updateHS = false;
     }
-
-    /** returns the note speed in pixels/milliseconds */
-    //public double getNoteSpeed() { return note_speed; }
 
     public double getMeasureSize() { return measure_size; }
     public double getViewport() { return judgment_line_y2; }
@@ -538,19 +531,19 @@ public class BeatmaniaRender extends Render
                         || (ne.getY() >= judgmentArea()))) // TODO: compare the time, not the position
                 {
                     if(judgment_entity != null)judgment_entity.setAlive(false);
-                    judgment_entity = skin.getEntityMap().get("EFFECT_"+MISS_JUDGE).copy();
+                    judgment_entity = skin.getEntityMap().get("EFFECT_"+JUDGES[0]).copy();
                     entities_matrix.add(judgment_entity);
 
-                    note_counter.get(MISS_JUDGE).incNumber();
+                    note_counter.get(JUDGES[0]).incNumber();
                     combo_entity.resetNumber();
 
-                    update_screen_info(MISS_JUDGE,ne.getHit());
+                    update_screen_info(JUDGES[0],ne.getHit());
                     
                     ne.setState(NoteEntity.State.TO_KILL);
                  }
             break;
             case JUDGE: //LN & normal ones: has finished with good result
-                judge = skin.judgment.rateTimePrecision((long)ne.getHit());
+                judge = ratePrecision((int) ne.getHit());
 
                 judge = update_screen_info(judge,ne.getHit());
 
@@ -560,14 +553,14 @@ public class BeatmaniaRender extends Render
 
 		note_counter.get(judge).incNumber();
 
-		if(!judge.equals(MISS_JUDGE))
+		if(!judge.equals(JUDGES[0]))
                 {
 		    Entity ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
 		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
 		    getViewport()-ee.getHeight()/2);
 		    entities_matrix.add(ee);
 
-		    if(ne.getHit() <= skin.judgment.combo_t_threshold)
+		    if(ne.getHit() <= COMBO_THRESHOLD)
                         combo_entity.incNumber();
 		    else {
                         if(judge.equals("JUDGMENT_GOOD"))combo_entity.incNumber(); //because of the pills
@@ -582,7 +575,7 @@ public class BeatmaniaRender extends Render
                 last_sound.put(ne.getChannel(), ne.getSample());
             break;
             case LN_HEAD_JUDGE: //LN: Head has been played
-                judge = skin.judgment.rateTimePrecision((long)ne.getHit());
+                judge = ratePrecision((int)ne.getHit());
                 judge = update_screen_info(judge,ne.getHit());
 
                 if(judgment_entity != null)judgment_entity.setAlive(false);
@@ -591,7 +584,7 @@ public class BeatmaniaRender extends Render
 
 		note_counter.get(judge).incNumber();
 
-		if(!judge.equals(MISS_JUDGE))
+		if(!judge.equals(JUDGES[0]))
                 {
 		    Entity ee = skin.getEntityMap().get("EFFECT_LONGFLARE").copy();
 		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,ee.getY());
@@ -604,7 +597,7 @@ public class BeatmaniaRender extends Render
 		    getViewport()-ee.getHeight()/2);
 		    entities_matrix.add(ee);
 
-		    if(ne.getHit() <= skin.judgment.combo_t_threshold)
+		    if(ne.getHit() <= COMBO_THRESHOLD)
                         combo_entity.incNumber();
 		    else {
                         if(judge.equals("JUDGMENT_GOOD"))combo_entity.incNumber(); //because of the pills
@@ -618,13 +611,13 @@ public class BeatmaniaRender extends Render
                 if(ne.isAlive() && ne.getY() >= judgmentArea()) // TODO: use the time
                 {
                     if(judgment_entity != null)judgment_entity.setAlive(false);
-                    judgment_entity = skin.getEntityMap().get("EFFECT_"+MISS_JUDGE).copy();
+                    judgment_entity = skin.getEntityMap().get("EFFECT_"+JUDGES[0]).copy();
                     entities_matrix.add(judgment_entity);
 
-                    note_counter.get(MISS_JUDGE).incNumber();
+                    note_counter.get(JUDGES[0]).incNumber();
                     combo_entity.resetNumber();
 
-                    update_screen_info(MISS_JUDGE,ne.getHit());
+                    update_screen_info(JUDGES[0],ne.getHit());
 
                     ne.setState(NoteEntity.State.TO_KILL);
                  }
@@ -720,7 +713,7 @@ public class BeatmaniaRender extends Render
         }
 
         hit_sum += hit;
-        if(!judge.equals(MISS_JUDGE))hit_count++;
+        if(!judge.equals(JUDGES[0]))hit_count++;
         total_notes++;
         
         return judge;
@@ -735,7 +728,6 @@ public class BeatmaniaRender extends Render
             NoteEntity ne = nextNoteKey(c);
 
             if(ne == null)continue;
-//            if(ne.getStartY() < judgment_line_y2)continue; //sync
 
             long hit = 0;
             if(ne instanceof LongNoteEntity)
@@ -830,16 +822,16 @@ public class BeatmaniaRender extends Render
 
                     queueSample(e.getSample());
                    
-                    String judge = MISS_JUDGE;
+                    String judge = JUDGES[0];
                     long hit = e.testTimeHit(now);
-                    judge = skin.judgment.rateTimePrecision(hit);
+                    judge = ratePrecision(hit);
                     e.setHit(hit);
 
                     /* we compare the judgment with a MISS, misses should be ignored here,
                      * because this is the case where the player pressed the note so soon
                      * that it's worse than BAD ( 20% or below on o2jam) so we need to let
                      * it pass like nothing happened */
-                    if(!judge.equals(MISS_JUDGE)){
+                    if(!judge.equals(JUDGES[0])){
                         if(e instanceof LongNoteEntity){
                             longnote_holded.put(c, (LongNoteEntity) e);
                             if(e.getState() == NoteEntity.State.NOT_JUDGED)
@@ -911,7 +903,6 @@ public class BeatmaniaRender extends Render
         while(buffer_iterator.hasNext() && getViewport() - velocity_integral(now,buffer_timer) > buffer_upper_bound)
         {
             Event e = buffer_iterator.next();
-//            System.out.println(buffer_bpm);
             while(e.getMeasure() > buffer_measure) // this is the start of a new measure
             {
                 buffer_timer += 1000 * ( 240/buffer_bpm * (fractional_measure-buffer_measure_pointer) );
@@ -925,8 +916,6 @@ public class BeatmaniaRender extends Render
 
             buffer_timer += 1000 * ( 240/buffer_bpm * (e.getPosition()-buffer_measure_pointer) );
             buffer_measure_pointer = e.getPosition();
-
-//            System.out.println("t: "+buffer_timer+", "+e.getChannel());
 
             switch(e.getChannel())
             {
@@ -1022,13 +1011,13 @@ public class BeatmaniaRender extends Render
 	    Event e = buffer.next();
 	    switch(e.getChannel())
 	    {
-		case NOTE_1: e.setChannel((Channel) channelSwap.get(0)); break;
-		case NOTE_2: e.setChannel((Channel) channelSwap.get(1)); break;
-		case NOTE_3: e.setChannel((Channel) channelSwap.get(2)); break;
-		case NOTE_4: e.setChannel((Channel) channelSwap.get(3)); break;
-		case NOTE_5: e.setChannel((Channel) channelSwap.get(4)); break;
-		case NOTE_6: e.setChannel((Channel) channelSwap.get(5)); break;
-		case NOTE_7: e.setChannel((Channel) channelSwap.get(6)); break;
+		case NOTE_1: e.setChannel(channelSwap.get(0)); break;
+		case NOTE_2: e.setChannel(channelSwap.get(1)); break;
+		case NOTE_3: e.setChannel(channelSwap.get(2)); break;
+		case NOTE_4: e.setChannel(channelSwap.get(3)); break;
+		case NOTE_5: e.setChannel(channelSwap.get(4)); break;
+		case NOTE_6: e.setChannel(channelSwap.get(5)); break;
+		case NOTE_7: e.setChannel(channelSwap.get(6)); break;
 	    }
 	}
     }
@@ -1070,7 +1059,7 @@ public class BeatmaniaRender extends Render
 			Channel chan = e.getChannel();
 
 			int temp = (int)(Math.random()*7);
-			chan = (Channel) channelSwap.get(temp);
+			chan = channelSwap.get(temp);
 			
 			if(e.getFlag() == Event.Flag.NONE){
 			    e.setChannel(chan);
@@ -1165,6 +1154,23 @@ public class BeatmaniaRender extends Render
         }
         velocity_tree.addInterval(last_bpm_change, timer, my_note_speed);
         velocity_tree.build();
+    }
+
+    private String ratePrecision(long hit)
+    {
+        if(hit <= 20)  // PERFECT
+            return JUDGES[4];
+        else
+        if(hit <= 41)  // COOL
+            return JUDGES[3];
+        else
+        if(hit <= 125) // GOOD
+            return JUDGES[2];
+        else
+        if(hit <= 173) // BAD
+            return JUDGES[1];
+        else           // MISS
+            return JUDGES[0];
     }
 }
 
