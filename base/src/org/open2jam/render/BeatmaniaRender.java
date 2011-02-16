@@ -280,10 +280,6 @@ public class BeatmaniaRender extends Render
         score_entity = (NumberEntity) skin.getEntityMap().get("SCORE_COUNTER");
         entities_matrix.add(score_entity);
 
-        /**
-         * TODO It's a combo counter, but because our combo counter substract 1 when it draws
-         * the real number and the drawed number are different
-         */
         jamcombo_entity = (ComboCounterEntity) skin.getEntityMap().get("JAM_COUNTER");
         entities_matrix.add(jamcombo_entity);
 
@@ -298,6 +294,7 @@ public class BeatmaniaRender extends Render
         entities_matrix.add(lifebar_entity);
         
         combo_entity = (ComboCounterEntity) skin.getEntityMap().get("COMBO_COUNTER");
+        combo_entity.setThreshold(2);
         entities_matrix.add(combo_entity);
 
         maxcombo_entity = (NumberEntity) skin.getEntityMap().get("MAXCOMBO_COUNTER");
@@ -307,8 +304,8 @@ public class BeatmaniaRender extends Render
         entities_matrix.add(minute_entity);
 
         second_entity = (NumberEntity) skin.getEntityMap().get("SECOND_COUNTER");
-        entities_matrix.add(second_entity);
         second_entity.showDigits(2);//show 2 digits
+        entities_matrix.add(second_entity);
 
         pills_draw = new LinkedList<Entity>();
 
@@ -543,7 +540,7 @@ public class BeatmaniaRender extends Render
                  }
             break;
             case JUDGE: //LN & normal ones: has finished with good result
-                judge = ratePrecision((int) ne.getHit());
+                judge = ratePrecision((long) ne.getHit());
 
                 judge = update_screen_info(judge,ne.getHit());
 
@@ -575,7 +572,7 @@ public class BeatmaniaRender extends Render
                 last_sound.put(ne.getChannel(), ne.getSample());
             break;
             case LN_HEAD_JUDGE: //LN: Head has been played
-                judge = ratePrecision((int)ne.getHit());
+                judge = ratePrecision((long)ne.getHit());
                 judge = update_screen_info(judge,ne.getHit());
 
                 if(judgment_entity != null)judgment_entity.setAlive(false);
@@ -707,7 +704,7 @@ public class BeatmaniaRender extends Render
             pills_draw.add(ee);
         }
 
-        if(combo_entity.getNumber() > 1 && maxcombo_entity.getNumber()<(combo_entity.getNumber()-1))
+        if(maxcombo_entity.getNumber()<(combo_entity.getNumber()))
         {
             maxcombo_entity.incNumber();
         }

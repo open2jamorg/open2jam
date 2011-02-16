@@ -38,7 +38,7 @@ public class O2jamRender extends Render
     /** the config xml */
     private static final URL resources_xml = O2jamRender.class.getResource("/resources/resources.xml");
 
-    private static final double AUTOPLAY_THRESHOLD = 50;
+    private static final double AUTOPLAY_THRESHOLD = 0.8;
 
     private static final int JUDGMENT_SIZE = 64;
 
@@ -281,10 +281,6 @@ public class O2jamRender extends Render
         score_entity = (NumberEntity) skin.getEntityMap().get("SCORE_COUNTER");
         entities_matrix.add(score_entity);
 
-        /**
-         * TODO It's a combo counter, but because our combo counter substract 1 when it draws
-         * the real number and the drawed number are different
-         */
         jamcombo_entity = (ComboCounterEntity) skin.getEntityMap().get("JAM_COUNTER");
         entities_matrix.add(jamcombo_entity);
 
@@ -299,6 +295,7 @@ public class O2jamRender extends Render
         entities_matrix.add(lifebar_entity);
         
         combo_entity = (ComboCounterEntity) skin.getEntityMap().get("COMBO_COUNTER");
+        combo_entity.setThreshold(2);
         entities_matrix.add(combo_entity);
 
         maxcombo_entity = (NumberEntity) skin.getEntityMap().get("MAXCOMBO_COUNTER");
@@ -308,8 +305,8 @@ public class O2jamRender extends Render
         entities_matrix.add(minute_entity);
 
         second_entity = (NumberEntity) skin.getEntityMap().get("SECOND_COUNTER");
-        entities_matrix.add(second_entity);
         second_entity.showDigits(2);//show 2 digits
+        entities_matrix.add(second_entity);
 
         pills_draw = new LinkedList<Entity>();
 
@@ -709,7 +706,7 @@ public class O2jamRender extends Render
             pills_draw.add(ee);
         }
 
-        if(combo_entity.getNumber() > 1 && maxcombo_entity.getNumber()<(combo_entity.getNumber()-1))
+        if(maxcombo_entity.getNumber()<(combo_entity.getNumber()))
         {
             maxcombo_entity.incNumber();
         }
@@ -731,26 +728,8 @@ public class O2jamRender extends Render
 
             if(ne == null)continue;
 
-            long hit = 0;
-            if(ne instanceof LongNoteEntity)
-            {
-                if(ne.getState() == NoteEntity.State.NOT_JUDGED)
-                {
-                    hit = ne.testTimeHit(ne.getTime());
-                    if(Math.abs(ne.getTime() - now) > AUTOPLAY_THRESHOLD)continue;
-                }
-                else if(ne.getState() == NoteEntity.State.LN_HOLD)
-                {
-                    hit = ne.testTimeHit(((LongNoteEntity)ne).getEndTime());
-                    if(Math.abs(((LongNoteEntity)ne).getEndTime() - now) > AUTOPLAY_THRESHOLD)continue;
-                }
-            }
-            else
-            {
-                hit = ne.testTimeHit(ne.getTime());
-                if(Math.abs(ne.getTime() - now) > AUTOPLAY_THRESHOLD)continue;
-            }
-
+            double hit = ne.testHit(judgment_line_y1, judgment_line_y2);
+            if(hit < AUTOPLAY_THRESHOLD)continue;
             ne.setHit(hit);
             
             if(ne instanceof LongNoteEntity)
