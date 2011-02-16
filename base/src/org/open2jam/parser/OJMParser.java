@@ -120,7 +120,7 @@ public class OJMParser
         int payload_size = buffer.getInt();
         int padding = buffer.getInt();
 
-        buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 28, payload_size);
+        buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 28, f.getChannel().size()-28);
         buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
 
         HashMap<Integer,Integer> samples = new HashMap<Integer,Integer>();
