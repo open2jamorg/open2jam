@@ -1,369 +1,64 @@
 package org.open2jam.render;
 
-import java.awt.image.BufferedImage;
-import java.net.URL;
-import java.util.Collections;
-import java.util.Map;
 import java.util.EnumMap;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Level;
-import javax.swing.JOptionPane;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 
-import org.open2jam.parser.Event.Channel;
 import org.open2jam.util.SystemTimer;
 
 import org.open2jam.parser.Chart;
 import org.open2jam.parser.Event;
-import org.open2jam.render.entities.ComboCounterEntity;
 import org.open2jam.render.entities.Entity;
-import org.open2jam.render.entities.BarEntity;
 import org.open2jam.render.entities.LongNoteEntity;
 import org.open2jam.render.entities.MeasureEntity;
 import org.open2jam.render.entities.NoteEntity;
 import org.open2jam.render.entities.NumberEntity;
-import org.open2jam.render.entities.SampleEntity;
 import org.open2jam.render.entities.TimeEntity;
 import org.open2jam.render.lwjgl.SoundManager;
-import org.open2jam.util.Interval;
-import org.open2jam.util.IntervalTree;
 
 
 public class O2jamRender extends Render
 {
-    /** the config xml */
-    private static final URL resources_xml = O2jamRender.class.getResource("/resources/resources.xml");
-
     private static final double AUTOPLAY_THRESHOLD = 0.8;
-
-    private static final int JUDGMENT_SIZE = 64;
 
     private static final double COMBO_THRESHOLD = 0.5; // GOOD
 
-    private static final String[] JUDGES = {"JUDGMENT_MISS","JUDGMENT_BAD","JUDGMENT_GOOD",
-                                            "JUDGMENT_COOL"};
-    
-    /** is autoplaying ? */
-    private final boolean AUTOPLAY;
+    private enum JUDGE {
+        COOL(0.8), GOOD(0.5), BAD(0.2), MISS(0);
 
-    private final IntervalTree<Double> velocity_tree;
+        double value;
 
-    /** the hispeed */
-    private double hispeed;
-    private boolean updateHS = false;
+        private JUDGE(double i){ value = i; }
 
-    /** the channelMirror, random select */
-    private int channelModifier = 0;
+        @Override
+        public String toString() {
+            return "JUDGEMENT_" + super.toString();
+        }
+    }
 
-    /** the visibility modifier */
-    private int visibilityModifier = 0;
-
-    /** skin info and entities */
-    private Skin skin;
-
-    /** the size of a measure */
-    private double measure_size;
-
-    /** the bpm at which the entities are falling */
-    private double bpm;
-    
-    /** the note layer, to check when it's empty */
-    private int note_layer;
-
-    /** The recorded fps */
-    private int fps;
-
-    /** The time at which the last rendering looped started from the point of view of the game logic */
-    private long lastLoopTime;
-
-    /** The time since the last record of fps */
-    private long lastFpsTime = 0;
-
-    /** defines the judgment space */
-    private double judgment_line_y1, judgment_line_y2;
-
-    /** maps the Event value to OpenGL sample ID's */
-    private Map<Integer, Integer> samples;
-
-    /** a list of list of entities.
-    ** basically, each list is a layer of entities
-    ** the layers are rendered in order
-    ** so entities at layer X will always be rendered before layer X+1 */
-    private EntityMatrix entities_matrix;
-
-    /** this iterator is used by the update_note_buffer
-     * to go through the events on the chart */
-    private Iterator<Event> buffer_iterator;
-
-    /** this is used by the update_note_buffer
-     * to remember the "opened" long-notes */
-    private EnumMap<Event.Channel, LongNoteEntity> ln_buffer;
-
-    /** this holds the actual state of the keyboard,
-     * whether each is being pressed or not */
-    private EnumMap<Event.Channel,Boolean> keyboard_key_pressed;
-
-    private EnumMap<Event.Channel,Entity> longflare;
-
-    /** these are the same notes from the entity_matrix
-     * but divided in channels for ease to pull */
-    private EnumMap<Event.Channel,LinkedList<NoteEntity>> note_channels;
-
-    /** entities for the key pressed events
-     * need to keep track of then to kill
-     * when the key is released */
-    private EnumMap<Event.Channel,Entity> key_pressed_entity;
-
-    /** keep track of the long note the player may be
-     * holding with the key */
-    private EnumMap<Event.Channel,LongNoteEntity> longnote_holded;
-
-    /** keep trap of the last sound of each channel
-     * so that the player can re-play the sound when the key is pressed */
-    private EnumMap<Event.Channel,Event.SoundSample> last_sound;
-
-    /** this queue hold the available sources
-     * that may be used to play sounds */
-    private LinkedList<Integer> source_queue;
-    private Iterator<Integer> source_queue_iterator;
-
-    /** number to display the fps, and note counters on the screen */
-    private NumberEntity fps_entity;
-    private HashMap<String,NumberEntity> note_counter;
-    private NumberEntity score_entity;
-    /** JamCombo variables */
-    private ComboCounterEntity jamcombo_entity;
-    /**
-     * Cools: +2
-     * Goods: +1
-     * Everything else: reset to 0
-     * >=50 to add a jam
-     */
-    private BarEntity jambar_entity;
-
-    private BarEntity lifebar_entity;
-
-    private int pills = 0;
-
-    private LinkedList<Entity> pills_draw;
-    
-    private int consecutive_cools = 0;
-
-    private NumberEntity minute_entity;
-    
-    private NumberEntity second_entity;
-
-    private Entity judgment_entity;
-
-    /** the combo counter */
-    private ComboCounterEntity combo_entity;
-    /** the maxcombo counter */
-    private NumberEntity maxcombo_entity;
-
-    private long start_time;
-    
-    /** statistics variables */
-    protected double hit_sum = 0, hit_count = 0, total_notes = 0;
+    private EnumMap<JUDGE,NumberEntity> note_counter;
 
     public O2jamRender(Chart c, double hispeed, boolean autoplay, int channelModifier, int visibilityModifier)
     {
-        super(c);
-        this.hispeed = hispeed;
-	this.AUTOPLAY = autoplay;
-	this.channelModifier = channelModifier;
-        this.visibilityModifier = visibilityModifier;
-        velocity_tree = new IntervalTree<Double>();
-    }
-    
-    public void startRendering()
-    {
-        window.setGameWindowCallback(this);
-        window.setTitle(chart.getArtist()+" - "+chart.getTitle());
-
-        try{
-            window.startRendering();
-        }catch(OutOfMemoryError e) {
-            System.gc();
-            JOptionPane.showMessageDialog(null, "Fatal Error", "System out of memory ! baillin out !!",JOptionPane.ERROR_MESSAGE);
-            logger.log(Level.SEVERE, "System out of memory ! baillin out !!{0}", e.getMessage());
-            System.exit(1);
-        }
-        // at this point the game window has gone away
-
-        double precision = (hit_count / total_notes) * 100;
-        double accuracy = (hit_sum / total_notes) * 100;
-        JOptionPane.showMessageDialog(null,
-                String.format("Precision : %.3f, Accuracy : %.3f", precision, accuracy)
-                );
+        super(c,hispeed,autoplay,channelModifier,visibilityModifier);
     }
 
     /**
     * initialize the common elements for the game.
     * this is called by the window render
     */
+    @Override
     public void initialise()
     {
-        lastLoopTime = SystemTimer.getTime();
-
-        // skin load
-        try {
-            SkinHandler sb = new SkinHandler("o2jam", window.getResolutionWidth(), window.getResolutionHeight());
-            SAXParserFactory.newInstance().newSAXParser().parse(resources_xml.openStream(), sb);
-            skin = sb.getResult();
-        } catch (ParserConfigurationException ex) {
-            logger.log(Level.SEVERE, "Skin load error {0}", ex);
-        } catch (org.xml.sax.SAXException ex) {
-            logger.log(Level.SEVERE, "Skin load error {0}", ex);
-        } catch (java.io.IOException ex) {
-            logger.log(Level.SEVERE, "Skin load error {0}", ex);
-        }
-
-        // cover image load
-        try{
-            BufferedImage img = chart.getCover();
-            Sprite s = ResourceFactory.get().getSprite(img);
-            s.setScale(skin.screen_scale_x, skin.screen_scale_y);
-            s.draw(0, 0);
-            window.update();
-        } catch (NullPointerException e){
-            logger.log(Level.INFO, "No cover image on file: {0}", chart.getSource().getName());
-        }
-
-        judgment_line_y2 = skin.judgment_line + JUDGMENT_SIZE;
-	updateHispeed();
-
-        entities_matrix = new EntityMatrix(skin.max_layer+1);
-
-        bpm = chart.getBPM();
-        buffer_bpm = chart.getBPM();
-
-        note_layer = skin.getEntityMap().get("NOTE_1").getLayer();
-
-        // adding static entities
-        for(Entity e : skin.getEntityList()){
-            entities_matrix.add(e);
-        }
-
-        note_counter = new HashMap<String,NumberEntity>();
-        for(String s : JUDGES){
+        super.initialise();
+        note_counter = new EnumMap<JUDGE,NumberEntity>(JUDGE.class);
+        for(JUDGE s : JUDGE.values()){
             NumberEntity e = (NumberEntity)skin.getEntityMap().get("COUNTER_"+s).copy();
             note_counter.put(s, e);
-            e.setPos(e.getX(), e.getY());
 	    entities_matrix.add(note_counter.get(s));
         }
-
-        // build long note buffer
-        ln_buffer = new EnumMap<Event.Channel,LongNoteEntity>(Event.Channel.class);
-
-        // the notes pressed buffer
-        keyboard_key_pressed = new EnumMap<Event.Channel,Boolean>(Event.Channel.class);
-
-        // reference to the notes in the buffer, separated by the channel
-        note_channels = new EnumMap<Event.Channel,LinkedList<NoteEntity>>(Event.Channel.class);
-
-        // entity for key pressed events
-        key_pressed_entity = new EnumMap<Event.Channel,Entity>(Event.Channel.class);
-
-        // reference to long notes being holded
-        longnote_holded = new EnumMap<Event.Channel,LongNoteEntity>(Event.Channel.class);
-
-	longflare = new EnumMap<Event.Channel, Entity> (Event.Channel.class);
-
-        last_sound = new EnumMap<Event.Channel,Event.SoundSample>(Event.Channel.class);
-
-        fps_entity = (NumberEntity) skin.getEntityMap().get("FPS_COUNTER");
-        entities_matrix.add(fps_entity);
-
-        score_entity = (NumberEntity) skin.getEntityMap().get("SCORE_COUNTER");
-        entities_matrix.add(score_entity);
-
-        jamcombo_entity = (ComboCounterEntity) skin.getEntityMap().get("JAM_COUNTER");
-        entities_matrix.add(jamcombo_entity);
-
-        jambar_entity = (BarEntity) skin.getEntityMap().get("JAM_BAR");
-        jambar_entity.setLimit(50);
-        entities_matrix.add(jambar_entity);
-
-        lifebar_entity = (BarEntity) skin.getEntityMap().get("LIFE_BAR");
-        lifebar_entity.setLimit(1000);
-        lifebar_entity.setNumber(1000);
-        lifebar_entity.setFillDirection(BarEntity.fillDirection.UP_TO_DOWN);
-        entities_matrix.add(lifebar_entity);
-        
-        combo_entity = (ComboCounterEntity) skin.getEntityMap().get("COMBO_COUNTER");
-        combo_entity.setThreshold(2);
-        entities_matrix.add(combo_entity);
-
-        maxcombo_entity = (NumberEntity) skin.getEntityMap().get("MAXCOMBO_COUNTER");
-        entities_matrix.add(maxcombo_entity);
-
-        minute_entity = (NumberEntity) skin.getEntityMap().get("MINUTE_COUNTER");
-        entities_matrix.add(minute_entity);
-
-        second_entity = (NumberEntity) skin.getEntityMap().get("SECOND_COUNTER");
-        second_entity.showDigits(2);//show 2 digits
-        entities_matrix.add(second_entity);
-
-        pills_draw = new LinkedList<Entity>();
-
-        for(Event.Channel c : keyboard_map.keySet())
-        {
-            keyboard_key_pressed.put(c, Boolean.FALSE);
-            note_channels.put(c, new LinkedList<NoteEntity>());
-        }
-
-
-        List<Event> event_list = chart.getEvents();
-
-        construct_velocity_tree(event_list.iterator());
-
-        buffer_iterator = event_list.iterator();
-	
-	/**Let's randomize "-"
-	 * I don't know any better implementation so...
-	 */
-	if(channelModifier != 0)
-	{
-	    if(channelModifier == 1)
-		channelMirror(buffer_iterator);
-	    if(channelModifier == 2)
-		channelShuffle(buffer_iterator);
-	    if(channelModifier == 3)
-		channelRandom(buffer_iterator);
-
-            // get a new iterator
-            buffer_iterator = event_list.iterator();
-	}
-        
-        // load up initial buffer
-        update_note_buffer(0);
-
-
-        // create sound sources
-        source_queue = new LinkedList<Integer>();
-
-        try{
-            for(int i=0;i<MAX_SOURCES;i++)
-                source_queue.push(SoundManager.newSource()); // creates sources
-        }catch(org.lwjgl.openal.OpenALException e){
-            logger.log(Level.WARNING, "Couldn''t create enough sources({0})", MAX_SOURCES);
-        }
-
-        source_queue_iterator = source_queue.iterator();
-
-        // get the chart sound samples
-        samples = chart.getSamples();
-
-        //clean up
-        System.gc();
-
-        // wait a bit.. 5 seconds at min
-        SystemTimer.sleep((int) (5000 - (SystemTimer.getTime() - lastLoopTime)));
-
         start_time = lastLoopTime = SystemTimer.getTime();
     }
 
@@ -455,72 +150,9 @@ public class O2jamRender extends Render
         }
     }
 
-    /**
-     * given a time segment, returns the distance, in pixels,
-     * from each segment based on the bpm.
-     *
-     * segment types returned by velocity_tree:
-     *  a    t0    b   t1  ->  b - t0
-     * t0     a   t1    b  -> t1 -  a
-     * t0     a    b   t1  ->  b -  a
-     *  a    t0   t1    b  -> t1 - t0
-     */
-    public double velocity_integral(long t0, long t1)
-    {
-        int sign = 1;
-        if(t0 > t1){
-            long tmp = t1;t1 = t0;t0 = tmp; // swap
-            sign = -1;
-        }
-        List<Interval<Double>> list = velocity_tree.getIntervals(t0, t1);
-        double integral = 0;
-        for(Interval<Double> i : list)
-        {
-            if(i.getStart() < t0) // 1st or 4th case
-            {
-                if(i.getEnd() < t1) // 1st case
-                    integral += i.getData() * (i.getEnd() - t0);
-                else // 4th case
-                    integral += i.getData() * (t1 - t0);
-            }
-            else { // 2nd or 3rd case
-                if(t1 < i.getEnd()) // 2nd case
-                    integral += i.getData() * (t1 - i.getStart());
-                else // 3rd case
-                    integral += i.getData() * (i.getEnd() - i.getStart());
-            }
-        }
-        return sign * integral;
-    }
-    
-    private double judgmentArea()
-    {
-        // y2-y1 is the the upper half of the judgment area
-        // 2*(y2-y1) is the total area
-        // y1 + 2*(y2-y1) is the end line of the area
-        // simplifying: y1 + 2*y2 - 2*y1 == 2*y2 - y1
-        return 2 * judgment_line_y2 - judgment_line_y1;
-    }
-
-    private void updateHispeed()
-    {
-        judgment_line_y1 = skin.judgment_line;
-        if(hispeed > 1){
-            double off = JUDGMENT_SIZE * (hispeed-1);
-            judgment_line_y1 -= off;
-        }
-
-        measure_size = 0.8 * hispeed * getViewport();
-
-	updateHS = false;
-    }
-    
-    public double getMeasureSize() { return measure_size; }
-    public double getViewport() { return judgment_line_y2; }
-
     private void check_judgment(NoteEntity ne)
     {
-        String judge;
+        JUDGE judge;
         switch (ne.getState())
         {
             case NOT_JUDGED: // you missed it (no keyboard input)
@@ -529,13 +161,13 @@ public class O2jamRender extends Render
                         || (ne.getY() >= judgmentArea())))
                 {
                     if(judgment_entity != null)judgment_entity.setAlive(false);
-                    judgment_entity = skin.getEntityMap().get("EFFECT_"+JUDGES[0]).copy();
+                    judgment_entity = skin.getEntityMap().get("EFFECT_"+JUDGE.MISS).copy();
                     entities_matrix.add(judgment_entity);
 
-                    note_counter.get(JUDGES[0]).incNumber();
+                    note_counter.get(JUDGE.MISS).incNumber();
                     combo_entity.resetNumber();
 
-                    update_screen_info(JUDGES[0],ne.getHit());
+                    update_screen_info(JUDGE.MISS,ne.getHit());
                     
                     ne.setState(NoteEntity.State.TO_KILL);
                  }
@@ -551,7 +183,7 @@ public class O2jamRender extends Render
 
 		note_counter.get(judge).incNumber();
 
-		if(!judge.equals(JUDGES[0]))
+		if(!judge.equals(JUDGE.MISS))
                 {
 		    Entity ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
 		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
@@ -561,7 +193,7 @@ public class O2jamRender extends Render
 		    if(ne.getHit() >= COMBO_THRESHOLD)
                         combo_entity.incNumber();
 		    else {
-                        if(judge.equals("JUDGMENT_GOOD"))combo_entity.incNumber(); //because of the pills
+                        if(judge.equals(JUDGE.GOOD))combo_entity.incNumber(); //because of the pills
                         else combo_entity.resetNumber();
                     }
                     if(ne instanceof LongNoteEntity)ne.setState(NoteEntity.State.TO_KILL);
@@ -583,7 +215,7 @@ public class O2jamRender extends Render
 
 		note_counter.get(judge).incNumber();
 
-		if(!judge.equals(JUDGES[0]))
+		if(!judge.equals(JUDGE.MISS))
                 {
 		    Entity ee = skin.getEntityMap().get("EFFECT_LONGFLARE").copy();
 		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,ee.getY());
@@ -599,7 +231,7 @@ public class O2jamRender extends Render
 		    if(ne.getHit() >= COMBO_THRESHOLD)
                         combo_entity.incNumber();
 		    else {
-                        if(judge.equals("JUDGMENT_GOOD"))combo_entity.incNumber(); //because of the pills
+                        if(judge.equals(JUDGE.GOOD))combo_entity.incNumber(); //because of the pills
                         else combo_entity.resetNumber();
                     }
                     ne.setState(NoteEntity.State.LN_HOLD);
@@ -610,13 +242,13 @@ public class O2jamRender extends Render
                 if(ne.isAlive() && ne.getY() >= judgmentArea())
                 {
                     if(judgment_entity != null)judgment_entity.setAlive(false);
-                    judgment_entity = skin.getEntityMap().get("EFFECT_"+JUDGES[0]).copy();
+                    judgment_entity = skin.getEntityMap().get("EFFECT_"+JUDGE.MISS).copy();
                     entities_matrix.add(judgment_entity);
 
-                    note_counter.get(JUDGES[0]).incNumber();
+                    note_counter.get(JUDGE.MISS).incNumber();
                     combo_entity.resetNumber();
 
-                    update_screen_info(JUDGES[0],ne.getHit());
+                    update_screen_info(JUDGE.MISS,ne.getHit());
 
                     ne.setState(NoteEntity.State.TO_KILL);
                  }
@@ -637,56 +269,58 @@ public class O2jamRender extends Render
      * @param judge
      * @return judge
      */
-    private String update_screen_info(String judge, double hit)
+    private JUDGE update_screen_info(JUDGE judge, double hit)
     {
         int score_value = 0;
-        if(judge.equals("JUDGMENT_COOL"))
+        switch(judge)
         {
-            jambar_entity.addNumber(2);
-            consecutive_cools++;
-            if(lifebar_entity.getNumber() <= lifebar_entity.getLimit())lifebar_entity.addNumber(100);
+            case COOL:
+                jambar_entity.addNumber(2);
+                consecutive_cools++;
+                if(lifebar_entity.getNumber() <= lifebar_entity.getLimit())lifebar_entity.addNumber(10);
 
-            score_value = 200 + (jamcombo_entity.getNumber()*10);
-        }
-        else if(judge.equals("JUDGMENT_GOOD"))
-        {
-            jambar_entity.addNumber(1);
-            consecutive_cools = 0;
-            if(lifebar_entity.getNumber() <= lifebar_entity.getLimit())lifebar_entity.addNumber(50);
+                score_value = 200 + (jamcombo_entity.getNumber()*10);
+            break;
 
-             score_value = 100;
-        }
-        else if(judge.equals("JUDGMENT_BAD"))
-        {
-            if(pills > 0)
-            {
-                judge = "JUDGMENT_GOOD";
+            case GOOD:
                 jambar_entity.addNumber(1);
-                pills--;
-                pills_draw.getLast().setAlive(false);
+                consecutive_cools = 0;
+                if(lifebar_entity.getNumber() <= lifebar_entity.getLimit())lifebar_entity.addNumber(5);
 
-                score_value = 100; // TODO: not sure
-            }
-            else
-            {
+                 score_value = 100;
+            break;
+
+            case BAD:
+                if(pills > 0)
+                {
+                    judge = JUDGE.GOOD;
+                    jambar_entity.addNumber(1);
+                    pills--;
+                    pills_draw.getLast().setAlive(false);
+
+                    score_value = 100; // TODO: not sure
+                }
+                else
+                {
+                    jambar_entity.setNumber(0);
+                    jamcombo_entity.resetNumber();
+
+                    score_value = 4;
+                }
+                consecutive_cools = 0;
+            break;
+
+            case MISS:
                 jambar_entity.setNumber(0);
                 jamcombo_entity.resetNumber();
+                consecutive_cools = 0;
 
-                score_value = 4;
-            }
-            consecutive_cools = 0;
-            if(lifebar_entity.getNumber() <= lifebar_entity.getLimit())lifebar_entity.addNumber(30);
-        }
-        else if(judge.equals("JUDGMENT_MISS"))
-        {
-            jambar_entity.setNumber(0);
-            jamcombo_entity.resetNumber();
-            consecutive_cools = 0;
+                if(lifebar_entity.getNumber() >= 30)lifebar_entity.addNumber(-30);
+                else lifebar_entity.setNumber(0);
 
-            if(lifebar_entity.getNumber() >= 30)lifebar_entity.addNumber(-30);
-
-            if(score_entity.getNumber() >= 10)score_value = -10;
-            else score_value = -score_entity.getNumber();
+                if(score_entity.getNumber() >= 10)score_value = -10;
+                else score_value = -score_entity.getNumber();
+            break;
         }
 
         score_entity.addNumber(score_value);
@@ -712,7 +346,7 @@ public class O2jamRender extends Render
         }
 
         hit_sum += hit;
-        if(!judge.equals(JUDGES[0]))hit_count++;
+        if(!judge.equals(JUDGE.MISS))hit_count++;
         total_notes++;
         
         return judge;
@@ -803,7 +437,7 @@ public class O2jamRender extends Render
 
                     queueSample(e.getSample());
                    
-                    String judge = JUDGES[0];
+                    JUDGE judge = JUDGE.MISS;
                     double hit = e.testHit(judgment_line_y1, judgment_line_y2);
                     judge = ratePrecision(hit);
                     e.setHit(hit);
@@ -812,7 +446,7 @@ public class O2jamRender extends Render
                      * because this is the case where the player pressed the note so soon
                      * that it's worse than BAD ( 20% or below on o2jam) so we need to let
                      * it pass like nothing happened */
-                    if(!judge.equals(JUDGES[0])){
+                    if(!judge.equals(JUDGE.MISS)){
                         if(e instanceof LongNoteEntity){
                             longnote_holded.put(c, (LongNoteEntity) e);
                             if(e.getState() == NoteEntity.State.NOT_JUDGED)
@@ -845,310 +479,18 @@ public class O2jamRender extends Render
         }
     }
 
-    /** this returns the next note that needs to be played
-     ** of the defined channel or NULL if there's
-     ** no such note in the moment **/
-    private NoteEntity nextNoteKey(Event.Channel c)
+    private JUDGE ratePrecision(double hit)
     {
-        if(note_channels.get(c).isEmpty())return null;
-        NoteEntity ne = note_channels.get(c).getFirst();
-        while(ne.getState() != NoteEntity.State.NOT_JUDGED &&
-            ne.getState() != NoteEntity.State.LN_HOLD)
-        {
-            note_channels.get(c).removeFirst();
-            if(note_channels.get(c).isEmpty())return null;
-            ne = note_channels.get(c).getFirst();
-        }
-        return ne;
-    }
-
-    private int buffer_measure = 0;
-
-    private double fractional_measure = 1;
-
-    private final int buffer_upper_bound = -10;
-
-    private long buffer_timer = 0;
-
-    private double buffer_bpm;
-
-    private double buffer_measure_pointer = 0;
-
-
-
-    /** update the note layer of the entities_matrix.
-    *** note buffering is equally distributed between the frames
-    **/
-    private void update_note_buffer(long now)
-    {
-        while(buffer_iterator.hasNext() && getViewport() - velocity_integral(now,buffer_timer) > buffer_upper_bound)
-        {
-            Event e = buffer_iterator.next();
-            while(e.getMeasure() > buffer_measure) // this is the start of a new measure
-            {
-                buffer_timer += 1000 * ( 240/buffer_bpm * (fractional_measure-buffer_measure_pointer) );
-                MeasureEntity m = (MeasureEntity) skin.getEntityMap().get("MEASURE_MARK").copy();
-                m.setTime(buffer_timer);
-                entities_matrix.add(m);
-                buffer_measure++;
-                fractional_measure = 1;
-                buffer_measure_pointer = 0;
-            }
-
-            buffer_timer += 1000 * ( 240/buffer_bpm * (e.getPosition()-buffer_measure_pointer) );
-            buffer_measure_pointer = e.getPosition();
-
-            switch(e.getChannel())
-            {
-                case TIME_SIGNATURE:
-                fractional_measure = e.getValue();
-                break;
-
-                case BPM_CHANGE:
-                buffer_bpm = e.getValue();
-                break;
-
-                case NOTE_1:case NOTE_2:
-                case NOTE_3:case NOTE_4:
-                case NOTE_5:case NOTE_6:case NOTE_7:
-                if(e.getFlag() == Event.Flag.NONE){
-                    NoteEntity n = (NoteEntity) skin.getEntityMap().get(e.getChannel().toString()).copy();
-                    n.setTime(buffer_timer);
-                    n.setSample(e.getSample());
-		    entities_matrix.add(n);
-                    note_channels.get(n.getChannel()).add(n);
-                }
-                else if(e.getFlag() == Event.Flag.HOLD){
-                    LongNoteEntity ln = (LongNoteEntity) skin.getEntityMap().get("LONG_"+e.getChannel()).copy();
-                    ln.setTime(buffer_timer);
-                    ln.setSample(e.getSample());
-		    entities_matrix.add(ln);
-		    ln_buffer.put(e.getChannel(),ln);
-                    note_channels.get(ln.getChannel()).add(ln);
-                }
-                else if(e.getFlag() == Event.Flag.RELEASE){
-                    LongNoteEntity lne = ln_buffer.remove(e.getChannel());
-                    if(lne == null){
-                        logger.log(Level.WARNING, "Attempted to RELEASE note {0}", e.getChannel());
-                    }else{
-                        lne.setEndTime(buffer_timer,velocity_integral(lne.getTime(),buffer_timer));
-                    }
-                }
-                break;
-                
-                case AUTO_PLAY:
-                case NOTE_SC:
-                SampleEntity s = new SampleEntity(this,e.getSample(),0);
-                s.setTime(buffer_timer);
-                entities_matrix.add(s);
-                break;
-            }
-        }
-    }
-
-    /**
-     * This function will mirrorize the notes
-     *
-     * @param buffer
-     */
-    public void channelMirror(Iterator<Event> buffer)
-    {
-	while(buffer.hasNext())
-	{
-	    Event e = buffer.next();
-	    switch(e.getChannel())
-	    {
-		case NOTE_1: e.setChannel(Event.Channel.NOTE_7); break;
-		case NOTE_2: e.setChannel(Event.Channel.NOTE_6); break;
-		case NOTE_3: e.setChannel(Event.Channel.NOTE_5); break;
-		case NOTE_5: e.setChannel(Event.Channel.NOTE_3); break;
-		case NOTE_6: e.setChannel(Event.Channel.NOTE_2); break;
-		case NOTE_7: e.setChannel(Event.Channel.NOTE_1); break;
-	    }
-	}
-    }
-
-    /**
-     * This function will shuffle the note lanes
-     *
-     * @param buffer
-     */
-    public void channelShuffle(Iterator<Event> buffer)
-    {
-	List<Event.Channel> channelSwap = new LinkedList<Event.Channel>();
-
-	channelSwap.add(Event.Channel.NOTE_1);
-	channelSwap.add(Event.Channel.NOTE_2);
-	channelSwap.add(Event.Channel.NOTE_3);
-	channelSwap.add(Event.Channel.NOTE_4);
-	channelSwap.add(Event.Channel.NOTE_5);
-	channelSwap.add(Event.Channel.NOTE_6);
-	channelSwap.add(Event.Channel.NOTE_7);
-
-	Collections.shuffle(channelSwap);
-
-	while(buffer.hasNext())
-	{
-	    Event e = buffer.next();
-	    switch(e.getChannel())
-	    {
-		case NOTE_1: e.setChannel(channelSwap.get(0)); break;
-		case NOTE_2: e.setChannel(channelSwap.get(1)); break;
-		case NOTE_3: e.setChannel(channelSwap.get(2)); break;
-		case NOTE_4: e.setChannel(channelSwap.get(3)); break;
-		case NOTE_5: e.setChannel(channelSwap.get(4)); break;
-		case NOTE_6: e.setChannel(channelSwap.get(5)); break;
-		case NOTE_7: e.setChannel(channelSwap.get(6)); break;
-	    }
-	}
-    }
-    
-    /**
-     * This function will randomize the notes, need more work
-     *
-     * TODO:
-     * * Don't overlap the notes
-     * 
-     * @param buffer
-     */
-    public void channelRandom(Iterator<Event> buffer)
-    {
-	EnumMap<Event.Channel, Event.Channel> ln = new EnumMap<Event.Channel, Event.Channel>(Event.Channel.class);
-
-	List<Event.Channel> channelSwap = new LinkedList<Event.Channel>();
-
-	channelSwap.add(Event.Channel.NOTE_1);
-	channelSwap.add(Event.Channel.NOTE_2);
-	channelSwap.add(Event.Channel.NOTE_3);
-	channelSwap.add(Event.Channel.NOTE_4);
-	channelSwap.add(Event.Channel.NOTE_5);
-	channelSwap.add(Event.Channel.NOTE_6);
-	channelSwap.add(Event.Channel.NOTE_7);
-
-	Collections.shuffle(channelSwap);
-
-	while(buffer.hasNext())
-	{
-	    Event e = buffer.next();
-
-	    switch(e.getChannel())
-	    {
-		    case NOTE_1:case NOTE_2:
-		    case NOTE_3:case NOTE_4:
-		    case NOTE_5:case NOTE_6:case NOTE_7:
-
-			Channel chan = e.getChannel();
-
-			int temp = (int)(Math.random()*7);
-			chan = channelSwap.get(temp);
-			
-			if(e.getFlag() == Event.Flag.NONE){
-			    e.setChannel(chan);
-			}
-                        //WTF it seems that the release flag can be BEFORE the hold one :/
-			else if(e.getFlag() == Event.Flag.HOLD || e.getFlag() == Event.Flag.RELEASE){
-			    if(ln.get(e.getChannel()) != null)
-			    {
-				e.setChannel(ln.get(e.getChannel()));
-				ln.remove(e.getChannel());
-			    }
-                            else
-                            {
-                                ln.put(e.getChannel(), chan);
-                                e.setChannel(chan);
-                            }
-			}
-		    break;
-	    }
-	}
-    }
-
-    /**
-     * Notification that the game window has been closed
-     */
-    public void windowClosed() {
-        SoundManager.killData();
-    }
-
-    public void queueSample(Event.SoundSample sample)
-    {
-        Integer buffer = samples.get(sample.sample_id);
-        if(buffer == null)return;
-
-
-        if(!source_queue_iterator.hasNext())
-            source_queue_iterator = source_queue.iterator();
-        Integer head = source_queue_iterator.next();
-
-        Integer source = head;
-
-        while(SoundManager.isPlaying(source)){
-            if(!source_queue_iterator.hasNext())
-                source_queue_iterator = source_queue.iterator();
-            source = source_queue_iterator.next();
-
-            if(source.equals(head)){
-                logger.warning("Source queue exausted !");
-                return;
-            }
-        }
-
-        SoundManager.setGain(source, sample.volume);
-        SoundManager.setPan(source, sample.pan);
-        SoundManager.play(source, buffer);
-    }
-
-    private void construct_velocity_tree(Iterator<Event> it)
-    {
-        int measure = 0;
-        long last_bpm_change = 0;
-        long timer = 0;
-        double my_bpm = this.bpm;
-        double frac_measure = 1;
-        double measure_pointer = 0;
-        double my_note_speed = ((my_bpm/240) * measure_size) / 1000.0d;
-        while(it.hasNext())
-        {
-            Event e = it.next();
-            while(e.getMeasure() > measure)
-            {
-                timer += 1000 * ( 240/my_bpm * (frac_measure-measure_pointer) );
-                measure++;
-                frac_measure = 1;
-                measure_pointer = 0;
-            }
-            timer += 1000 * ( 240/my_bpm * (e.getPosition()-measure_pointer) );
-            measure_pointer = e.getPosition();
-
-            switch(e.getChannel())
-            {
-                case BPM_CHANGE:
-                    velocity_tree.addInterval(last_bpm_change, timer, my_note_speed);
-                    my_bpm = e.getValue();
-                    my_note_speed = ((my_bpm/240) * measure_size) / 1000.0d;
-                    last_bpm_change = timer;
-                break;
-                case TIME_SIGNATURE:
-                    frac_measure = e.getValue();
-                break;
-            }
-        }
-        velocity_tree.addInterval(last_bpm_change, timer, my_note_speed);
-        velocity_tree.build();
-    }
-
-    private String ratePrecision(double hit)
-    {
-        if(hit >= 0.8) // COOL
-            return JUDGES[3];
+        if(hit >= JUDGE.COOL.value) // COOL
+            return JUDGE.COOL;
         else
-        if(hit >= 0.5) // GOOD
-            return JUDGES[2];
+        if(hit >= JUDGE.GOOD.value) // GOOD
+            return JUDGE.GOOD;
         else
-        if(hit >= 0.2) // BAD
-            return JUDGES[1];
-        else           // MISS
-            return JUDGES[0];
+        if(hit >= JUDGE.BAD.value) // BAD
+            return JUDGE.BAD;
+        else                        // MISS
+            return JUDGE.MISS;
     }
 }
 

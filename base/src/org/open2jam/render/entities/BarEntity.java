@@ -35,11 +35,6 @@ public class BarEntity extends AnimatedEntity
         return number;
     }
 
-    public void incNumber()
-    {
-        number++;
-    }
-
     public void addNumber(int add)
     {
         number += add;
