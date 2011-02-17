@@ -17,7 +17,6 @@ public class Entity implements Copyable<Entity>
     /** this object stores the position(x,y) and dimensions (width,height) */
     protected double x, y, width, height;
 
-    protected double time = 0;
 
     /** when a entity die the render removes it */
     protected boolean alive = true;
@@ -84,9 +83,6 @@ public class Entity implements Copyable<Entity>
     {
 	sprite.setAlpha(alpha);
     }
-
-    public void setTime(double t) { time = t; }
-    public double getTime() { return time; }
 
     /**
      * Draw this entity to the graphics context provided

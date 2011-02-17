@@ -32,7 +32,7 @@ public class BeatmaniaRender extends Render
 
         @Override
         public String toString() {
-            return "JUDGEMENT_" + super.toString();
+            return "JUDGMENT_" + super.toString();
         }
     }
 
@@ -51,7 +51,7 @@ public class BeatmaniaRender extends Render
         super.initialise();
         note_counter = new EnumMap<JUDGE,NumberEntity>(JUDGE.class);
         for(JUDGE s : JUDGE.values()){
-            NumberEntity e = (NumberEntity)skin.getEntityMap().get("COUNTER_"+s).copy();
+            NumberEntity e = (NumberEntity)skin.getEntityMap().get("COUNTER_"+s.toString()).copy();
             note_counter.put(s, e);
 	    entities_matrix.add(note_counter.get(s));
         }

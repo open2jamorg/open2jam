@@ -64,8 +64,8 @@ public class LWJGLSprite implements Sprite {
 
     private void init(int x, int y, int width, int height)
     {
-        float u = ((float)(x)/texture.getWidth()); // top-left x
-        float v = ((float)(y)/texture.getHeight()); // top-left y
+        float u = ((float)x/texture.getWidth()); // top-left x
+        float v = ((float)y/texture.getHeight()); // top-left y
         float w = ((float)(x+width)/texture.getWidth()); // bottom-right x
         float z = ((float)(y+height)/texture.getHeight()); // bottom-right y
 
