@@ -49,7 +49,7 @@ public class Config implements Serializable
         keyboard_map.put(Event.Channel.NOTE_SC, KeyEvent.VK_SHIFT);
     }
 
-    public EnumMap getKeyboardMap(){
+    public EnumMap<Event.Channel,Integer> getKeyboardMap(){
         return keyboard_map;
     }
 

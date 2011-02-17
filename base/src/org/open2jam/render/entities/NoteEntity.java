@@ -2,14 +2,11 @@ package org.open2jam.render.entities;
 
 import org.open2jam.parser.Event;
 import org.open2jam.render.SpriteList;
-import org.open2jam.render.Render;
 
 /** a NoteEntity is a animated entity which moves down.
 **/
-public class NoteEntity extends AnimatedEntity
+public class NoteEntity extends AnimatedEntity implements TimeEntity
 {
-    protected Render render;
-
     protected Event.SoundSample sample_value;
 
     protected Event.Channel channel = Event.Channel.NONE;
@@ -17,6 +14,8 @@ public class NoteEntity extends AnimatedEntity
     protected State state = State.NOT_JUDGED;
 
     protected double hit = 0;
+
+    protected long time_to_hit;
 
     public enum State {
         NOT_JUDGED,
@@ -26,17 +25,15 @@ public class NoteEntity extends AnimatedEntity
         LN_HOLD
     };
 
-    public NoteEntity(Render r, SpriteList sl, Event.Channel ch, double x, double y)
+    public NoteEntity(SpriteList sl, Event.Channel ch, double x, double y)
     {
         super(sl, x, y);
         this.channel = ch;
-        this.render = r;
     }
 
     protected NoteEntity(NoteEntity org) {
         super(org);
         this.channel = org.channel;
-        this.render = org.render;
         this.sample_value = org.sample_value;
         this.state = org.state;
     }
@@ -50,7 +47,6 @@ public class NoteEntity extends AnimatedEntity
     @Override
     public void move(long delta)
     {
-	setYMove(render.getNoteSpeed());
 	super.move(delta);
     }
 
@@ -65,6 +61,12 @@ public class NoteEntity extends AnimatedEntity
         return testHit(y, y + height, jy1, jy2);
     }
 
+    public long testTimeHit(long now)
+    {
+        long p = Math.abs(time_to_hit-now);
+        return p;
+    }
+
     protected static double testHit(double y1, double y2, double jy1, double jy2)
     {
         if(y2 < jy1)return 0;
@@ -74,23 +76,15 @@ public class NoteEntity extends AnimatedEntity
         return p;
     }
 
-//    protected static double testHit(double y1, double y2, double jy1, double jy2)
-//    {
-//        if(y1 > jy2 || y2 < jy1)return 0;
-//        if(y1 > jy1 && y2 < jy2)return 1;
-//        if(y1 < jy1){ // first case, before middle
-//            return (y2-jy1)/(jy2-jy1);
-//        }
-//        else{ // second case, after middle
-//            return (jy2-y1)/(jy2-jy1);
-//        }
-//    }
+    public void setTime(long time){
+        this.time_to_hit = time;
+    }
+    public long getTime() {
+        return time_to_hit;
+    }
     
     @Override
-    public void judgment()
-    {
-        alive = false;
-    }
+    public void judgment() {}
 
     @Override
     public NoteEntity copy(){

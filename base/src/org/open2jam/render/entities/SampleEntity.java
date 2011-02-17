@@ -12,12 +12,14 @@ import org.open2jam.render.Render;
  *
  * @author fox
  */
-public class SampleEntity extends Entity
+public class SampleEntity extends Entity implements TimeEntity
 {
     private Event.SoundSample value;
     private Render render;
 
-    public SampleEntity(Render r, Event.SoundSample value, double y, double t)
+    private long time_to_hit;
+
+    public SampleEntity(Render r, Event.SoundSample value, double y)
     {
         this.render = r;
         this.value = value;
@@ -25,7 +27,6 @@ public class SampleEntity extends Entity
         this.y = y;
         this.width = 0;
         this.height = 0;
-        this.time = t;
     }
 
     private SampleEntity(SampleEntity org) {
@@ -35,10 +36,7 @@ public class SampleEntity extends Entity
     }
 
     @Override
-    public void move(long delta)
-    {
-        y += delta * render.getNoteSpeed();
-    }
+    public void move(long delta) {}
 
     @Override
     public void judgment()
@@ -54,5 +52,13 @@ public class SampleEntity extends Entity
     @Override
     public SampleEntity copy(){
         return new SampleEntity(this);
+    }
+
+    public void setTime(long t) {
+        this.time_to_hit = t;
+    }
+
+    public long getTime() {
+        return time_to_hit;
     }
 }

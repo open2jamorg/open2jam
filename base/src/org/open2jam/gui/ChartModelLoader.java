@@ -29,7 +29,7 @@ public class ChartModelLoader extends SwingWorker<ChartListTableModel,ChartList>
     protected ChartListTableModel doInBackground() {
         try{
         table_model.clear();
-        ArrayList<File> files = new ArrayList(Arrays.asList(dir.listFiles()));
+        ArrayList<File> files = new ArrayList<File>(Arrays.asList(dir.listFiles()));
         double perc = files.size() / 100d;
         for(int i=0;i<files.size();i++)
         {

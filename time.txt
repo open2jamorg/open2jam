@@ -1,0 +1,44 @@
+
+
+time based judgment plan.
+
+basically, each note is assigned the time when it should pass the red line, 
+and the engine will draw the notes on the screen based on the difference between 
+the note time and the current time.
+
+on the buffer:
+    bpm:
+        buffer_bpm = bpm
+
+    measure:
+        buffer_timer += ( 240/buffer_bpm * (1-buffer_measure_pointer) )
+        buffer_measure_pointer = 0
+
+    note:
+        buffer_timer += ( 240/buffer_bpm * (note_position-buffer_measure_pointer) )
+        buffer_measure_pointer = note_position
+        note_time = buffer_timer
+
+
+with the time the note will pass the red line, we can calculate the current distance of a note
+from the line by integrating the velocity over the time between the note timer and the current time.
+To do that, we use the Riemann method[1], which ends up without error, because the note_speeds are constants
+over the time (i.e. there's no acceleration).
+
+on the renderer:
+    note:
+	interval = [ current_time, note_timer ]
+	for each note speed change in interval:
+		sum_of_speed_pieces += note_speed * time_interval
+
+        screen_pos = viewport - sum_of_speed_pieces
+
+---------------------------------------
+
+on a related note, this would allow us to use a time based judgment.
+
+the only obvious problem I see is that o2jam definitely doesn't use time judgment
+and this would create differences in some cases,(e.g. zl), but most people would say
+that's a flaw in o2jam, so I'm not sure this is a problem at all.
+
+(1) http://en.wikipedia.org/wiki/Riemann_integral

@@ -25,12 +25,14 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableRowSorter;
 
 import org.open2jam.parser.Chart;
-import org.open2jam.render.Render;
+import org.open2jam.render.BeatmaniaRender;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.parser.ChartList;
+import org.open2jam.render.O2jamRender;
+import org.open2jam.render.Render;
 /**
  *
  * @author fox
@@ -49,7 +51,7 @@ public class NewInterface extends javax.swing.JFrame
     private ChartList selected_chart;
     private Chart selected_header;
     private int last_model_idx;
-    private final TableRowSorter table_sorter;
+    private final TableRowSorter<ChartListTableModel> table_sorter;
 
     javax.swing.ListSelectionModel chartLM;
 
@@ -59,7 +61,8 @@ public class NewInterface extends javax.swing.JFrame
         initComponents();
         this.setLocationRelativeTo(null);
         load_progress.setVisible(false);
-        table_sorter = (TableRowSorter) table_songlist.getRowSorter();
+        table_sorter = new TableRowSorter<ChartListTableModel>(model_songlist);
+        table_songlist.setRowSorter(table_sorter);
         txt_filter.getDocument().addDocumentListener(new DocumentListener() {
 
             public void insertUpdate(DocumentEvent e) {updateFilter();}
@@ -133,6 +136,7 @@ public class NewInterface extends javax.swing.JFrame
         lbl_filename = new javax.swing.JLabel();
         table_scroll2 = new javax.swing.JScrollPane();
         table_chartlist = new javax.swing.JTable();
+        jc_timed_judgment = new javax.swing.JCheckBox();
         panel_setting = new javax.swing.JPanel();
         jr_rank_hard = new javax.swing.JRadioButton();
         combo_displays = new javax.swing.JComboBox();
@@ -234,6 +238,9 @@ public class NewInterface extends javax.swing.JFrame
         table_chartlist.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         table_scroll2.setViewportView(table_chartlist);
 
+        jc_timed_judgment.setSelected(true);
+        jc_timed_judgment.setText("Use timed judment");
+
         javax.swing.GroupLayout panel_infoLayout = new javax.swing.GroupLayout(panel_info);
         panel_info.setLayout(panel_infoLayout);
         panel_infoLayout.setHorizontalGroup(
@@ -266,14 +273,17 @@ public class NewInterface extends javax.swing.JFrame
                     .addComponent(lbl_artist, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE)
                     .addGroup(panel_infoLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(panel_infoLayout.createSequentialGroup()
                                 .addComponent(lbl_channelModifier)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(combo_channelModifier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(lbl_visibilityModifier))
-                            .addComponent(jc_autoplay))
+                            .addGroup(panel_infoLayout.createSequentialGroup()
+                                .addComponent(jc_timed_judgment)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jc_autoplay)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(bt_play)
@@ -326,7 +336,8 @@ public class NewInterface extends javax.swing.JFrame
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jc_autoplay)
-                    .addComponent(bt_play)))
+                    .addComponent(bt_play)
+                    .addComponent(jc_timed_judgment)))
         );
 
         rank_group.add(jr_rank_hard);
@@ -647,6 +658,8 @@ public class NewInterface extends javax.swing.JFrame
 
 	    final boolean autoplay = jc_autoplay.isSelected();
 
+            final boolean judgment = jc_timed_judgment.isSelected();
+
 	    final int channelModifier = combo_channelModifier.getSelectedIndex();
             final int visibilityModifier = combo_visibilityModifier.getSelectedIndex();
 
@@ -656,14 +669,22 @@ public class NewInterface extends javax.swing.JFrame
                         + "Do you want to play it in windowed mode?";
                 if(JOptionPane.showConfirmDialog(this, str, "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE) == JOptionPane.YES_OPTION)
                 {
-                    Render r = new Render(selected_header, hispeed, autoplay, channelModifier, visibilityModifier);
+                    Render r = null;
+                    if(judgment)
+                        r = new BeatmaniaRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier);
+                    else
+                        r = new O2jamRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier);
                     r.setDisplay(dm, vsync, false);
                     r.startRendering();
                 }
             }
             else
             {
-                Render r = new Render(selected_header, hispeed, autoplay, channelModifier, visibilityModifier);
+                Render r = null;
+                if(judgment)
+                    r = new BeatmaniaRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier);
+                else
+                    r = new O2jamRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier);
                 r.setDisplay(dm, vsync, fs);
                 r.startRendering();
             }
@@ -702,6 +723,7 @@ public class NewInterface extends javax.swing.JFrame
     private javax.swing.JCheckBox jc_autoplay;
     private javax.swing.JCheckBox jc_custom_size;
     private javax.swing.JCheckBox jc_full_screen;
+    private javax.swing.JCheckBox jc_timed_judgment;
     private javax.swing.JCheckBox jc_vsync;
     private javax.swing.JRadioButton jr_rank_easy;
     private javax.swing.JRadioButton jr_rank_hard;

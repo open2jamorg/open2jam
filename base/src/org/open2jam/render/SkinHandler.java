@@ -29,7 +29,7 @@ public class SkinHandler extends DefaultHandler
     static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private enum Keyword {
-        Resources, skin, spriteset, sprite, frame, layer, entity, judgment, type;
+        Resources, skin, spriteset, sprite, frame, layer, entity;
     }
 
     ArrayDeque<Keyword> call_stack;
@@ -44,7 +44,6 @@ public class SkinHandler extends DefaultHandler
 
     private static String FILE_PATH_PREFIX = "/resources/";
 
-    protected Render render;
     protected String target_skin;
     protected boolean on_skin = false;
     protected int auto_draw_id = 0;
@@ -55,9 +54,8 @@ public class SkinHandler extends DefaultHandler
     protected final double targetH;
 
 
-    public SkinHandler(Render r, String skin, double width, double height)
+    public SkinHandler(String skin, double width, double height)
     {
-        this.render = r;
         this.target_skin = skin;
 	this.targetW = width;
 	this.targetH = height;
@@ -85,6 +83,7 @@ public class SkinHandler extends DefaultHandler
                 if(atts_map.get("name").equals(target_skin))on_skin = true;
 		if(atts_map.containsKey("width"))this.baseW = Double.parseDouble(atts_map.get("width"));
 		if(atts_map.containsKey("height"))this.baseH = Double.parseDouble(atts_map.get("height"));
+                result.judgment_line = Integer.parseInt(atts_map.get("judgment_line"));
 
 		result.screen_scale_x = (float) (this.targetW/this.baseW);
 		result.screen_scale_y = (float) (this.targetH/this.baseH);
@@ -218,19 +217,6 @@ public class SkinHandler extends DefaultHandler
             else result.getEntityList().add(e);
             
             }break;
-
-            case type:{
-                String name = atts.get("id");
-                Double hit = Double.parseDouble(atts.get("hit"));
-                result.judgment.score_map.put(hit, name);
-            }break;
-
-            case judgment:{
-                result.judgment.start = Integer.parseInt(atts.get("start"));
-                result.judgment.size = Integer.parseInt(atts.get("size"));
-
-                result.judgment.combo_threshold = Double.parseDouble(atts.get("combo_threshold"));
-            }break;
         }
     }
 
@@ -254,14 +240,14 @@ public class SkinHandler extends DefaultHandler
             int x = 0;
             if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x"));
 
-            e = new LongNoteEntity(render, head, body, Event.Channel.valueOf(id), x, 0);
+            e = new LongNoteEntity(head, body, Event.Channel.valueOf(id), x, 0);
             e.setLayer(layer);
             result.getEntityMap().put("LONG_"+id, e);
-            e = new NoteEntity(render, head, Event.Channel.valueOf(id), x, 0);
+            e = new NoteEntity(head, Event.Channel.valueOf(id), x, 0);
         }
         else if(id.equals("MEASURE_MARK")){
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
-            e = new MeasureEntity(render, s, 0, 0);
+            e = new MeasureEntity(s, 0, 0);
         }
         else if(id.startsWith("EFFECT_JUDGMENT_")){
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
@@ -289,6 +275,14 @@ public class SkinHandler extends DefaultHandler
             }
             e = new NumberEntity(list, 0, 0);
         }
+	else if(id.equals("COUNTER_JUDGMENT_PERFECT")){
+            ArrayList<Entity> list = new ArrayList<Entity>();
+            for(String s : atts.get("sprite").split(",")){
+                s = s.trim();
+                list.add( new Entity(sprite_buffer.get(s),0,0));
+            }
+	    e = new NumberEntity(list, 0, 0);
+	}
 	else if(id.equals("COUNTER_JUDGMENT_COOL")){
             ArrayList<Entity> list = new ArrayList<Entity>();
             for(String s : atts.get("sprite").split(",")){

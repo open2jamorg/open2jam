@@ -157,7 +157,7 @@
                       <Component id="lbl_artist" alignment="1" pref="415" max="32767" attributes="0"/>
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="1" attributes="0">
+                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
                                   <Component id="lbl_channelModifier" min="-2" max="-2" attributes="1"/>
                                   <EmptySpace max="-2" attributes="0"/>
@@ -165,7 +165,11 @@
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Component id="lbl_visibilityModifier" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <Component id="jc_autoplay" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Group type="102" alignment="1" attributes="1">
+                                  <Component id="jc_timed_judgment" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
+                                  <Component id="jc_autoplay" min="-2" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
@@ -234,6 +238,7 @@
                   <Group type="103" groupAlignment="2" attributes="0">
                       <Component id="jc_autoplay" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="bt_play" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="jc_timed_judgment" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -417,6 +422,12 @@
             </Component>
           </SubComponents>
         </Container>
+        <Component class="javax.swing.JCheckBox" name="jc_timed_judgment">
+          <Properties>
+            <Property name="selected" type="boolean" value="true"/>
+            <Property name="text" type="java.lang.String" value="Use timed judment"/>
+          </Properties>
+        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="panel_setting">

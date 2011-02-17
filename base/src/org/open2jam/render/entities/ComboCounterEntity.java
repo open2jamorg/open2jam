@@ -27,6 +27,8 @@ public class ComboCounterEntity extends NumberEntity
      * won't be draw on screen if it's zero */
     protected int to_show = 0;
 
+    protected int count_threshold = 0;
+
     public ComboCounterEntity(Collection<Entity> list, double x, double y)
     {
         super(list,x,y);
@@ -63,6 +65,11 @@ public class ComboCounterEntity extends NumberEntity
         to_show = show_time;
     }
 
+    public void setThreshold(int i)
+    {
+        count_threshold = i;
+    }
+
     @Override
     public void move(long delta)
     {
@@ -74,14 +81,14 @@ public class ComboCounterEntity extends NumberEntity
     @Override
     public void draw()
     {
-        if(to_show < 0 || number < 2)return;
+        if(to_show < 0 || number < count_threshold)return;
 	/* In O2Jam, a combo is simply the number of consecutive cools or goods hit by the player
 	 * For example, for the first note, there is no combo, for the second, there is 1 combo, and so on.
 	 * http://o2jam.wikia.com/wiki/Combo
 	 *
 	 * Maybe this is not the best place to do this ·-·
 	 */
-        char[] chars = String.valueOf(number-1).toCharArray();
+        char[] chars = String.valueOf(number-(count_threshold > 0 ? count_threshold-1 : 0)).toCharArray();
         x = 0;
         for(char c : chars){
              int i = Integer.parseInt(c+"");
