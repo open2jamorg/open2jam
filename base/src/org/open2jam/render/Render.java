@@ -447,6 +447,7 @@ public abstract class Render implements GameWindowCallback
             if(note_channels.get(c).isEmpty())return null;
             ne = note_channels.get(c).getFirst();
         }
+        if(ne != null)last_sound.put(c, ne.getSample());
         return ne;
     }
     
