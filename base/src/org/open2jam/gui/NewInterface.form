@@ -426,6 +426,7 @@
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Use timed judment"/>
+            <Property name="toolTipText" type="java.lang.String" value="Like Bemani games"/>
           </Properties>
         </Component>
       </SubComponents>

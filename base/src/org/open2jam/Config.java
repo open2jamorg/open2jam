@@ -37,8 +37,6 @@ public class Config implements Serializable
     private Config()
     {
         keyboard_map = new EnumMap<Event.Channel,Integer>(Event.Channel.class);
-	keyboard_map.put(Event.Channel.NONE, KeyEvent.VK_UP);
-	keyboard_map.put(Event.Channel.NONE, KeyEvent.VK_DOWN);
         keyboard_map.put(Event.Channel.NOTE_1, KeyEvent.VK_S);
         keyboard_map.put(Event.Channel.NOTE_2, KeyEvent.VK_D);
         keyboard_map.put(Event.Channel.NOTE_3, KeyEvent.VK_F);
@@ -51,6 +49,10 @@ public class Config implements Serializable
 
     public EnumMap<Event.Channel,Integer> getKeyboardMap(){
         return keyboard_map;
+    }
+
+    public void setKeyboardMap(EnumMap<Event.Channel,Integer> kb_map){
+        this.keyboard_map = kb_map;
     }
 
     public void save()

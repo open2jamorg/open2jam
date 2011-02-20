@@ -11,18 +11,41 @@
 
 package org.open2jam.gui;
 
+import java.awt.event.KeyEvent;
+import java.util.EnumMap;
+import java.util.Map;
+import org.open2jam.Config;
+import org.open2jam.parser.Event;
+
+
 /**
  *
  * @author Administrador
  */
 public class Configuration extends javax.swing.JFrame {
 
+    static EnumMap<Event.Channel,Integer> kb_map = Config.get().getKeyboardMap();
+
     /** Creates new form configuration */
     public Configuration() {
         initComponents();
-
+        //TODO load config
+        loadConfig();
 	this.setLocationRelativeTo(null);
     }
+
+    private void loadConfig()
+    {
+        kb_map = Config.get().getKeyboardMap();
+        int i = 0;
+        for(Map.Entry<Event.Channel,Integer> entry : kb_map.entrySet())
+        {
+            tKeys.setValueAt(entry.getKey().toString(), i, 0);
+            tKeys.setValueAt(KeyEventListener.translateKeyEvent(entry.getValue()), i, 1);
+            i++;
+        }
+    }
+
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -34,19 +57,15 @@ public class Configuration extends javax.swing.JFrame {
     private void initComponents() {
 
         panel_folders = new javax.swing.JPanel();
-        tFolders_scroll = new javax.swing.JScrollPane();
-        tFolders = new javax.swing.JTable();
         bAddFolder = new javax.swing.JButton();
-        panel_keys = new javax.swing.JPanel();
         bSave = new javax.swing.JButton();
         bCancel = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
+        tKeys_scroll = new javax.swing.JScrollPane();
+        tKeys = new javax.swing.JTable();
 
         setTitle("Configuration");
         setResizable(false);
-
-        tFolders.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        tFolders_scroll.setViewportView(tFolders);
 
         bAddFolder.setText("Add Folder");
 
@@ -55,33 +74,19 @@ public class Configuration extends javax.swing.JFrame {
         panel_foldersLayout.setHorizontalGroup(
             panel_foldersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel_foldersLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panel_foldersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tFolders_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 623, Short.MAX_VALUE)
-                    .addComponent(bAddFolder, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap(548, Short.MAX_VALUE)
+                .addComponent(bAddFolder)
                 .addContainerGap())
         );
         panel_foldersLayout.setVerticalGroup(
             panel_foldersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel_foldersLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(tFolders_scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(164, 164, 164)
                 .addComponent(bAddFolder)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout panel_keysLayout = new javax.swing.GroupLayout(panel_keys);
-        panel_keys.setLayout(panel_keysLayout);
-        panel_keysLayout.setHorizontalGroup(
-            panel_keysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 643, Short.MAX_VALUE)
-        );
-        panel_keysLayout.setVerticalGroup(
-            panel_keysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 170, Short.MAX_VALUE)
-        );
-
+        bSave.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         bSave.setText("Save");
         bSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -96,6 +101,59 @@ public class Configuration extends javax.swing.JFrame {
             }
         });
 
+        tKeys.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Key", "Assign"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tKeys.setColumnSelectionAllowed(true);
+        tKeys.getTableHeader().setReorderingAllowed(false);
+        tKeys.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tKeysMouseClicked(evt);
+            }
+        });
+        tKeys_scroll.setViewportView(tKeys);
+        tKeys.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -103,13 +161,13 @@ public class Configuration extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(tKeys_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 643, Short.MAX_VALUE)
                     .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 643, Short.MAX_VALUE)
                     .addComponent(panel_folders, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(bCancel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(bSave))
-                    .addComponent(panel_keys, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(bSave)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(bCancel)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -120,11 +178,11 @@ public class Configuration extends javax.swing.JFrame {
                 .addGap(15, 15, 15)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panel_keys, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                .addComponent(tKeys_scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bSave)
-                    .addComponent(bCancel))
+                    .addComponent(bCancel)
+                    .addComponent(bSave))
                 .addContainerGap())
         );
 
@@ -132,24 +190,44 @@ public class Configuration extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCancelActionPerformed
-	this.setVisible(false);
+        loadConfig();
+        this.setVisible(false);
     }//GEN-LAST:event_bCancelActionPerformed
 
     private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
-	// save
+	//TODO save
+        Config.get().setKeyboardMap(kb_map);
+        Config.get().save();
+        loadConfig();
 	this.setVisible(false);
     }//GEN-LAST:event_bSaveActionPerformed
 
+    private void tKeysMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tKeysMouseClicked
+        int row = tKeys.getSelectedRow();
+        if(tKeys.getValueAt(row, 0) == null) return;
+        KeyEventListener ke = new KeyEventListener(row);
+        ke.setVisible(true);
+    }//GEN-LAST:event_tKeysMouseClicked
+
+    protected static String getTableValue(int row, int col)
+    {
+        return tKeys.getValueAt(row, col) == null ? "NONE?!?!?!" : tKeys.getValueAt(row, col).toString();
+    }
+
+    protected static void setTableValue(KeyEvent value, int row, int col)
+    {
+        tKeys.setValueAt(KeyEventListener.translateKeyEvent(value), row, col);
+        kb_map.put(Event.Channel.valueOf((String) tKeys.getValueAt(row, 0)), value.getKeyCode());
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton bAddFolder;
-    private javax.swing.JButton bCancel;
-    private javax.swing.JButton bSave;
-    private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JPanel panel_folders;
-    private javax.swing.JPanel panel_keys;
-    private javax.swing.JTable tFolders;
-    private javax.swing.JScrollPane tFolders_scroll;
+    private static javax.swing.JButton bAddFolder;
+    private static javax.swing.JButton bCancel;
+    private static javax.swing.JButton bSave;
+    private static javax.swing.JSeparator jSeparator1;
+    private static javax.swing.JPanel panel_folders;
+    private static javax.swing.JTable tKeys;
+    private static javax.swing.JScrollPane tKeys_scroll;
     // End of variables declaration//GEN-END:variables
 
 }
