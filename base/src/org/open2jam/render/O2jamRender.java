@@ -202,7 +202,6 @@ public class O2jamRender extends Render
                     combo_entity.resetNumber();
                     ne.setState(NoteEntity.State.TO_KILL);
                 }
-                last_sound.put(ne.getChannel(), ne.getSample());
             break;
             case LN_HEAD_JUDGE: //LN: Head has been played
                 judge = ratePrecision(ne.getHit());
@@ -236,7 +235,6 @@ public class O2jamRender extends Render
                     }
                     ne.setState(NoteEntity.State.LN_HOLD);
                 }
-                last_sound.put(ne.getChannel(), ne.getSample());
             break;
             case LN_HOLD:    // You keept too much time the note held that it misses
                 if(ne.isAlive() && ne.getY() >= judgmentArea())
@@ -277,7 +275,7 @@ public class O2jamRender extends Render
             case COOL:
                 jambar_entity.addNumber(2);
                 consecutive_cools++;
-                if(lifebar_entity.getNumber() <= lifebar_entity.getLimit())lifebar_entity.addNumber(10);
+                if(lifebar_entity.getNumber() <= lifebar_entity.getLimit())lifebar_entity.addNumber(2);
 
                 score_value = 200 + (jamcombo_entity.getNumber()*10);
             break;
@@ -285,7 +283,7 @@ public class O2jamRender extends Render
             case GOOD:
                 jambar_entity.addNumber(1);
                 consecutive_cools = 0;
-                if(lifebar_entity.getNumber() <= lifebar_entity.getLimit())lifebar_entity.addNumber(5);
+                //if(lifebar_entity.getNumber() <= lifebar_entity.getLimit())lifebar_entity.addNumber(5);
 
                  score_value = 100;
             break;

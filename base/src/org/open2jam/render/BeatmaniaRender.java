@@ -50,11 +50,14 @@ public class BeatmaniaRender extends Render
     {
         super.initialise();
         note_counter = new EnumMap<JUDGE,NumberEntity>(JUDGE.class);
-        for(JUDGE s : JUDGE.values()){
+
+        //TODO: find place to put the perfect counter first
+        for(JUDGE s : new JUDGE[]{JUDGE.MISS,JUDGE.BAD,JUDGE.GOOD,JUDGE.COOL}){
             NumberEntity e = (NumberEntity)skin.getEntityMap().get("COUNTER_"+s.toString()).copy();
             note_counter.put(s, e);
 	    entities_matrix.add(note_counter.get(s));
         }
+        note_counter.put(JUDGE.PERFECT, note_counter.get(JUDGE.COOL));
         start_time = lastLoopTime = SystemTimer.getTime();
     }
     
@@ -113,7 +116,8 @@ public class BeatmaniaRender extends Render
                 if(e instanceof TimeEntity)
                 {
                     TimeEntity te = (TimeEntity) e;
-                    double y = getViewport() - velocity_integral(now,te.getTime());
+                    // TODO: this is supposed to be skin.judgment_line, but I just notice that's fuck up too, so I need to fix there before
+                    double y = getViewport()-7 - velocity_integral(now,te.getTime());
                     if(te.getTime() - now <= 0)
                     {
                         e.judgment();
@@ -197,7 +201,6 @@ public class BeatmaniaRender extends Render
                     combo_entity.resetNumber();
                     ne.setState(NoteEntity.State.TO_KILL);
                 }
-                last_sound.put(ne.getChannel(), ne.getSample());
             break;
             case LN_HEAD_JUDGE: //LN: Head has been played
                 judge = ratePrecision((long)ne.getHit());
@@ -230,7 +233,6 @@ public class BeatmaniaRender extends Render
                     }
                     ne.setState(NoteEntity.State.LN_HOLD);
                 }
-                last_sound.put(ne.getChannel(), ne.getSample());
             break;
             case LN_HOLD:    // You keept too much time the note held that it misses
                 if(ne.isAlive() && ne.getY() >= judgmentArea()) // TODO: use the time
@@ -273,7 +275,7 @@ public class BeatmaniaRender extends Render
             case COOL:
                 jambar_entity.addNumber(2);
                 consecutive_cools++;
-                if(lifebar_entity.getNumber() <= lifebar_entity.getLimit())lifebar_entity.addNumber(10);
+                if(lifebar_entity.getNumber() <= lifebar_entity.getLimit())lifebar_entity.addNumber(2);
 
                 score_value = 200 + (jamcombo_entity.getNumber()*10);
             break;
@@ -281,7 +283,7 @@ public class BeatmaniaRender extends Render
             case GOOD:
                 jambar_entity.addNumber(1);
                 consecutive_cools = 0;
-                if(lifebar_entity.getNumber() <= lifebar_entity.getLimit())lifebar_entity.addNumber(5);
+                //if(lifebar_entity.getNumber() <= lifebar_entity.getLimit())lifebar_entity.addNumber(5);
 
                  score_value = 100;
             break;
