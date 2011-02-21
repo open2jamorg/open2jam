@@ -26,18 +26,6 @@ public class OJNParser
     public static boolean canRead(File file)
     {
         return file.getName().toLowerCase().endsWith(".ojn");
-//        if(file.isDirectory())return false;
-//        try{
-//            RandomAccessFile f = new RandomAccessFile(file.getAbsolutePath(),"r");
-//            ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 4, 8);
-//            buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
-//            int signature = buffer.getInt();
-//            f.close();
-//            return (signature == OJN_SIGNATURE);
-//        }catch(IOException e){
-//            Util.log(e);
-//        }
-//        return false;
     }
 
     public static ChartList parseFile(File file)
@@ -207,13 +195,13 @@ public class OJNParser
             {
                 case 0:channel = Event.Channel.TIME_SIGNATURE;break;
                 case 1:channel = Event.Channel.BPM_CHANGE;break;
-                case 2:channel = Event.Channel.NOTE_1;break;
-                case 3:channel = Event.Channel.NOTE_2;break;
-                case 4:channel = Event.Channel.NOTE_3;break;
-                case 5:channel = Event.Channel.NOTE_4;break;
-                case 6:channel = Event.Channel.NOTE_5;break;
-                case 7:channel = Event.Channel.NOTE_6;break;
-                case 8:channel = Event.Channel.NOTE_7;break;
+                case 2:channel = Event.Channel.NOTE_P1_1;break;
+                case 3:channel = Event.Channel.NOTE_P1_2;break;
+                case 4:channel = Event.Channel.NOTE_P1_3;break;
+                case 5:channel = Event.Channel.NOTE_P1_4;break;
+                case 6:channel = Event.Channel.NOTE_P1_5;break;
+                case 7:channel = Event.Channel.NOTE_P1_6;break;
+                case 8:channel = Event.Channel.NOTE_P1_7;break;
                 default:
                 channel = Event.Channel.AUTO_PLAY;
             }

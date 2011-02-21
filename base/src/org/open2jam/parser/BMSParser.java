@@ -285,35 +285,35 @@ public class BMSParser
                         break;
                     case 11:
                     case 51:
-                        ec = Event.Channel.NOTE_1;
+                        ec = Event.Channel.NOTE_P1_1;
                         break;
                     case 12:
                     case 52:
-                        ec = Event.Channel.NOTE_2;
+                        ec = Event.Channel.NOTE_P1_2;
                         break;
                     case 13:
                     case 53:
-                        ec = Event.Channel.NOTE_3;
+                        ec = Event.Channel.NOTE_P1_3;
                         break;
                     case 14:
                     case 54:
-                        ec = Event.Channel.NOTE_4;
+                        ec = Event.Channel.NOTE_P1_4;
                         break;
                     case 15:
                     case 55:
-                        ec = Event.Channel.NOTE_5;
+                        ec = Event.Channel.NOTE_P1_5;
                         break;
                     case 18:
                     case 58:
-                        ec = Event.Channel.NOTE_6;
+                        ec = Event.Channel.NOTE_P1_6;
                         break;
                     case 19:
                     case 59:
-                        ec = Event.Channel.NOTE_7;
+                        ec = Event.Channel.NOTE_P1_7;
                         break;
                     case 16:
                     case 56:
-                        ec = Event.Channel.NOTE_SC;
+                        ec = Event.Channel.NOTE_P1_SC;
                         break;
                     default:
                         continue;

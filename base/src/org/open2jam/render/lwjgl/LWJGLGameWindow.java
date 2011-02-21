@@ -59,6 +59,7 @@ public class LWJGLGameWindow implements GameWindow {
             key_map.put(KeyEvent.VK_J, Keyboard.KEY_J);
             key_map.put(KeyEvent.VK_K, Keyboard.KEY_K);
             key_map.put(KeyEvent.VK_L, Keyboard.KEY_L);
+            key_map.put(KeyEvent.VK_CONTROL, Keyboard.KEY_LCONTROL);
             key_map.put(KeyEvent.VK_ESCAPE, Keyboard.KEY_ESCAPE);
             key_map.put(KeyEvent.VK_UP, Keyboard.KEY_UP);
             key_map.put(KeyEvent.VK_DOWN, Keyboard.KEY_DOWN);

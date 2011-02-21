@@ -316,7 +316,7 @@ public abstract class Render implements GameWindowCallback
         bpm = chart.getBPM();
         buffer_bpm = chart.getBPM();
 
-        note_layer = skin.getEntityMap().get("NOTE_1").getLayer();
+        note_layer = skin.getEntityMap().get("NOTE_P1_1").getLayer();
 
         // adding static entities
         for(Entity e : skin.getEntityList()){
@@ -497,9 +497,9 @@ public abstract class Render implements GameWindowCallback
                 buffer_bpm = e.getValue();
                 break;
 
-                case NOTE_1:case NOTE_2:
-                case NOTE_3:case NOTE_4:
-                case NOTE_5:case NOTE_6:case NOTE_7:
+                case NOTE_P1_1:case NOTE_P1_2:
+                case NOTE_P1_3:case NOTE_P1_4:
+                case NOTE_P1_5:case NOTE_P1_6:case NOTE_P1_7:
                 if(e.getFlag() == Event.Flag.NONE){
                     NoteEntity n = (NoteEntity) skin.getEntityMap().get(e.getChannel().toString()).copy();
                     n.setTime(buffer_timer);
@@ -524,9 +524,14 @@ public abstract class Render implements GameWindowCallback
                     }
                 }
                 break;
+                //TODO ADD SUPPORT
+                case NOTE_P1_SC:
+                case NOTE_P2_1:case NOTE_P2_2:
+                case NOTE_P2_3:case NOTE_P2_4:
+                case NOTE_P2_5:case NOTE_P2_6:case NOTE_P2_7:
+                case NOTE_P2_SC:
 
                 case AUTO_PLAY:
-                case NOTE_SC:
                 SampleEntity s = new SampleEntity(this,e.getSample(),0);
                 s.setTime(buffer_timer);
                 entities_matrix.add(s);
@@ -616,7 +621,7 @@ public abstract class Render implements GameWindowCallback
 
      /**
      * This function will mirrorize the notes
-     *
+     * TODO ADD P2 SUPPORT
      * @param buffer
      */
     public void channelMirror(Iterator<Event> buffer)
@@ -626,32 +631,32 @@ public abstract class Render implements GameWindowCallback
 	    Event e = buffer.next();
 	    switch(e.getChannel())
 	    {
-		case NOTE_1: e.setChannel(Event.Channel.NOTE_7); break;
-		case NOTE_2: e.setChannel(Event.Channel.NOTE_6); break;
-		case NOTE_3: e.setChannel(Event.Channel.NOTE_5); break;
-		case NOTE_5: e.setChannel(Event.Channel.NOTE_3); break;
-		case NOTE_6: e.setChannel(Event.Channel.NOTE_2); break;
-		case NOTE_7: e.setChannel(Event.Channel.NOTE_1); break;
+		case NOTE_P1_1: e.setChannel(Event.Channel.NOTE_P1_7); break;
+		case NOTE_P1_2: e.setChannel(Event.Channel.NOTE_P1_6); break;
+		case NOTE_P1_3: e.setChannel(Event.Channel.NOTE_P1_5); break;
+		case NOTE_P1_5: e.setChannel(Event.Channel.NOTE_P1_3); break;
+		case NOTE_P1_6: e.setChannel(Event.Channel.NOTE_P1_2); break;
+		case NOTE_P1_7: e.setChannel(Event.Channel.NOTE_P1_1); break;
 	    }
 	}
     }
 
     /**
      * This function will shuffle the note lanes
-     *
+     * TODO ADD P2 SUPPORT
      * @param buffer
      */
     public void channelShuffle(Iterator<Event> buffer)
     {
 	List<Event.Channel> channelSwap = new LinkedList<Event.Channel>();
 
-	channelSwap.add(Event.Channel.NOTE_1);
-	channelSwap.add(Event.Channel.NOTE_2);
-	channelSwap.add(Event.Channel.NOTE_3);
-	channelSwap.add(Event.Channel.NOTE_4);
-	channelSwap.add(Event.Channel.NOTE_5);
-	channelSwap.add(Event.Channel.NOTE_6);
-	channelSwap.add(Event.Channel.NOTE_7);
+	channelSwap.add(Event.Channel.NOTE_P1_1);
+	channelSwap.add(Event.Channel.NOTE_P1_2);
+	channelSwap.add(Event.Channel.NOTE_P1_3);
+	channelSwap.add(Event.Channel.NOTE_P1_4);
+	channelSwap.add(Event.Channel.NOTE_P1_5);
+	channelSwap.add(Event.Channel.NOTE_P1_6);
+	channelSwap.add(Event.Channel.NOTE_P1_7);
 
 	Collections.shuffle(channelSwap);
 
@@ -660,13 +665,13 @@ public abstract class Render implements GameWindowCallback
 	    Event e = buffer.next();
 	    switch(e.getChannel())
 	    {
-		case NOTE_1: e.setChannel(channelSwap.get(0)); break;
-		case NOTE_2: e.setChannel(channelSwap.get(1)); break;
-		case NOTE_3: e.setChannel(channelSwap.get(2)); break;
-		case NOTE_4: e.setChannel(channelSwap.get(3)); break;
-		case NOTE_5: e.setChannel(channelSwap.get(4)); break;
-		case NOTE_6: e.setChannel(channelSwap.get(5)); break;
-		case NOTE_7: e.setChannel(channelSwap.get(6)); break;
+		case NOTE_P1_1: e.setChannel(channelSwap.get(0)); break;
+		case NOTE_P1_2: e.setChannel(channelSwap.get(1)); break;
+		case NOTE_P1_3: e.setChannel(channelSwap.get(2)); break;
+		case NOTE_P1_4: e.setChannel(channelSwap.get(3)); break;
+		case NOTE_P1_5: e.setChannel(channelSwap.get(4)); break;
+		case NOTE_P1_6: e.setChannel(channelSwap.get(5)); break;
+		case NOTE_P1_7: e.setChannel(channelSwap.get(6)); break;
 	    }
 	}
     }
@@ -676,7 +681,7 @@ public abstract class Render implements GameWindowCallback
      *
      * TODO:
      * * Don't overlap the notes
-     *
+     * * ADD P2 SUPPORT
      * @param buffer
      */
     public void channelRandom(Iterator<Event> buffer)
@@ -685,13 +690,13 @@ public abstract class Render implements GameWindowCallback
 
 	List<Event.Channel> channelSwap = new LinkedList<Event.Channel>();
 
-	channelSwap.add(Event.Channel.NOTE_1);
-	channelSwap.add(Event.Channel.NOTE_2);
-	channelSwap.add(Event.Channel.NOTE_3);
-	channelSwap.add(Event.Channel.NOTE_4);
-	channelSwap.add(Event.Channel.NOTE_5);
-	channelSwap.add(Event.Channel.NOTE_6);
-	channelSwap.add(Event.Channel.NOTE_7);
+	channelSwap.add(Event.Channel.NOTE_P1_1);
+	channelSwap.add(Event.Channel.NOTE_P1_2);
+	channelSwap.add(Event.Channel.NOTE_P1_3);
+	channelSwap.add(Event.Channel.NOTE_P1_4);
+	channelSwap.add(Event.Channel.NOTE_P1_5);
+	channelSwap.add(Event.Channel.NOTE_P1_6);
+	channelSwap.add(Event.Channel.NOTE_P1_7);
 
 	Collections.shuffle(channelSwap);
 
@@ -701,9 +706,9 @@ public abstract class Render implements GameWindowCallback
 
 	    switch(e.getChannel())
 	    {
-		    case NOTE_1:case NOTE_2:
-		    case NOTE_3:case NOTE_4:
-		    case NOTE_5:case NOTE_6:case NOTE_7:
+		    case NOTE_P1_1:case NOTE_P1_2:
+		    case NOTE_P1_3:case NOTE_P1_4:
+		    case NOTE_P1_5:case NOTE_P1_6:case NOTE_P1_7:
 
 			Event.Channel chan = e.getChannel();
 

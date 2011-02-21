@@ -24,7 +24,7 @@ import org.open2jam.parser.Event;
  */
 public class Configuration extends javax.swing.JFrame {
 
-    static EnumMap<Event.Channel,Integer> kb_map = Config.get().getKeyboardMap();
+    static EnumMap<Event.Channel,Integer> kb_map = Config.get().getKeyboardMap().clone();
 
     /** Creates new form configuration */
     public Configuration() {
@@ -36,7 +36,7 @@ public class Configuration extends javax.swing.JFrame {
 
     private void loadConfig()
     {
-        kb_map = Config.get().getKeyboardMap();
+        kb_map = Config.get().getKeyboardMap().clone();
         int i = 0;
         for(Map.Entry<Event.Channel,Integer> entry : kb_map.entrySet())
         {

@@ -29,7 +29,7 @@ public class SkinHandler extends DefaultHandler
     static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private enum Keyword {
-        Resources, skin, spriteset, sprite, frame, layer, entity;
+        Resources, skin, spriteset, styles, style, sprite, frame, layer, entity;
     }
 
     ArrayDeque<Keyword> call_stack;

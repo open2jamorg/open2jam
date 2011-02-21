@@ -228,7 +228,7 @@ public class KeyEventListener extends javax.swing.JFrame implements KeyListener 
         keyString = KeyEvent.getKeyText(i);
 
         String locationS = "KBD::";
-//        int location = 0;
+//        int location = KeyEvent.getKeyLocation();
 //
 //        if (location == KeyEvent.KEY_LOCATION_LEFT) {
 //            locationS += "LEFT_";
