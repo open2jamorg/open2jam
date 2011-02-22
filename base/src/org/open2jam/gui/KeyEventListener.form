@@ -75,8 +75,8 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="lbl_newassign1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="txt_newassign" min="-2" pref="181" max="-2" attributes="0"/>
-                      <EmptySpace pref="79" max="32767" attributes="0"/>
+                      <Component id="txt_newassign" pref="250" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
           </Group>

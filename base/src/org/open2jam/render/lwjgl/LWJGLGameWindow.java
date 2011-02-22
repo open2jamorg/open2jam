@@ -246,7 +246,7 @@ public class LWJGLGameWindow implements GameWindow {
 		key_map.put(KeyEvent.VK_SCROLL_LOCK, Keyboard.KEY_SCROLL);
 		key_map.put(KeyEvent.VK_SEMICOLON, Keyboard.KEY_SEMICOLON);
 		key_map.put(KeyEvent.VK_SEPARATOR, Keyboard.KEY_DECIMAL);
-//		key_map.put(KeyEvent.VK_SHIFT, Keyboard.KEY_LSHIFT); manually mapped
+		key_map.put(KeyEvent.VK_SHIFT, Keyboard.KEY_LSHIFT);                    //****manually mapped****
 		key_map.put(KeyEvent.VK_SLASH, Keyboard.KEY_SLASH);
 		key_map.put(KeyEvent.VK_SPACE, Keyboard.KEY_SPACE);
 		key_map.put(KeyEvent.VK_STOP, Keyboard.KEY_STOP);
