@@ -58,7 +58,7 @@ public abstract class Render implements GameWindowCallback
     protected static final int MAX_SOURCES = 64;
     
     /** the mapping of note channels to KeyEvent keys  */
-    protected static final EnumMap<Event.Channel, Integer> keyboard_map;
+    protected final EnumMap<Event.Channel, Integer> keyboard_map;
     
     /** The window that is being used to render the game */
     protected final GameWindow window;
@@ -180,10 +180,11 @@ public abstract class Render implements GameWindowCallback
 
     static {
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
-        keyboard_map = Config.get().getKeyboardMap();
     }
 
-    Render(Chart chart, double hispeed, boolean autoplay, int channelModifier, int visibilityModifier) {
+    Render(Chart chart, double hispeed, boolean autoplay, int channelModifier, int visibilityModifier)
+    {
+        keyboard_map = Config.get().getKeyboardMap();
         window = ResourceFactory.get().getGameWindow();
         this.chart = chart;
         this.hispeed = hispeed;

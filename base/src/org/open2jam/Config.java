@@ -1,6 +1,5 @@
 package org.open2jam;
 
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,6 +12,7 @@ import java.util.EnumMap;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.lwjgl.input.Keyboard;
 import org.open2jam.parser.Event;
 
 /**
@@ -37,14 +37,14 @@ public class Config implements Serializable
     private Config()
     {
         keyboard_map = new EnumMap<Event.Channel,Integer>(Event.Channel.class);
-        keyboard_map.put(Event.Channel.NOTE_P1_1, KeyEvent.VK_S);
-        keyboard_map.put(Event.Channel.NOTE_P1_2, KeyEvent.VK_D);
-        keyboard_map.put(Event.Channel.NOTE_P1_3, KeyEvent.VK_F);
-        keyboard_map.put(Event.Channel.NOTE_P1_4, KeyEvent.VK_SPACE);
-        keyboard_map.put(Event.Channel.NOTE_P1_5, KeyEvent.VK_J);
-        keyboard_map.put(Event.Channel.NOTE_P1_6, KeyEvent.VK_K);
-        keyboard_map.put(Event.Channel.NOTE_P1_7, KeyEvent.VK_L);
-        keyboard_map.put(Event.Channel.NOTE_P1_SC, KeyEvent.VK_SHIFT);
+        keyboard_map.put(Event.Channel.NOTE_P1_1, Keyboard.KEY_S);
+        keyboard_map.put(Event.Channel.NOTE_P1_2, Keyboard.KEY_D);
+        keyboard_map.put(Event.Channel.NOTE_P1_3, Keyboard.KEY_F);
+        keyboard_map.put(Event.Channel.NOTE_P1_4, Keyboard.KEY_SPACE);
+        keyboard_map.put(Event.Channel.NOTE_P1_5, Keyboard.KEY_J);
+        keyboard_map.put(Event.Channel.NOTE_P1_6, Keyboard.KEY_K);
+        keyboard_map.put(Event.Channel.NOTE_P1_7, Keyboard.KEY_L);
+        keyboard_map.put(Event.Channel.NOTE_P1_SC,Keyboard.KEY_LSHIFT);
     }
 
     public EnumMap<Event.Channel,Integer> getKeyboardMap(){

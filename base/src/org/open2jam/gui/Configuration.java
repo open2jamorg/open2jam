@@ -11,9 +11,13 @@
 
 package org.open2jam.gui;
 
-import java.awt.event.KeyEvent;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.Config;
 import org.open2jam.parser.Event;
 
@@ -24,15 +28,18 @@ import org.open2jam.parser.Event;
  */
 public class Configuration extends javax.swing.JFrame {
 
-    static EnumMap<Event.Channel,Integer> kb_map = Config.get().getKeyboardMap().clone();
+    EnumMap<Event.Channel,Integer> kb_map = Config.get().getKeyboardMap().clone();
+
+    HashMap<Integer, Event.Channel> table_map = new HashMap<Integer,Event.Channel>();
 
     /** Creates new form configuration */
     public Configuration() {
         initComponents();
-        //TODO load config
         loadConfig();
 	this.setLocationRelativeTo(null);
     }
+
+
 
     private void loadConfig()
     {
@@ -41,7 +48,8 @@ public class Configuration extends javax.swing.JFrame {
         for(Map.Entry<Event.Channel,Integer> entry : kb_map.entrySet())
         {
             tKeys.setValueAt(entry.getKey().toString(), i, 0);
-            tKeys.setValueAt(KeyEventListener.translateKeyEvent(entry.getValue()), i, 1);
+            tKeys.setValueAt(Keyboard.getKeyName(entry.getValue()), i, 1);
+            table_map.put(i, entry.getKey());
             i++;
         }
     }
@@ -193,33 +201,55 @@ public class Configuration extends javax.swing.JFrame {
 
     private void bCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCancelActionPerformed
         loadConfig();
-        this.setVisible(false);
+        this.dispose();
     }//GEN-LAST:event_bCancelActionPerformed
 
     private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
 	//TODO save
         Config.get().setKeyboardMap(kb_map);
         Config.get().save();
-        loadConfig();
-	this.setVisible(false);
+        loadConfig(); // EH ?
+	this.dispose();
     }//GEN-LAST:event_bSaveActionPerformed
+
 
     private void tKeysMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tKeysMouseClicked
         int row = tKeys.getSelectedRow();
         if(tKeys.getValueAt(row, 0) == null) return;
-        KeyEventListener ke = new KeyEventListener(row);
-        ke.setVisible(true);
+
+        int code = -1;
+        try {
+            code = read_keyboard_key();
+        } catch(LWJGLException e) {
+            // FML
+            return;
+        }
+
+        Event.Channel c = table_map.get(row);
+        kb_map.put(c, code);
+        tKeys.setValueAt(Keyboard.getKeyName(code), row, 1);
     }//GEN-LAST:event_tKeysMouseClicked
 
-    protected static String getTableValue(int row, int col)
+    private int read_keyboard_key() throws LWJGLException
     {
-        return tKeys.getValueAt(row, col) == null ? "NONE?!?!?!" : tKeys.getValueAt(row, col).toString();
-    }
+        if(Display.isCreated())throw new LWJGLException();
+        
+        Display.setDisplayMode(new DisplayMode(100,100));
+        Display.create();
+        Display.setLocation(-1, -1);
 
-    protected static void setTableValue(KeyEvent value, int row, int col)
-    {
-        tKeys.setValueAt(KeyEventListener.translateKeyEvent(value), row, col);
-        kb_map.put(Event.Channel.valueOf((String) tKeys.getValueAt(row, 0)), value.getKeyCode());
+        // TODO: there should be some kind of text on the display to
+        // tell the user to press a key or something
+
+        int code;
+        do{
+            Display.update();
+            Keyboard.next();
+            code = Keyboard.getEventKey();
+        }
+        while(code == Keyboard.CHAR_NONE);
+        Display.destroy();
+        return code;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
