@@ -11,6 +11,7 @@
 
 package org.open2jam.gui;
 
+import java.awt.Font;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,8 +19,10 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.GL11;
 import org.open2jam.Config;
 import org.open2jam.parser.Event;
+import org.open2jam.util.TrueTypeFont;
 
 
 /**
@@ -224,19 +227,47 @@ public class Configuration extends javax.swing.JFrame {
             // FML
             return;
         }
-
         Event.Channel c = table_map.get(row);
         kb_map.put(c, code);
         tKeys.setValueAt(Keyboard.getKeyName(code), row, 1);
     }//GEN-LAST:event_tKeysMouseClicked
 
+    private static Font font = new Font("Arial", Font.PLAIN, 12);
+    private static TrueTypeFont trueTypeFont;
+
     private int read_keyboard_key() throws LWJGLException
     {
+        String place = tKeys.getValueAt(tKeys.getSelectedRow(), 0).toString();
         if(Display.isCreated())throw new LWJGLException();
         
-        Display.setDisplayMode(new DisplayMode(100,100));
+        Display.setDisplayMode(new DisplayMode(200,50));
+        Display.setTitle("Assign a new key to "+place);
+        Display.setIcon(null);
         Display.create();
         Display.setLocation(-1, -1);
+
+            // enable textures since we're going to use these for our sprites
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+
+            // disable the OpenGL depth test since we're rendering 2D graphics
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+            // enable apha blending
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+            GL11.glMatrixMode(GL11.GL_PROJECTION);
+            GL11.glLoadIdentity();
+
+            GL11.glOrtho(0, 200, 50, 0, -1, 1);
+
+            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+            GL11.glMatrixMode(GL11.GL_MODELVIEW);
+            GL11.glLoadIdentity();
+
+        trueTypeFont = new TrueTypeFont(font, false);
+        
+        
 
         // TODO: there should be some kind of text on the display to
         // tell the user to press a key or something
@@ -244,10 +275,13 @@ public class Configuration extends javax.swing.JFrame {
         int code;
         do{
             Display.update();
+            trueTypeFont.drawString(10, 23, "Press a KEY for "+place, 1, -1);
             Keyboard.next();
+            if(Keyboard.getEventKey() == Keyboard.KEY_ESCAPE) { return -1; }
             code = Keyboard.getEventKey();
         }
         while(code == Keyboard.CHAR_NONE);
+        trueTypeFont.destroy();
         Display.destroy();
         return code;
     }
