@@ -105,7 +105,7 @@ public class Config implements Serializable
     }
 
     public void setKeyboardMap(EnumMap<Event.Channel,Integer> kb_map, KeyboardType kt){
-        keyboard_map.put(kt, kb_map);
+        keyboard_map.get(kt).putAll(kb_map);
     }
 
     public void save()
