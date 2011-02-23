@@ -26,14 +26,18 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="tKeys_scroll" alignment="0" pref="643" max="32767" attributes="0"/>
-                  <Component id="jSeparator1" alignment="0" pref="643" max="32767" attributes="0"/>
                   <Component id="panel_folders" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
+                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="combo_keyboardConfig" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="202" max="32767" attributes="0"/>
                       <Component id="bSave" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="bCancel" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <Component id="jSeparator1" alignment="1" pref="643" max="32767" attributes="0"/>
+                  <Component id="tKeys_scroll" alignment="1" pref="643" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -48,10 +52,12 @@
               <Component id="jSeparator1" min="-2" pref="10" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="tKeys_scroll" min="-2" pref="176" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="bCancel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="bSave" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="combo_keyboardConfig" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -156,5 +162,26 @@
         </Component>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JLabel" name="jLabel1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Select the keyboard configuration you want to edit:"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="combo_keyboardConfig">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="5">
+            <StringItem index="0" value="7 Keys"/>
+            <StringItem index="1" value="5 Keys"/>
+            <StringItem index="2" value="6 Keys"/>
+            <StringItem index="3" value="4 Keys"/>
+            <StringItem index="4" value="8 Keys"/>
+          </StringArray>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="combo_keyboardConfigActionPerformed"/>
+      </Events>
+    </Component>
   </SubComponents>
 </Form>
