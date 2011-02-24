@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -33,6 +34,9 @@ public class Config implements Serializable
     // TODO Not sure if we want a 9k map :/
     EnumMap<KeyboardType, EnumMap<Event.Channel,Integer>> keyboard_map;
 
+    ArrayList<String> dir_list;
+    int last_selected_dir; //it should have the last selected dir index
+
     private static final File CONFIG_FILE = new File("config.obj");
 
     Level log_level = Level.INFO;
@@ -47,6 +51,10 @@ public class Config implements Serializable
 
     private Config()
     {
+        dir_list = new ArrayList<String>();
+        dir_list.add(System.getProperty("user.dir"));
+        last_selected_dir = 0;
+
         // TODO Needs the 2nd player keys, if we are going to add 2p support ofc xD
         keyboard_map_4K = new EnumMap<Event.Channel,Integer>(Event.Channel.class);
         keyboard_map_4K.put(Event.Channel.NOTE_P1_1, Keyboard.KEY_D);
@@ -106,6 +114,18 @@ public class Config implements Serializable
 
     public void setKeyboardMap(EnumMap<Event.Channel,Integer> kb_map, KeyboardType kt){
         keyboard_map.get(kt).putAll(kb_map);
+    }
+
+    public ArrayList<String> getDirsList (){
+        return dir_list;
+    }
+
+    public void addDir(String s){
+        dir_list.add(s);
+    }
+
+    public void delDir(String s){
+        dir_list.remove(s);
     }
 
     public void save()

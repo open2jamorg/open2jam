@@ -421,7 +421,7 @@ public class TrueTypeFont {
 
 		    int internalFormat = GL11.GL_RGBA8,
 			format = GL11.GL_RGBA;
-			IntBuffer   textureId =  BufferUtils.createIntBuffer(1);;
+			IntBuffer   textureId =  BufferUtils.createIntBuffer(1);
 			GL11.glGenTextures(textureId);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureId.get(0));
 

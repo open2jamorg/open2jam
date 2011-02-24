@@ -154,7 +154,10 @@ public class NewInterface extends javax.swing.JFrame
         bt_choose_dir = new javax.swing.JButton();
         load_progress = new javax.swing.JProgressBar();
         js_hispeed = new javax.swing.JSpinner();
-        configuration = new javax.swing.JButton();
+        bConfiguration = new javax.swing.JButton();
+        lbl_dirKey = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        bSkin = new javax.swing.JButton();
         table_scroll = new javax.swing.JScrollPane();
         table_songlist = new javax.swing.JTable();
         txt_filter = new javax.swing.JTextField();
@@ -412,10 +415,29 @@ public class NewInterface extends javax.swing.JFrame
 
         js_hispeed.setModel(new javax.swing.SpinnerNumberModel(1.0d, 0.5d, 10.0d, 0.5d));
 
-        configuration.setText("Configuration");
-        configuration.addActionListener(new java.awt.event.ActionListener() {
+        bConfiguration.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        bConfiguration.setText("Go!");
+        bConfiguration.setMaximumSize(new java.awt.Dimension(20, 20));
+        bConfiguration.setMinimumSize(new java.awt.Dimension(20, 20));
+        bConfiguration.setPreferredSize(new java.awt.Dimension(20, 20));
+        bConfiguration.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                configurationActionPerformed(evt);
+                bConfigurationActionPerformed(evt);
+            }
+        });
+
+        lbl_dirKey.setText("Folders and Keys:");
+
+        jLabel2.setText("Skin selection:");
+
+        bSkin.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        bSkin.setText("Go!");
+        bSkin.setMaximumSize(new java.awt.Dimension(20, 20));
+        bSkin.setMinimumSize(new java.awt.Dimension(20, 20));
+        bSkin.setPreferredSize(new java.awt.Dimension(20, 20));
+        bSkin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bSkinActionPerformed(evt);
             }
         });
 
@@ -436,13 +458,14 @@ public class NewInterface extends javax.swing.JFrame
                     .addGroup(panel_settingLayout.createSequentialGroup()
                         .addComponent(lbl_hispeed)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(js_hispeed, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
+                        .addComponent(js_hispeed, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
                         .addGap(72, 72, 72))
                     .addComponent(lbl_display)
+                    .addComponent(combo_displays, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(panel_settingLayout.createSequentialGroup()
-                        .addComponent(jc_vsync)
+                        .addComponent(bt_choose_dir)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jc_full_screen))
+                        .addComponent(load_progress, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panel_settingLayout.createSequentialGroup()
                         .addComponent(jc_custom_size, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -451,18 +474,25 @@ public class NewInterface extends javax.swing.JFrame
                         .addComponent(lbl_res_x)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_res_height, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(combo_displays, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(panel_settingLayout.createSequentialGroup()
-                        .addComponent(bt_choose_dir)
+                        .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(lbl_dirKey, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(load_progress, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(configuration))
+                        .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(bConfiguration, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(bSkin, javax.swing.GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE))
+                    .addGroup(panel_settingLayout.createSequentialGroup()
+                        .addComponent(jc_vsync)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jc_full_screen)))
                 .addContainerGap())
         );
         panel_settingLayout.setVerticalGroup(
             panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel_settingLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(18, Short.MAX_VALUE)
                 .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bt_choose_dir)
                     .addComponent(load_progress, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -491,9 +521,15 @@ public class NewInterface extends javax.swing.JFrame
                 .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jc_vsync)
                     .addComponent(jc_full_screen))
-                .addGap(36, 36, 36)
-                .addComponent(configuration)
-                .addGap(83, 83, 83))
+                .addGap(31, 31, 31)
+                .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbl_dirKey)
+                    .addComponent(bConfiguration, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(bSkin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(65, 65, 65))
         );
 
         table_songlist.setAutoCreateRowSorter(true);
@@ -553,8 +589,8 @@ public class NewInterface extends javax.swing.JFrame
                 .addComponent(panel_info, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
-                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)))
+                    .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE)
+                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -567,8 +603,8 @@ public class NewInterface extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_filter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 99, Short.MAX_VALUE)
+                        .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
                         .addComponent(jLabel1)))
                 .addContainerGap())
         );
@@ -692,9 +728,9 @@ public class NewInterface extends javax.swing.JFrame
 	}
     }//GEN-LAST:event_bt_playActionPerformed
 
-    private void configurationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configurationActionPerformed
+    private void bConfigurationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bConfigurationActionPerformed
 	new Configuration().setVisible(true);
-    }//GEN-LAST:event_configurationActionPerformed
+    }//GEN-LAST:event_bConfigurationActionPerformed
 
     private void mitem_exitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mitem_exitActionPerformed
         System.exit(0); //TODO Not a good idea XD
@@ -707,15 +743,21 @@ public class NewInterface extends javax.swing.JFrame
         JOptionPane.showMessageDialog(this, about, "About", JOptionPane.ERROR_MESSAGE, null);
     }//GEN-LAST:event_menu_aboutMouseClicked
 
+    private void bSkinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSkinActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_bSkinActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton bConfiguration;
+    private javax.swing.JButton bSkin;
     private javax.swing.JButton bt_choose_dir;
     private javax.swing.JButton bt_play;
     private javax.swing.JComboBox combo_channelModifier;
     private javax.swing.JComboBox combo_displays;
     private javax.swing.JComboBox combo_visibilityModifier;
-    private javax.swing.JButton configuration;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
@@ -735,6 +777,7 @@ public class NewInterface extends javax.swing.JFrame
     private javax.swing.JLabel lbl_bpm1;
     private javax.swing.JLabel lbl_channelModifier;
     private javax.swing.JLabel lbl_cover;
+    private javax.swing.JLabel lbl_dirKey;
     private javax.swing.JLabel lbl_display;
     private javax.swing.JLabel lbl_filename;
     private javax.swing.JLabel lbl_genre;
@@ -768,6 +811,9 @@ public class NewInterface extends javax.swing.JFrame
     // End of variables declaration//GEN-END:variables
 
     private void initLogic() {
+        /* TODO A table with the dirs in the config.obj and change the cwd and the way it loads right now
+         * also, it would be nice if we can construct some kind of song's db
+         */
         cwd = System.getProperty("user.dir");
         try {
             display_modes = Display.getAvailableDisplayModes();

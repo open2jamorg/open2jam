@@ -90,8 +90,8 @@
               <Component id="panel_info" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="txt_filter" pref="326" max="32767" attributes="1"/>
-                  <Component id="table_scroll" pref="326" max="32767" attributes="1"/>
+                  <Component id="txt_filter" pref="315" max="32767" attributes="1"/>
+                  <Component id="table_scroll" pref="315" max="32767" attributes="1"/>
               </Group>
           </Group>
       </Group>
@@ -108,8 +108,8 @@
                       <Component id="txt_filter" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="panel_setting" min="-2" pref="350" max="-2" attributes="1"/>
-                      <EmptySpace pref="99" max="32767" attributes="0"/>
+                      <Component id="panel_setting" min="-2" max="-2" attributes="1"/>
+                      <EmptySpace pref="30" max="32767" attributes="0"/>
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -436,7 +436,7 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
+              <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
@@ -450,14 +450,15 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="lbl_hispeed" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="js_hispeed" pref="87" max="32767" attributes="0"/>
+                          <Component id="js_hispeed" pref="98" max="32767" attributes="0"/>
                           <EmptySpace min="-2" pref="72" max="-2" attributes="0"/>
                       </Group>
                       <Component id="lbl_display" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="combo_displays" alignment="0" min="-2" max="-2" attributes="1"/>
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="jc_vsync" min="-2" max="-2" attributes="0"/>
+                          <Component id="bt_choose_dir" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jc_full_screen" min="-2" max="-2" attributes="0"/>
+                          <Component id="load_progress" min="-2" pref="91" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="jc_custom_size" min="-2" pref="85" max="-2" attributes="0"/>
@@ -468,13 +469,23 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="txt_res_height" min="-2" pref="39" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="combo_displays" alignment="0" min="-2" max="-2" attributes="1"/>
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="bt_choose_dir" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="lbl_dirKey" alignment="0" min="-2" pref="100" max="-2" attributes="0"/>
+                          </Group>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="load_progress" min="-2" pref="91" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="bConfiguration" max="32767" attributes="1"/>
+                              <Component id="bSkin" alignment="0" pref="47" max="32767" attributes="1"/>
+                          </Group>
+                          <EmptySpace pref="29" max="32767" attributes="0"/>
                       </Group>
-                      <Component id="configuration" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="jc_vsync" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jc_full_screen" min="-2" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -483,7 +494,7 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="18" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="bt_choose_dir" alignment="3" min="-2" max="-2" attributes="1"/>
                       <Component id="load_progress" alignment="3" min="-2" pref="27" max="-2" attributes="1"/>
@@ -517,9 +528,17 @@
                       <Component id="jc_vsync" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jc_full_screen" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
-                  <Component id="configuration" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="83" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="lbl_dirKey" alignment="3" min="-2" max="-2" attributes="1"/>
+                      <Component id="bConfiguration" alignment="3" min="-2" max="-2" attributes="1"/>
+                  </Group>
+                  <EmptySpace max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="bSkin" alignment="3" min="-2" max="-2" attributes="1"/>
+                  </Group>
+                  <EmptySpace min="-2" pref="65" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -646,12 +665,54 @@
             </Property>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="configuration">
+        <Component class="javax.swing.JButton" name="bConfiguration">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Configuration"/>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="10" style="0"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Go!"/>
+            <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[20, 20]"/>
+            </Property>
+            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[20, 20]"/>
+            </Property>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[20, 20]"/>
+            </Property>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="configurationActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bConfigurationActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="lbl_dirKey">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Folders and Keys:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel2">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Skin selection:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="bSkin">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="10" style="0"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Go!"/>
+            <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[20, 20]"/>
+            </Property>
+            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[20, 20]"/>
+            </Property>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[20, 20]"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bSkinActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
