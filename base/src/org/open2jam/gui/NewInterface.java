@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -30,6 +31,7 @@ import org.open2jam.render.BeatmaniaRender;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.open2jam.Config;
 import org.open2jam.parser.ChartList;
 import org.open2jam.render.O2jamRender;
 import org.open2jam.render.Render;
@@ -45,6 +47,7 @@ public class NewInterface extends javax.swing.JFrame
     private ChartListTableModel model_songlist;
     private ChartTableModel model_chartlist;
     private String cwd;
+    private ArrayList<String> dir_list;
     private DisplayMode[] display_modes;
     private ChartModelLoader task;
     private int rank = 0;
@@ -69,6 +72,8 @@ public class NewInterface extends javax.swing.JFrame
             public void removeUpdate(DocumentEvent e) {updateFilter();}
             public void changedUpdate(DocumentEvent e) {updateFilter();}
         });
+
+        loadDirlist();
 
         javax.swing.table.TableColumn col = null;
         col = table_songlist.getColumnModel().getColumn(0);
@@ -158,6 +163,7 @@ public class NewInterface extends javax.swing.JFrame
         lbl_dirKey = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         bSkin = new javax.swing.JButton();
+        combo_dirs = new javax.swing.JComboBox();
         table_scroll = new javax.swing.JScrollPane();
         table_songlist = new javax.swing.JTable();
         txt_filter = new javax.swing.JTextField();
@@ -415,7 +421,7 @@ public class NewInterface extends javax.swing.JFrame
 
         js_hispeed.setModel(new javax.swing.SpinnerNumberModel(1.0d, 0.5d, 10.0d, 0.5d));
 
-        bConfiguration.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        bConfiguration.setFont(new java.awt.Font("Tahoma", 0, 10));
         bConfiguration.setText("Go!");
         bConfiguration.setMaximumSize(new java.awt.Dimension(20, 20));
         bConfiguration.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -430,7 +436,7 @@ public class NewInterface extends javax.swing.JFrame
 
         jLabel2.setText("Skin selection:");
 
-        bSkin.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        bSkin.setFont(new java.awt.Font("Tahoma", 0, 10));
         bSkin.setText("Go!");
         bSkin.setMaximumSize(new java.awt.Dimension(20, 20));
         bSkin.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -438,6 +444,12 @@ public class NewInterface extends javax.swing.JFrame
         bSkin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bSkinActionPerformed(evt);
+            }
+        });
+
+        combo_dirs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                combo_dirsActionPerformed(evt);
             }
         });
 
@@ -486,7 +498,8 @@ public class NewInterface extends javax.swing.JFrame
                     .addGroup(panel_settingLayout.createSequentialGroup()
                         .addComponent(jc_vsync)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jc_full_screen)))
+                        .addComponent(jc_full_screen))
+                    .addComponent(combo_dirs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         panel_settingLayout.setVerticalGroup(
@@ -529,7 +542,9 @@ public class NewInterface extends javax.swing.JFrame
                 .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(bSkin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(65, 65, 65))
+                .addGap(34, 34, 34)
+                .addComponent(combo_dirs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         table_songlist.setAutoCreateRowSorter(true);
@@ -747,6 +762,14 @@ public class NewInterface extends javax.swing.JFrame
         // TODO add your handling code here:
     }//GEN-LAST:event_bSkinActionPerformed
 
+    private void combo_dirsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_dirsActionPerformed
+        if(dir_list.isEmpty()) return;
+        String s = dir_list.get(combo_dirs.getSelectedIndex());
+//        if(cwd.equals(s)) return;
+        cwd = s;
+        updateSelection();
+    }//GEN-LAST:event_combo_dirsActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bConfiguration;
@@ -754,6 +777,7 @@ public class NewInterface extends javax.swing.JFrame
     private javax.swing.JButton bt_choose_dir;
     private javax.swing.JButton bt_play;
     private javax.swing.JComboBox combo_channelModifier;
+    private javax.swing.JComboBox combo_dirs;
     private javax.swing.JComboBox combo_displays;
     private javax.swing.JComboBox combo_visibilityModifier;
     private javax.swing.JLabel jLabel1;
@@ -814,7 +838,10 @@ public class NewInterface extends javax.swing.JFrame
         /* TODO A table with the dirs in the config.obj and change the cwd and the way it loads right now
          * also, it would be nice if we can construct some kind of song's db
          */
-        cwd = System.getProperty("user.dir");
+        dir_list = Config.get().getDirsList();
+        if(dir_list.isEmpty()) cwd = System.getProperty("user.dir");
+        else                   cwd = dir_list.get(0);
+        
         try {
             display_modes = Display.getAvailableDisplayModes();
         } catch (LWJGLException ex) {
@@ -827,11 +854,30 @@ public class NewInterface extends javax.swing.JFrame
     private void updateSelection() {
         this.setTitle("Open2Jam - "+cwd);
         bt_choose_dir.setEnabled(false);
+        combo_dirs.setEnabled(false);
         load_progress.setValue(0);
         load_progress.setVisible(true);
         task = new ChartModelLoader(model_songlist, new File(cwd));
         task.addPropertyChangeListener(this);
         task.execute();
+    }
+
+    private void loadDirlist()
+    {
+        if(dir_list.isEmpty()) return;
+        for(int i=0; i<dir_list.size(); i++)
+        {
+            String s = dir_list.get(i);
+            if(s.length()>18)
+            {
+                if(s.contains("\\"))     s =".."+s.substring(s.lastIndexOf("\\"));
+                else if(s.contains("/")) s =".."+s.substring(s.lastIndexOf("/"));
+
+                if(s.length()>18)
+                    s = ".."+s.substring(s.length()-16);
+            }
+            combo_dirs.addItem(s);
+        }
     }
 
     public void propertyChange(PropertyChangeEvent evt) {
@@ -842,6 +888,7 @@ public class NewInterface extends javax.swing.JFrame
             if(i == 100)
             {
                 bt_choose_dir.setEnabled(true);
+                combo_dirs.setEnabled(true);
                 load_progress.setVisible(false);
             }
         }

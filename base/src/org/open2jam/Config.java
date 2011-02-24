@@ -28,14 +28,13 @@ public class Config implements Serializable
     EnumMap<Event.Channel,Integer> keyboard_map_4K; // DJMAX Triology / EZ2ON
     EnumMap<Event.Channel,Integer> keyboard_map_5K; // BEMANI / DJMAX series / Pop'n'Music
     EnumMap<Event.Channel,Integer> keyboard_map_6K; // DJMAX series / EZ2ON
-    EnumMap<Event.Channel,Integer> keyboard_map_7K; // BEMANI / DJMAX series
+    EnumMap<Event.Channel,Integer> keyboard_map_7K; // BEMANI / DJMAX series / O2JAM
     EnumMap<Event.Channel,Integer> keyboard_map_8K; // DJMAX Triology / EZ2ON
 //  EnumMap<Event.Channel,Integer> keyboard_map_9K; // Pop'n'Music
     // TODO Not sure if we want a 9k map :/
     EnumMap<KeyboardType, EnumMap<Event.Channel,Integer>> keyboard_map;
 
     ArrayList<String> dir_list;
-    int last_selected_dir; //it should have the last selected dir index
 
     private static final File CONFIG_FILE = new File("config.obj");
 
@@ -53,7 +52,6 @@ public class Config implements Serializable
     {
         dir_list = new ArrayList<String>();
         dir_list.add(System.getProperty("user.dir"));
-        last_selected_dir = 0;
 
         // TODO Needs the 2nd player keys, if we are going to add 2p support ofc xD
         keyboard_map_4K = new EnumMap<Event.Channel,Integer>(Event.Channel.class);

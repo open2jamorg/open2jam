@@ -76,6 +76,7 @@ public class ChartListTableModel implements TableModel
 
     public Object getValueAt(int rowIndex, int columnIndex) {
         Chart c = null;
+        if(items.get(rowIndex).isEmpty()) return null;
         if(items.get(rowIndex).size()-1 < rank)
             c = items.get(rowIndex).get(0);
         else

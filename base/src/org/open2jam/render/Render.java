@@ -217,9 +217,10 @@ public abstract class Render implements GameWindowCallback
 
         double precision = (hit_count / total_notes) * 100;
         double accuracy = (hit_sum / total_notes) * 100;
-        JOptionPane.showMessageDialog(null,
-                String.format("Precision : %.3f, Accuracy : %.3f", precision, accuracy)
-                );
+        //TODO better result screen xD right now it's annoying, at least for me
+//        JOptionPane.showMessageDialog(null,
+//                String.format("Precision : %.3f, Accuracy : %.3f", precision, accuracy)
+//                );
     }
 
     /** play a sample */

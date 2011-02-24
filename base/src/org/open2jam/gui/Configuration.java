@@ -351,7 +351,7 @@ public class Configuration extends javax.swing.JFrame {
         String place = tKeys.getValueAt(tKeys.getSelectedRow(), 0).toString();
         if(Display.isCreated())throw new LWJGLException();
         
-        Display.setDisplayMode(new DisplayMode(200,50));
+        Display.setDisplayMode(new DisplayMode(220,50));
         Display.setTitle(place);
         Display.setVSyncEnabled(true);
         Display.setIcon(null);
@@ -371,7 +371,7 @@ public class Configuration extends javax.swing.JFrame {
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
 
-        GL11.glOrtho(0, 200, 50, 0, -1, 1);
+        GL11.glOrtho(0, 220, 50, 0, -1, 1);
 
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
