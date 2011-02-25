@@ -8,6 +8,8 @@ package org.open2jam.gui;
  */
 
 import java.awt.event.ItemEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.beans.PropertyChangeEvent;
@@ -15,6 +17,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -56,6 +59,8 @@ public class NewInterface extends javax.swing.JFrame
     private int last_model_idx;
     private final TableRowSorter<ChartListTableModel> table_sorter;
 
+    Configuration cfg_window = new Configuration();
+
     javax.swing.ListSelectionModel chartLM;
 
     /** Creates new form Interface */
@@ -74,6 +79,31 @@ public class NewInterface extends javax.swing.JFrame
         });
 
         loadDirlist();
+
+        cfg_window.addWindowListener(new WindowListener() {
+            public void windowClosed(WindowEvent arg0) {
+                dir_list = Config.get().getDirsList();
+                loadDirlist();
+            }
+            public void windowActivated(WindowEvent arg0) {
+                // Not interested in this
+            }
+            public void windowClosing(WindowEvent arg0) {
+                // Not interested in this
+            }
+            public void windowDeactivated(WindowEvent arg0) {
+                // Not interested in this
+            }
+            public void windowDeiconified(WindowEvent arg0) {
+                // Not interested in this
+            }
+            public void windowIconified(WindowEvent arg0) {
+                // Not interested in this
+            }
+            public void windowOpened(WindowEvent arg0) {
+                // Not interested in this
+            }
+        });
 
         javax.swing.table.TableColumn col = null;
         col = table_songlist.getColumnModel().getColumn(0);
@@ -744,7 +774,7 @@ public class NewInterface extends javax.swing.JFrame
     }//GEN-LAST:event_bt_playActionPerformed
 
     private void bConfigurationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bConfigurationActionPerformed
-	new Configuration().setVisible(true);
+	cfg_window.setVisible(true);
     }//GEN-LAST:event_bConfigurationActionPerformed
 
     private void mitem_exitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mitem_exitActionPerformed
@@ -764,6 +794,7 @@ public class NewInterface extends javax.swing.JFrame
 
     private void combo_dirsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_dirsActionPerformed
         if(dir_list.isEmpty()) return;
+        if(combo_dirs.getSelectedIndex()<0) return;
         String s = dir_list.get(combo_dirs.getSelectedIndex());
 //        if(cwd.equals(s)) return;
         cwd = s;
@@ -864,6 +895,8 @@ public class NewInterface extends javax.swing.JFrame
 
     private void loadDirlist()
     {
+        DefaultComboBoxModel theModel = (DefaultComboBoxModel)combo_dirs.getModel();
+        theModel.removeAllElements();
         if(dir_list.isEmpty()) return;
         for(int i=0; i<dir_list.size(); i++)
         {
@@ -879,7 +912,7 @@ public class NewInterface extends javax.swing.JFrame
             combo_dirs.addItem(s);
         }
     }
-
+    
     public void propertyChange(PropertyChangeEvent evt) {
         if("progress".equals(evt.getPropertyName()))
         {

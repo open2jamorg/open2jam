@@ -79,6 +79,9 @@ public abstract class Render implements GameWindowCallback
     /** the layer of the notes */
     protected int note_layer;
 
+    /** the height of the notes */
+    protected double note_height;
+
     /** the bpm at which the entities are falling */
     private double bpm;
 
@@ -319,6 +322,8 @@ public abstract class Render implements GameWindowCallback
         buffer_bpm = chart.getBPM();
 
         note_layer = skin.getEntityMap().get("NOTE_P1_1").getLayer();
+
+        note_height = skin.getEntityMap().get("NOTE_P1_1").getHeight();
 
         // adding static entities
         for(Entity e : skin.getEntityList()){

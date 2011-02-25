@@ -117,7 +117,7 @@ public class BeatmaniaRender extends Render
                 {
                     TimeEntity te = (TimeEntity) e;
                     // TODO: this is supposed to be skin.judgment_line, but I just notice that's fuck up too, so I need to fix there before
-                    double y = getViewport()-7 - velocity_integral(now,te.getTime());
+                    double y = getViewport()-note_height - velocity_integral(now,te.getTime());
                     if(te.getTime() - now <= 0)
                     {
                         e.judgment();
