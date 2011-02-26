@@ -168,6 +168,7 @@ public abstract class Render implements GameWindowCallback
 
     /** the combo counter */
     protected ComboCounterEntity combo_entity;
+    protected ComboCounterEntity combo_title;
 
     /** the maxcombo counter */
     protected NumberEntity maxcombo_entity;
@@ -397,9 +398,7 @@ public abstract class Render implements GameWindowCallback
 
         buffer_iterator = event_list.iterator();
 
-	/**Let's randomize "-"
-	 * I don't know any better implementation so...
-	 */
+	//Let's randomize "-"
 	if(channelModifier != 0)
 	{
 	    if(channelModifier == 1)
