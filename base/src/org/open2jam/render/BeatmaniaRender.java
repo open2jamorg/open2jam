@@ -60,7 +60,9 @@ public class BeatmaniaRender extends Render
         note_counter.put(JUDGE.PERFECT, note_counter.get(JUDGE.COOL));
         start_time = lastLoopTime = SystemTimer.getTime();
     }
-    
+
+    @Override
+    public double getViewport(){ return judgment_line_y2-note_height; }
     /**
     * Notification that a frame is being rendered. Responsible for
     * running game logic and rendering the scene.
@@ -117,7 +119,7 @@ public class BeatmaniaRender extends Render
                 {
                     TimeEntity te = (TimeEntity) e;
                     // TODO: this is supposed to be skin.judgment_line, but I just notice that's fuck up too, so I need to fix there before
-                    double y = getViewport()-note_height - velocity_integral(now,te.getTime());
+                    double y = getViewport() - velocity_integral(now,te.getTime());
                     if(te.getTime() - now <= 0)
                     {
                         e.judgment();
