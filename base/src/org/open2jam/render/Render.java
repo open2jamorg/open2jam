@@ -475,7 +475,7 @@ public abstract class Render implements GameWindowCallback
             Event e = buffer_iterator.next();
             while(e.getMeasure() > buffer_measure) // this is the start of a new measure
             {
-                buffer_timer += 1000 * ( 240/buffer_bpm * (fractional_measure-buffer_measure_pointer) );
+                buffer_timer += (240000 * (fractional_measure-buffer_measure_pointer)) / buffer_bpm;
                 MeasureEntity m = (MeasureEntity) skin.getEntityMap().get("MEASURE_MARK").copy();
                 m.setTime(buffer_timer);
                 entities_matrix.add(m);
@@ -484,7 +484,7 @@ public abstract class Render implements GameWindowCallback
                 buffer_measure_pointer = 0;
             }
 
-            buffer_timer += 1000 * ( 240/buffer_bpm * (e.getPosition()-buffer_measure_pointer) );
+            buffer_timer += (240000 * (e.getPosition()-buffer_measure_pointer)) / buffer_bpm;
             buffer_measure_pointer = e.getPosition();
 
             switch(e.getChannel())
@@ -582,18 +582,18 @@ public abstract class Render implements GameWindowCallback
         double my_bpm = this.bpm;
         double frac_measure = 1;
         double measure_pointer = 0;
-        double my_note_speed = ((my_bpm/240) * measure_size) / 1000.0d;
+        double my_note_speed = (my_bpm * measure_size) / 240000;
         while(it.hasNext())
         {
             Event e = it.next();
             while(e.getMeasure() > measure)
             {
-                timer += 1000 * ( 240/my_bpm * (frac_measure-measure_pointer) );
+                timer += (240000 * (frac_measure-measure_pointer)) / my_bpm;
                 measure++;
                 frac_measure = 1;
                 measure_pointer = 0;
             }
-            timer += 1000 * ( 240/my_bpm * (e.getPosition()-measure_pointer) );
+            timer += (240000 * (e.getPosition()-measure_pointer)) / my_bpm;
             measure_pointer = e.getPosition();
 
             switch(e.getChannel())
@@ -601,7 +601,7 @@ public abstract class Render implements GameWindowCallback
                 case BPM_CHANGE:
                     velocity_tree.addInterval(last_bpm_change, timer, my_note_speed);
                     my_bpm = e.getValue();
-                    my_note_speed = ((my_bpm/240) * measure_size) / 1000.0d;
+                    my_note_speed = (my_bpm * measure_size) / 240000;
                     last_bpm_change = timer;
                 break;
                 case TIME_SIGNATURE:
@@ -609,7 +609,8 @@ public abstract class Render implements GameWindowCallback
                 break;
             }
         }
-        velocity_tree.addInterval(last_bpm_change, timer, my_note_speed);
+        // pad 10s to make sure the songs ends
+        velocity_tree.addInterval(last_bpm_change, timer+10000, my_note_speed);
         velocity_tree.build();
     }
 
