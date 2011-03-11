@@ -7,6 +7,9 @@
         <sprite id="background">
                 <frame x="0" y="0" w="600" h="560" file="Playing_BG7.jpg" />
         </sprite>
+        <sprite id="bg">
+                <frame x="0" y="0" w="600" h="560" file="Playing_BG2.jpg" />
+        </sprite>
         <sprite id="background2">
                 <frame x="73" y="1" w="284" h="91" file="main2.png" />
         </sprite>
@@ -380,9 +383,16 @@
 
     <!-- background -->
     <layer id="0">
-	<entity x="204" y="0"   sprite="background" />
-	<entity x="204" y="509" sprite="background2" />
-	<entity x="488" y="509" sprite="background3" />
+        <styles id="BACKGROUND">
+            <style id="Default">
+                <entity x="204" y="0"   sprite="background" />
+                <entity x="204" y="509" sprite="background2" />
+                <entity x="488" y="509" sprite="background3" />
+            </style>
+            <style id="bg2">
+                <entity x="204" y="0"   sprite="bg" />
+            </style>
+        </styles>
     </layer>
 
     <!-- borders for the note area -->

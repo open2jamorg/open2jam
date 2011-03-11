@@ -102,12 +102,12 @@
                       </Group>
                   </Group>
               </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="panel_info" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="panel_info" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="txt_filter" pref="307" max="32767" attributes="1"/>
-                  <Component id="table_scroll" pref="307" max="32767" attributes="1"/>
+                  <Component id="txt_filter" pref="311" max="32767" attributes="1"/>
+                  <Component id="table_scroll" pref="311" max="32767" attributes="1"/>
               </Group>
           </Group>
       </Group>
@@ -119,7 +119,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="panel_info" alignment="1" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="table_scroll" pref="501" max="32767" attributes="1"/>
+                      <Component id="table_scroll" pref="504" max="32767" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="txt_filter" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -157,8 +157,8 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="table_scroll2" alignment="0" pref="415" max="32767" attributes="0"/>
-                      <Component id="lbl_title" alignment="0" pref="415" max="32767" attributes="0"/>
+                      <Component id="table_scroll2" alignment="0" pref="423" max="32767" attributes="0"/>
+                      <Component id="lbl_title" alignment="0" pref="423" max="32767" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="lbl_cover" min="-2" pref="146" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -175,17 +175,17 @@
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="lbl_keys" min="-2" max="-2" attributes="0"/>
-                                      <Component id="lbl_level" alignment="0" pref="208" max="32767" attributes="0"/>
-                                      <Component id="lbl_notes" alignment="0" pref="208" max="32767" attributes="0"/>
-                                      <Component id="lbl_time" alignment="0" pref="208" max="32767" attributes="0"/>
-                                      <Component id="lbl_genre" alignment="0" pref="208" max="32767" attributes="0"/>
-                                      <Component id="lbl_bpm" alignment="0" pref="208" max="32767" attributes="0"/>
+                                      <Component id="lbl_level" alignment="0" pref="216" max="32767" attributes="0"/>
+                                      <Component id="lbl_notes" alignment="0" pref="216" max="32767" attributes="0"/>
+                                      <Component id="lbl_time" alignment="0" pref="216" max="32767" attributes="0"/>
+                                      <Component id="lbl_genre" alignment="0" pref="216" max="32767" attributes="0"/>
+                                      <Component id="lbl_bpm" alignment="0" pref="216" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                               <Component id="lbl_filename" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <Component id="lbl_artist" alignment="1" pref="415" max="32767" attributes="0"/>
+                      <Component id="lbl_artist" alignment="1" pref="423" max="32767" attributes="0"/>
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" max="-2" attributes="0">
@@ -257,7 +257,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="lbl_artist" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="table_scroll2" pref="242" max="32767" attributes="0"/>
+                  <Component id="table_scroll2" pref="245" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="lbl_visibilityModifier" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -502,13 +502,13 @@
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="lbl_skin_selection" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="lbl_dirKey" alignment="0" min="-2" pref="100" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="bConfiguration" max="32767" attributes="1"/>
-                              <Component id="bSkin" alignment="0" pref="47" max="32767" attributes="1"/>
+                              <Component id="btn_configuration" max="32767" attributes="1"/>
+                              <Component id="btn_skin" alignment="0" pref="47" max="32767" attributes="1"/>
                           </Group>
                           <EmptySpace pref="29" max="32767" attributes="0"/>
                       </Group>
@@ -517,7 +517,11 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jc_full_screen" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="combo_dirs" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="combo_dirs" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="btn_reload" min="-2" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -563,15 +567,18 @@
                   <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="lbl_dirKey" alignment="3" min="-2" max="-2" attributes="1"/>
-                      <Component id="bConfiguration" alignment="3" min="-2" max="-2" attributes="1"/>
+                      <Component id="btn_configuration" alignment="3" min="-2" max="-2" attributes="1"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="bSkin" alignment="3" min="-2" max="-2" attributes="1"/>
+                      <Component id="lbl_skin_selection" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btn_skin" alignment="3" min="-2" max="-2" attributes="1"/>
                   </Group>
                   <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
-                  <Component id="combo_dirs" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="combo_dirs" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btn_reload" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -699,7 +706,7 @@
             </Property>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="bConfiguration">
+        <Component class="javax.swing.JButton" name="btn_configuration">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="10" style="0"/>
@@ -716,7 +723,7 @@
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bConfigurationActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_configurationActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="lbl_dirKey">
@@ -724,12 +731,12 @@
             <Property name="text" type="java.lang.String" value="Folders and Keys:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel2">
+        <Component class="javax.swing.JLabel" name="lbl_skin_selection">
           <Properties>
             <Property name="text" type="java.lang.String" value="Skin selection:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="bSkin">
+        <Component class="javax.swing.JButton" name="btn_skin">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="10" style="0"/>
@@ -746,7 +753,7 @@
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bSkinActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_skinActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JComboBox" name="combo_dirs">
@@ -757,6 +764,14 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="combo_dirsActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btn_reload">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Reload"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_reloadActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

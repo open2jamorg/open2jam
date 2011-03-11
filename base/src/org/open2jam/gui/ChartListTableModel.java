@@ -37,6 +37,10 @@ public class ChartListTableModel implements TableModel
         fireListeners();
     }
 
+    public List<ChartList> getRawList() {
+        return items;
+    }
+
     public void setRank(int rank)
     {
         this.rank = rank;

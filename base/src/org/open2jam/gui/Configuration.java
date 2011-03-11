@@ -340,6 +340,7 @@ public class Configuration extends javax.swing.JFrame {
         if(tDirs.getSelectedRow()<0)return;
         String s = tDirs.getValueAt(tDirs.getSelectedRow(), 0).toString();
         Config.get().delDir(s);
+        //TODO should delete the cache_*CRC32dirname*.obj  here
         loadTableDirs();
     }//GEN-LAST:event_bDelFolderActionPerformed
 
