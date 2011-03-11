@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.zip.CRC32;
+import java.util.zip.GZIPOutputStream;
 import javax.swing.SwingWorker;
 import org.open2jam.parser.ChartList;
 import org.open2jam.parser.ChartParser;
@@ -57,16 +57,14 @@ public class ChartModelLoader extends SwingWorker<ChartListTableModel,ChartList>
 
     @Override
     protected void done() {
-        //let's make a crc32 hash for the cache name
-        CRC32 cs = new CRC32();
-        cs.reset();
 
-        byte[] d = dir.toString().getBytes();
-        cs.update(d, 0, d.length);
+        String str = NewInterface.stringToCRC32(dir.toString());
 
-        String str = "cache_"+Long.toHexString(cs.getValue()).toUpperCase()+".obj";
         try {
-            new ObjectOutputStream(new FileOutputStream(str)).writeObject(table_model.getRawList());
+            GZIPOutputStream gzip = new GZIPOutputStream(new FileOutputStream(str));
+            ObjectOutputStream obj = new ObjectOutputStream(gzip);
+            obj.writeObject(table_model.getRawList());
+            obj.close();
         } catch (IOException ex) {
             logger.log(Level.SEVERE, "{0}", ex);
         }

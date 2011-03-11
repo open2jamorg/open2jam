@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.CRC32;
+import java.util.zip.GZIPInputStream;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -866,7 +867,7 @@ public class NewInterface extends javax.swing.JFrame
         if(combo_dirs.getSelectedIndex()<0) return;
         String s = dir_list.get(combo_dirs.getSelectedIndex());
         cwd = s;
-        File cache = new File(dirToCRC32(cwd)); //if exist do nothing
+        File cache = new File(stringToCRC32(cwd)); //if exist do nothing
         if(cache.exists())
             loadCache(cwd);
         else
@@ -967,7 +968,8 @@ public class NewInterface extends javax.swing.JFrame
         loadCache(cwd);
     }
 
-    public String dirToCRC32(String s)
+    //TODO Move this function to its own class, with other ones xD
+    public static String stringToCRC32(String s)
     {
          //let's make a crc32 hash for the cache name
         CRC32 cs = new CRC32();
@@ -981,13 +983,17 @@ public class NewInterface extends javax.swing.JFrame
 
     private void loadCache(String dir)
     {
-        File cache = new File(dirToCRC32(dir));
+        File cache = new File(stringToCRC32(dir));
         if(cache.exists()){
+            this.setTitle("Open2Jam - "+dir);
             try {
+                GZIPInputStream gzip = new GZIPInputStream(new FileInputStream(cache));
+                ObjectInputStream obj = new ObjectInputStream(gzip);
                 @SuppressWarnings("unchecked") // yes, I'm sure its a list of chartlist
-                List<ChartList> l = (List<ChartList>) new ObjectInputStream(new FileInputStream(cache)).readObject();
+                List<ChartList> l = (List<ChartList>) obj.readObject();
                 model_songlist.clear();
                 for(ChartList c : l)model_songlist.addRow(c);
+                obj.close();
             } catch (IOException ex) {
                 logger.log(Level.SEVERE, "{0}", ex);
             } catch (ClassNotFoundException ex) {

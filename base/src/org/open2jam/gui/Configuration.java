@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.table.DefaultTableModel;
 import org.lwjgl.LWJGLException;
@@ -35,22 +37,30 @@ import org.open2jam.util.TrueTypeFont;
  */
 public class Configuration extends javax.swing.JFrame {
 
+    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
     EnumMap<Event.Channel,Integer> kb_map;
     ArrayList<String> dir_list;
+    ArrayList<String> deleted_dirs;
 
     HashMap<Integer, Event.Channel> table_map = new HashMap<Integer,Event.Channel>();
 
     /** Creates new form configuration */
     public Configuration() {
         initComponents();
+
         loadTableKeys(Config.KeyboardType.K7);
+
+        dir_list = new ArrayList<String>();
+        deleted_dirs = new ArrayList<String>();
         loadTableDirs();
+        
 	this.setLocationRelativeTo(null);
     }
 
     private void loadTableDirs()
     {
-        dir_list = Config.get().getDirsList();
+        if(dir_list.isEmpty())dir_list = Config.get().getDirsList();
         DefaultTableModel dm = (DefaultTableModel)tDirs.getModel();
         dm.setRowCount(dir_list.size());
         
@@ -271,6 +281,18 @@ public class Configuration extends javax.swing.JFrame {
     }//GEN-LAST:event_bCancelActionPerformed
 
     private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
+        //delete the cache files that are useless(deleted folders ones)
+        for(String s : deleted_dirs)
+        {
+            String dir = NewInterface.stringToCRC32(s);
+            File cache = new File(dir);
+            if(!cache.exists()) continue;
+            if(!cache.delete())
+                logger.log(Level.WARNING, "Could NOT delete {0}", dir);
+        }
+
+        Config.get().setDirsList(dir_list);
+
         Config.KeyboardType kt;
         switch(combo_keyboardConfig.getSelectedIndex())
         {
@@ -331,7 +353,8 @@ public class Configuration extends javax.swing.JFrame {
         if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             String s = jfc.getSelectedFile().getAbsolutePath();
             if(dir_list.contains(s)) return; //check for duplicates, TODO something informing about the duplicate
-            Config.get().addDir(s);
+            dir_list.add(s);
+            if(deleted_dirs.contains(s))  deleted_dirs.remove(s); //it's not deleted, just the user fucking it up
             loadTableDirs();
         }
     }//GEN-LAST:event_bAddFolderActionPerformed
@@ -339,8 +362,8 @@ public class Configuration extends javax.swing.JFrame {
     private void bDelFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDelFolderActionPerformed
         if(tDirs.getSelectedRow()<0)return;
         String s = tDirs.getValueAt(tDirs.getSelectedRow(), 0).toString();
-        Config.get().delDir(s);
-        //TODO should delete the cache_*CRC32dirname*.obj  here
+        if(dir_list.contains(s)) dir_list.remove(s);
+        deleted_dirs.add(s);
         loadTableDirs();
     }//GEN-LAST:event_bDelFolderActionPerformed
 

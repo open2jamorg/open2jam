@@ -118,6 +118,11 @@ public class Config implements Serializable
         return dir_list;
     }
 
+    public void setDirsList(ArrayList<String> dl)
+    {
+        this.dir_list = dl;
+    }
+
     public void addDir(String s){
         dir_list.add(s);
     }
@@ -129,7 +134,9 @@ public class Config implements Serializable
     public void save()
     {
         try {
-            new ObjectOutputStream(new FileOutputStream(CONFIG_FILE)).writeObject(this);
+            ObjectOutputStream obj = new ObjectOutputStream(new FileOutputStream(CONFIG_FILE));
+            obj.writeObject(this);
+            obj.close();
         } catch (FileNotFoundException ex) {
             logger.severe("Could not find file to write config !");
         } catch (IOException ioe) {
@@ -141,7 +148,9 @@ public class Config implements Serializable
     {
         if(config == null){
             try {
-                config = (Config) new ObjectInputStream(new FileInputStream(CONFIG_FILE)).readObject();
+                ObjectInputStream obj = new ObjectInputStream(new FileInputStream(CONFIG_FILE));
+                config = (Config) obj.readObject();
+                obj.close();
             } catch (ClassNotFoundException ex) {
                 logger.severe("There's no Config class !! impossibru !");
             } catch (FileNotFoundException ex) {
