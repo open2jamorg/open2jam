@@ -40,9 +40,9 @@ public class BeatmaniaRender extends Render
 
     private EnumMap<JUDGE,NumberEntity> note_counter;
 
-    public BeatmaniaRender(Chart c, double hispeed, boolean autoplay, int channelModifier, int visibilityModifier)
+    public BeatmaniaRender(Chart c, double hispeed, boolean autoplay, int channelModifier, int visibilityModifier, int mainVol, int keyVol, int bgmVol)
     {
-        super(c,hispeed,autoplay,channelModifier,visibilityModifier);
+        super(c,hispeed,autoplay,channelModifier,visibilityModifier, mainVol, keyVol, bgmVol);
     }
 
     @Override

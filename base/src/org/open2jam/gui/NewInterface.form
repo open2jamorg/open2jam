@@ -79,19 +79,35 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="panel_setting" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="panel_setting" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="lbl_main_vol" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="lbl_bgm_vol" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="lbl_key_vol" alignment="0" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                          <Component id="slider_bgm_vol" alignment="0" min="0" pref="0" max="32767" attributes="0"/>
+                          <Component id="slider_key_vol" alignment="0" min="0" pref="0" max="32767" attributes="0"/>
+                          <Component id="slider_main_vol" alignment="0" min="-2" pref="104" max="-2" attributes="1"/>
+                      </Group>
+                  </Group>
               </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="panel_info" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="txt_filter" pref="315" max="32767" attributes="1"/>
-                  <Component id="table_scroll" pref="315" max="32767" attributes="1"/>
+                  <Component id="txt_filter" pref="307" max="32767" attributes="1"/>
+                  <Component id="table_scroll" pref="307" max="32767" attributes="1"/>
               </Group>
           </Group>
       </Group>
@@ -103,13 +119,28 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="panel_info" alignment="1" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="table_scroll" pref="438" max="32767" attributes="1"/>
+                      <Component id="table_scroll" pref="501" max="32767" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="txt_filter" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="panel_setting" min="-2" max="-2" attributes="1"/>
-                      <EmptySpace pref="30" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="2" attributes="0">
+                          <Component id="lbl_main_vol" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="slider_main_vol" alignment="2" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="2" attributes="0">
+                          <Component id="lbl_key_vol" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="slider_key_vol" alignment="2" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="2" attributes="0">
+                          <Component id="lbl_bgm_vol" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="slider_bgm_vol" alignment="2" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -226,7 +257,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="lbl_artist" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="table_scroll2" pref="179" max="32767" attributes="0"/>
+                  <Component id="table_scroll2" pref="242" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="lbl_visibilityModifier" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -767,6 +798,41 @@
           <Font name="Tahoma" size="12" style="1"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Source"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JSlider" name="slider_main_vol">
+      <Properties>
+        <Property name="paintLabels" type="boolean" value="true"/>
+        <Property name="toolTipText" type="java.lang.String" value="Main Volume"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JSlider" name="slider_key_vol">
+      <Properties>
+        <Property name="paintLabels" type="boolean" value="true"/>
+        <Property name="toolTipText" type="java.lang.String" value="Key Volume"/>
+        <Property name="value" type="int" value="100"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JSlider" name="slider_bgm_vol">
+      <Properties>
+        <Property name="paintLabels" type="boolean" value="true"/>
+        <Property name="toolTipText" type="java.lang.String" value="BGM Volume"/>
+        <Property name="value" type="int" value="100"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lbl_main_vol">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Main Volume:"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lbl_key_vol">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Key Volume:"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lbl_bgm_vol">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="BGM Volume:"/>
       </Properties>
     </Component>
   </SubComponents>

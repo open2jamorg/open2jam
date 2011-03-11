@@ -205,4 +205,9 @@ public class SoundManager
         }
         sample_buffer.clear();
     }
+
+    public static void mainVolume(float vol)
+    {
+        AL10.alListenerf(AL10.AL_GAIN, vol);
+    }
 }

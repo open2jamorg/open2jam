@@ -182,11 +182,16 @@ public abstract class Render implements GameWindowCallback
     /** the visibility modifier */
     private int visibilityModifier = 0;
 
+    /** The volume */
+    private float mainVolume = 0.75f;
+    private float keyVolume = 0.75f;
+    private float bgmVolume = 0.75f;
+
     static {
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
     }
 
-    Render(Chart chart, double hispeed, boolean autoplay, int channelModifier, int visibilityModifier)
+    Render(Chart chart, double hispeed, boolean autoplay, int channelModifier, int visibilityModifier, int mainVol, int keyVol, int bgmVol)
     {
         keyboard_map = Config.get().getKeyboardMap(Config.KeyboardType.K7);
         window = ResourceFactory.get().getGameWindow();
@@ -196,6 +201,9 @@ public abstract class Render implements GameWindowCallback
         this.AUTOPLAY = autoplay;
         this.channelModifier = channelModifier;
         this.visibilityModifier = visibilityModifier;
+        this.mainVolume = (mainVol/100f);
+        this.keyVolume = (keyVol/100f);
+        this.bgmVolume = (bgmVol/100f);
     }
 
     /** set the screen dimensions */
@@ -250,8 +258,12 @@ public abstract class Render implements GameWindowCallback
                 return;
             }
         }
-
-        SoundManager.setGain(source, sample.volume);
+        float vol = keyVolume;
+        if(sample.isBGM()) vol = bgmVolume;
+        vol = sample.volume*vol;
+        if(vol < 0f) vol = 0f;
+        if(vol > 1f) vol = 1f;
+        SoundManager.setGain(source, vol);
         SoundManager.setPan(source, sample.pan);
         SoundManager.play(source, buffer);
     }
@@ -418,6 +430,9 @@ public abstract class Render implements GameWindowCallback
         // create sound sources
         source_queue = new LinkedList<Integer>();
 
+        //set main Volume
+        SoundManager.mainVolume(mainVolume);
+
         try{
             for(int i=0;i<MAX_SOURCES;i++)
                 source_queue.push(SoundManager.newSource()); // creates sources
@@ -538,6 +553,7 @@ public abstract class Render implements GameWindowCallback
                 case NOTE_P2_SC:
 
                 case AUTO_PLAY:
+                e.getSample().toBGM();
                 SampleEntity s = new SampleEntity(this,e.getSample(),0);
                 s.setTime(buffer_timer);
                 entities_matrix.add(s);

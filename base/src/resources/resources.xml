@@ -280,7 +280,7 @@
         </sprite>
 
         <sprite id="jam_title">
-                <frame x="0" y="0" w="67" h="31" file="jam.png" />
+                <frame x="0" y="0" w="67" h="31" file="Jam.png" />
         </sprite>
 
 	<sprite id="time_number_0">

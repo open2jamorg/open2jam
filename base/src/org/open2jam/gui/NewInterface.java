@@ -198,6 +198,12 @@ public class NewInterface extends javax.swing.JFrame
         table_songlist = new javax.swing.JTable();
         txt_filter = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
+        slider_main_vol = new javax.swing.JSlider();
+        slider_key_vol = new javax.swing.JSlider();
+        slider_bgm_vol = new javax.swing.JSlider();
+        lbl_main_vol = new javax.swing.JLabel();
+        lbl_key_vol = new javax.swing.JLabel();
+        lbl_bgm_vol = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         mitem_exit = new javax.swing.JMenuItem();
@@ -366,7 +372,7 @@ public class NewInterface extends javax.swing.JFrame
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbl_artist)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbl_visibilityModifier)
@@ -583,8 +589,25 @@ public class NewInterface extends javax.swing.JFrame
         table_songlist.getSelectionModel().addListSelectionListener(this);
         table_scroll.setViewportView(table_songlist);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12));
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel1.setText("Source");
+
+        slider_main_vol.setPaintLabels(true);
+        slider_main_vol.setToolTipText("Main Volume");
+
+        slider_key_vol.setPaintLabels(true);
+        slider_key_vol.setToolTipText("Key Volume");
+        slider_key_vol.setValue(100);
+
+        slider_bgm_vol.setPaintLabels(true);
+        slider_bgm_vol.setToolTipText("BGM Volume");
+        slider_bgm_vol.setValue(100);
+
+        lbl_main_vol.setText("Main Volume:");
+
+        lbl_key_vol.setText("Key Volume:");
+
+        lbl_bgm_vol.setText("BGM Volume:");
 
         jMenu1.setText("File");
 
@@ -625,17 +648,29 @@ public class NewInterface extends javax.swing.JFrame
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addContainerGap()
+                            .addComponent(jLabel1))
+                        .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel1))
-                    .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbl_main_vol)
+                            .addComponent(lbl_bgm_vol)
+                            .addComponent(lbl_key_vol))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(slider_bgm_vol, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+                            .addComponent(slider_key_vol, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+                            .addComponent(slider_main_vol, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(18, 18, 18)
                 .addComponent(panel_info, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE)
-                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE)))
+                    .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)
+                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -644,12 +679,24 @@ public class NewInterface extends javax.swing.JFrame
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panel_info, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE)
+                        .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 501, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_filter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(lbl_main_vol)
+                            .addComponent(slider_main_vol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(lbl_key_vol)
+                            .addComponent(slider_key_vol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(lbl_bgm_vol)
+                            .addComponent(slider_bgm_vol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel1)))
                 .addContainerGap())
         );
@@ -745,6 +792,10 @@ public class NewInterface extends javax.swing.JFrame
 	    final int channelModifier = combo_channelModifier.getSelectedIndex();
             final int visibilityModifier = combo_visibilityModifier.getSelectedIndex();
 
+            final int mainVol = slider_main_vol.getValue();
+            final int keyVol = slider_key_vol.getValue();
+            final int bgmVol = slider_bgm_vol.getValue();
+
             if(!dm.isFullscreenCapable() && fs)
             {
                 String str = "This monitor can't support the selected resolution.\n"
@@ -753,9 +804,9 @@ public class NewInterface extends javax.swing.JFrame
                 {
                     Render r = null;
                     if(judgment)
-                        r = new BeatmaniaRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier);
+                        r = new BeatmaniaRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
                     else
-                        r = new O2jamRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier);
+                        r = new O2jamRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
                     r.setDisplay(dm, vsync, false);
                     r.startRendering();
                 }
@@ -764,9 +815,9 @@ public class NewInterface extends javax.swing.JFrame
             {
                 Render r = null;
                 if(judgment)
-                    r = new BeatmaniaRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier);
+                    r = new BeatmaniaRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
                 else
-                    r = new O2jamRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier);
+                    r = new O2jamRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
                 r.setDisplay(dm, vsync, fs);
                 r.startRendering();
             }
@@ -828,6 +879,7 @@ public class NewInterface extends javax.swing.JFrame
     private javax.swing.JRadioButton jr_rank_normal;
     private javax.swing.JSpinner js_hispeed;
     private javax.swing.JLabel lbl_artist;
+    private javax.swing.JLabel lbl_bgm_vol;
     private javax.swing.JLabel lbl_bpm;
     private javax.swing.JLabel lbl_bpm1;
     private javax.swing.JLabel lbl_channelModifier;
@@ -838,10 +890,12 @@ public class NewInterface extends javax.swing.JFrame
     private javax.swing.JLabel lbl_genre;
     private javax.swing.JLabel lbl_genre1;
     private javax.swing.JLabel lbl_hispeed;
+    private javax.swing.JLabel lbl_key_vol;
     private javax.swing.JLabel lbl_keys;
     private javax.swing.JLabel lbl_keys1;
     private javax.swing.JLabel lbl_level;
     private javax.swing.JLabel lbl_level1;
+    private javax.swing.JLabel lbl_main_vol;
     private javax.swing.JLabel lbl_notes;
     private javax.swing.JLabel lbl_notes1;
     private javax.swing.JLabel lbl_rank;
@@ -856,6 +910,9 @@ public class NewInterface extends javax.swing.JFrame
     private javax.swing.JPanel panel_info;
     private javax.swing.JPanel panel_setting;
     private javax.swing.ButtonGroup rank_group;
+    private javax.swing.JSlider slider_bgm_vol;
+    private javax.swing.JSlider slider_key_vol;
+    private javax.swing.JSlider slider_main_vol;
     private javax.swing.JTable table_chartlist;
     private javax.swing.JScrollPane table_scroll;
     private javax.swing.JScrollPane table_scroll2;
