@@ -53,13 +53,16 @@ public class BMSParser
         for(int i=0;i<bms_files.length;i++)
         {
             try{
-                list.add(parseBMSHeader(bms_files[i]));
+                BMSChart chart = parseBMSHeader(bms_files[i]);
+                if(chart != null)
+                    list.add(chart);
             } catch (UnsupportedOperationException e){}
               catch (Exception e) {
                 logger.log(Level.WARNING, "{0}", e);
             }
         }
         Collections.sort(list);
+        if (list.isEmpty()) return null;
         return list;
     }
 
@@ -120,7 +123,11 @@ public class BMSParser
                 }
                 if(cmd.equals("#PLAYER")){
                         int player = Integer.parseInt(st.nextToken());
-                        if(player != 1)throw new UnsupportedOperationException("Not supported yet.");
+                        if(player != 1)
+                        {
+                            logger.log(Level.WARNING, "#PLAYER not supported @ {0}", f.getName());
+                            return null;
+                        }
                         continue;
                 }
                 if(cmd.equals("#BPM")){
