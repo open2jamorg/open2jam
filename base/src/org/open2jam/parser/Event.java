@@ -6,27 +6,44 @@ public class Event implements Comparable<Event>
             NONE,
             TIME_SIGNATURE,
             BPM_CHANGE,
-            NOTE_1,
-            NOTE_2,
-            NOTE_3,
-            NOTE_4,
-            NOTE_5,
-            NOTE_6,
-            NOTE_7,
-            NOTE_SC,
+            NOTE_P1_1,                  //P1-NOTE_1
+            NOTE_P1_2,                  //P1-NOTE_2
+            NOTE_P1_3,                  //P1-NOTE_3
+            NOTE_P1_4,                  //P1-NOTE_4
+            NOTE_P1_5,                  //P1-NOTE_5
+            NOTE_P1_6,                  //P1-NOTE_6
+            NOTE_P1_7,                  //P1-NOTE_7
+            NOTE_P1_SC,                 //P1-NOTE_SC / P1-NOTE_8
+            NOTE_P2_1,                  //P2-NOTE_1
+            NOTE_P2_2,                  //P2-NOTE_2
+            NOTE_P2_3,                  //P2-NOTE_3
+            NOTE_P2_4,                  //P2-NOTE_4
+            NOTE_P2_5,                  //P2-NOTE_5
+            NOTE_P2_6,                  //P2-NOTE_6
+            NOTE_P2_7,                  //P2-NOTE_7
+            NOTE_P2_SC,                 //P2-NOTE_SC / P2-NOTE_8
+
             AUTO_PLAY;
 
             @Override
             public String toString(){
                 switch(this){
-	            case NOTE_1:return "NOTE_1";
-	            case NOTE_2:return "NOTE_2";
-	            case NOTE_3:return "NOTE_3";
-	            case NOTE_4:return "NOTE_4";
-	            case NOTE_5:return "NOTE_5";
-	            case NOTE_6:return "NOTE_6";
-	            case NOTE_7:return "NOTE_7";
-                    case NOTE_SC:return "NOTE_SC";
+	            case NOTE_P1_1:return "NOTE_P1_1";
+	            case NOTE_P1_2:return "NOTE_P1_2";
+	            case NOTE_P1_3:return "NOTE_P1_3";
+	            case NOTE_P1_4:return "NOTE_P1_4";
+	            case NOTE_P1_5:return "NOTE_P1_5";
+	            case NOTE_P1_6:return "NOTE_P1_6";
+	            case NOTE_P1_7:return "NOTE_P1_7";
+                    case NOTE_P1_SC:return "NOTE_P1_SC";
+	            case NOTE_P2_1:return "NOTE_P2_1";
+	            case NOTE_P2_2:return "NOTE_P2_2";
+	            case NOTE_P2_3:return "NOTE_P2_3";
+	            case NOTE_P2_4:return "NOTE_P2_4";
+	            case NOTE_P2_5:return "NOTE_P2_5";
+	            case NOTE_P2_6:return "NOTE_P2_6";
+	            case NOTE_P2_7:return "NOTE_P2_7";
+                    case NOTE_P2_SC:return "NOTE_P2_SC";
 	            case TIME_SIGNATURE:return "TIME_SIGNATURE";
 	            case BPM_CHANGE:return "BPM_CHANGE";
 	        }

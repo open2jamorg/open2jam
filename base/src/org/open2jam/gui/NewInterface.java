@@ -240,6 +240,7 @@ public class NewInterface extends javax.swing.JFrame
 
         jc_timed_judgment.setSelected(true);
         jc_timed_judgment.setText("Use timed judment");
+        jc_timed_judgment.setToolTipText("Like Bemani games");
 
         javax.swing.GroupLayout panel_infoLayout = new javax.swing.GroupLayout(panel_info);
         panel_info.setLayout(panel_infoLayout);

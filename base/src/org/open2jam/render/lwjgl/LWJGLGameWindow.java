@@ -1,6 +1,5 @@
 package org.open2jam.render.lwjgl;
 
-import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,21 +50,6 @@ public class LWJGLGameWindow implements GameWindow {
 
         private float scale_x = 1f, scale_y = 1f;
 
-        static {
-            key_map.put(KeyEvent.VK_S, Keyboard.KEY_S);
-            key_map.put(KeyEvent.VK_D, Keyboard.KEY_D);
-            key_map.put(KeyEvent.VK_F, Keyboard.KEY_F);
-            key_map.put(KeyEvent.VK_SPACE, Keyboard.KEY_SPACE);
-            key_map.put(KeyEvent.VK_J, Keyboard.KEY_J);
-            key_map.put(KeyEvent.VK_K, Keyboard.KEY_K);
-            key_map.put(KeyEvent.VK_L, Keyboard.KEY_L);
-            key_map.put(KeyEvent.VK_ESCAPE, Keyboard.KEY_ESCAPE);
-            key_map.put(KeyEvent.VK_UP, Keyboard.KEY_UP);
-            key_map.put(KeyEvent.VK_DOWN, Keyboard.KEY_DOWN);
-            key_map.put(KeyEvent.VK_LEFT, Keyboard.KEY_LEFT);
-            key_map.put(KeyEvent.VK_RIGHT, Keyboard.KEY_RIGHT);
-        }
-	
 	/**
 	 * Create a new game window that will use OpenGL to 
 	 * render our game.
@@ -193,9 +177,7 @@ public class LWJGLGameWindow implements GameWindow {
 	 */
 	public boolean isKeyDown(int keyCode)
         {
-            Integer code = key_map.get(keyCode);
-            if(code == null)code = keyCode; // use raw key
-            return Keyboard.isKeyDown(code);
+            return Keyboard.isKeyDown(keyCode);
 	}
 
         public void setScale(float x, float y){

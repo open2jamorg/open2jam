@@ -411,27 +411,6 @@ public class BeatmaniaRender extends Render
 
     private void check_keyboard(long now)
     {
-        /* Misc keys
-         * Like up and down
-         */
-        if(window.isKeyDown(java.awt.event.KeyEvent.VK_UP) && !updateHS)
-        {
-            if(hispeed > 0.5 || hispeed < 10)
-            {
-                hispeed += 0.5;
-                updateHS = true;
-            }
-            return;
-        }
-        if(window.isKeyDown(java.awt.event.KeyEvent.VK_DOWN) && !updateHS)
-        {
-            if(hispeed > 0.5 || hispeed < 10)
-            {
-                hispeed -= 0.5;
-                updateHS = true;
-            }
-            return;
-        }
 	for(Map.Entry<Event.Channel,Integer> entry : keyboard_map.entrySet())
         {
             Event.Channel c = entry.getKey();
