@@ -62,10 +62,22 @@ public class Event implements Comparable<Event>
             public float volume;
             public float pan;
 
+            protected boolean bgm = false;
+
             public SoundSample(int sample, float vol, float pan){
                 this.sample_id = sample;
                 this.volume = vol;
                 this.pan = pan;
+            }
+
+            public void toBGM()
+            {
+                this.bgm = true;
+            }
+
+            public boolean isBGM()
+            {
+                return bgm;
             }
         }
 

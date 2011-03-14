@@ -6,6 +6,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.zip.GZIPOutputStream;
 import javax.swing.SwingWorker;
 import org.open2jam.parser.ChartList;
 import org.open2jam.parser.ChartParser;
@@ -51,6 +55,20 @@ public class ChartModelLoader extends SwingWorker<ChartListTableModel,ChartList>
         }
     }
 
+    @Override
+    protected void done() {
+
+        String str = NewInterface.stringToCRC32(dir.toString());
+
+        try {
+            GZIPOutputStream gzip = new GZIPOutputStream(new FileOutputStream(str));
+            ObjectOutputStream obj = new ObjectOutputStream(gzip);
+            obj.writeObject(table_model.getRawList());
+            obj.close();
+        } catch (IOException ex) {
+            logger.log(Level.SEVERE, "{0}", ex);
+        }
+    }
 
     @Override
      protected void process(List<ChartList> chunks) {

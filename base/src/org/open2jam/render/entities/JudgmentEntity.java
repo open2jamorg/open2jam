@@ -6,7 +6,7 @@ import org.open2jam.render.SpriteList;
  *
  * @author fox
  */
-public class JudgmentEntity extends Entity
+public class JudgmentEntity extends AnimatedEntity
 {
     /** the time in milliseconds in which the entity
      * will be displayed when the count is updated */

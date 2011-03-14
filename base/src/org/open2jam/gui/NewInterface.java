@@ -8,12 +8,22 @@ package org.open2jam.gui;
  */
 
 import java.awt.event.ItemEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.CRC32;
+import java.util.zip.GZIPInputStream;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -30,6 +40,7 @@ import org.open2jam.render.BeatmaniaRender;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.open2jam.Config;
 import org.open2jam.parser.ChartList;
 import org.open2jam.render.O2jamRender;
 import org.open2jam.render.Render;
@@ -45,6 +56,7 @@ public class NewInterface extends javax.swing.JFrame
     private ChartListTableModel model_songlist;
     private ChartTableModel model_chartlist;
     private String cwd;
+    private ArrayList<String> dir_list;
     private DisplayMode[] display_modes;
     private ChartModelLoader task;
     private int rank = 0;
@@ -52,6 +64,8 @@ public class NewInterface extends javax.swing.JFrame
     private Chart selected_header;
     private int last_model_idx;
     private final TableRowSorter<ChartListTableModel> table_sorter;
+
+    Configuration cfg_window = new Configuration();
 
     javax.swing.ListSelectionModel chartLM;
 
@@ -68,6 +82,33 @@ public class NewInterface extends javax.swing.JFrame
             public void insertUpdate(DocumentEvent e) {updateFilter();}
             public void removeUpdate(DocumentEvent e) {updateFilter();}
             public void changedUpdate(DocumentEvent e) {updateFilter();}
+        });
+
+        loadDirlist();
+
+        cfg_window.addWindowListener(new WindowListener() {
+            public void windowClosed(WindowEvent arg0) {
+                dir_list = Config.get().getDirsList();
+                loadDirlist();
+            }
+            public void windowActivated(WindowEvent arg0) {
+                // Not interested in this
+            }
+            public void windowClosing(WindowEvent arg0) {
+                // Not interested in this
+            }
+            public void windowDeactivated(WindowEvent arg0) {
+                // Not interested in this
+            }
+            public void windowDeiconified(WindowEvent arg0) {
+                // Not interested in this
+            }
+            public void windowIconified(WindowEvent arg0) {
+                // Not interested in this
+            }
+            public void windowOpened(WindowEvent arg0) {
+                // Not interested in this
+            }
         });
 
         javax.swing.table.TableColumn col = null;
@@ -154,11 +195,22 @@ public class NewInterface extends javax.swing.JFrame
         bt_choose_dir = new javax.swing.JButton();
         load_progress = new javax.swing.JProgressBar();
         js_hispeed = new javax.swing.JSpinner();
-        configuration = new javax.swing.JButton();
+        btn_configuration = new javax.swing.JButton();
+        lbl_dirKey = new javax.swing.JLabel();
+        lbl_skin_selection = new javax.swing.JLabel();
+        btn_skin = new javax.swing.JButton();
+        combo_dirs = new javax.swing.JComboBox();
+        btn_reload = new javax.swing.JButton();
         table_scroll = new javax.swing.JScrollPane();
         table_songlist = new javax.swing.JTable();
         txt_filter = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
+        slider_main_vol = new javax.swing.JSlider();
+        slider_key_vol = new javax.swing.JSlider();
+        slider_bgm_vol = new javax.swing.JSlider();
+        lbl_main_vol = new javax.swing.JLabel();
+        lbl_key_vol = new javax.swing.JLabel();
+        lbl_bgm_vol = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         mitem_exit = new javax.swing.JMenuItem();
@@ -170,11 +222,11 @@ public class NewInterface extends javax.swing.JFrame
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Open2Jam");
 
-        lbl_title.setFont(new java.awt.Font("Tahoma", 0, 18));
+        lbl_title.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         lbl_title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbl_title.setText("Title");
 
-        lbl_artist.setFont(new java.awt.Font("Tahoma", 2, 11));
+        lbl_artist.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         lbl_artist.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbl_artist.setText("Artist");
 
@@ -248,8 +300,8 @@ public class NewInterface extends javax.swing.JFrame
             panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_infoLayout.createSequentialGroup()
                 .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(table_scroll2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE)
-                    .addComponent(lbl_title, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE)
+                    .addComponent(table_scroll2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE)
+                    .addComponent(lbl_title, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panel_infoLayout.createSequentialGroup()
                         .addComponent(lbl_cover, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -265,13 +317,13 @@ public class NewInterface extends javax.swing.JFrame
                                 .addGap(18, 18, 18)
                                 .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(lbl_keys)
-                                    .addComponent(lbl_level, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
-                                    .addComponent(lbl_notes, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
-                                    .addComponent(lbl_time, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
-                                    .addComponent(lbl_genre, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
-                                    .addComponent(lbl_bpm, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)))
+                                    .addComponent(lbl_level, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+                                    .addComponent(lbl_notes, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+                                    .addComponent(lbl_time, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+                                    .addComponent(lbl_genre, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+                                    .addComponent(lbl_bpm, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)))
                             .addComponent(lbl_filename)))
-                    .addComponent(lbl_artist, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE)
+                    .addComponent(lbl_artist, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE)
                     .addGroup(panel_infoLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -327,7 +379,7 @@ public class NewInterface extends javax.swing.JFrame
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbl_artist)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbl_visibilityModifier)
@@ -412,10 +464,42 @@ public class NewInterface extends javax.swing.JFrame
 
         js_hispeed.setModel(new javax.swing.SpinnerNumberModel(1.0d, 0.5d, 10.0d, 0.5d));
 
-        configuration.setText("Configuration");
-        configuration.addActionListener(new java.awt.event.ActionListener() {
+        btn_configuration.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        btn_configuration.setText("Go!");
+        btn_configuration.setMaximumSize(new java.awt.Dimension(20, 20));
+        btn_configuration.setMinimumSize(new java.awt.Dimension(20, 20));
+        btn_configuration.setPreferredSize(new java.awt.Dimension(20, 20));
+        btn_configuration.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                configurationActionPerformed(evt);
+                btn_configurationActionPerformed(evt);
+            }
+        });
+
+        lbl_dirKey.setText("Folders and Keys:");
+
+        lbl_skin_selection.setText("Skin selection:");
+
+        btn_skin.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        btn_skin.setText("Go!");
+        btn_skin.setMaximumSize(new java.awt.Dimension(20, 20));
+        btn_skin.setMinimumSize(new java.awt.Dimension(20, 20));
+        btn_skin.setPreferredSize(new java.awt.Dimension(20, 20));
+        btn_skin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_skinActionPerformed(evt);
+            }
+        });
+
+        combo_dirs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                combo_dirsActionPerformed(evt);
+            }
+        });
+
+        btn_reload.setText("Reload");
+        btn_reload.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_reloadActionPerformed(evt);
             }
         });
 
@@ -436,13 +520,14 @@ public class NewInterface extends javax.swing.JFrame
                     .addGroup(panel_settingLayout.createSequentialGroup()
                         .addComponent(lbl_hispeed)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(js_hispeed, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
+                        .addComponent(js_hispeed, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
                         .addGap(72, 72, 72))
                     .addComponent(lbl_display)
+                    .addComponent(combo_displays, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(panel_settingLayout.createSequentialGroup()
-                        .addComponent(jc_vsync)
+                        .addComponent(bt_choose_dir)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jc_full_screen))
+                        .addComponent(load_progress, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panel_settingLayout.createSequentialGroup()
                         .addComponent(jc_custom_size, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -451,18 +536,29 @@ public class NewInterface extends javax.swing.JFrame
                         .addComponent(lbl_res_x)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_res_height, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(combo_displays, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(panel_settingLayout.createSequentialGroup()
-                        .addComponent(bt_choose_dir)
+                        .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbl_skin_selection)
+                            .addComponent(lbl_dirKey, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(load_progress, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(configuration))
+                        .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btn_configuration, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btn_skin, javax.swing.GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE))
+                    .addGroup(panel_settingLayout.createSequentialGroup()
+                        .addComponent(jc_vsync)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jc_full_screen))
+                    .addGroup(panel_settingLayout.createSequentialGroup()
+                        .addComponent(combo_dirs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_reload)))
                 .addContainerGap())
         );
         panel_settingLayout.setVerticalGroup(
             panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel_settingLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(18, Short.MAX_VALUE)
                 .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bt_choose_dir)
                     .addComponent(load_progress, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -491,9 +587,19 @@ public class NewInterface extends javax.swing.JFrame
                 .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jc_vsync)
                     .addComponent(jc_full_screen))
-                .addGap(36, 36, 36)
-                .addComponent(configuration)
-                .addGap(83, 83, 83))
+                .addGap(31, 31, 31)
+                .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbl_dirKey)
+                    .addComponent(btn_configuration, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbl_skin_selection)
+                    .addComponent(btn_skin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(34, 34, 34)
+                .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(combo_dirs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_reload))
+                .addContainerGap())
         );
 
         table_songlist.setAutoCreateRowSorter(true);
@@ -502,8 +608,25 @@ public class NewInterface extends javax.swing.JFrame
         table_songlist.getSelectionModel().addListSelectionListener(this);
         table_scroll.setViewportView(table_songlist);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12));
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel1.setText("Source");
+
+        slider_main_vol.setPaintLabels(true);
+        slider_main_vol.setToolTipText("Main Volume");
+
+        slider_key_vol.setPaintLabels(true);
+        slider_key_vol.setToolTipText("Key Volume");
+        slider_key_vol.setValue(100);
+
+        slider_bgm_vol.setPaintLabels(true);
+        slider_bgm_vol.setToolTipText("BGM Volume");
+        slider_bgm_vol.setValue(100);
+
+        lbl_main_vol.setText("Main Volume:");
+
+        lbl_key_vol.setText("Key Volume:");
+
+        lbl_bgm_vol.setText("BGM Volume:");
 
         jMenu1.setText("File");
 
@@ -544,17 +667,29 @@ public class NewInterface extends javax.swing.JFrame
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addContainerGap()
+                            .addComponent(jLabel1))
+                        .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel1))
-                    .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbl_main_vol)
+                            .addComponent(lbl_bgm_vol)
+                            .addComponent(lbl_key_vol))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(slider_bgm_vol, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+                            .addComponent(slider_key_vol, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+                            .addComponent(slider_main_vol, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(panel_info, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
-                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)))
+                    .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE)
+                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -563,12 +698,24 @@ public class NewInterface extends javax.swing.JFrame
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panel_info, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE)
+                        .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 504, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_filter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 99, Short.MAX_VALUE)
+                        .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(lbl_main_vol)
+                            .addComponent(slider_main_vol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(lbl_key_vol)
+                            .addComponent(slider_key_vol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(lbl_bgm_vol)
+                            .addComponent(slider_bgm_vol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel1)))
                 .addContainerGap())
         );
@@ -664,6 +811,10 @@ public class NewInterface extends javax.swing.JFrame
 	    final int channelModifier = combo_channelModifier.getSelectedIndex();
             final int visibilityModifier = combo_visibilityModifier.getSelectedIndex();
 
+            final int mainVol = slider_main_vol.getValue();
+            final int keyVol = slider_key_vol.getValue();
+            final int bgmVol = slider_bgm_vol.getValue();
+
             if(!dm.isFullscreenCapable() && fs)
             {
                 String str = "This monitor can't support the selected resolution.\n"
@@ -672,9 +823,9 @@ public class NewInterface extends javax.swing.JFrame
                 {
                     Render r = null;
                     if(judgment)
-                        r = new BeatmaniaRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier);
+                        r = new BeatmaniaRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
                     else
-                        r = new O2jamRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier);
+                        r = new O2jamRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
                     r.setDisplay(dm, vsync, false);
                     r.startRendering();
                 }
@@ -683,18 +834,18 @@ public class NewInterface extends javax.swing.JFrame
             {
                 Render r = null;
                 if(judgment)
-                    r = new BeatmaniaRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier);
+                    r = new BeatmaniaRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
                 else
-                    r = new O2jamRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier);
+                    r = new O2jamRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
                 r.setDisplay(dm, vsync, fs);
                 r.startRendering();
             }
 	}
     }//GEN-LAST:event_bt_playActionPerformed
 
-    private void configurationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configurationActionPerformed
-	new Configuration().setVisible(true);
-    }//GEN-LAST:event_configurationActionPerformed
+    private void btn_configurationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_configurationActionPerformed
+	cfg_window.setVisible(true);
+    }//GEN-LAST:event_btn_configurationActionPerformed
 
     private void mitem_exitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mitem_exitActionPerformed
         System.exit(0); //TODO Not a good idea XD
@@ -707,14 +858,37 @@ public class NewInterface extends javax.swing.JFrame
         JOptionPane.showMessageDialog(this, about, "About", JOptionPane.ERROR_MESSAGE, null);
     }//GEN-LAST:event_menu_aboutMouseClicked
 
+    private void btn_skinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_skinActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_skinActionPerformed
+
+    private void combo_dirsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_dirsActionPerformed
+        if(dir_list.isEmpty()) return;
+        if(combo_dirs.getSelectedIndex()<0) return;
+        String s = dir_list.get(combo_dirs.getSelectedIndex());
+        cwd = s;
+        File cache = new File(stringToCRC32(cwd)); //if exist do nothing
+        if(cache.exists())
+            loadCache(cwd);
+        else
+            updateSelection();
+    }//GEN-LAST:event_combo_dirsActionPerformed
+
+    private void btn_reloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_reloadActionPerformed
+        updateSelection();
+    }//GEN-LAST:event_btn_reloadActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bt_choose_dir;
     private javax.swing.JButton bt_play;
+    private javax.swing.JButton btn_configuration;
+    private javax.swing.JButton btn_reload;
+    private javax.swing.JButton btn_skin;
     private javax.swing.JComboBox combo_channelModifier;
+    private javax.swing.JComboBox combo_dirs;
     private javax.swing.JComboBox combo_displays;
     private javax.swing.JComboBox combo_visibilityModifier;
-    private javax.swing.JButton configuration;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu3;
@@ -731,23 +905,28 @@ public class NewInterface extends javax.swing.JFrame
     private javax.swing.JRadioButton jr_rank_normal;
     private javax.swing.JSpinner js_hispeed;
     private javax.swing.JLabel lbl_artist;
+    private javax.swing.JLabel lbl_bgm_vol;
     private javax.swing.JLabel lbl_bpm;
     private javax.swing.JLabel lbl_bpm1;
     private javax.swing.JLabel lbl_channelModifier;
     private javax.swing.JLabel lbl_cover;
+    private javax.swing.JLabel lbl_dirKey;
     private javax.swing.JLabel lbl_display;
     private javax.swing.JLabel lbl_filename;
     private javax.swing.JLabel lbl_genre;
     private javax.swing.JLabel lbl_genre1;
     private javax.swing.JLabel lbl_hispeed;
+    private javax.swing.JLabel lbl_key_vol;
     private javax.swing.JLabel lbl_keys;
     private javax.swing.JLabel lbl_keys1;
     private javax.swing.JLabel lbl_level;
     private javax.swing.JLabel lbl_level1;
+    private javax.swing.JLabel lbl_main_vol;
     private javax.swing.JLabel lbl_notes;
     private javax.swing.JLabel lbl_notes1;
     private javax.swing.JLabel lbl_rank;
     private javax.swing.JLabel lbl_res_x;
+    private javax.swing.JLabel lbl_skin_selection;
     private javax.swing.JLabel lbl_time;
     private javax.swing.JLabel lbl_time1;
     private javax.swing.JLabel lbl_title;
@@ -758,6 +937,9 @@ public class NewInterface extends javax.swing.JFrame
     private javax.swing.JPanel panel_info;
     private javax.swing.JPanel panel_setting;
     private javax.swing.ButtonGroup rank_group;
+    private javax.swing.JSlider slider_bgm_vol;
+    private javax.swing.JSlider slider_key_vol;
+    private javax.swing.JSlider slider_main_vol;
     private javax.swing.JTable table_chartlist;
     private javax.swing.JScrollPane table_scroll;
     private javax.swing.JScrollPane table_scroll2;
@@ -768,7 +950,13 @@ public class NewInterface extends javax.swing.JFrame
     // End of variables declaration//GEN-END:variables
 
     private void initLogic() {
-        cwd = System.getProperty("user.dir");
+        /* TODO A table with the dirs in the config.obj and change the cwd and the way it loads right now
+         * also, it would be nice if we can construct some kind of song's db
+         */
+        dir_list = Config.get().getDirsList();
+        if(dir_list.isEmpty()) cwd = System.getProperty("user.dir");
+        else                   cwd = dir_list.get(0);
+        
         try {
             display_modes = Display.getAvailableDisplayModes();
         } catch (LWJGLException ex) {
@@ -776,11 +964,48 @@ public class NewInterface extends javax.swing.JFrame
         }
         model_songlist = new ChartListTableModel();
         model_chartlist = new ChartTableModel();
+
+        loadCache(cwd);
+    }
+
+    //TODO Move this function to its own class, with other ones xD
+    public static String stringToCRC32(String s)
+    {
+         //let's make a crc32 hash for the cache name
+        CRC32 cs = new CRC32();
+        cs.reset();
+
+        byte[] d = s.getBytes();
+        cs.update(d, 0, d.length);
+
+        return "cache_"+Long.toHexString(cs.getValue()).toUpperCase()+".obj";
+    }
+
+    private void loadCache(String dir)
+    {
+        File cache = new File(stringToCRC32(dir));
+        if(cache.exists()){
+            this.setTitle("Open2Jam - "+dir);
+            try {
+                GZIPInputStream gzip = new GZIPInputStream(new FileInputStream(cache));
+                ObjectInputStream obj = new ObjectInputStream(gzip);
+                @SuppressWarnings("unchecked") // yes, I'm sure its a list of chartlist
+                List<ChartList> l = (List<ChartList>) obj.readObject();
+                model_songlist.clear();
+                for(ChartList c : l)model_songlist.addRow(c);
+                obj.close();
+            } catch (IOException ex) {
+                logger.log(Level.SEVERE, "{0}", ex);
+            } catch (ClassNotFoundException ex) {
+                logger.log(Level.SEVERE, "{0}", ex);
+            }
+        }
     }
 
     private void updateSelection() {
         this.setTitle("Open2Jam - "+cwd);
         bt_choose_dir.setEnabled(false);
+        combo_dirs.setEnabled(false);
         load_progress.setValue(0);
         load_progress.setVisible(true);
         task = new ChartModelLoader(model_songlist, new File(cwd));
@@ -788,6 +1013,26 @@ public class NewInterface extends javax.swing.JFrame
         task.execute();
     }
 
+    private void loadDirlist()
+    {
+        DefaultComboBoxModel theModel = (DefaultComboBoxModel)combo_dirs.getModel();
+        theModel.removeAllElements();
+        if(dir_list.isEmpty()) return;
+        for(int i=0; i<dir_list.size(); i++)
+        {
+            String s = dir_list.get(i);
+            if(s.length()>18)
+            {
+                if(s.contains("\\"))     s =".."+s.substring(s.lastIndexOf("\\"));
+                else if(s.contains("/")) s =".."+s.substring(s.lastIndexOf("/"));
+
+                if(s.length()>18)
+                    s = ".."+s.substring(s.length()-16);
+            }
+            combo_dirs.addItem(s);
+        }
+    }
+    
     public void propertyChange(PropertyChangeEvent evt) {
         if("progress".equals(evt.getPropertyName()))
         {
@@ -796,6 +1041,7 @@ public class NewInterface extends javax.swing.JFrame
             if(i == 100)
             {
                 bt_choose_dir.setEnabled(true);
+                combo_dirs.setEnabled(true);
                 load_progress.setVisible(false);
             }
         }
@@ -811,10 +1057,10 @@ public class NewInterface extends javax.swing.JFrame
     }
 
     public void valueChanged(ListSelectionEvent e) {
-        if(!task.isDone())
-        {
-            return;//TODO look for a better place to wait until everything is loaded
-        }
+//        if(!task.isDone())
+//        {
+//            return;//TODO look for a better place to wait until everything is loaded
+//        }
         int i = table_songlist.getSelectedRow();
         if(i < 0 && last_model_idx >= 0){
             i = last_model_idx;

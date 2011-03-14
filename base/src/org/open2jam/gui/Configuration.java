@@ -11,15 +11,24 @@
 
 package org.open2jam.gui;
 
+import java.awt.Font;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.table.DefaultTableModel;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.GL11;
 import org.open2jam.Config;
 import org.open2jam.parser.Event;
+import org.open2jam.util.TrueTypeFont;
 
 
 /**
@@ -28,22 +37,43 @@ import org.open2jam.parser.Event;
  */
 public class Configuration extends javax.swing.JFrame {
 
-    EnumMap<Event.Channel,Integer> kb_map = Config.get().getKeyboardMap().clone();
+    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
+    EnumMap<Event.Channel,Integer> kb_map;
+    ArrayList<String> dir_list;
+    ArrayList<String> deleted_dirs;
 
     HashMap<Integer, Event.Channel> table_map = new HashMap<Integer,Event.Channel>();
 
     /** Creates new form configuration */
     public Configuration() {
         initComponents();
-        loadConfig();
+
+        loadTableKeys(Config.KeyboardType.K7);
+
+        dir_list = new ArrayList<String>();
+        deleted_dirs = new ArrayList<String>();
+        loadTableDirs();
+        
 	this.setLocationRelativeTo(null);
     }
 
-
-
-    private void loadConfig()
+    private void loadTableDirs()
     {
-        kb_map = Config.get().getKeyboardMap().clone();
+        if(dir_list.isEmpty())dir_list = Config.get().getDirsList();
+        DefaultTableModel dm = (DefaultTableModel)tDirs.getModel();
+        dm.setRowCount(dir_list.size());
+        
+        for(int i=0; i<dir_list.size(); i++)
+            tDirs.setValueAt(dir_list.get(i), i, 0);
+    }
+
+    private void loadTableKeys(Config.KeyboardType kt)
+    {
+        kb_map = Config.get().getKeyboardMap(kt).clone();
+        DefaultTableModel dm = (DefaultTableModel)tKeys.getModel();
+        dm.setRowCount(kb_map.size());
+
         int i = 0;
         for(Map.Entry<Event.Channel,Integer> entry : kb_map.entrySet())
         {
@@ -53,7 +83,6 @@ public class Configuration extends javax.swing.JFrame {
             i++;
         }
     }
-
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -66,35 +95,87 @@ public class Configuration extends javax.swing.JFrame {
 
         panel_folders = new javax.swing.JPanel();
         bAddFolder = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tDirs = new javax.swing.JTable();
+        bDelFolder = new javax.swing.JButton();
         bSave = new javax.swing.JButton();
         bCancel = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         tKeys_scroll = new javax.swing.JScrollPane();
         tKeys = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        combo_keyboardConfig = new javax.swing.JComboBox();
 
         setTitle("Configuration");
         setResizable(false);
 
         bAddFolder.setText("Add Folder");
+        bAddFolder.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bAddFolderActionPerformed(evt);
+            }
+        });
+
+        tDirs.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Folders"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(tDirs);
+        tDirs.getColumnModel().getColumn(0).setResizable(false);
+
+        bDelFolder.setText("Delete Folder");
+        bDelFolder.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bDelFolderActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panel_foldersLayout = new javax.swing.GroupLayout(panel_folders);
         panel_folders.setLayout(panel_foldersLayout);
         panel_foldersLayout.setHorizontalGroup(
             panel_foldersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel_foldersLayout.createSequentialGroup()
-                .addContainerGap(548, Short.MAX_VALUE)
-                .addComponent(bAddFolder)
-                .addContainerGap())
+                .addContainerGap()
+                .addGroup(panel_foldersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 633, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_foldersLayout.createSequentialGroup()
+                        .addComponent(bAddFolder)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(bDelFolder)
+                        .addGap(6, 6, 6))))
         );
         panel_foldersLayout.setVerticalGroup(
             panel_foldersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panel_foldersLayout.createSequentialGroup()
-                .addGap(164, 164, 164)
-                .addComponent(bAddFolder)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_foldersLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panel_foldersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bAddFolder)
+                    .addComponent(bDelFolder))
+                .addGap(7, 7, 7))
         );
 
-        bSave.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        bSave.setFont(new java.awt.Font("Tahoma", 1, 11));
         bSave.setText("Save");
         bSave.setMaximumSize(new java.awt.Dimension(65, 23));
         bSave.setMinimumSize(new java.awt.Dimension(65, 23));
@@ -113,27 +194,7 @@ public class Configuration extends javax.swing.JFrame {
 
         tKeys.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+
             },
             new String [] {
                 "Key", "Assign"
@@ -164,6 +225,15 @@ public class Configuration extends javax.swing.JFrame {
         tKeys_scroll.setViewportView(tKeys);
         tKeys.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 
+        jLabel1.setText("Select the keyboard configuration you want to edit:");
+
+        combo_keyboardConfig.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "7 Keys", "5 Keys", "6 Keys", "4 Keys", "8 Keys" }));
+        combo_keyboardConfig.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                combo_keyboardConfigActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -171,13 +241,17 @@ public class Configuration extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tKeys_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 643, Short.MAX_VALUE)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 643, Short.MAX_VALUE)
-                    .addComponent(panel_folders, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panel_folders, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(combo_keyboardConfig, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 202, Short.MAX_VALUE)
                         .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bCancel)))
+                        .addComponent(bCancel))
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 643, Short.MAX_VALUE)
+                    .addComponent(tKeys_scroll, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 643, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -185,14 +259,16 @@ public class Configuration extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(panel_folders, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tKeys_scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(22, 22, 22)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bCancel)
-                    .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1)
+                    .addComponent(combo_keyboardConfig, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -200,15 +276,35 @@ public class Configuration extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCancelActionPerformed
-        loadConfig();
+        loadTableKeys(Config.KeyboardType.K7);
         this.dispose();
     }//GEN-LAST:event_bCancelActionPerformed
 
     private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
-	//TODO save
-        Config.get().setKeyboardMap(kb_map);
+        //delete the cache files that are useless(deleted folders ones)
+        for(String s : deleted_dirs)
+        {
+            String dir = NewInterface.stringToCRC32(s);
+            File cache = new File(dir);
+            if(!cache.exists()) continue;
+            if(!cache.delete())
+                logger.log(Level.WARNING, "Could NOT delete {0}", dir);
+        }
+
+        Config.get().setDirsList(dir_list);
+
+        Config.KeyboardType kt;
+        switch(combo_keyboardConfig.getSelectedIndex())
+        {
+            case 0:kt = Config.KeyboardType.K7;break;
+            case 1:kt = Config.KeyboardType.K5;break;
+            case 2:kt = Config.KeyboardType.K6;break;
+            case 3:kt = Config.KeyboardType.K4;break;
+            case 4:kt = Config.KeyboardType.K8;break;
+            default: return;
+        }
+        Config.get().setKeyboardMap(kb_map, kt);
         Config.get().save();
-        loadConfig(); // EH ?
 	this.dispose();
     }//GEN-LAST:event_bSaveActionPerformed
 
@@ -218,25 +314,96 @@ public class Configuration extends javax.swing.JFrame {
         if(tKeys.getValueAt(row, 0) == null) return;
 
         int code = -1;
+        int lastkey = Keyboard.getKeyIndex(tKeys.getValueAt(row, 1).toString());
         try {
-            code = read_keyboard_key();
+            code = read_keyboard_key(lastkey);
         } catch(LWJGLException e) {
             // FML
             return;
         }
-
+        if(kb_map.containsValue(code)) return; //check for duplicates, TODO something informing about the duplicate
         Event.Channel c = table_map.get(row);
         kb_map.put(c, code);
         tKeys.setValueAt(Keyboard.getKeyName(code), row, 1);
     }//GEN-LAST:event_tKeysMouseClicked
 
-    private int read_keyboard_key() throws LWJGLException
+    private void combo_keyboardConfigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_keyboardConfigActionPerformed
+        // TODO get a message asking if you change, the changes will not be saved
+        // Also, it would be a good idea to get the keys of the skin and only show those
+        // or maybe put the names of the combo like "8 Keys (not supported)" when the keys don't match
+        switch(combo_keyboardConfig.getSelectedIndex())
+        {
+            case 0:loadTableKeys(Config.KeyboardType.K7);break;
+            case 1:loadTableKeys(Config.KeyboardType.K5);break;
+            case 2:loadTableKeys(Config.KeyboardType.K6);break;
+            case 3:loadTableKeys(Config.KeyboardType.K4);break;
+            case 4:loadTableKeys(Config.KeyboardType.K8);break;
+        }
+    }//GEN-LAST:event_combo_keyboardConfigActionPerformed
+
+    private void bAddFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAddFolderActionPerformed
+        JFileChooser jfc = new JFileChooser();
+        String cwd = "";
+        if(tDirs.getRowCount()>0) cwd = tDirs.getValueAt(0, 0).toString();
+        if(cwd.isEmpty() || !(new File(cwd).exists())) cwd = System.getProperty("user.dir");
+        jfc.setCurrentDirectory(new File(cwd));
+        jfc.setDialogTitle("Choose a directory");
+        jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        jfc.setAcceptAllFileFilterUsed(false);
+        if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            String s = jfc.getSelectedFile().getAbsolutePath();
+            if(dir_list.contains(s)) return; //check for duplicates, TODO something informing about the duplicate
+            dir_list.add(s);
+            if(deleted_dirs.contains(s))  deleted_dirs.remove(s); //it's not deleted, just the user fucking it up
+            loadTableDirs();
+        }
+    }//GEN-LAST:event_bAddFolderActionPerformed
+
+    private void bDelFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDelFolderActionPerformed
+        if(tDirs.getSelectedRow()<0)return;
+        String s = tDirs.getValueAt(tDirs.getSelectedRow(), 0).toString();
+        if(dir_list.contains(s)) dir_list.remove(s);
+        deleted_dirs.add(s);
+        loadTableDirs();
+    }//GEN-LAST:event_bDelFolderActionPerformed
+
+    private static Font font = new Font("Tahoma", Font.BOLD, 14);
+    private static TrueTypeFont trueTypeFont;
+
+    private int read_keyboard_key(int lastkey) throws LWJGLException
     {
+        String place = tKeys.getValueAt(tKeys.getSelectedRow(), 0).toString();
         if(Display.isCreated())throw new LWJGLException();
         
-        Display.setDisplayMode(new DisplayMode(100,100));
+        Display.setDisplayMode(new DisplayMode(220,50));
+        Display.setTitle(place);
+        Display.setVSyncEnabled(true);
+        Display.setIcon(null);
         Display.create();
         Display.setLocation(-1, -1);
+
+        // enable textures since we're going to use these for our sprites
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+
+        // disable the OpenGL depth test since we're rendering 2D graphics
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+        // enable apha blending
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glLoadIdentity();
+
+        GL11.glOrtho(0, 220, 50, 0, -1, 1);
+
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        GL11.glLoadIdentity();
+
+        trueTypeFont = new TrueTypeFont(font, false);
+        
+        
 
         // TODO: there should be some kind of text on the display to
         // tell the user to press a key or something
@@ -244,10 +411,17 @@ public class Configuration extends javax.swing.JFrame {
         int code;
         do{
             Display.update();
+            trueTypeFont.drawString(10, 18, "Press a KEY for "+place, 1, -1);
+            trueTypeFont.drawString(10, 34, "Last assign was "+Keyboard.getKeyName(lastkey), 1, -1);
+            trueTypeFont.drawString(10, 50, "Press ESC or close to cancel", 1, -1);
             Keyboard.next();
-            code = Keyboard.getEventKey();
+            if(Display.isCloseRequested() || Keyboard.getEventKey() == Keyboard.KEY_ESCAPE)
+                code = lastkey;
+            else
+                code = Keyboard.getEventKey();
         }
         while(code == Keyboard.CHAR_NONE);
+        trueTypeFont.destroy();
         Display.destroy();
         return code;
     }
@@ -255,9 +429,14 @@ public class Configuration extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private static javax.swing.JButton bAddFolder;
     private static javax.swing.JButton bCancel;
+    private static javax.swing.JButton bDelFolder;
     private static javax.swing.JButton bSave;
+    private static javax.swing.JComboBox combo_keyboardConfig;
+    private static javax.swing.JLabel jLabel1;
+    private static javax.swing.JScrollPane jScrollPane1;
     private static javax.swing.JSeparator jSeparator1;
     private static javax.swing.JPanel panel_folders;
+    private static javax.swing.JTable tDirs;
     private static javax.swing.JTable tKeys;
     private static javax.swing.JScrollPane tKeys_scroll;
     // End of variables declaration//GEN-END:variables

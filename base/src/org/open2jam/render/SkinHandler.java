@@ -347,6 +347,14 @@ public class SkinHandler extends DefaultHandler
             }
 	    e = new ComboCounterEntity(list, 0, 0);
         }
+        else if(id.equals("COMBO_TITLE")){
+            SpriteList sl = sprite_buffer.get(atts.get("sprite"));
+            e = new Entity(sl, 0, 0);
+        }
+        else if(id.equals("JAM_TITLE")){
+            SpriteList sl = sprite_buffer.get(atts.get("sprite"));
+            e = new Entity(sl, 0, 0);
+        }
         else if(id.equals("MINUTE_COUNTER")){
             ArrayList<Entity> list = new ArrayList<Entity>();
             for(String s : atts.get("sprite").split(",")){

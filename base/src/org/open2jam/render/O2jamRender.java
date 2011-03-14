@@ -40,9 +40,9 @@ public class O2jamRender extends Render
 
     private EnumMap<JUDGE,NumberEntity> note_counter;
 
-    public O2jamRender(Chart c, double hispeed, boolean autoplay, int channelModifier, int visibilityModifier)
+    public O2jamRender(Chart c, double hispeed, boolean autoplay, int channelModifier, int visibilityModifier, int mainVol, int keyVol, int bgmVol)
     {
-        super(c,hispeed,autoplay,channelModifier,visibilityModifier);
+        super(c,hispeed,autoplay,channelModifier,visibilityModifier, mainVol, keyVol, bgmVol);
     }
 
     /**

@@ -79,6 +79,9 @@ public abstract class Render implements GameWindowCallback
     /** the layer of the notes */
     protected int note_layer;
 
+    /** the height of the notes */
+    protected double note_height;
+
     /** the bpm at which the entities are falling */
     private double bpm;
 
@@ -165,6 +168,7 @@ public abstract class Render implements GameWindowCallback
 
     /** the combo counter */
     protected ComboCounterEntity combo_entity;
+    protected ComboCounterEntity combo_title;
 
     /** the maxcombo counter */
     protected NumberEntity maxcombo_entity;
@@ -178,13 +182,18 @@ public abstract class Render implements GameWindowCallback
     /** the visibility modifier */
     private int visibilityModifier = 0;
 
+    /** The volume */
+    private float mainVolume = 0.75f;
+    private float keyVolume = 0.75f;
+    private float bgmVolume = 0.75f;
+
     static {
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
     }
 
-    Render(Chart chart, double hispeed, boolean autoplay, int channelModifier, int visibilityModifier)
+    Render(Chart chart, double hispeed, boolean autoplay, int channelModifier, int visibilityModifier, int mainVol, int keyVol, int bgmVol)
     {
-        keyboard_map = Config.get().getKeyboardMap();
+        keyboard_map = Config.get().getKeyboardMap(Config.KeyboardType.K7);
         window = ResourceFactory.get().getGameWindow();
         this.chart = chart;
         this.hispeed = hispeed;
@@ -192,6 +201,9 @@ public abstract class Render implements GameWindowCallback
         this.AUTOPLAY = autoplay;
         this.channelModifier = channelModifier;
         this.visibilityModifier = visibilityModifier;
+        this.mainVolume = (mainVol/100f);
+        this.keyVolume = (keyVol/100f);
+        this.bgmVolume = (bgmVol/100f);
     }
 
     /** set the screen dimensions */
@@ -217,9 +229,10 @@ public abstract class Render implements GameWindowCallback
 
         double precision = (hit_count / total_notes) * 100;
         double accuracy = (hit_sum / total_notes) * 100;
-        JOptionPane.showMessageDialog(null,
-                String.format("Precision : %.3f, Accuracy : %.3f", precision, accuracy)
-                );
+        //TODO better result screen xD right now it's annoying, at least for me
+//        JOptionPane.showMessageDialog(null,
+//                String.format("Precision : %.3f, Accuracy : %.3f", precision, accuracy)
+//                );
     }
 
     /** play a sample */
@@ -245,8 +258,12 @@ public abstract class Render implements GameWindowCallback
                 return;
             }
         }
-
-        SoundManager.setGain(source, sample.volume);
+        float vol = keyVolume;
+        if(sample.isBGM()) vol = bgmVolume;
+        vol = sample.volume*vol;
+        if(vol < 0f) vol = 0f;
+        if(vol > 1f) vol = 1f;
+        SoundManager.setGain(source, vol);
         SoundManager.setPan(source, sample.pan);
         SoundManager.play(source, buffer);
     }
@@ -318,6 +335,8 @@ public abstract class Render implements GameWindowCallback
         buffer_bpm = chart.getBPM();
 
         note_layer = skin.getEntityMap().get("NOTE_P1_1").getLayer();
+
+        note_height = skin.getEntityMap().get("NOTE_P1_1").getHeight();
 
         // adding static entities
         for(Entity e : skin.getEntityList()){
@@ -391,9 +410,7 @@ public abstract class Render implements GameWindowCallback
 
         buffer_iterator = event_list.iterator();
 
-	/**Let's randomize "-"
-	 * I don't know any better implementation so...
-	 */
+	//Let's randomize "-"
 	if(channelModifier != 0)
 	{
 	    if(channelModifier == 1)
@@ -412,6 +429,9 @@ public abstract class Render implements GameWindowCallback
 
         // create sound sources
         source_queue = new LinkedList<Integer>();
+
+        //set main Volume
+        SoundManager.mainVolume(mainVolume);
 
         try{
             for(int i=0;i<MAX_SOURCES;i++)
@@ -533,6 +553,7 @@ public abstract class Render implements GameWindowCallback
                 case NOTE_P2_SC:
 
                 case AUTO_PLAY:
+                e.getSample().toBGM();
                 SampleEntity s = new SampleEntity(this,e.getSample(),0);
                 s.setTime(buffer_timer);
                 entities_matrix.add(s);
