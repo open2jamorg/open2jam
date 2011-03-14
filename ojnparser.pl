@@ -106,11 +106,11 @@ while(!eof $OJN && tell $OJN < $endpos)
 			'type'    => $type,
 			};
 		}
-		next if $channel > 1;
-		print STDERR "$value m: $measure pos: ".($i / $events_count)."\n";
+		next if $channel > 9;
+		print "ch: $channel, m: $measure, p: ".($i / $events_count).",v: $value\n";
 	}
 }
-
+exit;
 # die Dumper \@note_list;
 
 @note_list = sort{ $a->{'measure'} <=> $b->{'measure'} } @note_list;

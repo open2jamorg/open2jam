@@ -54,10 +54,8 @@ public class BMSParser
         {
             try{
                 BMSChart chart = parseBMSHeader(bms_files[i]);
-                if(chart != null)
-                    list.add(chart);
-            } catch (UnsupportedOperationException e){}
-              catch (Exception e) {
+                if(chart != null)list.add(chart);
+            } catch (Exception e) {
                 logger.log(Level.WARNING, "{0}", e);
             }
         }
@@ -66,7 +64,7 @@ public class BMSParser
         return list;
     }
 
-    private static BMSChart parseBMSHeader(File f) throws BadFileException, FileNotFoundException, IOException
+    private static BMSChart parseBMSHeader(File f) throws IOException
     {
         String charset = CharsetDetector.analyze(f);
 
@@ -217,7 +215,6 @@ public class BMSParser
             default:
                 logger.log(Level.WARNING, "Unknown key number {0} on file {1}", new Object[]{max_key, f.getName()});
         }
-        //if(chart.keys != 7)throw new UnsupportedOperationException("Not supported yet.");
         return chart;
     }
 
@@ -292,35 +289,35 @@ public class BMSParser
                         break;
                     case 11:
                     case 51:
-                        ec = Event.Channel.NOTE_P1_1;
+                        ec = Event.Channel.NOTE_1;
                         break;
                     case 12:
                     case 52:
-                        ec = Event.Channel.NOTE_P1_2;
+                        ec = Event.Channel.NOTE_2;
                         break;
                     case 13:
                     case 53:
-                        ec = Event.Channel.NOTE_P1_3;
+                        ec = Event.Channel.NOTE_3;
                         break;
                     case 14:
                     case 54:
-                        ec = Event.Channel.NOTE_P1_4;
+                        ec = Event.Channel.NOTE_4;
                         break;
                     case 15:
                     case 55:
-                        ec = Event.Channel.NOTE_P1_5;
+                        ec = Event.Channel.NOTE_5;
                         break;
                     case 18:
                     case 58:
-                        ec = Event.Channel.NOTE_P1_6;
+                        ec = Event.Channel.NOTE_6;
                         break;
                     case 19:
                     case 59:
-                        ec = Event.Channel.NOTE_P1_7;
+                        ec = Event.Channel.NOTE_7;
                         break;
                     case 16:
                     case 56:
-                        ec = Event.Channel.NOTE_P1_SC;
+                        ec = Event.Channel.NOTE_SC;
                         break;
                     default:
                         continue;

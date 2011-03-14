@@ -15,6 +15,8 @@ import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.awt.GraphicsEnvironment;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -32,6 +34,9 @@ import org.lwjgl.util.glu.GLU;
  * @new version edited by David Aaron Muhar (bobjob)
  */
 public class TrueTypeFont {
+
+    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
 	public final static int
 		ALIGN_LEFT = 0,
 		ALIGN_RIGHT = 1,
@@ -40,7 +45,7 @@ public class TrueTypeFont {
 	private IntObject[] charArray = new IntObject[256];
 
 	/** Map of user defined font characters (Character <-> IntObject) */
-	private Map customChars = new HashMap();
+	private Map<Character,IntObject> customChars = new HashMap<Character,IntObject>();
 
 	/** Boolean flag on whether AntiAliasing is enabled or not */
 	private boolean antiAlias;
@@ -223,8 +228,7 @@ public class TrueTypeFont {
 					//.getTexture(font.toString(), imgTemp);
 
 		} catch (Exception e) {
-			System.err.println("Failed to create font.");
-			e.printStackTrace();
+                    logger.log(Level.SEVERE, "Failed to create font: {0}", e.getMessage());
 		}
 	}
 
@@ -446,9 +450,8 @@ public class TrueTypeFont {
 			return textureId.get(0);
 
 		} catch (Exception e) {
-	    	e.printStackTrace();
-	    	System.exit(-1);
-	    }
+                    logger.log(Level.SEVERE, "Fatal error: {0}", e.getMessage());
+                }
 
 		return -1;
 	}

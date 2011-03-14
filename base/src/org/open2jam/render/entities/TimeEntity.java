@@ -10,4 +10,10 @@ public interface TimeEntity {
     public void setTime(long t);
 
     public long getTime();
+
+    /**
+     * judgment time.
+     * this will be called once, when it hits judgment.
+     */
+    public void judgment();
 }

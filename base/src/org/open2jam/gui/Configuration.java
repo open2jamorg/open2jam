@@ -1,15 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+package org.open2jam.gui;
 
 /*
  * configuration.java
  *
  * Created on Dec 14, 2010, 1:54:48 PM
  */
-
-package org.open2jam.gui;
 
 import java.awt.Font;
 import java.io.File;
@@ -20,6 +15,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -31,28 +27,25 @@ import org.open2jam.parser.Event;
 import org.open2jam.util.TrueTypeFont;
 
 
-/**
- *
- * @author Administrador
- */
-public class Configuration extends javax.swing.JFrame {
+public class Configuration extends javax.swing.JDialog {
 
     static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     EnumMap<Event.Channel,Integer> kb_map;
-    ArrayList<String> dir_list;
-    ArrayList<String> deleted_dirs;
+    ArrayList<File> dir_list;
+    ArrayList<File> deleted_dirs;
 
     HashMap<Integer, Event.Channel> table_map = new HashMap<Integer,Event.Channel>();
 
     /** Creates new form configuration */
-    public Configuration() {
+    public Configuration(JFrame parent) {
+        super(parent, true);
         initComponents();
 
         loadTableKeys(Config.KeyboardType.K7);
 
-        dir_list = new ArrayList<String>();
-        deleted_dirs = new ArrayList<String>();
+        dir_list = new ArrayList<File>();
+        deleted_dirs = new ArrayList<File>();
         loadTableDirs();
         
 	this.setLocationRelativeTo(null);
@@ -282,13 +275,12 @@ public class Configuration extends javax.swing.JFrame {
 
     private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
         //delete the cache files that are useless(deleted folders ones)
-        for(String s : deleted_dirs)
+        for(File s : deleted_dirs)
         {
-            String dir = NewInterface.stringToCRC32(s);
-            File cache = new File(dir);
+            File cache = Interface.getCacheFile(s);
             if(!cache.exists()) continue;
             if(!cache.delete())
-                logger.log(Level.WARNING, "Could NOT delete {0}", dir);
+                logger.log(Level.WARNING, "Could NOT delete {0}", cache.getAbsolutePath());
         }
 
         Config.get().setDirsList(dir_list);
@@ -343,15 +335,15 @@ public class Configuration extends javax.swing.JFrame {
 
     private void bAddFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAddFolderActionPerformed
         JFileChooser jfc = new JFileChooser();
-        String cwd = "";
-        if(tDirs.getRowCount()>0) cwd = tDirs.getValueAt(0, 0).toString();
-        if(cwd.isEmpty() || !(new File(cwd).exists())) cwd = System.getProperty("user.dir");
-        jfc.setCurrentDirectory(new File(cwd));
+        File cwd = null;
+        if(tDirs.getRowCount()>0) cwd = (File) tDirs.getValueAt(0, 0);
+        if(cwd == null || !cwd.exists()) cwd = new File(System.getProperty("user.dir"));
+        jfc.setCurrentDirectory(cwd);
         jfc.setDialogTitle("Choose a directory");
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         jfc.setAcceptAllFileFilterUsed(false);
         if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            String s = jfc.getSelectedFile().getAbsolutePath();
+            File s = jfc.getSelectedFile();
             if(dir_list.contains(s)) return; //check for duplicates, TODO something informing about the duplicate
             dir_list.add(s);
             if(deleted_dirs.contains(s))  deleted_dirs.remove(s); //it's not deleted, just the user fucking it up
@@ -361,7 +353,7 @@ public class Configuration extends javax.swing.JFrame {
 
     private void bDelFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDelFolderActionPerformed
         if(tDirs.getSelectedRow()<0)return;
-        String s = tDirs.getValueAt(tDirs.getSelectedRow(), 0).toString();
+        File s = (File) tDirs.getValueAt(tDirs.getSelectedRow(), 0);
         if(dir_list.contains(s)) dir_list.remove(s);
         deleted_dirs.add(s);
         loadTableDirs();
@@ -402,11 +394,6 @@ public class Configuration extends javax.swing.JFrame {
         GL11.glLoadIdentity();
 
         trueTypeFont = new TrueTypeFont(font, false);
-        
-        
-
-        // TODO: there should be some kind of text on the display to
-        // tell the user to press a key or something
 
         int code;
         do{

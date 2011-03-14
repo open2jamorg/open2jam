@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Resources>
-<skin name="o2jam" keys="7" width="800" height="600" judgment_line="416">
+<skin name="o2jam" keys="7" width="800" height="600" judgment_line="460">
     
     <spriteset>
         
@@ -425,13 +425,13 @@
 
     <!-- note press lane effects -->
     <layer id="4">
-	<entity x="5"   y="215" id="PRESSED_NOTE_P1_1" sprite="pressed_note_lane_white" />
-	<entity x="33"  y="1"   id="PRESSED_NOTE_P1_2" sprite="pressed_note_lane_blue" />
-	<entity x="55"  y="215" id="PRESSED_NOTE_P1_3" sprite="pressed_note_lane_white" />
-	<entity x="83"  y="1"   id="PRESSED_NOTE_P1_4" sprite="pressed_note_lane_yellow" />
-	<entity x="115" y="215" id="PRESSED_NOTE_P1_5" sprite="pressed_note_lane_white" />
-	<entity x="143" y="1"   id="PRESSED_NOTE_P1_6" sprite="pressed_note_lane_blue" />
-	<entity x="165" y="215" id="PRESSED_NOTE_P1_7" sprite="pressed_note_lane_white" />
+	<entity x="5"   y="215" id="PRESSED_NOTE_1" sprite="pressed_note_lane_white" />
+	<entity x="33"  y="1"   id="PRESSED_NOTE_2" sprite="pressed_note_lane_blue" />
+	<entity x="55"  y="215" id="PRESSED_NOTE_3" sprite="pressed_note_lane_white" />
+	<entity x="83"  y="1"   id="PRESSED_NOTE_4" sprite="pressed_note_lane_yellow" />
+	<entity x="115" y="215" id="PRESSED_NOTE_5" sprite="pressed_note_lane_white" />
+	<entity x="143" y="1"   id="PRESSED_NOTE_6" sprite="pressed_note_lane_blue" />
+	<entity x="165" y="215" id="PRESSED_NOTE_7" sprite="pressed_note_lane_white" />
     </layer>
 
     <!-- measure mark -->
@@ -441,13 +441,13 @@
 
     <!-- notes -->
     <layer id="6">
-	<entity id="NOTE_P1_1" x="5"    sprite="head_note_white, body_note_white" />
-	<entity id="NOTE_P1_2" x="33"   sprite="head_note_blue, body_note_blue" />
-	<entity id="NOTE_P1_3" x="55"   sprite="head_note_white, body_note_white" />
-	<entity id="NOTE_P1_4" x="83"   sprite="head_note_yellow, body_note_yellow" />
-	<entity id="NOTE_P1_5" x="115"  sprite="head_note_white, body_note_white" />
-	<entity id="NOTE_P1_6" x="143"  sprite="head_note_blue, body_note_blue" />
-	<entity id="NOTE_P1_7" x="165"  sprite="head_note_white, body_note_white" />
+	<entity id="NOTE_1" x="5"    sprite="head_note_white, body_note_white" />
+	<entity id="NOTE_2" x="33"   sprite="head_note_blue, body_note_blue" />
+	<entity id="NOTE_3" x="55"   sprite="head_note_white, body_note_white" />
+	<entity id="NOTE_4" x="83"   sprite="head_note_yellow, body_note_yellow" />
+	<entity id="NOTE_5" x="115"  sprite="head_note_white, body_note_white" />
+	<entity id="NOTE_6" x="143"  sprite="head_note_blue, body_note_blue" />
+	<entity id="NOTE_7" x="165"  sprite="head_note_white, body_note_white" />
     </layer>
 
     <!-- static keyboard sprite -->
@@ -462,24 +462,23 @@
 
     <!-- pressed keyboard keys sprites -->
     <layer id="9">
-	<entity id="PRESSED_NOTE_P1_1" x="3"    y="487" sprite="pressed_note_keyboard_white1" />
-	<entity id="PRESSED_NOTE_P1_1" x="34"   y="528" sprite="pressed_note_keyboard_white2" />
+	<entity id="PRESSED_NOTE_1" x="3"    y="487" sprite="pressed_note_keyboard_white1" />
+	<entity id="PRESSED_NOTE_1" x="34"   y="528" sprite="pressed_note_keyboard_white2" />
 	
-	<entity id="PRESSED_NOTE_P1_2" x="33"   y="487" sprite="pressed_note_keyboard_blue" />
+	<entity id="PRESSED_NOTE_2" x="33"   y="487" sprite="pressed_note_keyboard_blue" />
 
-	<entity id="PRESSED_NOTE_P1_3" x="54"   y="487" sprite="pressed_note_keyboard_white1" />
-	<entity id="PRESSED_NOTE_P1_3" x="45"   y="528" sprite="pressed_note_keyboard_white2" />
+	<entity id="PRESSED_NOTE_3" x="54"   y="487" sprite="pressed_note_keyboard_white1" />
+	<entity id="PRESSED_NOTE_3" x="45"   y="528" sprite="pressed_note_keyboard_white2" />
 	
-	<entity id="PRESSED_NOTE_P1_4" x="83"   y="487" sprite="pressed_note_keyboard_yellow" />
+	<entity id="PRESSED_NOTE_4" x="83"   y="487" sprite="pressed_note_keyboard_yellow" />
 
-       <!-- TODO: there are different sprites for NOTE_P1_1 and NOTE_P1_5, does it make a difference ? -->
-	<entity id="PRESSED_NOTE_P1_5" x="114"  y="487" sprite="pressed_note_keyboard_white1" />
-	<entity id="PRESSED_NOTE_P1_5" x="144"  y="528" sprite="pressed_note_keyboard_white2" />
+	<entity id="PRESSED_NOTE_5" x="114"  y="487" sprite="pressed_note_keyboard_white1" />
+	<entity id="PRESSED_NOTE_5" x="144"  y="528" sprite="pressed_note_keyboard_white2" />
 
-	<entity id="PRESSED_NOTE_P1_6" x="143"  y="487" sprite="pressed_note_keyboard_blue" />
+	<entity id="PRESSED_NOTE_6" x="143"  y="487" sprite="pressed_note_keyboard_blue" />
 
-	<entity id="PRESSED_NOTE_P1_7" x="164"  y="487" sprite="pressed_note_keyboard_white1" />
-	<entity id="PRESSED_NOTE_P1_7" x="154"  y="528" sprite="pressed_note_keyboard_white2" />
+	<entity id="PRESSED_NOTE_7" x="164"  y="487" sprite="pressed_note_keyboard_white1" />
+	<entity id="PRESSED_NOTE_7" x="154"  y="528" sprite="pressed_note_keyboard_white2" />
     </layer>
 
     <!-- note hit effects -->

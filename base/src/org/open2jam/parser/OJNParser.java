@@ -47,7 +47,10 @@ public class OJNParser
 
         int songid = buffer.getInt();
         int signature = buffer.getInt();
-        if(signature != OJN_SIGNATURE)throw new BadFileException("Not a OJN file");
+        if(signature != OJN_SIGNATURE){
+            logger.log(Level.WARNING, "File [{0}] isn't a OJN file !", file);
+            return null;
+        }
 
         float encode_version = buffer.getFloat();
         
@@ -195,13 +198,13 @@ public class OJNParser
             {
                 case 0:channel = Event.Channel.TIME_SIGNATURE;break;
                 case 1:channel = Event.Channel.BPM_CHANGE;break;
-                case 2:channel = Event.Channel.NOTE_P1_1;break;
-                case 3:channel = Event.Channel.NOTE_P1_2;break;
-                case 4:channel = Event.Channel.NOTE_P1_3;break;
-                case 5:channel = Event.Channel.NOTE_P1_4;break;
-                case 6:channel = Event.Channel.NOTE_P1_5;break;
-                case 7:channel = Event.Channel.NOTE_P1_6;break;
-                case 8:channel = Event.Channel.NOTE_P1_7;break;
+                case 2:channel = Event.Channel.NOTE_1;break;
+                case 3:channel = Event.Channel.NOTE_2;break;
+                case 4:channel = Event.Channel.NOTE_3;break;
+                case 5:channel = Event.Channel.NOTE_4;break;
+                case 6:channel = Event.Channel.NOTE_5;break;
+                case 7:channel = Event.Channel.NOTE_6;break;
+                case 8:channel = Event.Channel.NOTE_7;break;
                 default:
                 channel = Event.Channel.AUTO_PLAY;
             }

@@ -2,9 +2,6 @@ package org.open2jam.render;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.TreeMap;
 import org.open2jam.render.entities.Entity;
 
 /**

@@ -69,12 +69,6 @@ public class CompositeEntity extends Entity
         for(Entity e : entity_list)e.draw();
     }
 
-    @Override
-    public void judgment()
-    {
-        for(Entity e : entity_list)e.judgment();
-    }
-
     /**
      * compositeEntity is alive as long
      * as there is a entity alive inside it

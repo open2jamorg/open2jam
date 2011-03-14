@@ -19,7 +19,7 @@ import org.open2jam.render.entities.TimeEntity;
 import org.open2jam.render.lwjgl.SoundManager;
 
 
-public class BeatmaniaRender extends Render
+public class TimeRender extends Render
 {
     private static final double AUTOPLAY_THRESHOLD = 50;
 
@@ -40,7 +40,7 @@ public class BeatmaniaRender extends Render
 
     private EnumMap<JUDGE,NumberEntity> note_counter;
 
-    public BeatmaniaRender(Chart c, double hispeed, boolean autoplay, int channelModifier, int visibilityModifier, int mainVol, int keyVol, int bgmVol)
+    public TimeRender(Chart c, double hispeed, boolean autoplay, int channelModifier, int visibilityModifier, int mainVol, int keyVol, int bgmVol)
     {
         super(c,hispeed,autoplay,channelModifier,visibilityModifier, mainVol, keyVol, bgmVol);
     }
@@ -95,17 +95,15 @@ public class BeatmaniaRender extends Render
                 second_entity.incNumber();
         }
 
-        now -= start_time;
+        now = SystemTimer.getTime() - start_time;
+        update_note_buffer(now);
+
+        now = SystemTimer.getTime() - start_time;
 
 	if(AUTOPLAY)do_autoplay(now);
         else check_keyboard(now);
 
-        if(updateHS)updateHispeed();
-        
-        update_note_buffer(now);
-
         Iterator<LinkedList<Entity>> i = entities_matrix.iterator();
-
         while(i.hasNext()) // loop over layers
         {
             // get entity iterator from layer
@@ -118,11 +116,10 @@ public class BeatmaniaRender extends Render
                 if(e instanceof TimeEntity)
                 {
                     TimeEntity te = (TimeEntity) e;
-                    // TODO: this is supposed to be skin.judgment_line, but I just notice that's fuck up too, so I need to fix there before
                     double y = getViewport() - velocity_integral(now,te.getTime());
                     if(te.getTime() - now <= 0)
                     {
-                        e.judgment();
+                        te.judgment();
                     }
                     if(e instanceof MeasureEntity) y += e.getHeight()*2;
                     e.setPos(e.getX(), y);
@@ -157,9 +154,8 @@ public class BeatmaniaRender extends Render
         switch (ne.getState())
         {
             case NOT_JUDGED: // you missed it (no keyboard input)
-                if(ne.isAlive()
-                        && ((ne instanceof LongNoteEntity && ne.getStartY() >= judgmentArea()) //needed by the ln head
-                        || (ne.getY() >= judgmentArea()))) // TODO: compare the time, not the position
+                if((ne instanceof LongNoteEntity && ne.getStartY() >= judgmentArea()) //needed by the ln head
+                        || (ne.getY() >= judgmentArea())) // TODO: compare the time, not the position
                 {
                     if(judgment_entity != null)judgment_entity.setAlive(false);
                     judgment_entity = skin.getEntityMap().get("EFFECT_"+JUDGE.MISS.toString()).copy();
@@ -237,7 +233,7 @@ public class BeatmaniaRender extends Render
                 }
             break;
             case LN_HOLD:    // You keept too much time the note held that it misses
-                if(ne.isAlive() && ne.getY() >= judgmentArea()) // TODO: use the time
+                if(ne.getY() >= judgmentArea()) // TODO: use the time
                 {
                     if(judgment_entity != null)judgment_entity.setAlive(false);
                     judgment_entity = skin.getEntityMap().get("EFFECT_"+JUDGE.MISS.toString()).copy();
@@ -252,7 +248,7 @@ public class BeatmaniaRender extends Render
                  }
             break;
             case TO_KILL: // this is the "garbage collector", it just removes the notes off window
-                if(ne.isAlive() && ne.getY() >= window.getResolutionHeight())
+                if(ne.getY() > judgmentArea())
                 {
                     // kill it
                     ne.setAlive(false);
@@ -466,7 +462,6 @@ public class BeatmaniaRender extends Render
                 Entity lf = longflare.remove(c);
                 if(lf !=null)lf.setAlive(false);
 
-                // TODO: necessary ?? --> note_channels.get(c).isEmpty() || e != note_channels.get(c).getFirst()
                 if(e == null || e.getState() != NoteEntity.State.LN_HOLD)continue;
 
                 long hit = e.testTimeHit(now);

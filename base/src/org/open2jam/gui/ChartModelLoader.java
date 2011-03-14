@@ -58,10 +58,10 @@ public class ChartModelLoader extends SwingWorker<ChartListTableModel,ChartList>
     @Override
     protected void done() {
 
-        String str = NewInterface.stringToCRC32(dir.toString());
+        File f = Interface.getCacheFile(dir);
 
         try {
-            GZIPOutputStream gzip = new GZIPOutputStream(new FileOutputStream(str));
+            GZIPOutputStream gzip = new GZIPOutputStream(new FileOutputStream(f));
             ObjectOutputStream obj = new ObjectOutputStream(gzip);
             obj.writeObject(table_model.getRawList());
             obj.close();

@@ -39,7 +39,7 @@ import org.open2jam.util.SystemTimer;
 public abstract class Render implements GameWindowCallback
 {
     /** the config xml */
-    private static final URL resources_xml = BeatmaniaRender.class.getResource("/resources/resources.xml");
+    private static final URL resources_xml = TimeRender.class.getResource("/resources/resources.xml");
     
     static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
@@ -70,8 +70,7 @@ public abstract class Render implements GameWindowCallback
     protected int fps;
 
     /** the hispeed */
-    protected double hispeed;
-    protected boolean updateHS = false;
+    protected final double hispeed;
     
     /** the size of a measure */
     protected double measure_size;
@@ -229,10 +228,7 @@ public abstract class Render implements GameWindowCallback
 
         double precision = (hit_count / total_notes) * 100;
         double accuracy = (hit_sum / total_notes) * 100;
-        //TODO better result screen xD right now it's annoying, at least for me
-//        JOptionPane.showMessageDialog(null,
-//                String.format("Precision : %.3f, Accuracy : %.3f", precision, accuracy)
-//                );
+        logger.log(Level.INFO,String.format("Precision : %.3f, Accuracy : %.3f", precision, accuracy));
     }
 
     /** play a sample */
@@ -240,7 +236,6 @@ public abstract class Render implements GameWindowCallback
     {
         Integer buffer = samples.get(sample.sample_id);
         if(buffer == null)return;
-
 
         if(!source_queue_iterator.hasNext())
             source_queue_iterator = source_queue.iterator();
@@ -271,15 +266,13 @@ public abstract class Render implements GameWindowCallback
 
     protected void updateHispeed()
     {
-        judgment_line_y1 = skin.judgment_line;
+        judgment_line_y1 = skin.judgment_line - JUDGMENT_SIZE;
         if(hispeed > 1){
             double off = JUDGMENT_SIZE * (hispeed-1);
             judgment_line_y1 -= off;
         }
 
         measure_size = 0.8 * hispeed * getViewport();
-
-	updateHS = false;
     }
 
     public double getMeasureSize() { return measure_size; }
@@ -326,7 +319,7 @@ public abstract class Render implements GameWindowCallback
             logger.log(Level.INFO, "No cover image on file: {0}", chart.getSource().getName());
         }
 
-        judgment_line_y2 = skin.judgment_line + JUDGMENT_SIZE;
+        judgment_line_y2 = skin.judgment_line;
 	updateHispeed();
 
         entities_matrix = new EntityMatrix(skin.max_layer+1);
@@ -334,9 +327,9 @@ public abstract class Render implements GameWindowCallback
         bpm = chart.getBPM();
         buffer_bpm = chart.getBPM();
 
-        note_layer = skin.getEntityMap().get("NOTE_P1_1").getLayer();
+        note_layer = skin.getEntityMap().get("NOTE_1").getLayer();
 
-        note_height = skin.getEntityMap().get("NOTE_P1_1").getHeight();
+        note_height = skin.getEntityMap().get("NOTE_1").getHeight();
 
         // adding static entities
         for(Entity e : skin.getEntityList()){
@@ -518,9 +511,9 @@ public abstract class Render implements GameWindowCallback
                 buffer_bpm = e.getValue();
                 break;
 
-                case NOTE_P1_1:case NOTE_P1_2:
-                case NOTE_P1_3:case NOTE_P1_4:
-                case NOTE_P1_5:case NOTE_P1_6:case NOTE_P1_7:
+                case NOTE_1:case NOTE_2:
+                case NOTE_3:case NOTE_4:
+                case NOTE_5:case NOTE_6:case NOTE_7:
                 if(e.getFlag() == Event.Flag.NONE){
                     NoteEntity n = (NoteEntity) skin.getEntityMap().get(e.getChannel().toString()).copy();
                     n.setTime(buffer_timer);
@@ -546,11 +539,11 @@ public abstract class Render implements GameWindowCallback
                 }
                 break;
                 //TODO ADD SUPPORT
-                case NOTE_P1_SC:
-                case NOTE_P2_1:case NOTE_P2_2:
-                case NOTE_P2_3:case NOTE_P2_4:
-                case NOTE_P2_5:case NOTE_P2_6:case NOTE_P2_7:
-                case NOTE_P2_SC:
+                case NOTE_SC:
+                case NOTE_8:case NOTE_9:
+                case NOTE_10:case NOTE_11:
+                case NOTE_12:case NOTE_13:case NOTE_14:
+                case NOTE_SC2:
 
                 case AUTO_PLAY:
                 e.getSample().toBGM();
@@ -654,12 +647,12 @@ public abstract class Render implements GameWindowCallback
 	    Event e = buffer.next();
 	    switch(e.getChannel())
 	    {
-		case NOTE_P1_1: e.setChannel(Event.Channel.NOTE_P1_7); break;
-		case NOTE_P1_2: e.setChannel(Event.Channel.NOTE_P1_6); break;
-		case NOTE_P1_3: e.setChannel(Event.Channel.NOTE_P1_5); break;
-		case NOTE_P1_5: e.setChannel(Event.Channel.NOTE_P1_3); break;
-		case NOTE_P1_6: e.setChannel(Event.Channel.NOTE_P1_2); break;
-		case NOTE_P1_7: e.setChannel(Event.Channel.NOTE_P1_1); break;
+		case NOTE_1: e.setChannel(Event.Channel.NOTE_7); break;
+		case NOTE_2: e.setChannel(Event.Channel.NOTE_6); break;
+		case NOTE_3: e.setChannel(Event.Channel.NOTE_5); break;
+		case NOTE_5: e.setChannel(Event.Channel.NOTE_3); break;
+		case NOTE_6: e.setChannel(Event.Channel.NOTE_2); break;
+		case NOTE_7: e.setChannel(Event.Channel.NOTE_1); break;
 	    }
 	}
     }
@@ -673,13 +666,13 @@ public abstract class Render implements GameWindowCallback
     {
 	List<Event.Channel> channelSwap = new LinkedList<Event.Channel>();
 
-	channelSwap.add(Event.Channel.NOTE_P1_1);
-	channelSwap.add(Event.Channel.NOTE_P1_2);
-	channelSwap.add(Event.Channel.NOTE_P1_3);
-	channelSwap.add(Event.Channel.NOTE_P1_4);
-	channelSwap.add(Event.Channel.NOTE_P1_5);
-	channelSwap.add(Event.Channel.NOTE_P1_6);
-	channelSwap.add(Event.Channel.NOTE_P1_7);
+	channelSwap.add(Event.Channel.NOTE_1);
+	channelSwap.add(Event.Channel.NOTE_2);
+	channelSwap.add(Event.Channel.NOTE_3);
+	channelSwap.add(Event.Channel.NOTE_4);
+	channelSwap.add(Event.Channel.NOTE_5);
+	channelSwap.add(Event.Channel.NOTE_6);
+	channelSwap.add(Event.Channel.NOTE_7);
 
 	Collections.shuffle(channelSwap);
 
@@ -688,13 +681,13 @@ public abstract class Render implements GameWindowCallback
 	    Event e = buffer.next();
 	    switch(e.getChannel())
 	    {
-		case NOTE_P1_1: e.setChannel(channelSwap.get(0)); break;
-		case NOTE_P1_2: e.setChannel(channelSwap.get(1)); break;
-		case NOTE_P1_3: e.setChannel(channelSwap.get(2)); break;
-		case NOTE_P1_4: e.setChannel(channelSwap.get(3)); break;
-		case NOTE_P1_5: e.setChannel(channelSwap.get(4)); break;
-		case NOTE_P1_6: e.setChannel(channelSwap.get(5)); break;
-		case NOTE_P1_7: e.setChannel(channelSwap.get(6)); break;
+		case NOTE_1: e.setChannel(channelSwap.get(0)); break;
+		case NOTE_2: e.setChannel(channelSwap.get(1)); break;
+		case NOTE_3: e.setChannel(channelSwap.get(2)); break;
+		case NOTE_4: e.setChannel(channelSwap.get(3)); break;
+		case NOTE_5: e.setChannel(channelSwap.get(4)); break;
+		case NOTE_6: e.setChannel(channelSwap.get(5)); break;
+		case NOTE_7: e.setChannel(channelSwap.get(6)); break;
 	    }
 	}
     }
@@ -713,13 +706,13 @@ public abstract class Render implements GameWindowCallback
 
 	List<Event.Channel> channelSwap = new LinkedList<Event.Channel>();
 
-	channelSwap.add(Event.Channel.NOTE_P1_1);
-	channelSwap.add(Event.Channel.NOTE_P1_2);
-	channelSwap.add(Event.Channel.NOTE_P1_3);
-	channelSwap.add(Event.Channel.NOTE_P1_4);
-	channelSwap.add(Event.Channel.NOTE_P1_5);
-	channelSwap.add(Event.Channel.NOTE_P1_6);
-	channelSwap.add(Event.Channel.NOTE_P1_7);
+	channelSwap.add(Event.Channel.NOTE_1);
+	channelSwap.add(Event.Channel.NOTE_2);
+	channelSwap.add(Event.Channel.NOTE_3);
+	channelSwap.add(Event.Channel.NOTE_4);
+	channelSwap.add(Event.Channel.NOTE_5);
+	channelSwap.add(Event.Channel.NOTE_6);
+	channelSwap.add(Event.Channel.NOTE_7);
 
 	Collections.shuffle(channelSwap);
 
@@ -729,9 +722,9 @@ public abstract class Render implements GameWindowCallback
 
 	    switch(e.getChannel())
 	    {
-		    case NOTE_P1_1:case NOTE_P1_2:
-		    case NOTE_P1_3:case NOTE_P1_4:
-		    case NOTE_P1_5:case NOTE_P1_6:case NOTE_P1_7:
+		    case NOTE_1:case NOTE_2:
+		    case NOTE_3:case NOTE_4:
+		    case NOTE_5:case NOTE_6:case NOTE_7:
 
 			Event.Channel chan = e.getChannel();
 

@@ -91,12 +91,6 @@ public class Entity implements Copyable<Entity>
         sprite.draw(x,y, sprite.getScaleX(), sprite.getScaleY());
     }
 
-    /**
-     * judgment time.
-     * this will be called once, when it hits judgment.
-     */
-    public void judgment() {}
-
     public double getX(){ return x;}
     public double getY(){ return y;}
 

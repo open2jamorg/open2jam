@@ -267,7 +267,6 @@ public class SkinHandler extends DefaultHandler
             e = new Entity(sl, 0, 0);
         }
         else if(id.equals("FPS_COUNTER")){
-            //TODO: why not use SpriteList directly ???
             ArrayList<Entity> list = new ArrayList<Entity>();
             for(String s : atts.get("sprite").split(",")){
                 s = s.trim();

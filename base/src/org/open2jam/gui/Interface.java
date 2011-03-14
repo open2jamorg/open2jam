@@ -35,28 +35,28 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableRowSorter;
 
 import org.open2jam.parser.Chart;
-import org.open2jam.render.BeatmaniaRender;
+import org.open2jam.render.TimeRender;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.Config;
 import org.open2jam.parser.ChartList;
-import org.open2jam.render.O2jamRender;
+import org.open2jam.render.DistanceRender;
 import org.open2jam.render.Render;
 /**
  *
  * @author fox
  */
-public class NewInterface extends javax.swing.JFrame
+public class Interface extends javax.swing.JFrame
         implements PropertyChangeListener, ListSelectionListener {
 
     static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private ChartListTableModel model_songlist;
     private ChartTableModel model_chartlist;
-    private String cwd;
-    private ArrayList<String> dir_list;
+    private File cwd;
+    private ArrayList<File> dir_list;
     private DisplayMode[] display_modes;
     private ChartModelLoader task;
     private int rank = 0;
@@ -65,12 +65,12 @@ public class NewInterface extends javax.swing.JFrame
     private int last_model_idx;
     private final TableRowSorter<ChartListTableModel> table_sorter;
 
-    Configuration cfg_window = new Configuration();
+    Configuration cfg_window = new Configuration(this);
 
     javax.swing.ListSelectionModel chartLM;
 
     /** Creates new form Interface */
-    public NewInterface() {
+    public Interface() {
         initLogic();
         initComponents();
         this.setLocationRelativeTo(null);
@@ -196,8 +196,6 @@ public class NewInterface extends javax.swing.JFrame
         load_progress = new javax.swing.JProgressBar();
         js_hispeed = new javax.swing.JSpinner();
         btn_configuration = new javax.swing.JButton();
-        lbl_dirKey = new javax.swing.JLabel();
-        lbl_skin_selection = new javax.swing.JLabel();
         btn_skin = new javax.swing.JButton();
         combo_dirs = new javax.swing.JComboBox();
         btn_reload = new javax.swing.JButton();
@@ -222,11 +220,11 @@ public class NewInterface extends javax.swing.JFrame
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Open2Jam");
 
-        lbl_title.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        lbl_title.setFont(new java.awt.Font("Tahoma", 0, 18));
         lbl_title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbl_title.setText("Title");
 
-        lbl_artist.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        lbl_artist.setFont(new java.awt.Font("Tahoma", 2, 11));
         lbl_artist.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbl_artist.setText("Artist");
 
@@ -300,8 +298,8 @@ public class NewInterface extends javax.swing.JFrame
             panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_infoLayout.createSequentialGroup()
                 .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(table_scroll2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE)
-                    .addComponent(lbl_title, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE)
+                    .addComponent(table_scroll2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
+                    .addComponent(lbl_title, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panel_infoLayout.createSequentialGroup()
                         .addComponent(lbl_cover, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -323,7 +321,7 @@ public class NewInterface extends javax.swing.JFrame
                                     .addComponent(lbl_genre, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
                                     .addComponent(lbl_bpm, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)))
                             .addComponent(lbl_filename)))
-                    .addComponent(lbl_artist, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE)
+                    .addComponent(lbl_artist, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
                     .addGroup(panel_infoLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -464,8 +462,8 @@ public class NewInterface extends javax.swing.JFrame
 
         js_hispeed.setModel(new javax.swing.SpinnerNumberModel(1.0d, 0.5d, 10.0d, 0.5d));
 
-        btn_configuration.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        btn_configuration.setText("Go!");
+        btn_configuration.setFont(new java.awt.Font("Tahoma", 0, 10));
+        btn_configuration.setText("Folders and Keys");
         btn_configuration.setMaximumSize(new java.awt.Dimension(20, 20));
         btn_configuration.setMinimumSize(new java.awt.Dimension(20, 20));
         btn_configuration.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -475,12 +473,8 @@ public class NewInterface extends javax.swing.JFrame
             }
         });
 
-        lbl_dirKey.setText("Folders and Keys:");
-
-        lbl_skin_selection.setText("Skin selection:");
-
-        btn_skin.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        btn_skin.setText("Go!");
+        btn_skin.setFont(new java.awt.Font("Tahoma", 0, 10));
+        btn_skin.setText("Skin Selection");
         btn_skin.setMaximumSize(new java.awt.Dimension(20, 20));
         btn_skin.setMinimumSize(new java.awt.Dimension(20, 20));
         btn_skin.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -537,22 +531,17 @@ public class NewInterface extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_res_height, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panel_settingLayout.createSequentialGroup()
-                        .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lbl_skin_selection)
-                            .addComponent(lbl_dirKey, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btn_configuration, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btn_skin, javax.swing.GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE))
-                    .addGroup(panel_settingLayout.createSequentialGroup()
                         .addComponent(jc_vsync)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jc_full_screen))
                     .addGroup(panel_settingLayout.createSequentialGroup()
                         .addComponent(combo_dirs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_reload)))
+                        .addComponent(btn_reload))
+                    .addGroup(panel_settingLayout.createSequentialGroup()
+                        .addComponent(btn_configuration, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE))
+                    .addComponent(btn_skin, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         panel_settingLayout.setVerticalGroup(
@@ -588,13 +577,9 @@ public class NewInterface extends javax.swing.JFrame
                     .addComponent(jc_vsync)
                     .addComponent(jc_full_screen))
                 .addGap(31, 31, 31)
-                .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbl_dirKey)
-                    .addComponent(btn_configuration, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbl_skin_selection)
-                    .addComponent(btn_skin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(btn_configuration, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_skin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(34, 34, 34)
                 .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(combo_dirs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -608,7 +593,7 @@ public class NewInterface extends javax.swing.JFrame
         table_songlist.getSelectionModel().addListSelectionListener(this);
         table_scroll.setViewportView(table_songlist);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12));
         jLabel1.setText("Source");
 
         slider_main_vol.setPaintLabels(true);
@@ -698,7 +683,7 @@ public class NewInterface extends javax.swing.JFrame
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panel_info, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 504, Short.MAX_VALUE)
+                        .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 505, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_filter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -741,13 +726,13 @@ public class NewInterface extends javax.swing.JFrame
     private void bt_choose_dirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_choose_dirActionPerformed
 
         JFileChooser jfc = new JFileChooser();
-        jfc.setCurrentDirectory(new File(cwd));
+        jfc.setCurrentDirectory(cwd);
         jfc.setDialogTitle("Choose a directory");
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         jfc.setAcceptAllFileFilterUsed(false);
         if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            cwd = jfc.getSelectedFile().getAbsolutePath();
-            updateSelection();
+            cwd = jfc.getSelectedFile();
+            loadDir(cwd);
         }
     }//GEN-LAST:event_bt_choose_dirActionPerformed
 
@@ -802,7 +787,7 @@ public class NewInterface extends javax.swing.JFrame
 		dm = (DisplayMode) combo_displays.getSelectedItem();
 	    }
 	    final boolean vsync = jc_vsync.isSelected();
-	    final boolean fs = jc_full_screen.isSelected();
+	    boolean fs = jc_full_screen.isSelected();
 
 	    final boolean autoplay = jc_autoplay.isSelected();
 
@@ -819,27 +804,19 @@ public class NewInterface extends javax.swing.JFrame
             {
                 String str = "This monitor can't support the selected resolution.\n"
                         + "Do you want to play it in windowed mode?";
-                if(JOptionPane.showConfirmDialog(this, str, "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE) == JOptionPane.YES_OPTION)
-                {
-                    Render r = null;
-                    if(judgment)
-                        r = new BeatmaniaRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
-                    else
-                        r = new O2jamRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
-                    r.setDisplay(dm, vsync, false);
-                    r.startRendering();
-                }
+                if(JOptionPane.showConfirmDialog(this, str, "Warning",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE)
+                        == JOptionPane.YES_OPTION)
+                    fs = false;
             }
+
+            Render r = null;
+            if(judgment)
+                r = new TimeRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
             else
-            {
-                Render r = null;
-                if(judgment)
-                    r = new BeatmaniaRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
-                else
-                    r = new O2jamRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
-                r.setDisplay(dm, vsync, fs);
-                r.startRendering();
-            }
+                r = new DistanceRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
+            r.setDisplay(dm, vsync, fs);
+            r.startRendering();
 	}
     }//GEN-LAST:event_bt_playActionPerformed
 
@@ -864,14 +841,9 @@ public class NewInterface extends javax.swing.JFrame
 
     private void combo_dirsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_dirsActionPerformed
         if(dir_list.isEmpty()) return;
-        if(combo_dirs.getSelectedIndex()<0) return;
-        String s = dir_list.get(combo_dirs.getSelectedIndex());
-        cwd = s;
-        File cache = new File(stringToCRC32(cwd)); //if exist do nothing
-        if(cache.exists())
-            loadCache(cwd);
-        else
-            updateSelection();
+        if(combo_dirs.getSelectedIndex()<0)return;
+        File s = dir_list.get(combo_dirs.getSelectedIndex());
+        loadDir(s);
     }//GEN-LAST:event_combo_dirsActionPerformed
 
     private void btn_reloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_reloadActionPerformed
@@ -910,7 +882,6 @@ public class NewInterface extends javax.swing.JFrame
     private javax.swing.JLabel lbl_bpm1;
     private javax.swing.JLabel lbl_channelModifier;
     private javax.swing.JLabel lbl_cover;
-    private javax.swing.JLabel lbl_dirKey;
     private javax.swing.JLabel lbl_display;
     private javax.swing.JLabel lbl_filename;
     private javax.swing.JLabel lbl_genre;
@@ -926,7 +897,6 @@ public class NewInterface extends javax.swing.JFrame
     private javax.swing.JLabel lbl_notes1;
     private javax.swing.JLabel lbl_rank;
     private javax.swing.JLabel lbl_res_x;
-    private javax.swing.JLabel lbl_skin_selection;
     private javax.swing.JLabel lbl_time;
     private javax.swing.JLabel lbl_time1;
     private javax.swing.JLabel lbl_title;
@@ -950,11 +920,9 @@ public class NewInterface extends javax.swing.JFrame
     // End of variables declaration//GEN-END:variables
 
     private void initLogic() {
-        /* TODO A table with the dirs in the config.obj and change the cwd and the way it loads right now
-         * also, it would be nice if we can construct some kind of song's db
-         */
+
         dir_list = Config.get().getDirsList();
-        if(dir_list.isEmpty()) cwd = System.getProperty("user.dir");
+        if(dir_list.isEmpty()) cwd = new File(System.getProperty("user.dir"));
         else                   cwd = dir_list.get(0);
         
         try {
@@ -965,27 +933,27 @@ public class NewInterface extends javax.swing.JFrame
         model_songlist = new ChartListTableModel();
         model_chartlist = new ChartTableModel();
 
-        loadCache(cwd);
+        loadDir(cwd);
     }
 
-    //TODO Move this function to its own class, with other ones xD
-    public static String stringToCRC32(String s)
+    public static File getCacheFile(File s)
     {
          //let's make a crc32 hash for the cache name
         CRC32 cs = new CRC32();
         cs.reset();
 
-        byte[] d = s.getBytes();
+        byte[] d = s.getAbsolutePath().getBytes();
         cs.update(d, 0, d.length);
 
-        return "cache_"+Long.toHexString(cs.getValue()).toUpperCase()+".obj";
+        return new File("cache_"+Long.toHexString(cs.getValue()).toUpperCase()+".obj");
     }
 
-    private void loadCache(String dir)
+    private void loadDir(File dir)
     {
-        File cache = new File(stringToCRC32(dir));
+        cwd = dir;
+        this.setTitle("Open2Jam - "+cwd);
+        File cache = getCacheFile(dir);
         if(cache.exists()){
-            this.setTitle("Open2Jam - "+dir);
             try {
                 GZIPInputStream gzip = new GZIPInputStream(new FileInputStream(cache));
                 ObjectInputStream obj = new ObjectInputStream(gzip);
@@ -1000,15 +968,17 @@ public class NewInterface extends javax.swing.JFrame
                 logger.log(Level.SEVERE, "{0}", ex);
             }
         }
+        else {
+            updateSelection();
+        }
     }
 
     private void updateSelection() {
-        this.setTitle("Open2Jam - "+cwd);
         bt_choose_dir.setEnabled(false);
         combo_dirs.setEnabled(false);
         load_progress.setValue(0);
         load_progress.setVisible(true);
-        task = new ChartModelLoader(model_songlist, new File(cwd));
+        task = new ChartModelLoader(model_songlist, cwd);
         task.addPropertyChangeListener(this);
         task.execute();
     }
@@ -1018,18 +988,9 @@ public class NewInterface extends javax.swing.JFrame
         DefaultComboBoxModel theModel = (DefaultComboBoxModel)combo_dirs.getModel();
         theModel.removeAllElements();
         if(dir_list.isEmpty()) return;
-        for(int i=0; i<dir_list.size(); i++)
+        for(File f : dir_list)
         {
-            String s = dir_list.get(i);
-            if(s.length()>18)
-            {
-                if(s.contains("\\"))     s =".."+s.substring(s.lastIndexOf("\\"));
-                else if(s.contains("/")) s =".."+s.substring(s.lastIndexOf("/"));
-
-                if(s.length()>18)
-                    s = ".."+s.substring(s.length()-16);
-            }
-            combo_dirs.addItem(s);
+            combo_dirs.addItem(f.getName());
         }
     }
     
@@ -1057,10 +1018,7 @@ public class NewInterface extends javax.swing.JFrame
     }
 
     public void valueChanged(ListSelectionEvent e) {
-//        if(!task.isDone())
-//        {
-//            return;//TODO look for a better place to wait until everything is loaded
-//        }
+
         int i = table_songlist.getSelectedRow();
         if(i < 0 && last_model_idx >= 0){
             i = last_model_idx;
