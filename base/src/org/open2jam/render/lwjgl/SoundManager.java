@@ -27,8 +27,8 @@ public class SoundManager
 {
     static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    private static ArrayList<Integer> sample_buffer = new ArrayList<Integer>();
-    private static ArrayList<Integer> source_buffer = new ArrayList<Integer>();
+    private static final ArrayList<Integer> sample_buffer = new ArrayList<Integer>();
+    private static final ArrayList<Integer> source_buffer = new ArrayList<Integer>();
 
 
     // we need to initialize the OpenAL context
@@ -59,7 +59,7 @@ public class SoundManager
         AL10.alSourcef(source, AL10.AL_GAIN, g);
     }
 
-    private static FloatBuffer pan_pos_buffer = BufferUtils.createFloatBuffer(3);
+    private static final FloatBuffer pan_pos_buffer = BufferUtils.createFloatBuffer(3);
     public static void setPan(int source, float x)
     {
         pan_pos_buffer.put(new float[] { x, 0.0f, 0.0f }).flip();
@@ -111,7 +111,7 @@ public class SoundManager
         AL10.alSourceStop(source);
     }
 
-    private static byte[] tmp_buffer = new byte[1024];
+    private static final byte[] tmp_buffer = new byte[1024];
     public static int newBuffer(OggInputStream in)
     {
         IntBuffer buffer = BufferUtils.createIntBuffer(1);
@@ -153,7 +153,7 @@ public class SoundManager
 
         org.lwjgl.openal.Util.checkALError();
 
-        int format = -1;
+        int format;
         if(channels == 1){
             if(bits == 8)format = AL10.AL_FORMAT_MONO8;
             else format = AL10.AL_FORMAT_MONO16;
@@ -192,16 +192,16 @@ public class SoundManager
     {
         IntBuffer scratch = BufferUtils.createIntBuffer(1);
         // Release all source data.
-        for (Iterator<Integer> iter = source_buffer.iterator(); iter.hasNext();) {
-                scratch.put(0, iter.next());
-                AL10.alSourceStop(scratch);
-                AL10.alDeleteSources(scratch);
+        for (Integer aSource_buffer : source_buffer) {
+            scratch.put(0, aSource_buffer);
+            AL10.alSourceStop(scratch);
+            AL10.alDeleteSources(scratch);
         }
         source_buffer.clear();
 
-        for (Iterator<Integer> iter = sample_buffer.iterator(); iter.hasNext();) {
-                scratch.put(0, iter.next());
-                AL10.alDeleteBuffers(scratch);
+        for (Integer aSample_buffer : sample_buffer) {
+            scratch.put(0, aSample_buffer);
+            AL10.alDeleteBuffers(scratch);
         }
         sample_buffer.clear();
     }

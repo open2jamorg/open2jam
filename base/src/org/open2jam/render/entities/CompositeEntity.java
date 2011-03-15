@@ -11,7 +11,7 @@ import java.util.LinkedList;
  */
 public class CompositeEntity extends Entity
 {
-    protected LinkedList<Entity> entity_list;
+    private final LinkedList<Entity> entity_list;
 
     public CompositeEntity(Collection<Entity> list)
     {
@@ -25,7 +25,7 @@ public class CompositeEntity extends Entity
         Collections.addAll(entity_list, e);
     }
 
-    protected CompositeEntity(CompositeEntity org)
+    private CompositeEntity(CompositeEntity org)
     {
         super(org);
         entity_list = new LinkedList<Entity>();

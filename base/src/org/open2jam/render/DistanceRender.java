@@ -28,7 +28,7 @@ public class DistanceRender extends Render
     private enum JUDGE {
         COOL(0.8), GOOD(0.5), BAD(0.2), MISS(0);
 
-        double value;
+        final double value;
 
         private JUDGE(double i){ value = i; }
 
@@ -100,8 +100,8 @@ public class DistanceRender extends Render
 
         now = SystemTimer.getTime() - start_time;
 
-	if(AUTOPLAY)do_autoplay(now);
-        else check_keyboard(now);
+	if(AUTOPLAY)do_autoplay();
+        else check_keyboard();
 
         Iterator<LinkedList<Entity>> i = entities_matrix.iterator();
         while(i.hasNext()) // loop over layers
@@ -347,7 +347,7 @@ public class DistanceRender extends Render
         return judge;
     }
 
-    private void do_autoplay(long now)
+    private void do_autoplay()
     {
         for(Map.Entry<Event.Channel,Integer> entry : keyboard_map.entrySet())
         {
@@ -387,14 +387,14 @@ public class DistanceRender extends Render
         }
     }
 
-    private void check_keyboard(long now)
+    private void check_keyboard()
     {
 	for(Map.Entry<Event.Channel,Integer> entry : keyboard_map.entrySet())
         {
             Event.Channel c = entry.getKey();
             if(window.isKeyDown(entry.getValue())) // this key is being pressed
             {
-                if(keyboard_key_pressed.get(c) == false){ // started holding now
+                if(!keyboard_key_pressed.get(c)){ // started holding now
                     keyboard_key_pressed.put(c, true);
 
                     Entity ee = skin.getEntityMap().get("PRESSED_"+c).copy();
@@ -411,7 +411,7 @@ public class DistanceRender extends Render
 
                     queueSample(e.getSample());
                    
-                    JUDGE judge = JUDGE.MISS;
+                    JUDGE judge;
                     double hit = e.testHit(judgment_line_y1, judgment_line_y2);
                     judge = ratePrecision(hit);
                     e.setHit(hit);
@@ -432,7 +432,7 @@ public class DistanceRender extends Render
                 }
             }
             else
-            if(keyboard_key_pressed.get(c) == true) { // key released now
+            if(keyboard_key_pressed.get(c)) { // key released now
 
                 keyboard_key_pressed.put(c, false);
                 key_pressed_entity.get(c).setAlive(false);

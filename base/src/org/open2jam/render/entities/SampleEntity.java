@@ -14,8 +14,8 @@ import org.open2jam.render.Render;
  */
 public class SampleEntity extends Entity implements TimeEntity
 {
-    private Event.SoundSample value;
-    private Render render;
+    private final Event.SoundSample value;
+    private final Render render;
 
     private long time_to_hit;
 

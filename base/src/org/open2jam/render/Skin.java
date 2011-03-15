@@ -13,15 +13,15 @@ import org.open2jam.render.entities.Entity;
  */
 public class Skin
 {
-    private HashMap<String,Entity> named_entities;
-    private ArrayList<Entity> other_entities;
+    private final HashMap<String,Entity> named_entities;
+    private final ArrayList<Entity> other_entities;
 
-    protected int max_layer = 0;
+    int max_layer = 0;
     
-    protected float screen_scale_x;
-    protected float screen_scale_y;
+    float screen_scale_x;
+    float screen_scale_y;
 
-    protected int judgment_line;
+    int judgment_line;
 
     public Skin()
     {

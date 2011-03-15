@@ -14,7 +14,7 @@ import org.open2jam.render.entities.Entity;
  */
 public class EntityMatrix
 {
-    private ArrayList<LinkedList<Entity>> matrix;
+    private final ArrayList<LinkedList<Entity>> matrix;
     
     public EntityMatrix(int layers)
     {

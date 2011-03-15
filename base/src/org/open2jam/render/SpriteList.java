@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class SpriteList extends ArrayList<Sprite>
 {
 	/** the frame change speed in milliseconds */
-	private double framespeed;
+	private final double framespeed;
 
 	public SpriteList(double fs)
 	{

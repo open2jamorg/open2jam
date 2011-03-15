@@ -22,8 +22,8 @@ public class ChartModelLoader extends SwingWorker<ChartListTableModel,ChartList>
 {
     static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    private ChartListTableModel table_model;
-    private File dir;
+    private final ChartListTableModel table_model;
+    private final File dir;
 
     public ChartModelLoader(ChartListTableModel table_model, File dir){
         this.table_model = table_model;

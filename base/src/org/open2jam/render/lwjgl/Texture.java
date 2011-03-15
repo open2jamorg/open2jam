@@ -17,14 +17,14 @@ import org.lwjgl.opengl.GL11;
  */
 public class Texture {
     /** The GL target type */
-    private int target; 
+    private final int target;
     /** The GL texture ID */
-    private int textureID;
+    private final int textureID;
 
     /** The height of the texture */
-    private int height;
+    private final int height;
     /** The width of the texture */
-    private int width;
+    private final int width;
 
 
     /**
@@ -43,7 +43,6 @@ public class Texture {
     /**
      * Bind the specified GL context to a texture
      *
-     * @param gl The GL context to bind to
      */
     public void bind() {
       GL11.glBindTexture(target, textureID); 

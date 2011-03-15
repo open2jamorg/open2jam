@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public class ChartList extends ArrayList<Chart>
 {
-    protected File source_file;
+    File source_file;
 
     public File getSource()
     {

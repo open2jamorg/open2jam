@@ -6,12 +6,12 @@ import org.open2jam.render.Sprite;
 
 public class LongNoteEntity extends NoteEntity
 {
-    protected SpriteList body_frames;
-    protected Sprite body_sprite;
+    private final SpriteList body_frames;
+    private Sprite body_sprite;
 
     /** the size of the long note, this is constant once defined end_time */
-    protected Double end_dist = null;
-    protected Long end_time = null;
+    private Double end_dist = null;
+    private Long end_time = null;
 
     public LongNoteEntity(SpriteList head_frames, SpriteList body_frames, Event.Channel ch, double x, double y)
     {
@@ -21,7 +21,7 @@ public class LongNoteEntity extends NoteEntity
             body_sprite = body_frames.get(0);
     }
 
-    protected LongNoteEntity(LongNoteEntity org) {
+    private LongNoteEntity(LongNoteEntity org) {
         super(org);
         this.body_frames = org.body_frames;
         this.body_sprite = org.body_sprite;
@@ -63,8 +63,7 @@ public class LongNoteEntity extends NoteEntity
             y1 = y - end_dist;
         }
         y2 = y1 + sprite.getHeight();
-        double p = testHit(y1, y2, jy1, jy2);
-        return p;
+        return testHit(y1, y2, jy1, jy2);
     }
 
     @Override

@@ -10,24 +10,25 @@ public class ComboCounterEntity extends NumberEntity
 {
     /** how much the entity will "wobble" down
      * when the count number is increased, in pixels */
-    protected static final int wobble = 10;
+    private static final int wobble = 10;
 
     /** the speed in which the entity will go
      * back to the base position */
-    protected static final double wobble_dy = -0.5;
+    private static final double wobble_dy = -0.5;
 
     /** the time in milliseconds in which the entity
      * will be displayed when the count is updated */
-    protected static final int show_time = 4000;
+    private static final int show_time = 4000;
 
     /** the base position of the entity */
-    protected double base_y, base_x;
+    private double base_y;
+    private double base_x;
 
     /** time left to display on screen,
      * won't be draw on screen if it's zero */
-    protected int to_show = 0;
+    private int to_show = 0;
 
-    protected int count_threshold = 0;
+    private int count_threshold = 0;
 
     public ComboCounterEntity(Collection<Entity> list, double x, double y)
     {
@@ -56,13 +57,6 @@ public class ComboCounterEntity extends NumberEntity
         number = 0;
         y = base_y + wobble;
         to_show = 0;
-    }
-
-    public void resetNumberTo(int i)
-    {
-        number = i;
-        y = base_y + wobble;
-        to_show = show_time;
     }
 
     public void setThreshold(int i)

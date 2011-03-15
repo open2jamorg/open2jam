@@ -10,7 +10,7 @@ public class JudgmentEntity extends AnimatedEntity
 {
     /** the time in milliseconds in which the entity
      * will be displayed when the count is updated */
-    protected int show_time = 3000;
+    private int show_time = 3000;
     
     public JudgmentEntity(SpriteList refs, double x, double y)
     {
@@ -18,7 +18,7 @@ public class JudgmentEntity extends AnimatedEntity
         this.x -= sprite.getWidth()/2;
     }
 
-    protected JudgmentEntity(JudgmentEntity org)
+    private JudgmentEntity(JudgmentEntity org)
     {
         super(org);
         this.show_time = org.show_time;

@@ -6,25 +6,28 @@ import org.open2jam.render.SpriteList;
 
 public class Entity implements Copyable<Entity>
 {
-    protected SpriteList frames;
-    protected Sprite sprite;
+    SpriteList frames;
+    Sprite sprite;
 
     /** The current speed of this entity horizontally (pixels/millisecs) */
-    protected double dx;
+    private double dx;
     /** The current speed of this entity vertically (pixels/millisecs) */
-    protected double dy;
+    private double dy;
 
     /** this object stores the position(x,y) and dimensions (width,height) */
-    protected double x, y, width, height;
+    double x;
+    double y;
+    double width;
+    double height;
 
 
     /** when a entity die the render removes it */
-    protected boolean alive = true;
+    boolean alive = true;
 
-    protected int layer = 0;
+    private int layer = 0;
 
     /** allows constructor extensions */
-    protected Entity() {}
+    Entity() {}
 
     public Entity(SpriteList sp, double x, double y)
     {
@@ -36,7 +39,7 @@ public class Entity implements Copyable<Entity>
         height = sprite.getHeight();
     }
 
-    protected Entity(Entity org) {
+    Entity(Entity org) {
         this.alive = org.alive;
         this.sprite = org.sprite;
         this.frames = org.frames;

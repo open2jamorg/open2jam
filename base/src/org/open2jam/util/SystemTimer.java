@@ -23,6 +23,6 @@ public class SystemTimer {
         if(milli <= 0)return;
         try{
                 Thread.sleep(milli);
-        }catch(InterruptedException e){}
+        }catch(InterruptedException ignored){}
     }
 }

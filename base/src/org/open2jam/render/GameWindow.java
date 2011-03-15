@@ -20,10 +20,8 @@ public interface GameWindow {
 	
 	/**
 	 * Set the game display resolution
-	 * 
-	 * @param x The new x resolution of the display
-	 * @param y The new y resolution of the display
-	 */
+	 *
+     */
         public void setDisplay(DisplayMode dm, boolean vsync, boolean fs);
 
 	public int getResolutionHeight();

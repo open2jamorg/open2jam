@@ -23,9 +23,9 @@ import java.util.logging.Logger;
 import org.open2jam.render.lwjgl.SoundManager;
 import org.open2jam.util.CharsetDetector;
 
-public class BMSParser
+class BMSParser
 {
-    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private static final FileFilter bms_filter = new FileFilter(){
         public boolean accept(File f){
@@ -50,11 +50,10 @@ public class BMSParser
 
         File[] bms_files = file.listFiles(bms_filter);
 
-        for(int i=0;i<bms_files.length;i++)
-        {
-            try{
-                BMSChart chart = parseBMSHeader(bms_files[i]);
-                if(chart != null)list.add(chart);
+        for (File bms_file : bms_files) {
+            try {
+                BMSChart chart = parseBMSHeader(bms_file);
+                if (chart != null) list.add(chart);
             } catch (Exception e) {
                 logger.log(Level.WARNING, "{0}", e);
             }
@@ -70,7 +69,7 @@ public class BMSParser
 
         BMSChart chart = new BMSChart();
         chart.source = f;
-        BufferedReader r = null;
+        BufferedReader r;
         try{
             r = new BufferedReader(new InputStreamReader(new FileInputStream(f),charset));
         }catch(FileNotFoundException e){
@@ -81,8 +80,8 @@ public class BMSParser
             r = new BufferedReader(new FileReader(f));
         }
         
-        String line = null;
-        StringTokenizer st = null;
+        String line;
+        StringTokenizer st;
         chart.sample_files = new HashMap<String, Integer>();
 
         Pattern note_line = Pattern.compile("^#(\\d\\d\\d)(\\d\\d):(.+)$");
@@ -123,7 +122,7 @@ public class BMSParser
                         int player = Integer.parseInt(st.nextToken());
                         if(player != 1)
                         {
-                            logger.log(Level.WARNING, "#PLAYER not supported @ {0}", f.getName());
+                            logger.log(Level.WARNING, "#PLAYER{0} not supported @ {1}",new Object[] {player, f.getName()});
                             return null;
                         }
                         continue;
@@ -183,7 +182,7 @@ public class BMSParser
                     }
                 }
 
-            }catch(NoSuchElementException e){}
+            }catch(NoSuchElementException ignored){}
              catch(NumberFormatException e){ 
                  logger.log(Level.WARNING, "unparsable number @ {0} on file {1}", new Object[]{cmd, f.getName()});
              }
@@ -221,8 +220,8 @@ public class BMSParser
     public static List<Event> parseChart(BMSChart chart)
     {
         ArrayList<Event> event_list = new ArrayList<Event>();
-        BufferedReader r = null;
-        String line = null;
+        BufferedReader r;
+        String line;
         try{
             r = new BufferedReader(new FileReader(chart.source));
         }catch(FileNotFoundException e){
@@ -328,7 +327,7 @@ public class BMSParser
 
                     if (channel > 50) {
                         Boolean b = ln_buffer.get(channel);
-                        if (b != null && b == true) {
+                        if (b != null && b) {
                             if (chart.lntype == 2) {
                                 if (value == 0) {
                                     event_list.add(new Event(ec, measure, p, value, Event.Flag.RELEASE));

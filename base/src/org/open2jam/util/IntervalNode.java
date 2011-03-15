@@ -15,7 +15,7 @@ import java.util.Map.Entry;
  */
 public class IntervalNode<Type> {
 
-	private SortedMap<Interval<Type>, List<Interval<Type>>> intervals;
+	private final SortedMap<Interval<Type>, List<Interval<Type>>> intervals;
 	private long center;
 	private IntervalNode<Type> leftNode;
 	private IntervalNode<Type> rightNode;

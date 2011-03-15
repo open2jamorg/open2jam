@@ -1,7 +1,5 @@
 package org.open2jam.render;
 
-import java.awt.Rectangle;
-import java.io.IOException;
 import java.util.Map;
 import java.net.URL;
 import java.util.ArrayDeque;
@@ -12,7 +10,6 @@ import java.util.logging.Logger;
 import org.open2jam.parser.Event;
 import org.open2jam.render.entities.AnimatedEntity;
 import org.open2jam.render.entities.ComboCounterEntity;
-import org.open2jam.render.entities.CompositeEntity;
 import org.open2jam.render.entities.EffectEntity;
 import org.open2jam.render.entities.Entity;
 import org.open2jam.render.entities.BarEntity;
@@ -24,41 +21,40 @@ import org.open2jam.render.entities.NumberEntity;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.Attributes;
 
-public class SkinHandler extends DefaultHandler
+public class SkinChecker extends DefaultHandler
 {
-    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private enum Keyword {
-        Resources, skin, spriteset, styles, style, sprite, frame, layer, entity
+        Resources, skin, spriteset, styles, style, sprite, frame, layer, entity;
     }
 
-    private ArrayDeque<Keyword> call_stack;
-    private ArrayDeque<Map<String,String>> atts_stack;
+    ArrayDeque<Keyword> call_stack;
+    ArrayDeque<Map<String,String>> atts_stack;
 
-    private ArrayList<Sprite> frame_buffer;
-    private HashMap<String, SpriteList> sprite_buffer;
+    ArrayList<Sprite> frame_buffer;
+    HashMap<String, SpriteList> sprite_buffer;
 
-    private ArrayList<String> style_list;
-    private HashMap<String, ArrayList<String>> styles_map;
+    ArrayList<String> style_list;
+    HashMap<String, ArrayList<String>> styles_map;
 
     private Skin result;
 
     private int layer = -1;
 
-    private String target_skin;
-    private boolean on_skin = false;
+    private static String FILE_PATH_PREFIX = "/resources/";
 
-    private double baseW = 800;
-    private double baseH = 600;
-    private final double targetW;
-    private final double targetH;
+    protected String target_skin;
+    protected boolean on_skin = false;
+    protected int auto_draw_id = 0;
+
+    protected double baseW = 800;
+    protected double baseH = 600;
 
 
-    public SkinHandler(String skin, double width, double height)
+    public SkinChecker(String skin)
     {
         this.target_skin = skin;
-	this.targetW = width;
-	this.targetH = height;
         call_stack = new ArrayDeque<Keyword>();
         atts_stack = new ArrayDeque<Map<String,String>>();
         frame_buffer = new ArrayList<Sprite>();
@@ -66,7 +62,7 @@ public class SkinHandler extends DefaultHandler
 
         style_list = new ArrayList<String>();
         styles_map = new HashMap<String, ArrayList<String>>();
-        
+
         result = new Skin();
     }
 
@@ -88,9 +84,6 @@ public class SkinHandler extends DefaultHandler
 		if(atts_map.containsKey("width"))this.baseW = Double.parseDouble(atts_map.get("width"));
 		if(atts_map.containsKey("height"))this.baseH = Double.parseDouble(atts_map.get("height"));
                 result.judgment_line = Integer.parseInt(atts_map.get("judgment_line"));
-
-		result.screen_scale_x = (float) (this.targetW/this.baseW);
-		result.screen_scale_y = (float) (this.targetH/this.baseH);
             }break;
 
             case layer:{
@@ -122,44 +115,22 @@ public class SkinHandler extends DefaultHandler
                 if(atts.containsKey("scale_y"))sy = Float.parseFloat(atts.get("scale_y"));
                 if(atts.containsKey("scale"))sy = sx = Float.parseFloat(atts.get("scale"));
 
-                Rectangle slice = new Rectangle(x,y,w,h);
-
-                String FILE_PATH_PREFIX = "/resources/";
-                URL url = SkinHandler.class.getResource(FILE_PATH_PREFIX +atts.get("file"));
-                if(url == null)throw new RuntimeException("Cannot find resource: "+ FILE_PATH_PREFIX +atts.get("file"));
-
-                Sprite s;
-                try {
-                    s = ResourceFactory.get().getSprite(url, slice);
-                } catch(IOException e) {
-                    logger.log(Level.WARNING, "Sprite resource load error !! {0}", e);
-                    break;
-                }
-                ResourceFactory.get().getGameWindow().setScale(result.screen_scale_x,result.screen_scale_y);
-                s.setScale(sx, sy);
-                frame_buffer.add(s);
+                URL url = SkinChecker.class.getResource(FILE_PATH_PREFIX+atts.get("file"));
+                if(url == null)throw new RuntimeException("Cannot find resource: "+FILE_PATH_PREFIX+atts.get("file"));
             }break;
 
             case sprite:{
                 double framespeed = 0;
                 if(atts.containsKey("framespeed"))framespeed = Double.parseDouble(atts.get("framespeed"));
-                framespeed /= 1000; // spritelist need framespeed in milliseconds
 
-                String id;
+                String id = null;
                 if(atts.containsKey("id"))id = atts.get("id");
                 else {
                     logger.severe("bad resource file ! sprite must have an ID !");
                     break;
                 }
-
-                SpriteList sl = new SpriteList(framespeed);
-                sl.addAll(frame_buffer);
-
-                sprite_buffer.put(id, sl);
-
-                frame_buffer.clear();
             }break;
-           
+
             case style:{
                 style_list.add(atts.get("id"));
             }break;
@@ -169,14 +140,12 @@ public class SkinHandler extends DefaultHandler
                 styles_map.put(atts.get("id"), al);
                 style_list.clear();
             }break;
-            
-            case entity:{
-            Entity e;
 
+            case entity:{
             String id = null;
             if(atts.containsKey("id"))id = atts.get("id");
 
-            String sprites[];
+            String sprites[] = null;
             if(atts.containsKey("sprite"))sprites = atts.get("sprite").split(",");
             else {
                 logger.log(Level.SEVERE, "bad resource file ! entity [{0}] must have an sprite !", id);
@@ -187,49 +156,6 @@ public class SkinHandler extends DefaultHandler
                 logger.log(Level.SEVERE, "bad resource file ! entity [{0}] must have an sprite !", id);
                 break;
             }
-
-
-
-            if(id != null && (e = promoteEntity(id, atts)) != null){
-                    // ok
-            }
-            else if(atts.get("sprite").split(",").length > 1){
-                ArrayList<Entity> list = new ArrayList<Entity>();
-                for(String s : atts.get("sprite").split(",")){
-                    s = s.trim();
-                    list.add( new Entity(sprite_buffer.get(s),0,0));
-                }
-                e = new CompositeEntity(list);
-            }
-            else{
-                String sprite = atts.get("sprite").trim();
-                SpriteList sl = sprite_buffer.get(sprite);
-                if(sl.size() > 1){
-                    e = new AnimatedEntity(sl, 0, 0);
-                }
-                else e = new Entity(sl, 0, 0);
-            }
-
-            e.setLayer(this.layer);
-            double x = e.getX(), y = e.getY();
-            if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x"));
-            if(atts.containsKey("y"))y = Integer.parseInt(atts.get("y"));
-            e.setPos(x, y);
-            
-            if(id != null){
-                if(!result.getEntityMap().containsKey(id))result.getEntityMap().put(id, e);
-                else{
-                    Entity prime = result.getEntityMap().get(id);
-                    if(prime instanceof CompositeEntity){
-                        ((CompositeEntity)prime).getEntityList().add(e);
-                    }else{
-                        CompositeEntity ce = new CompositeEntity(prime, e);
-                        result.getEntityMap().put(id, ce);
-                    }
-                }
-            }
-            else result.getEntityList().add(e);
-            
             }break;
         }
     }
@@ -281,6 +207,7 @@ public class SkinHandler extends DefaultHandler
             e = new Entity(sl, 0, 0);
         }
         else if(id.equals("FPS_COUNTER")){
+            //TODO: why not use SpriteList directly ???
             ArrayList<Entity> list = new ArrayList<Entity>();
             for(String s : atts.get("sprite").split(",")){
                 s = s.trim();

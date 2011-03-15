@@ -8,7 +8,7 @@ import org.open2jam.render.SpriteList;
 */
 public class AnimatedEntity extends Entity
 {
-    protected double sub_frame;
+    double sub_frame;
 
     public AnimatedEntity(SpriteList sl)
     {
@@ -21,7 +21,7 @@ public class AnimatedEntity extends Entity
             sub_frame = 0;
     }
 
-    protected AnimatedEntity(AnimatedEntity org) {
+    AnimatedEntity(AnimatedEntity org) {
         super(org);
         this.frames = org.frames;
         this.sub_frame = org.sub_frame;

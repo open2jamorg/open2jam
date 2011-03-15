@@ -14,8 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -27,17 +26,17 @@ import org.open2jam.parser.Event;
 import org.open2jam.util.TrueTypeFont;
 
 
-public class Configuration extends javax.swing.JDialog {
+class Configuration extends javax.swing.JDialog {
 
-    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    EnumMap<Event.Channel,Integer> kb_map;
-    ArrayList<File> dir_list;
-    ArrayList<File> deleted_dirs;
+    private EnumMap<Event.Channel,Integer> kb_map;
+    private ArrayList<File> dir_list;
+    private final ArrayList<File> deleted_dirs;
 
-    HashMap<Integer, Event.Channel> table_map = new HashMap<Integer,Event.Channel>();
+    private HashMap<Integer, Event.Channel> table_map = new HashMap<Integer,Event.Channel>();
 
-    /** Creates new form configuration */
+    /** Creates new form configuration  */
     public Configuration(JFrame parent) {
         super(parent, true);
         initComponents();
@@ -86,17 +85,17 @@ public class Configuration extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        panel_folders = new javax.swing.JPanel();
-        bAddFolder = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        JPanel panel_folders = new JPanel();
+        JButton bAddFolder = new JButton();
+        JScrollPane jScrollPane1 = new JScrollPane();
         tDirs = new javax.swing.JTable();
-        bDelFolder = new javax.swing.JButton();
-        bSave = new javax.swing.JButton();
-        bCancel = new javax.swing.JButton();
-        jSeparator1 = new javax.swing.JSeparator();
-        tKeys_scroll = new javax.swing.JScrollPane();
+        JButton bDelFolder = new JButton();
+        JButton bSave = new JButton();
+        JButton bCancel = new JButton();
+        JSeparator jSeparator1 = new JSeparator();
+        JScrollPane tKeys_scroll = new JScrollPane();
         tKeys = new javax.swing.JTable();
-        jLabel1 = new javax.swing.JLabel();
+        JLabel jLabel1 = new JLabel();
         combo_keyboardConfig = new javax.swing.JComboBox();
 
         setTitle("Configuration");
@@ -305,7 +304,7 @@ public class Configuration extends javax.swing.JDialog {
         int row = tKeys.getSelectedRow();
         if(tKeys.getValueAt(row, 0) == null) return;
 
-        int code = -1;
+        int code;
         int lastkey = Keyboard.getKeyIndex(tKeys.getValueAt(row, 1).toString());
         try {
             code = read_keyboard_key(lastkey);
@@ -360,7 +359,6 @@ public class Configuration extends javax.swing.JDialog {
     }//GEN-LAST:event_bDelFolderActionPerformed
 
     private static Font font = new Font("Tahoma", Font.BOLD, 14);
-    private static TrueTypeFont trueTypeFont;
 
     private int read_keyboard_key(int lastkey) throws LWJGLException
     {
@@ -393,13 +391,13 @@ public class Configuration extends javax.swing.JDialog {
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glLoadIdentity();
 
-        trueTypeFont = new TrueTypeFont(font, false);
+        TrueTypeFont trueTypeFont = new TrueTypeFont(font, false);
 
         int code;
         do{
             Display.update();
-            trueTypeFont.drawString(10, 18, "Press a KEY for "+place, 1, -1);
-            trueTypeFont.drawString(10, 34, "Last assign was "+Keyboard.getKeyName(lastkey), 1, -1);
+            trueTypeFont.drawString(10, 18, "Press a KEY for " + place, 1, -1);
+            trueTypeFont.drawString(10, 34, "Last assign was " + Keyboard.getKeyName(lastkey), 1, -1);
             trueTypeFont.drawString(10, 50, "Press ESC or close to cancel", 1, -1);
             Keyboard.next();
             if(Display.isCloseRequested() || Keyboard.getEventKey() == Keyboard.KEY_ESCAPE)
@@ -413,19 +411,9 @@ public class Configuration extends javax.swing.JDialog {
         return code;
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private static javax.swing.JButton bAddFolder;
-    private static javax.swing.JButton bCancel;
-    private static javax.swing.JButton bDelFolder;
-    private static javax.swing.JButton bSave;
     private static javax.swing.JComboBox combo_keyboardConfig;
-    private static javax.swing.JLabel jLabel1;
-    private static javax.swing.JScrollPane jScrollPane1;
-    private static javax.swing.JSeparator jSeparator1;
-    private static javax.swing.JPanel panel_folders;
     private static javax.swing.JTable tDirs;
     private static javax.swing.JTable tKeys;
-    private static javax.swing.JScrollPane tKeys_scroll;
     // End of variables declaration//GEN-END:variables
 
 }

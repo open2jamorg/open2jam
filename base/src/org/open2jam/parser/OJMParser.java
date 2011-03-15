@@ -15,9 +15,9 @@ import org.open2jam.util.ByteBufferInputStream;
 import org.open2jam.render.lwjgl.SoundManager;
 
 
-public class OJMParser
+class OJMParser
 {
-    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     /** the xor mask used in the M30 format */
     private static final byte[] nami = new byte[]{0x6E, 0x61, 0x6D, 0x69};
@@ -74,8 +74,8 @@ public class OJMParser
 
     public static HashMap<Integer,Integer> parseFile(File file)
     {
-        RandomAccessFile f = null;
-        HashMap<Integer,Integer> ret = null;
+        RandomAccessFile f;
+        HashMap<Integer,Integer> ret;
         try{
             f = new RandomAccessFile(file,"r");
             ByteBuffer buffer = f.getChannel().map(java.nio.channels.FileChannel.MapMode.READ_ONLY, 0, 4);
@@ -295,8 +295,8 @@ public class OJMParser
     private static int acc_counter = 0;
     private static byte[] acc_xor(byte[] buf)
     {
-        int temp = 0;
-        byte this_byte = 0;
+        int temp;
+        byte this_byte;
         for(int i=0;i<buf.length;i++)
         {
             temp = this_byte = buf[i];

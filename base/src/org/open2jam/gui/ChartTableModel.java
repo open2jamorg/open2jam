@@ -14,11 +14,11 @@ import org.open2jam.parser.ChartList;
  */
 public class ChartTableModel implements TableModel
 {
-    private List<Chart> items;
-    private String[] col_names = new String[] { "Level", "Notes", "Keys" };
+    private final List<Chart> items;
+    private final String[] col_names = new String[] { "Level", "Notes", "Keys" };
     private ChartList chartlist;
     
-    private List<TableModelListener> listeners;
+    private final List<TableModelListener> listeners;
 
     public ChartTableModel()
     {

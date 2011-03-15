@@ -15,52 +15,52 @@ import org.open2jam.util.ByteBufferInputStream;
 
 public class OJNChart extends Chart
 {
-    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     /** full path to the source file of this header */
-    protected File source;
+    File source;
     public File getSource() { return source; }
 
     /** an integer representing difficulty.
     *** this is the internal difficult level of the song
     *** for that rank **/
-    protected short level;
+    short level;
     public int getLevel(){ return level; }
 
     public int getKeys(){ return 7; }
 
-    protected String title;
+    String title;
     public String getTitle() { return title; }
 
-    protected String artist;
+    String artist;
     public String getArtist() { return artist; }
 
-    protected String genre;
+    String genre;
     public String getGenre() { return genre; }
 
-    protected String noter;
+    String noter;
     public String getNoter(){ return noter; }
 
-    protected File sample_file;
+    File sample_file;
     public Map<Integer,Integer> getSamples(){ return OJMParser.parseFile(sample_file); }
 
     /** the bpm as specified is the header */
-    protected double bpm;
+    double bpm;
     public double getBPM() { return bpm; }
 
     /** the number of notes in the song */
-    protected int note_count;
+    int note_count;
     public int getNoteCount() { return note_count; }
 
     /** the duration in seconds */
-    protected int duration;
+    int duration;
     public int getDuration() { return duration; }
 
-    protected int note_offset;
-    protected int note_offset_end;
+    int note_offset;
+    int note_offset_end;
 
-    protected int cover_offset;
-    protected int cover_size;
+    int cover_offset;
+    int cover_size;
     public BufferedImage getCover()
     {
         try{

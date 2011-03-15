@@ -26,7 +26,7 @@ public class TimeRender extends Render
     private enum JUDGE {
         PERFECT(20), COOL(41), GOOD(125), BAD(173), MISS(-1);
         
-        int value;
+        final int value;
 
         private JUDGE(int i){ value = i; }
 
@@ -414,7 +414,7 @@ public class TimeRender extends Render
             Event.Channel c = entry.getKey();
             if(window.isKeyDown(entry.getValue())) // this key is being pressed
             {
-                if(keyboard_key_pressed.get(c) == false){ // started holding now
+                if(!keyboard_key_pressed.get(c)){ // started holding now
                     keyboard_key_pressed.put(c, true);
 
                     Entity ee = skin.getEntityMap().get("PRESSED_"+c).copy();
@@ -431,7 +431,7 @@ public class TimeRender extends Render
 
                     queueSample(e.getSample());
                    
-                    JUDGE judge = JUDGE.MISS;
+                    JUDGE judge;
                     long hit = e.testTimeHit(now);
                     judge = ratePrecision(hit);
                     e.setHit(hit);
@@ -452,7 +452,7 @@ public class TimeRender extends Render
                 }
             }
             else
-            if(keyboard_key_pressed.get(c) == true) { // key released now
+            if(keyboard_key_pressed.get(c)) { // key released now
 
                 keyboard_key_pressed.put(c, false);
                 key_pressed_entity.get(c).setAlive(false);

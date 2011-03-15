@@ -34,7 +34,7 @@ import org.lwjgl.opengl.GL11;
  * @author Brian Matzon
  * @author fox
  */
-public class TextureLoader {
+class TextureLoader {
     /** The table of textures that have been loaded in this loader */
     private HashMap<URL,Texture> table = new HashMap<URL,Texture>();
 
@@ -47,7 +47,6 @@ public class TextureLoader {
     /** 
      * Create a new texture loader based on the game panel
      *
-     * @param gl The GL content in which the textures should be loaded
      */
     public TextureLoader() {
         glAlphaColorModel = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB),
@@ -80,7 +79,6 @@ public class TextureLoader {
     /**
      * Load a texture
      *
-     * @param resourceName The location of the resource to load
      * @return The loaded texture
      * @throws IOException Indicates a failure to access the resource
      */
@@ -110,7 +108,6 @@ public class TextureLoader {
      * Load a texture into OpenGL from a image reference on
      * disk.
      *
-     * @param resourceName The location of the resource to load
      * @param target The GL target to load the texture against
      * @param dstPixelFormat The pixel format of the screen
      * @param minFilter The minimising filter
@@ -118,13 +115,13 @@ public class TextureLoader {
      * @return The loaded texture
      * @throws IOException Indicates a failure to access the resource
      */
-    public Texture createTexture(BufferedImage image,
-                              int target, 
-                              int dstPixelFormat, 
-                              int minFilter, 
-                              int magFilter)
+    Texture createTexture(BufferedImage image,
+                          int target,
+                          int dstPixelFormat,
+                          int minFilter,
+                          int magFilter)
     {
-        int srcPixelFormat = 0;
+        int srcPixelFormat;
 
 	int texw = getNextPOT(image.getWidth(null));
 	int texh = getNextPOT(image.getHeight(null));
@@ -183,9 +180,6 @@ public class TextureLoader {
 	/**
 	* Convert the buffered image to a texture
 	*
-	* @param bufferedImage The image to convert to a texture
-	* @param texture The texture to store the data into
-	* @param slice specify only a part of the source image, can be null
 	* @return A buffer containing the data
 	*/
 	private ByteBuffer convertImageData(BufferedImage image)
@@ -217,7 +211,7 @@ public class TextureLoader {
 		// that be used by OpenGL to produce a texture.
 		byte[] data = ((DataBufferByte) texImage.getRaster().getDataBuffer()).getData(); 
 
-		ByteBuffer imageBuffer = imageBuffer = ByteBuffer.allocateDirect(data.length); 
+		ByteBuffer imageBuffer = ByteBuffer.allocateDirect(data.length);
 		imageBuffer.order(ByteOrder.nativeOrder()); 
 		imageBuffer.put(data, 0, data.length); 
 		imageBuffer.flip();
@@ -244,7 +238,7 @@ public class TextureLoader {
      * @param size how many int to contain
      * @return created IntBuffer
      */
-    protected IntBuffer createIntBuffer(int size) {
+    IntBuffer createIntBuffer(int size) {
       ByteBuffer temp = ByteBuffer.allocateDirect(4 * size);
       temp.order(ByteOrder.nativeOrder());
 

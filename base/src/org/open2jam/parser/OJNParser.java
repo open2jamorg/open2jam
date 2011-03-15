@@ -13,9 +13,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.open2jam.util.CharsetDetector;
 
-public class OJNParser
+class OJNParser
 {
-    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private static final String genre_map[] = {"Ballad","Rock","Dance","Techno","Hip-hop",
                     "Soul/R&B","Jazz","Funk","Classical","Traditional","Etc"};
@@ -30,13 +30,14 @@ public class OJNParser
 
     public static ChartList parseFile(File file)
     {
-        ByteBuffer buffer = null;
-        RandomAccessFile f = null;
+        ByteBuffer buffer;
+        RandomAccessFile f;
         try{
             f = new RandomAccessFile(file.getAbsolutePath(),"r");
             buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, 300);
         }catch(IOException e){
             logger.log(Level.WARNING, "IO exception on reading OJN file {0}", file.getName());
+            return null;
         }
 
         buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
@@ -159,7 +160,7 @@ public class OJNParser
         try {
             f.close();
         } catch (IOException ex) {
-            logger.log(Level.SEVERE, null, ex);
+            logger.log(Level.WARNING, "Error closing the file (lol?) {0}", ex);
         }
         return list;
     }
@@ -185,8 +186,7 @@ public class OJNParser
         return event_list;
     }
 
-    private static void readNoteBlock(List<Event> event_list, ByteBuffer buffer) throws IOException
-    {
+    private static void readNoteBlock(List<Event> event_list, ByteBuffer buffer) {
         while(buffer.hasRemaining())
         {
             int measure = buffer.getInt();

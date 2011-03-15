@@ -56,7 +56,7 @@ public class NumberEntity extends Entity
     public void draw()
     {
         //draw from right to left
-	String numberString = String.valueOf(number).toString();
+	String numberString = String.valueOf(number);
         if(numberString.length() < show_digits)
         {
             String zeros = "";

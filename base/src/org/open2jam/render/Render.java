@@ -43,148 +43,149 @@ public abstract class Render implements GameWindowCallback
     
     static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    protected static final int JUDGMENT_SIZE = 64;
+    private static final int JUDGMENT_SIZE = 64;
 
     /** is autoplaying ? */
-    protected final boolean AUTOPLAY;
+    final boolean AUTOPLAY;
 
     /** skin info and entities */
-    protected Skin skin;
+    Skin skin;
     
     /** defines the judgment space */
-    protected double judgment_line_y1, judgment_line_y2;
+    double judgment_line_y1;
+    double judgment_line_y2;
 
     /** store the sound sources being played */
-    protected static final int MAX_SOURCES = 64;
+    private static final int MAX_SOURCES = 64;
     
     /** the mapping of note channels to KeyEvent keys  */
-    protected final EnumMap<Event.Channel, Integer> keyboard_map;
+    final EnumMap<Event.Channel, Integer> keyboard_map;
     
     /** The window that is being used to render the game */
-    protected final GameWindow window;
+    final GameWindow window;
 
     /** the chart being rendered */
-    protected final Chart chart;
+    private final Chart chart;
 
     /** The recorded fps */
-    protected int fps;
+    int fps;
 
     /** the hispeed */
-    protected final double hispeed;
+    private final double hispeed;
     
     /** the size of a measure */
-    protected double measure_size;
+    private double measure_size;
 
     /** the layer of the notes */
-    protected int note_layer;
+    int note_layer;
 
     /** the height of the notes */
-    protected double note_height;
+    double note_height;
 
     /** the bpm at which the entities are falling */
     private double bpm;
 
     /** this queue hold the available sources
      * that may be used to play sounds */
-    protected LinkedList<Integer> source_queue;
-    protected Iterator<Integer> source_queue_iterator;
+    LinkedList<Integer> source_queue;
+    private Iterator<Integer> source_queue_iterator;
 
     /** maps the Event value to OpenGL sample ID's */
-    protected Map<Integer, Integer> samples;
+    private Map<Integer, Integer> samples;
 
     /** The time at which the last rendering looped started from the point of view of the game logic */
-    protected long lastLoopTime;
+    long lastLoopTime;
 
     /** The time since the last record of fps */
-    protected long lastFpsTime = 0;
+    long lastFpsTime = 0;
 
     /** the time it started rendering */
-    protected long start_time;
+    long start_time;
 
        /** a list of list of entities.
     ** basically, each list is a layer of entities
     ** the layers are rendered in order
     ** so entities at layer X will always be rendered before layer X+1 */
-    protected EntityMatrix entities_matrix;
+       EntityMatrix entities_matrix;
 
     /** this iterator is used by the update_note_buffer
      * to go through the events on the chart */
-    protected Iterator<Event> buffer_iterator;
+    Iterator<Event> buffer_iterator;
 
     /** this is used by the update_note_buffer
      * to remember the "opened" long-notes */
-    protected EnumMap<Event.Channel, LongNoteEntity> ln_buffer;
+    private EnumMap<Event.Channel, LongNoteEntity> ln_buffer;
 
     /** this holds the actual state of the keyboard,
      * whether each is being pressed or not */
-    protected EnumMap<Event.Channel,Boolean> keyboard_key_pressed;
+    EnumMap<Event.Channel,Boolean> keyboard_key_pressed;
 
-    protected EnumMap<Event.Channel,Entity> longflare;
+    EnumMap<Event.Channel,Entity> longflare;
 
     /** these are the same notes from the entity_matrix
      * but divided in channels for ease to pull */
-    protected EnumMap<Event.Channel,LinkedList<NoteEntity>> note_channels;
+    private EnumMap<Event.Channel,LinkedList<NoteEntity>> note_channels;
 
     /** entities for the key pressed events
      * need to keep track of then to kill
      * when the key is released */
-    protected EnumMap<Event.Channel,Entity> key_pressed_entity;
+    EnumMap<Event.Channel,Entity> key_pressed_entity;
 
     /** keep track of the long note the player may be
      * holding with the key */
-    protected EnumMap<Event.Channel,LongNoteEntity> longnote_holded;
+    EnumMap<Event.Channel,LongNoteEntity> longnote_holded;
 
     /** keep trap of the last sound of each channel
      * so that the player can re-play the sound when the key is pressed */
-    protected EnumMap<Event.Channel,Event.SoundSample> last_sound;
+    EnumMap<Event.Channel,Event.SoundSample> last_sound;
 
     /** number to display the fps, and note counters on the screen */
-    protected NumberEntity fps_entity;
+    NumberEntity fps_entity;
 
-    protected NumberEntity score_entity;
+    NumberEntity score_entity;
     /** JamCombo variables */
-    protected ComboCounterEntity jamcombo_entity;
+    ComboCounterEntity jamcombo_entity;
     /**
      * Cools: +2
      * Goods: +1
      * Everything else: reset to 0
      * >=50 to add a jam
      */
-    protected BarEntity jambar_entity;
+    BarEntity jambar_entity;
 
-    protected BarEntity lifebar_entity;
+    BarEntity lifebar_entity;
 
-    protected int pills = 0;
+    int pills = 0;
 
-    protected LinkedList<Entity> pills_draw;
+    LinkedList<Entity> pills_draw;
 
-    protected int consecutive_cools = 0;
+    int consecutive_cools = 0;
 
-    protected NumberEntity minute_entity;
-    protected NumberEntity second_entity;
+    NumberEntity minute_entity;
+    NumberEntity second_entity;
 
-    protected Entity judgment_entity;
+    Entity judgment_entity;
 
     /** the combo counter */
-    protected ComboCounterEntity combo_entity;
+    ComboCounterEntity combo_entity;
     protected ComboCounterEntity combo_title;
 
     /** the maxcombo counter */
-    protected NumberEntity maxcombo_entity;
+    NumberEntity maxcombo_entity;
 
     /** statistics variables */
-    protected double hit_sum = 0, hit_count = 0, total_notes = 0;
+    double hit_sum = 0;
+    double hit_count = 0;
+    double total_notes = 0;
 
     /** the channelMirror, random select */
     private int channelModifier = 0;
-
-    /** the visibility modifier */
-    private int visibilityModifier = 0;
 
     /** The volume */
     private float mainVolume = 0.75f;
     private float keyVolume = 0.75f;
     private float bgmVolume = 0.75f;
+    private final int visibilityModifier;
 
     static {
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
@@ -264,7 +265,7 @@ public abstract class Render implements GameWindowCallback
     }
 
 
-    protected void updateHispeed()
+    void updateHispeed()
     {
         judgment_line_y1 = skin.judgment_line - JUDGMENT_SIZE;
         if(hispeed > 1){
@@ -275,10 +276,9 @@ public abstract class Render implements GameWindowCallback
         measure_size = 0.8 * hispeed * getViewport();
     }
 
-    public double getMeasureSize() { return measure_size; }
-    public double getViewport() { return judgment_line_y2; }
+    double getViewport() { return judgment_line_y2; }
 
-    protected double judgmentArea()
+    double judgmentArea()
     {
         // y2-y1 is the the upper half of the judgment area
         // 2*(y2-y1) is the total area
@@ -300,6 +300,8 @@ public abstract class Render implements GameWindowCallback
             SkinHandler sb = new SkinHandler("o2jam", window.getResolutionWidth(), window.getResolutionHeight());
             SAXParserFactory.newInstance().newSAXParser().parse(resources_xml.openStream(), sb);
             skin = sb.getResult();
+
+            System.out.println(sb.getStyles());
         } catch (ParserConfigurationException ex) {
             logger.log(Level.SEVERE, "Skin load error {0}", ex);
         } catch (org.xml.sax.SAXException ex) {
@@ -371,7 +373,7 @@ public abstract class Render implements GameWindowCallback
         lifebar_entity = (BarEntity) skin.getEntityMap().get("LIFE_BAR");
         lifebar_entity.setLimit(1000);
         lifebar_entity.setNumber(1000);
-        lifebar_entity.setFillDirection(BarEntity.fillDirection.UP_TO_DOWN);
+        lifebar_entity.setFillDirection(BarEntity.FillDirection.UP_TO_DOWN);
         entities_matrix.add(lifebar_entity);
 
         combo_entity = (ComboCounterEntity) skin.getEntityMap().get("COMBO_COUNTER");
@@ -450,7 +452,7 @@ public abstract class Render implements GameWindowCallback
     /** this returns the next note that needs to be played
      ** of the defined channel or NULL if there's
      ** no such note in the moment **/
-    protected NoteEntity nextNoteKey(Event.Channel c)
+    NoteEntity nextNoteKey(Event.Channel c)
     {
         if(note_channels.get(c).isEmpty())return null;
         NoteEntity ne = note_channels.get(c).getFirst();
@@ -461,7 +463,7 @@ public abstract class Render implements GameWindowCallback
             if(note_channels.get(c).isEmpty())return null;
             ne = note_channels.get(c).getFirst();
         }
-        if(ne != null)last_sound.put(c, ne.getSample());
+        last_sound.put(c, ne.getSample());
         return ne;
     }
     
@@ -469,8 +471,6 @@ public abstract class Render implements GameWindowCallback
     private int buffer_measure = 0;
 
     private double fractional_measure = 1;
-
-    private final int buffer_upper_bound = -10;
 
     private long buffer_timer = 0;
 
@@ -482,8 +482,9 @@ public abstract class Render implements GameWindowCallback
     /** update the note layer of the entities_matrix.
     *** note buffering is equally distributed between the frames
     **/
-    protected void update_note_buffer(long now)
+    void update_note_buffer(long now)
     {
+        int buffer_upper_bound = -10;
         while(buffer_iterator.hasNext() && getViewport() - velocity_integral(now,buffer_timer) > buffer_upper_bound)
         {
             Event e = buffer_iterator.next();
@@ -566,7 +567,7 @@ public abstract class Render implements GameWindowCallback
      * t0     a    b   t1  ->  b -  a
      *  a    t0   t1    b  -> t1 - t0
      */
-    public double velocity_integral(long t0, long t1)
+    double velocity_integral(long t0, long t1)
     {
         int sign = 1;
         if(t0 > t1){
@@ -640,7 +641,7 @@ public abstract class Render implements GameWindowCallback
      * TODO ADD P2 SUPPORT
      * @param buffer
      */
-    public void channelMirror(Iterator<Event> buffer)
+     void channelMirror(Iterator<Event> buffer)
     {
 	while(buffer.hasNext())
 	{
@@ -662,7 +663,7 @@ public abstract class Render implements GameWindowCallback
      * TODO ADD P2 SUPPORT
      * @param buffer
      */
-    public void channelShuffle(Iterator<Event> buffer)
+    void channelShuffle(Iterator<Event> buffer)
     {
 	List<Event.Channel> channelSwap = new LinkedList<Event.Channel>();
 
@@ -700,7 +701,7 @@ public abstract class Render implements GameWindowCallback
      * * ADD P2 SUPPORT
      * @param buffer
      */
-    public void channelRandom(Iterator<Event> buffer)
+    void channelRandom(Iterator<Event> buffer)
     {
 	EnumMap<Event.Channel, Event.Channel> ln = new EnumMap<Event.Channel, Event.Channel>(Event.Channel.class);
 

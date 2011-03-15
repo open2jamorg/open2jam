@@ -14,7 +14,7 @@ import java.util.List;
 public class IntervalTree<Type> {
 
 	private IntervalNode<Type> head;
-	private List<Interval<Type>> intervalList;
+	private final List<Interval<Type>> intervalList;
 	private boolean inSync;
 	private int size;
 	

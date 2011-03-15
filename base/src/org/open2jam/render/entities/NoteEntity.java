@@ -7,15 +7,15 @@ import org.open2jam.render.SpriteList;
 **/
 public class NoteEntity extends AnimatedEntity implements TimeEntity
 {
-    protected Event.SoundSample sample_value;
+    private Event.SoundSample sample_value;
 
-    protected Event.Channel channel = Event.Channel.NONE;
+    private Event.Channel channel = Event.Channel.NONE;
 
-    protected State state = State.NOT_JUDGED;
+    State state = State.NOT_JUDGED;
 
-    protected double hit = 0;
+    private double hit = 0;
 
-    protected long time_to_hit;
+    long time_to_hit;
 
     public enum State {
         NOT_JUDGED,
@@ -23,7 +23,7 @@ public class NoteEntity extends AnimatedEntity implements TimeEntity
         JUDGE,
         TO_KILL,
         LN_HOLD
-    };
+    }
 
     public NoteEntity(SpriteList sl, Event.Channel ch, double x, double y)
     {
@@ -31,7 +31,7 @@ public class NoteEntity extends AnimatedEntity implements TimeEntity
         this.channel = ch;
     }
 
-    protected NoteEntity(NoteEntity org) {
+    NoteEntity(NoteEntity org) {
         super(org);
         this.channel = org.channel;
         this.sample_value = org.sample_value;
@@ -43,12 +43,6 @@ public class NoteEntity extends AnimatedEntity implements TimeEntity
     }
 
     public Event.SoundSample getSample(){ return sample_value; }
-
-    @Override
-    public void move(long delta)
-    {
-	super.move(delta);
-    }
 
     public void setHit(double hit) { this.hit = hit; }
     public double getHit() { return hit; }
@@ -63,11 +57,10 @@ public class NoteEntity extends AnimatedEntity implements TimeEntity
 
     public long testTimeHit(long now)
     {
-        long p = Math.abs(time_to_hit-now);
-        return p;
+        return Math.abs(time_to_hit-now);
     }
 
-    protected static double testHit(double y1, double y2, double jy1, double jy2)
+    static double testHit(double y1, double y2, double jy1, double jy2)
     {
         if(y2 < jy1)return 0;
         double p = (y2 - jy1)/(jy2 - jy1);

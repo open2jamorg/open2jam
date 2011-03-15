@@ -42,13 +42,13 @@ public class TrueTypeFont {
 		ALIGN_RIGHT = 1,
 		ALIGN_CENTER = 2;
 	/** Array that holds necessary information about the font characters */
-	private IntObject[] charArray = new IntObject[256];
+	private final IntObject[] charArray = new IntObject[256];
 
 	/** Map of user defined font characters (Character <-> IntObject) */
-	private Map<Character,IntObject> customChars = new HashMap<Character,IntObject>();
+	private final Map<Character,IntObject> customChars = new HashMap<Character,IntObject>();
 
 	/** Boolean flag on whether AntiAliasing is enabled or not */
-	private boolean antiAlias;
+	private final boolean antiAlias;
 
 	/** Font's size */
 	private int fontSize = 0;
@@ -63,16 +63,13 @@ public class TrueTypeFont {
 	private int textureWidth = 512;
 
 	/** Default font texture height */
-	private int textureHeight = 512;
+	private final int textureHeight = 512;
 
 	/** A reference to Java's AWT Font that we create our font texture from */
-	private Font font;
-
-	/** The font metrics for our Java AWT font */
-	private FontMetrics fontMetrics;
+	private final Font font;
 
 
-	private int correctL = 9, correctR = 8;
+    private int correctL = 9, correctR = 8;
 
 	private class IntObject {
 		/** Character's width */
@@ -117,12 +114,12 @@ public class TrueTypeFont {
 		BufferedImage tempfontImage = new BufferedImage(1, 1,
 				BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = (Graphics2D) tempfontImage.getGraphics();
-		if (antiAlias == true) {
+		if (antiAlias) {
 			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 					RenderingHints.VALUE_ANTIALIAS_ON);
 		}
 		g.setFont(font);
-		fontMetrics = g.getFontMetrics();
+        FontMetrics fontMetrics = g.getFontMetrics();
 		int charwidth = fontMetrics.charWidth(ch)+8;
 
 		if (charwidth <= 0) {
@@ -138,7 +135,7 @@ public class TrueTypeFont {
 		fontImage = new BufferedImage(charwidth, charheight,
 				BufferedImage.TYPE_INT_ARGB);
 		Graphics2D gt = (Graphics2D) fontImage.getGraphics();
-		if (antiAlias == true) {
+		if (antiAlias) {
 			gt.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 					RenderingHints.VALUE_ANTIALIAS_ON);
 		}
@@ -215,7 +212,7 @@ public class TrueTypeFont {
 				if( i < 256 ) { // standard characters
 					charArray[i] = newIntObject;
 				} else { // custom characters
-					customChars.put( new Character( ch ), newIntObject );
+					customChars.put(ch, newIntObject );
 				}
 
 				fontImage = null;
@@ -255,14 +252,14 @@ public class TrueTypeFont {
 
 	public int getWidth(String whatchars) {
 		int totalwidth = 0;
-		IntObject intObject = null;
-		int currentChar = 0;
+		IntObject intObject;
+		int currentChar;
 		for (int i = 0; i < whatchars.length(); i++) {
 			currentChar = whatchars.charAt(i);
 			if (currentChar < 256) {
 				intObject = charArray[currentChar];
 			} else {
-				intObject = (IntObject)customChars.get( new Character( (char) currentChar ) );
+				intObject = customChars.get((char) currentChar);
 			}
 
 			if( intObject != null )
@@ -300,7 +297,7 @@ public class TrueTypeFont {
 			int format
 			) {
 
-		IntObject intObject = null;
+		IntObject intObject;
 		int charCurrent;
 
 
@@ -328,7 +325,7 @@ public class TrueTypeFont {
 					if (charCurrent < 256) {
 						intObject = charArray[charCurrent];
 					} else {
-						intObject = (IntObject)customChars.get( new Character( (char) charCurrent ) );
+						intObject = customChars.get((char) charCurrent);
 					}
 					totalwidth += intObject.width-correctL;
 				}
@@ -352,7 +349,7 @@ public class TrueTypeFont {
 			if (charCurrent < 256) {
 				intObject = charArray[charCurrent];
 			} else {
-				intObject = (IntObject)customChars.get( new Character( (char) charCurrent ) );
+				intObject = customChars.get((char) charCurrent);
 			}
 
 			if( intObject != null ) {
@@ -367,7 +364,7 @@ public class TrueTypeFont {
 								if (charCurrent < 256) {
 									intObject = charArray[charCurrent];
 								} else {
-									intObject = (IntObject)customChars.get( new Character( (char) charCurrent ) );
+									intObject = customChars.get((char) charCurrent);
 								}
 								totalwidth += intObject.width-correctL;
 							}

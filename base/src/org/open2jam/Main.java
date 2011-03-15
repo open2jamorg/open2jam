@@ -9,13 +9,13 @@ import org.open2jam.gui.Interface;
 
 public class Main
 {
-    static final String LIB_PATH =
+    private static final String LIB_PATH =
         System.getProperty("user.dir") + File.separator +
         "lib" + File.separator +
         "native" + File.separator +
         getOS();
 
-    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     public static void main(String []args)
     {
@@ -56,7 +56,7 @@ public class Main
         }
     }
 
-    public static String getOS()
+    private static String getOS()
     {
         String os = System.getProperty("os.name").toLowerCase();
         if(os.indexOf("win") >= 0){

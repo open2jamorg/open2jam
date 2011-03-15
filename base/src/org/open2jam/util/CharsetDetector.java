@@ -17,9 +17,9 @@ public class CharsetDetector implements nsICharsetDetectionObserver
     private String charset;
     private nsDetector det;
 
-    public CharsetDetector() {}
+    private CharsetDetector() {}
 
-    public void start(){
+    void start(){
         charset = "US-ASCII";
         det = new nsDetector(nsPSMDetector.ALL);
         det.Init(this);
@@ -29,13 +29,13 @@ public class CharsetDetector implements nsICharsetDetectionObserver
     private boolean isAscii = true;
 
     /** returns true if done */
-    public boolean feed(byte[] b){
+    boolean feed(byte[] b){
         if(isAscii)isAscii = det.isAscii(b,b.length);
         if(!isAscii && !done)done = det.DoIt(b,b.length, false);
         return done;
     }
 
-    public String result(){
+    String result(){
         det.DataEnd();
         return charset;
     }
@@ -44,7 +44,7 @@ public class CharsetDetector implements nsICharsetDetectionObserver
         charset = string;
     }
 
-    public static String analyze(File f) throws java.io.FileNotFoundException, java.io.IOException
+    public static String analyze(File f) throws java.io.IOException
     {
         CharsetDetector c = new CharsetDetector();
         c.start();

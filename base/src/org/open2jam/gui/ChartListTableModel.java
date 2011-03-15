@@ -14,11 +14,11 @@ import org.open2jam.parser.ChartList;
  */
 public class ChartListTableModel implements TableModel
 {
-    private List<ChartList> items;
-    private String[] col_names = new String[] { "Name", "Level", "Genre" };
+    private final List<ChartList> items;
+    private final String[] col_names = new String[] { "Name", "Level", "Genre" };
     private int rank;
     
-    private List<TableModelListener> listeners;
+    private final List<TableModelListener> listeners;
 
     public ChartListTableModel()
     {
@@ -79,7 +79,7 @@ public class ChartListTableModel implements TableModel
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Chart c = null;
+        Chart c;
         if(items.get(rowIndex).isEmpty()) return null;
         if(items.get(rowIndex).size()-1 < rank)
             c = items.get(rowIndex).get(0);

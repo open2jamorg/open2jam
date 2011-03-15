@@ -13,14 +13,14 @@ public class BarEntity extends AnimatedEntity
     private int LIMIT = 1;
     private int number = 0;
 
-    public enum fillDirection {
+    public enum FillDirection {
         LEFT_TO_RIGHT,
         RIGHT_TO_LEFT,
         UP_TO_DOWN,
         DOWN_TO_UP
-    };
+    }
 
-    private fillDirection direction = fillDirection.LEFT_TO_RIGHT;
+    private FillDirection direction = FillDirection.LEFT_TO_RIGHT;
 
     public BarEntity(SpriteList list, double x, double y)
     {
@@ -43,8 +43,8 @@ public class BarEntity extends AnimatedEntity
     public void setLimit(int limit){ LIMIT = limit; }
     public int getLimit() {return LIMIT; }
 
-    public void setFillDirection(fillDirection value) { direction = value; }
-    public fillDirection getFillDirection() { return direction; }
+    public void setFillDirection(FillDirection value) { direction = value; }
+    public FillDirection getFillDirection() { return direction; }
 
     @Override
     public void draw()

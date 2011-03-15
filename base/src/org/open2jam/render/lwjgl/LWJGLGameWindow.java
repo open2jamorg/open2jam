@@ -23,9 +23,7 @@ import org.open2jam.render.GameWindowCallback;
  */
 public class LWJGLGameWindow implements GameWindow {
 
-        static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-        
-        private static final HashMap<Integer,Integer> key_map = new HashMap<Integer,Integer>();
+    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
 	/** The callback which should be notified of window events */
 	private GameWindowCallback callback;
@@ -39,7 +37,7 @@ public class LWJGLGameWindow implements GameWindow {
 	/** The height of the game display area */
 	private int height;
 
-        private float screen_scale_x = 1f, screen_scale_y = 1f;
+    private float screen_scale_x = 1f, screen_scale_y = 1f;
 
 	/** The loader responsible for converting images into OpenGL textures */
 	private TextureLoader textureLoader;
@@ -48,7 +46,7 @@ public class LWJGLGameWindow implements GameWindow {
 	private String title;
 
 
-        private float scale_x = 1f, scale_y = 1f;
+    private float scale_x = 1f, scale_y = 1f;
 
 	/**
 	 * Create a new game window that will use OpenGL to 
@@ -85,9 +83,7 @@ public class LWJGLGameWindow implements GameWindow {
 	/**
 	 * Set the resolution of the game display area.
 	 *
-	 * @param x The width of the game display area
-	 * @param y The height of the game display area
-	 */
+     */
 	public void setDisplay(DisplayMode dm, boolean vsync, boolean fs) {
             try{
                 Display.setDisplayMode(dm);

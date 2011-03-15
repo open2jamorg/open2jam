@@ -23,46 +23,21 @@ public class Event implements Comparable<Event>
             NOTE_14,                  //P2-NOTE_7
             NOTE_SC2,                 //P2-NOTE_SC / P2-NOTE_8
 
-            AUTO_PLAY;
+            AUTO_PLAY
+     }
 
-            @Override
-            public String toString(){
-//                switch(this){
-//	            case NOTE_1:return "NOTE_P1_1";
-//	            case NOTE_2:return "NOTE_P1_2";
-//	            case NOTE_3:return "NOTE_P1_3";
-//	            case NOTE_4:return "NOTE_P1_4";
-//	            case NOTE_5:return "NOTE_P1_5";
-//	            case NOTE_6:return "NOTE_P1_6";
-//	            case NOTE_7:return "NOTE_P1_7";
-//                    case NOTE_SC:return "NOTE_P1_SC";
-//	            case NOTE_8:return "NOTE_P2_1";
-//	            case NOTE_9:return "NOTE_P2_2";
-//	            case NOTE_10:return "NOTE_P2_3";
-//	            case NOTE_11:return "NOTE_P2_4";
-//	            case NOTE_12:return "NOTE_P2_5";
-//	            case NOTE_13:return "NOTE_P2_6";
-//	            case NOTE_14:return "NOTE_P2_7";
-//                    case NOTE_SC2:return "NOTE_P2_SC";
-//	            case TIME_SIGNATURE:return "TIME_SIGNATURE";
-//	            case BPM_CHANGE:return "BPM_CHANGE";
-//	        }
-	        return super.toString();
-	    }
-        };
-
-        /**
+    /**
          * wrapper for the sound sample
          *
          * contains the sample id for the SoundManager
          * volume and pan */
         public class SoundSample
         {
-            public int sample_id;
-            public float volume;
-            public float pan;
+            public final int sample_id;
+            public final float volume;
+            public final float pan;
 
-            protected boolean bgm = false;
+            boolean bgm = false;
 
             public SoundSample(int sample, float vol, float pan){
                 this.sample_id = sample;
@@ -82,14 +57,14 @@ public class Event implements Comparable<Event>
         }
 
         
-	public enum Flag { NONE, HOLD, RELEASE };
+	public enum Flag { NONE, HOLD, RELEASE }
 
-	private Channel channel;
-	private int measure;
-	private double position;
+    private Channel channel;
+	private final int measure;
+	private final double position;
 	
-	private double value;
-	protected Flag flag;
+	private final double value;
+	Flag flag;
         private final SoundSample sound_sample;
 
 	public Event(Channel channel, int measure, double position,

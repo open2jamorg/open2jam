@@ -13,14 +13,8 @@ public class MeasureEntity extends AnimatedEntity implements TimeEntity
         super(sl, x, y);
     }
 
-    protected MeasureEntity(MeasureEntity org) {
+    private MeasureEntity(MeasureEntity org) {
         super(org);
-    }
-    
-    @Override
-    public void move(long delta)
-    {
-	super.move(delta);
     }
 
     @Override

@@ -11,54 +11,54 @@ import javax.imageio.ImageIO;
 
 public class BMSChart extends Chart
 {
-    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    protected int lntype;
+    int lntype;
 
-    protected File source;
-    protected int lnobj;
+    File source;
+    int lnobj;
 
     public File getSource() { return source; }
 
-    protected int level;
+    int level;
     public int getLevel() { return level; }
 
-    protected int keys;
+    int keys;
     public int getKeys()  {  return keys; }
 
 
-    protected String title;
+    String title;
     public String getTitle() {
         return title;
     }
 
-    protected String artist;
+    String artist;
     public String getArtist() {
         return artist;
     }
 
-    protected String genre;
+    String genre;
     public String getGenre() {
         return genre;
     }
 
-    protected Map<String, Integer> sample_files;
+    Map<String, Integer> sample_files;
     public Map<Integer,Integer> getSamples() {
         return BMSParser.loadSamples(this);
     }
 
-    protected double bpm = 130;
+    double bpm = 130;
     public double getBPM() {
         return bpm;
     }
 
-    protected int notes = 0;
+    int notes = 0;
     public int getNoteCount() { return notes; }
 
-    protected int duration = 0;
+    int duration = 0;
     public int getDuration() { return duration; }
 
-    protected File image_cover;
+    File image_cover;
     public BufferedImage getCover() {
         if(image_cover == null)return null;
         try {

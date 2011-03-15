@@ -8,8 +8,8 @@ package org.open2jam.gui;
  */
 
 import java.awt.event.ItemEvent;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.beans.PropertyChangeEvent;
@@ -17,17 +17,16 @@ import java.beans.PropertyChangeListener;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.CRC32;
 import java.util.zip.GZIPInputStream;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.RowFilter;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -51,23 +50,21 @@ import org.open2jam.render.Render;
 public class Interface extends javax.swing.JFrame
         implements PropertyChangeListener, ListSelectionListener {
 
-    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private ChartListTableModel model_songlist;
     private ChartTableModel model_chartlist;
     private File cwd;
     private ArrayList<File> dir_list;
     private DisplayMode[] display_modes;
-    private ChartModelLoader task;
     private int rank = 0;
     private ChartList selected_chart;
     private Chart selected_header;
     private int last_model_idx;
     private final TableRowSorter<ChartListTableModel> table_sorter;
 
-    Configuration cfg_window = new Configuration(this);
-
-    javax.swing.ListSelectionModel chartLM;
+    private Configuration cfg_window = new Configuration(this);
+    private SkinConfiguration skin_window = new SkinConfiguration();
 
     /** Creates new form Interface */
     public Interface() {
@@ -78,7 +75,6 @@ public class Interface extends javax.swing.JFrame
         table_sorter = new TableRowSorter<ChartListTableModel>(model_songlist);
         table_songlist.setRowSorter(table_sorter);
         txt_filter.getDocument().addDocumentListener(new DocumentListener() {
-
             public void insertUpdate(DocumentEvent e) {updateFilter();}
             public void removeUpdate(DocumentEvent e) {updateFilter();}
             public void changedUpdate(DocumentEvent e) {updateFilter();}
@@ -86,32 +82,15 @@ public class Interface extends javax.swing.JFrame
 
         loadDirlist();
 
-        cfg_window.addWindowListener(new WindowListener() {
+        cfg_window.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosed(WindowEvent arg0) {
                 dir_list = Config.get().getDirsList();
                 loadDirlist();
             }
-            public void windowActivated(WindowEvent arg0) {
-                // Not interested in this
-            }
-            public void windowClosing(WindowEvent arg0) {
-                // Not interested in this
-            }
-            public void windowDeactivated(WindowEvent arg0) {
-                // Not interested in this
-            }
-            public void windowDeiconified(WindowEvent arg0) {
-                // Not interested in this
-            }
-            public void windowIconified(WindowEvent arg0) {
-                // Not interested in this
-            }
-            public void windowOpened(WindowEvent arg0) {
-                // Not interested in this
-            }
         });
 
-        javax.swing.table.TableColumn col = null;
+        javax.swing.table.TableColumn col;
         col = table_songlist.getColumnModel().getColumn(0);
         col.setPreferredWidth(180);
         col = table_songlist.getColumnModel().getColumn(1);
@@ -119,8 +98,7 @@ public class Interface extends javax.swing.JFrame
         col = table_songlist.getColumnModel().getColumn(2);
         col.setPreferredWidth(80);
 
-        chartLM = table_chartlist.getSelectionModel();
-        chartLM.addListSelectionListener(new ListSelectionListener() {
+        table_chartlist.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e)
             {
                 if (e.getValueIsAdjusting()) return;
@@ -151,8 +129,8 @@ public class Interface extends javax.swing.JFrame
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        rank_group = new javax.swing.ButtonGroup();
-        panel_info = new javax.swing.JPanel();
+        ButtonGroup rank_group = new ButtonGroup();
+        JPanel panel_info = new JPanel();
         lbl_title = new javax.swing.JLabel();
         lbl_artist = new javax.swing.JLabel();
         lbl_bpm = new javax.swing.JLabel();
@@ -160,62 +138,62 @@ public class Interface extends javax.swing.JFrame
         lbl_notes = new javax.swing.JLabel();
         lbl_time = new javax.swing.JLabel();
         lbl_genre = new javax.swing.JLabel();
-        lbl_bpm1 = new javax.swing.JLabel();
-        lbl_genre1 = new javax.swing.JLabel();
-        lbl_level1 = new javax.swing.JLabel();
-        lbl_notes1 = new javax.swing.JLabel();
-        lbl_time1 = new javax.swing.JLabel();
-        bt_play = new javax.swing.JButton();
+        JLabel lbl_bpm1 = new JLabel();
+        JLabel lbl_genre1 = new JLabel();
+        JLabel lbl_level1 = new JLabel();
+        JLabel lbl_notes1 = new JLabel();
+        JLabel lbl_time1 = new JLabel();
+        JButton bt_play = new JButton();
         lbl_cover = new javax.swing.JLabel();
-        lbl_keys1 = new javax.swing.JLabel();
+        JLabel lbl_keys1 = new JLabel();
         lbl_keys = new javax.swing.JLabel();
         jc_autoplay = new javax.swing.JCheckBox();
         combo_channelModifier = new javax.swing.JComboBox();
-        lbl_channelModifier = new javax.swing.JLabel();
+        JLabel lbl_channelModifier = new JLabel();
         combo_visibilityModifier = new javax.swing.JComboBox();
-        lbl_visibilityModifier = new javax.swing.JLabel();
+        JLabel lbl_visibilityModifier = new JLabel();
         lbl_filename = new javax.swing.JLabel();
-        table_scroll2 = new javax.swing.JScrollPane();
+        JScrollPane table_scroll2 = new JScrollPane();
         table_chartlist = new javax.swing.JTable();
         jc_timed_judgment = new javax.swing.JCheckBox();
-        panel_setting = new javax.swing.JPanel();
-        jr_rank_hard = new javax.swing.JRadioButton();
+        JPanel panel_setting = new JPanel();
+        JRadioButton jr_rank_hard = new JRadioButton();
         combo_displays = new javax.swing.JComboBox();
         txt_res_height = new javax.swing.JTextField();
         txt_res_width = new javax.swing.JTextField();
         jc_vsync = new javax.swing.JCheckBox();
         lbl_rank = new javax.swing.JLabel();
-        lbl_display = new javax.swing.JLabel();
+        JLabel lbl_display = new JLabel();
         jc_custom_size = new javax.swing.JCheckBox();
-        jr_rank_easy = new javax.swing.JRadioButton();
-        lbl_hispeed = new javax.swing.JLabel();
+        JRadioButton jr_rank_easy = new JRadioButton();
+        JLabel lbl_hispeed = new JLabel();
         lbl_res_x = new javax.swing.JLabel();
-        jr_rank_normal = new javax.swing.JRadioButton();
+        JRadioButton jr_rank_normal = new JRadioButton();
         jc_full_screen = new javax.swing.JCheckBox();
         bt_choose_dir = new javax.swing.JButton();
         load_progress = new javax.swing.JProgressBar();
         js_hispeed = new javax.swing.JSpinner();
-        btn_configuration = new javax.swing.JButton();
-        btn_skin = new javax.swing.JButton();
+        JButton btn_configuration = new JButton();
+        JButton btn_skin = new JButton();
         combo_dirs = new javax.swing.JComboBox();
         btn_reload = new javax.swing.JButton();
         table_scroll = new javax.swing.JScrollPane();
         table_songlist = new javax.swing.JTable();
         txt_filter = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
+        JLabel jLabel1 = new JLabel();
         slider_main_vol = new javax.swing.JSlider();
         slider_key_vol = new javax.swing.JSlider();
         slider_bgm_vol = new javax.swing.JSlider();
-        lbl_main_vol = new javax.swing.JLabel();
-        lbl_key_vol = new javax.swing.JLabel();
-        lbl_bgm_vol = new javax.swing.JLabel();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        mitem_exit = new javax.swing.JMenuItem();
-        jMenu3 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        menu_about = new javax.swing.JMenu();
+        JLabel lbl_main_vol = new JLabel();
+        JLabel lbl_key_vol = new JLabel();
+        JLabel lbl_bgm_vol = new JLabel();
+        JMenuBar jMenuBar1 = new JMenuBar();
+        JMenu jMenu1 = new JMenu();
+        JMenuItem mitem_exit = new JMenuItem();
+        JMenu jMenu3 = new JMenu();
+        JMenuItem jMenuItem1 = new JMenuItem();
+        JMenuItem jMenuItem2 = new JMenuItem();
+        JMenu menu_about = new JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Open2Jam");
@@ -810,7 +788,7 @@ public class Interface extends javax.swing.JFrame
                     fs = false;
             }
 
-            Render r = null;
+            Render r;
             if(judgment)
                 r = new TimeRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
             else
@@ -836,7 +814,7 @@ public class Interface extends javax.swing.JFrame
     }//GEN-LAST:event_menu_aboutMouseClicked
 
     private void btn_skinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_skinActionPerformed
-        // TODO add your handling code here:
+        skin_window.setVisible(true);
     }//GEN-LAST:event_btn_skinActionPerformed
 
     private void combo_dirsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_dirsActionPerformed
@@ -853,66 +831,35 @@ public class Interface extends javax.swing.JFrame
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bt_choose_dir;
-    private javax.swing.JButton bt_play;
-    private javax.swing.JButton btn_configuration;
     private javax.swing.JButton btn_reload;
-    private javax.swing.JButton btn_skin;
     private javax.swing.JComboBox combo_channelModifier;
     private javax.swing.JComboBox combo_dirs;
     private javax.swing.JComboBox combo_displays;
     private javax.swing.JComboBox combo_visibilityModifier;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JCheckBox jc_autoplay;
     private javax.swing.JCheckBox jc_custom_size;
     private javax.swing.JCheckBox jc_full_screen;
     private javax.swing.JCheckBox jc_timed_judgment;
     private javax.swing.JCheckBox jc_vsync;
-    private javax.swing.JRadioButton jr_rank_easy;
-    private javax.swing.JRadioButton jr_rank_hard;
-    private javax.swing.JRadioButton jr_rank_normal;
     private javax.swing.JSpinner js_hispeed;
     private javax.swing.JLabel lbl_artist;
-    private javax.swing.JLabel lbl_bgm_vol;
     private javax.swing.JLabel lbl_bpm;
-    private javax.swing.JLabel lbl_bpm1;
-    private javax.swing.JLabel lbl_channelModifier;
     private javax.swing.JLabel lbl_cover;
-    private javax.swing.JLabel lbl_display;
     private javax.swing.JLabel lbl_filename;
     private javax.swing.JLabel lbl_genre;
-    private javax.swing.JLabel lbl_genre1;
-    private javax.swing.JLabel lbl_hispeed;
-    private javax.swing.JLabel lbl_key_vol;
     private javax.swing.JLabel lbl_keys;
-    private javax.swing.JLabel lbl_keys1;
     private javax.swing.JLabel lbl_level;
-    private javax.swing.JLabel lbl_level1;
-    private javax.swing.JLabel lbl_main_vol;
     private javax.swing.JLabel lbl_notes;
-    private javax.swing.JLabel lbl_notes1;
     private javax.swing.JLabel lbl_rank;
     private javax.swing.JLabel lbl_res_x;
     private javax.swing.JLabel lbl_time;
-    private javax.swing.JLabel lbl_time1;
     private javax.swing.JLabel lbl_title;
-    private javax.swing.JLabel lbl_visibilityModifier;
     private javax.swing.JProgressBar load_progress;
-    private javax.swing.JMenu menu_about;
-    private javax.swing.JMenuItem mitem_exit;
-    private javax.swing.JPanel panel_info;
-    private javax.swing.JPanel panel_setting;
-    private javax.swing.ButtonGroup rank_group;
     private javax.swing.JSlider slider_bgm_vol;
     private javax.swing.JSlider slider_key_vol;
     private javax.swing.JSlider slider_main_vol;
     private javax.swing.JTable table_chartlist;
     private javax.swing.JScrollPane table_scroll;
-    private javax.swing.JScrollPane table_scroll2;
     private javax.swing.JTable table_songlist;
     private javax.swing.JTextField txt_filter;
     private javax.swing.JTextField txt_res_height;
@@ -924,12 +871,49 @@ public class Interface extends javax.swing.JFrame
         dir_list = Config.get().getDirsList();
         if(dir_list.isEmpty()) cwd = new File(System.getProperty("user.dir"));
         else                   cwd = dir_list.get(0);
-        
+
         try {
-            display_modes = Display.getAvailableDisplayModes();
+            List<DisplayMode> list = Arrays.asList(Display.getAvailableDisplayModes());
+
+            Collections.sort(list, new Comparator<DisplayMode>() {
+                public int compare(DisplayMode dm1, DisplayMode dm2) {
+                    int width1 = dm1.getWidth();
+                    int width2 = dm2.getWidth();
+                    int height1 = dm1.getHeight();
+                    int height2 = dm2.getHeight();
+                    int depth1 = dm1.getBitsPerPixel();
+                    int depth2 = dm2.getBitsPerPixel();
+                    int hz1 = dm1.getFrequency();
+                    int hz2 = dm2.getFrequency();
+
+                    if(depth1 == depth2)
+                    {
+                        if(width1 == width2)
+                        {
+                            if(height1 > height2) return 1;
+                            if(height1 < height2) return -1;
+                            if(height1 == height2)
+                            {
+                                if(hz1 > hz2) return 1;
+                                if(hz1 < hz2) return -1;
+                                if(hz1 == hz2) return 0;
+                            }
+                        }
+                        else if (width1 > width2) return 1;
+                        else if (width1 < width2) return -1;
+                    }
+                    else if(depth1 > depth2) return -1;
+
+                    return 1;
+                }
+            });
+            display_modes = list.toArray(new DisplayMode[list.size()]);
+
         } catch (LWJGLException ex) {
             logger.log(Level.WARNING, "Could not get the display modes !! {0}", ex.getMessage());
+            display_modes = new DisplayMode[0];
         }
+
         model_songlist = new ChartListTableModel();
         model_chartlist = new ChartTableModel();
 
@@ -975,10 +959,13 @@ public class Interface extends javax.swing.JFrame
 
     private void updateSelection() {
         bt_choose_dir.setEnabled(false);
+        btn_reload.setEnabled(false);
         combo_dirs.setEnabled(false);
+        txt_filter.setVisible(false);
+        table_songlist.setEnabled(false);
         load_progress.setValue(0);
         load_progress.setVisible(true);
-        task = new ChartModelLoader(model_songlist, cwd);
+        ChartModelLoader task = new ChartModelLoader(model_songlist, cwd);
         task.addPropertyChangeListener(this);
         task.execute();
     }
@@ -1003,22 +990,23 @@ public class Interface extends javax.swing.JFrame
             {
                 bt_choose_dir.setEnabled(true);
                 combo_dirs.setEnabled(true);
+                btn_reload.setEnabled(true);
                 load_progress.setVisible(false);
+                txt_filter.setVisible(true);
+                table_songlist.setEnabled(true);
             }
         }
     }
 
-    public void updateFilter() {
+    void updateFilter() {
         try {
             if(txt_filter.getText().length() == 0)table_sorter.setRowFilter(null);
             else table_sorter.setRowFilter(RowFilter.regexFilter("(?i)"+txt_filter.getText()));
-        } catch (java.util.regex.PatternSyntaxException ex) {
-            return;
+        } catch (java.util.regex.PatternSyntaxException ignored) {
         }
     }
 
     public void valueChanged(ListSelectionEvent e) {
-
         int i = table_songlist.getSelectedRow();
         if(i < 0 && last_model_idx >= 0){
             i = last_model_idx;
@@ -1044,6 +1032,7 @@ public class Interface extends javax.swing.JFrame
     private void updateInfo()
     {
         if(selected_header == null)return;
+        if(!selected_header.getSource().exists()) {JOptionPane.showMessageDialog(this, "Doesn't Exist"); return;}
         lbl_artist.setText(resizeString(selected_header.getArtist(), 40));
         lbl_title.setText(resizeString(selected_header.getTitle(), 30));
         lbl_filename.setText(resizeString(selected_header.getSource().getName(), 30));
