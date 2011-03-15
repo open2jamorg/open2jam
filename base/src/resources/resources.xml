@@ -397,9 +397,18 @@
 
     <!-- borders for the note area -->
     <layer id="1">
-	<entity x="0"   y="0" sprite="border1" />
-	<entity x="195" y="0" sprite="border3" />
-	<entity x="195" y="0" sprite="border2" />
+        <styles id="BODERS">
+            <style id="DEFAULT">
+            <entity x="0"   y="0" sprite="border1" />
+            <entity x="195" y="0" sprite="border3" />
+            <entity x="195" y="0" sprite="border2" />
+            </style>
+            <style id="Another">
+            <entity x="0"   y="0" sprite="border1" />
+            <entity x="195" y="0" sprite="border3" />
+            <entity x="195" y="0" sprite="border2" />
+            </style>
+        </styles>
     </layer>
 
     <!-- pills, life bar & time bar -->

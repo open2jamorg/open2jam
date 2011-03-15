@@ -17,8 +17,11 @@ import java.beans.PropertyChangeListener;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.CRC32;
@@ -66,6 +69,7 @@ public class NewInterface extends javax.swing.JFrame
     private final TableRowSorter<ChartListTableModel> table_sorter;
 
     Configuration cfg_window = new Configuration();
+    SkinConfiguration skin_window = new SkinConfiguration();
 
     javax.swing.ListSelectionModel chartLM;
 
@@ -222,11 +226,11 @@ public class NewInterface extends javax.swing.JFrame
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Open2Jam");
 
-        lbl_title.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        lbl_title.setFont(new java.awt.Font("Tahoma", 0, 18));
         lbl_title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbl_title.setText("Title");
 
-        lbl_artist.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        lbl_artist.setFont(new java.awt.Font("Tahoma", 2, 11));
         lbl_artist.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbl_artist.setText("Artist");
 
@@ -608,7 +612,7 @@ public class NewInterface extends javax.swing.JFrame
         table_songlist.getSelectionModel().addListSelectionListener(this);
         table_scroll.setViewportView(table_songlist);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12));
         jLabel1.setText("Source");
 
         slider_main_vol.setPaintLabels(true);
@@ -859,7 +863,7 @@ public class NewInterface extends javax.swing.JFrame
     }//GEN-LAST:event_menu_aboutMouseClicked
 
     private void btn_skinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_skinActionPerformed
-        // TODO add your handling code here:
+        skin_window.setVisible(true);
     }//GEN-LAST:event_btn_skinActionPerformed
 
     private void combo_dirsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_dirsActionPerformed
@@ -956,12 +960,52 @@ public class NewInterface extends javax.swing.JFrame
         dir_list = Config.get().getDirsList();
         if(dir_list.isEmpty()) cwd = System.getProperty("user.dir");
         else                   cwd = dir_list.get(0);
-        
+
+        ArrayList<DisplayMode> list = new ArrayList<DisplayMode>();
         try {
             display_modes = Display.getAvailableDisplayModes();
+            list.addAll(Arrays.asList(display_modes));
         } catch (LWJGLException ex) {
             logger.log(Level.WARNING, "Could not get the display modes !! {0}", ex.getMessage());
         }
+
+        class DisplayComparator implements Comparator<DisplayMode> {
+            public int compare(DisplayMode dm1, DisplayMode dm2) {
+                int width1 = dm1.getWidth();
+                int width2 = dm2.getWidth();
+                int height1 = dm1.getHeight();
+                int height2 = dm2.getHeight();
+                int depth1 = dm1.getBitsPerPixel();
+                int depth2 = dm2.getBitsPerPixel();
+                int hz1 = dm1.getFrequency();
+                int hz2 = dm2.getFrequency();
+
+                if(depth1 == depth2)
+                {
+                    if(width1 == width2)
+                    {
+                        if(height1 > height2) return 1;
+                        if(height1 < height2) return -1;
+                        if(height1 == height2)
+                        {
+                            if(hz1 > hz2) return 1;
+                            if(hz1 < hz2) return -1;
+                            if(hz1 == hz2) return 0;
+                        }
+                    }
+                    else if (width1 > width2) return 1;
+                    else if (width1 < width2) return -1;
+                }
+                else if(depth1 > depth2) return -1;
+
+                return 1;
+            }
+        }
+
+        Collections.sort(list, new DisplayComparator());
+
+        display_modes = list.toArray(new DisplayMode[display_modes.length]);
+
         model_songlist = new ChartListTableModel();
         model_chartlist = new ChartTableModel();
 
@@ -1005,7 +1049,10 @@ public class NewInterface extends javax.swing.JFrame
     private void updateSelection() {
         this.setTitle("Open2Jam - "+cwd);
         bt_choose_dir.setEnabled(false);
+        btn_reload.setEnabled(false);
         combo_dirs.setEnabled(false);
+        txt_filter.setVisible(false);
+        table_songlist.setEnabled(false);
         load_progress.setValue(0);
         load_progress.setVisible(true);
         task = new ChartModelLoader(model_songlist, new File(cwd));
@@ -1021,14 +1068,12 @@ public class NewInterface extends javax.swing.JFrame
         for(int i=0; i<dir_list.size(); i++)
         {
             String s = dir_list.get(i);
-            if(s.length()>18)
-            {
-                if(s.contains("\\"))     s =".."+s.substring(s.lastIndexOf("\\"));
-                else if(s.contains("/")) s =".."+s.substring(s.lastIndexOf("/"));
+            
+            if(s.contains("\\"))     s =".."+s.substring(s.lastIndexOf("\\"));
+            else if(s.contains("/")) s =".."+s.substring(s.lastIndexOf("/"));
+            
+            if(s.length()>18)        s = ".."+s.substring(s.length()-16);
 
-                if(s.length()>18)
-                    s = ".."+s.substring(s.length()-16);
-            }
             combo_dirs.addItem(s);
         }
     }
@@ -1042,7 +1087,10 @@ public class NewInterface extends javax.swing.JFrame
             {
                 bt_choose_dir.setEnabled(true);
                 combo_dirs.setEnabled(true);
+                btn_reload.setEnabled(true);
                 load_progress.setVisible(false);
+                txt_filter.setVisible(true);
+                table_songlist.setEnabled(true);
             }
         }
     }
@@ -1057,10 +1105,6 @@ public class NewInterface extends javax.swing.JFrame
     }
 
     public void valueChanged(ListSelectionEvent e) {
-//        if(!task.isDone())
-//        {
-//            return;//TODO look for a better place to wait until everything is loaded
-//        }
         int i = table_songlist.getSelectedRow();
         if(i < 0 && last_model_idx >= 0){
             i = last_model_idx;
@@ -1086,6 +1130,7 @@ public class NewInterface extends javax.swing.JFrame
     private void updateInfo()
     {
         if(selected_header == null)return;
+        if(!selected_header.getSource().exists()) {JOptionPane.showMessageDialog(this, "Doesn't Exist"); return;}
         lbl_artist.setText(resizeString(selected_header.getArtist(), 40));
         lbl_title.setText(resizeString(selected_header.getTitle(), 30));
         lbl_filename.setText(resizeString(selected_header.getSource().getName(), 30));
