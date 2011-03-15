@@ -411,6 +411,7 @@ class Configuration extends javax.swing.JDialog {
         return code;
     }
 
+    // Variables declaration - do not modify//GEN-BEGIN:variables
     private static javax.swing.JComboBox combo_keyboardConfig;
     private static javax.swing.JTable tDirs;
     private static javax.swing.JTable tKeys;
