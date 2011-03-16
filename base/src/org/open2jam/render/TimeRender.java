@@ -61,8 +61,6 @@ public class TimeRender extends Render
         start_time = lastLoopTime = SystemTimer.getTime();
     }
 
-    @Override
-    public double getViewport(){ return judgment_line_y2-note_height; }
     /**
     * Notification that a frame is being rendered. Responsible for
     * running game logic and rendering the scene.

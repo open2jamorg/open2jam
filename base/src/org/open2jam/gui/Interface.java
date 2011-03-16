@@ -70,6 +70,8 @@ public class Interface extends javax.swing.JFrame
     public Interface() {
         initLogic();
         initComponents();
+        loadDir(cwd);
+        
         this.setLocationRelativeTo(null);
         load_progress.setVisible(false);
         table_sorter = new TableRowSorter<ChartListTableModel>(model_songlist);
@@ -877,33 +879,25 @@ public class Interface extends javax.swing.JFrame
 
             Collections.sort(list, new Comparator<DisplayMode>() {
                 public int compare(DisplayMode dm1, DisplayMode dm2) {
-                    int width1 = dm1.getWidth();
-                    int width2 = dm2.getWidth();
-                    int height1 = dm1.getHeight();
-                    int height2 = dm2.getHeight();
-                    int depth1 = dm1.getBitsPerPixel();
-                    int depth2 = dm2.getBitsPerPixel();
-                    int hz1 = dm1.getFrequency();
-                    int hz2 = dm2.getFrequency();
 
-                    if(depth1 == depth2)
+                    if(dm1.getBitsPerPixel() == dm2.getBitsPerPixel())
                     {
-                        if(width1 == width2)
-                        {
-                            if(height1 > height2) return 1;
-                            if(height1 < height2) return -1;
-                            if(height1 == height2)
-                            {
-                                if(hz1 > hz2) return 1;
-                                if(hz1 < hz2) return -1;
-                                if(hz1 == hz2) return 0;
-                            }
-                        }
-                        else if (width1 > width2) return 1;
-                        else if (width1 < width2) return -1;
-                    }
-                    else if(depth1 > depth2) return -1;
 
+                        if(dm1.getWidth() == dm2.getWidth())
+                        {
+                            if(dm1.getHeight() == dm2.getHeight())
+                            {
+                                if(dm1.getFrequency() > dm2.getFrequency())return -1;
+                                else if(dm1.getFrequency() < dm2.getFrequency())return 1;
+                                else return 0;
+                            }
+                            else if(dm1.getHeight() > dm2.getHeight())return -1;
+                            else return 1;
+                        }
+                        else if(dm1.getWidth() > dm2.getWidth())return -1;
+                        else return 1;
+                    }
+                    else if(dm1.getBitsPerPixel() > dm2.getBitsPerPixel()) return -1;
                     return 1;
                 }
             });
@@ -916,8 +910,6 @@ public class Interface extends javax.swing.JFrame
 
         model_songlist = new ChartListTableModel();
         model_chartlist = new ChartTableModel();
-
-        loadDir(cwd);
     }
 
     public static File getCacheFile(File s)

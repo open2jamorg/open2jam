@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Resources>
-<skin name="o2jam" keys="7" width="800" height="600" judgment_line="460">
+<skin name="o2jam" keys="7" width="800" height="600" judgment_line="480">
     
     <spriteset>
         

@@ -484,8 +484,7 @@ public abstract class Render implements GameWindowCallback
     **/
     void update_note_buffer(long now)
     {
-        int buffer_upper_bound = -10;
-        while(buffer_iterator.hasNext() && getViewport() - velocity_integral(now,buffer_timer) > buffer_upper_bound)
+        while(buffer_iterator.hasNext() && getViewport() - velocity_integral(now,buffer_timer) > -10)
         {
             Event e = buffer_iterator.next();
             while(e.getMeasure() > buffer_measure) // this is the start of a new measure
