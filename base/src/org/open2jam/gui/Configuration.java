@@ -13,7 +13,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.open2jam.util.Logger;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import org.lwjgl.LWJGLException;
@@ -27,8 +27,6 @@ import org.open2jam.util.TrueTypeFont;
 
 
 class Configuration extends javax.swing.JDialog {
-
-    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private EnumMap<Event.Channel,Integer> kb_map;
     private ArrayList<File> dir_list;
@@ -279,7 +277,7 @@ class Configuration extends javax.swing.JDialog {
             File cache = Interface.getCacheFile(s);
             if(!cache.exists()) continue;
             if(!cache.delete())
-                logger.log(Level.WARNING, "Could NOT delete {0}", cache.getAbsolutePath());
+                Logger.global.log(Level.WARNING, "Could NOT delete {0}", cache.getAbsolutePath());
         }
 
         Config.get().setDirsList(dir_list);

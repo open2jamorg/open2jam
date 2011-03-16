@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.open2jam.util.Logger;
 import org.lwjgl.input.Keyboard;
 import org.open2jam.parser.Event;
 
@@ -33,8 +33,6 @@ public class Config implements Serializable
 
     Level log_level = Level.INFO;
     FileHandler log_handle = null;
-
-    private static final Logger logger = Logger.getLogger(Config.class.getName());
 
     /** singleton object */
     private static Config config = null;
@@ -123,9 +121,9 @@ public class Config implements Serializable
             obj.writeObject(this);
             obj.close();
         } catch (FileNotFoundException ex) {
-            logger.severe("Could not find file to write config !");
+            Logger.global.severe("Could not find file to write config !");
         } catch (IOException ioe) {
-            logger.log(Level.SEVERE, "IO Error on writing config file ! :{0}", ioe.getMessage());
+            Logger.global.log(Level.SEVERE, "IO Error on writing config file ! :{0}", ioe.getMessage());
         }
     }
 
@@ -137,12 +135,12 @@ public class Config implements Serializable
                 config = (Config) obj.readObject();
                 obj.close();
             } catch (ClassNotFoundException ex) {
-                logger.severe("There's no Config class !! impossibru !");
+                Logger.global.severe("There's no Config class !! impossibru !");
             } catch (FileNotFoundException ex) {
                 config = new Config();
                 config.save();
             } catch (IOException ioe) {
-                logger.log(Level.SEVERE, "IO Error on reading config file ! :{0}", ioe.getMessage());
+                Logger.global.log(Level.SEVERE, "IO Error on reading config file ! :{0}", ioe.getMessage());
             }
         }
         return config;

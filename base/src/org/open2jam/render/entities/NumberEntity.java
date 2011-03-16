@@ -9,9 +9,9 @@ import java.util.Collection;
  */
 public class NumberEntity extends Entity
 {
-    protected int number = 0;
-    protected int show_digits = 1;
-    protected ArrayList<Entity> entity_list;
+    int number = 0;
+    int show_digits = 1;
+    ArrayList<Entity> entity_list;
     
     public NumberEntity(Collection<Entity> list, double x, double y)
     {

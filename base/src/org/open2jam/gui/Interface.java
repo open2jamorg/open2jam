@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.open2jam.util.Logger;
 import java.util.zip.CRC32;
 import java.util.zip.GZIPInputStream;
 import javax.swing.*;
@@ -49,8 +49,6 @@ import org.open2jam.render.Render;
  */
 public class Interface extends javax.swing.JFrame
         implements PropertyChangeListener, ListSelectionListener {
-
-    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private ChartListTableModel model_songlist;
     private ChartTableModel model_chartlist;
@@ -904,7 +902,7 @@ public class Interface extends javax.swing.JFrame
             display_modes = list.toArray(new DisplayMode[list.size()]);
 
         } catch (LWJGLException ex) {
-            logger.log(Level.WARNING, "Could not get the display modes !! {0}", ex.getMessage());
+            Logger.global.log(Level.WARNING, "Could not get the display modes !! {0}", ex.getMessage());
             display_modes = new DisplayMode[0];
         }
 
@@ -939,9 +937,9 @@ public class Interface extends javax.swing.JFrame
                 for(ChartList c : l)model_songlist.addRow(c);
                 obj.close();
             } catch (IOException ex) {
-                logger.log(Level.SEVERE, "{0}", ex);
+                Logger.global.log(Level.SEVERE, "{0}", ex);
             } catch (ClassNotFoundException ex) {
-                logger.log(Level.SEVERE, "{0}", ex);
+                Logger.global.log(Level.SEVERE, "{0}", ex);
             }
         }
         else {

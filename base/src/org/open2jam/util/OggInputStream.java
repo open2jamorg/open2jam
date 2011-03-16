@@ -14,7 +14,7 @@ import com.jcraft.jorbis.Block;
 import com.jcraft.jorbis.Comment;
 import com.jcraft.jorbis.DspState;
 import com.jcraft.jorbis.Info;
-import java.util.logging.Logger;
+import org.open2jam.util.Logger;
 
 
 
@@ -32,7 +32,6 @@ import java.util.logging.Logger;
  */
 public class OggInputStream extends FilterInputStream {
 
-    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     /** The mono 16 bit format */
     public static final int FORMAT_MONO16 = 1;
@@ -495,14 +494,14 @@ public class OggInputStream extends FilterInputStream {
 					fetchData();
 				} else if (result2 == -1) {
 					//throw new Exception("syncState.pageout(page) result == -1");
-                                        logger.severe("OGG decode Error: syncState.pageout(page) result == -1");
+                                        Logger.global.severe("OGG decode Error: syncState.pageout(page) result == -1");
 					return -1;
 				} else {
 					int result3 = streamState.pagein(page);
 				}
 			} else if (result1 == -1) {
 				//throw new Exception("streamState.packetout(packet) result == -1");
-                                logger.severe("OGG decode Error: streamState.packetout(packet) result == -1");
+                                Logger.global.severe("OGG decode Error: streamState.packetout(packet) result == -1");
 				return -1;
 			} else {
 				fetchedPacket = true;

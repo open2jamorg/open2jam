@@ -22,7 +22,6 @@ public class Event implements Comparable<Event>
             NOTE_13,                  //P2-NOTE_6
             NOTE_14,                  //P2-NOTE_7
             NOTE_SC2,                 //P2-NOTE_SC / P2-NOTE_8
-
             AUTO_PLAY
      }
 

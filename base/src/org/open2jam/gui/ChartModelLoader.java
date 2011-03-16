@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.open2jam.util.Logger;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -18,9 +18,8 @@ import org.open2jam.parser.ChartParser;
  *
  * @author fox
  */
-public class ChartModelLoader extends SwingWorker<ChartListTableModel,ChartList>
+class ChartModelLoader extends SwingWorker<ChartListTableModel,ChartList>
 {
-    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private final ChartListTableModel table_model;
     private final File dir;
@@ -49,7 +48,7 @@ public class ChartModelLoader extends SwingWorker<ChartListTableModel,ChartList>
         setProgress(100);
         return table_model;
         }catch(Exception e){
-            logger.log(Level.SEVERE, "Exception in chart loader ! {0} {1}", new Object[]{e.toString(), e.getMessage()});
+            Logger.global.log(Level.SEVERE, "Exception in chart loader ! {0} {1}", new Object[]{e.toString(), e.getMessage()});
             System.exit(1);
             return null;
         }
@@ -66,7 +65,7 @@ public class ChartModelLoader extends SwingWorker<ChartListTableModel,ChartList>
             obj.writeObject(table_model.getRawList());
             obj.close();
         } catch (IOException ex) {
-            logger.log(Level.SEVERE, "{0}", ex);
+            Logger.global.log(Level.SEVERE, "{0}", ex);
         }
     }
 

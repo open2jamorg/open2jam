@@ -3,7 +3,7 @@ package org.open2jam;
 import java.io.File;
 import java.awt.EventQueue;
 import java.util.logging.Handler;
-import java.util.logging.Logger;
+import org.open2jam.util.Logger;
 import javax.swing.UIManager;
 import org.open2jam.gui.Interface;
 
@@ -14,8 +14,6 @@ public class Main
         "lib" + File.separator +
         "native" + File.separator +
         getOS();
-
-    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     public static void main(String []args)
     {
@@ -35,9 +33,9 @@ public class Main
     private static void setupLogging()
     {
         Config c = Config.get();
-        if(c.log_handle != null)logger.addHandler(c.log_handle);
-        for(Handler h : logger.getHandlers())h.setLevel(c.log_level);
-        logger.setLevel(c.log_level);
+        if(c.log_handle != null)Logger.global.addHandler(c.log_handle);
+        for(Handler h : Logger.global.getHandlers())h.setLevel(c.log_level);
+        Logger.global.setLevel(c.log_level);
     }
 
     private static void trySetLAF()
@@ -52,7 +50,7 @@ public class Main
             }
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
-            logger.info(e.toString());
+            Logger.global.info(e.toString());
         }
     }
 

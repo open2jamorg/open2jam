@@ -19,13 +19,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Logger;
+import org.open2jam.util.Logger;
 import org.open2jam.render.lwjgl.SoundManager;
 import org.open2jam.util.CharsetDetector;
 
 class BMSParser
 {
-    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private static final FileFilter bms_filter = new FileFilter(){
         public boolean accept(File f){
@@ -55,7 +54,7 @@ class BMSParser
                 BMSChart chart = parseBMSHeader(bms_file);
                 if (chart != null) list.add(chart);
             } catch (Exception e) {
-                logger.log(Level.WARNING, "{0}", e);
+                Logger.global.log(Level.WARNING, "{0}", e);
             }
         }
         Collections.sort(list);
@@ -73,10 +72,10 @@ class BMSParser
         try{
             r = new BufferedReader(new InputStreamReader(new FileInputStream(f),charset));
         }catch(FileNotFoundException e){
-            logger.log(Level.WARNING, "File {0} not found !!", f.getName());
+            Logger.global.log(Level.WARNING, "File {0} not found !!", f.getName());
             return null;
         }catch(UnsupportedEncodingException e2){
-            logger.log(Level.WARNING, "Encoding [{0}] not supported !", charset);
+            Logger.global.log(Level.WARNING, "Encoding [{0}] not supported !", charset);
             r = new BufferedReader(new FileReader(f));
         }
         
@@ -122,7 +121,7 @@ class BMSParser
                         int player = Integer.parseInt(st.nextToken());
                         if(player != 1)
                         {
-                            logger.log(Level.WARNING, "#PLAYER{0} not supported @ {1}",new Object[] {player, f.getName()});
+                            Logger.global.log(Level.WARNING, "#PLAYER{0} not supported @ {1}",new Object[] {player, f.getName()});
                             return null;
                         }
                         continue;
@@ -184,11 +183,11 @@ class BMSParser
 
             }catch(NoSuchElementException ignored){}
              catch(NumberFormatException e){ 
-                 logger.log(Level.WARNING, "unparsable number @ {0} on file {1}", new Object[]{cmd, f.getName()});
+                 Logger.global.log(Level.WARNING, "unparsable number @ {0} on file {1}", new Object[]{cmd, f.getName()});
              }
         }
         }catch(IOException e){
-            logger.log(Level.WARNING, "IO exception on file parsing ! {0}", e.getMessage());
+            Logger.global.log(Level.WARNING, "IO exception on file parsing ! {0}", e.getMessage());
         }
 
         chart.notes = total_notes;
@@ -212,7 +211,7 @@ class BMSParser
                 chart.keys = 14;
                 break;
             default:
-                logger.log(Level.WARNING, "Unknown key number {0} on file {1}", new Object[]{max_key, f.getName()});
+                Logger.global.log(Level.WARNING, "Unknown key number {0} on file {1}", new Object[]{max_key, f.getName()});
         }
         return chart;
     }
@@ -225,7 +224,7 @@ class BMSParser
         try{
             r = new BufferedReader(new FileReader(chart.source));
         }catch(FileNotFoundException e){
-            logger.log(Level.WARNING, "File {0} not found !!", chart.source);
+            Logger.global.log(Level.WARNING, "File {0} not found !!", chart.source);
             return null;
         }
 
@@ -364,7 +363,7 @@ class BMSParser
                 }
             }
         } catch (IOException ex) {
-            logger.log(Level.SEVERE, null, ex);
+            Logger.global.log(Level.SEVERE, null, ex);
         }
         Collections.sort(event_list);
         return event_list;
@@ -390,10 +389,10 @@ class BMSParser
                 int buffer = 0;
                 if      (st.equals(".wav")) buffer = SoundManager.newBuffer(f.toURI().toURL());
                 else if (st.equals(".ogg")) buffer = SoundManager.newBuffer(new OggInputStream(new FileInputStream(f)));
-                else                        logger.log(Level.WARNING, "File {0} not supported", f.getName());
+                else                        Logger.global.log(Level.WARNING, "File {0} not supported", f.getName());
                 samples.put(id, buffer);
             } catch (IOException ex) {
-                logger.log(Level.SEVERE, null, ex);
+                Logger.global.log(Level.SEVERE, null, ex);
             }
         }
         return samples;

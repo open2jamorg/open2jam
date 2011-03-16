@@ -12,7 +12,7 @@ import org.open2jam.parser.ChartList;
  *
  * @author fox
  */
-public class ChartTableModel implements TableModel
+class ChartTableModel implements TableModel
 {
     private final List<Chart> items;
     private final String[] col_names = new String[] { "Level", "Notes", "Keys" };

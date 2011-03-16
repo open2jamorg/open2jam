@@ -12,7 +12,7 @@ import org.open2jam.render.entities.Entity;
  * 
  * @author fox
  */
-public class EntityMatrix
+class EntityMatrix
 {
     private final ArrayList<LinkedList<Entity>> matrix;
     

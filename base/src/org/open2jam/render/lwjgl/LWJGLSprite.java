@@ -4,14 +4,13 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
-import java.util.logging.Logger;
+import org.open2jam.util.Logger;
 import org.lwjgl.opengl.GL11;
 import org.open2jam.render.Sprite;
 
 
 public class LWJGLSprite implements Sprite {
 
-    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     /** The texture that stores the image for this sprite */
     private final Texture texture;

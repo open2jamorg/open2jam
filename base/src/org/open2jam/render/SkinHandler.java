@@ -8,7 +8,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.open2jam.util.Logger;
 import org.open2jam.parser.Event;
 import org.open2jam.render.entities.AnimatedEntity;
 import org.open2jam.render.entities.ComboCounterEntity;
@@ -26,7 +26,6 @@ import org.xml.sax.Attributes;
 
 public class SkinHandler extends DefaultHandler
 {
-    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private enum Keyword {
         Resources, skin, spriteset, styles, style, sprite, frame, layer, entity
@@ -132,7 +131,7 @@ public class SkinHandler extends DefaultHandler
                 try {
                     s = ResourceFactory.get().getSprite(url, slice);
                 } catch(IOException e) {
-                    logger.log(Level.WARNING, "Sprite resource load error !! {0}", e);
+                    Logger.global.log(Level.WARNING, "Sprite resource load error !! {0}", e);
                     break;
                 }
                 ResourceFactory.get().getGameWindow().setScale(result.screen_scale_x,result.screen_scale_y);
@@ -148,7 +147,7 @@ public class SkinHandler extends DefaultHandler
                 String id;
                 if(atts.containsKey("id"))id = atts.get("id");
                 else {
-                    logger.severe("bad resource file ! sprite must have an ID !");
+                    Logger.global.severe("bad resource file ! sprite must have an ID !");
                     break;
                 }
 
@@ -179,12 +178,12 @@ public class SkinHandler extends DefaultHandler
             String sprites[];
             if(atts.containsKey("sprite"))sprites = atts.get("sprite").split(",");
             else {
-                logger.log(Level.SEVERE, "bad resource file ! entity [{0}] must have an sprite !", id);
+                Logger.global.log(Level.SEVERE, "bad resource file ! entity [{0}] must have an sprite !", id);
                 break;
             }
 
             if(sprites[0].trim().equals("")){
-                logger.log(Level.SEVERE, "bad resource file ! entity [{0}] must have an sprite !", id);
+                Logger.global.log(Level.SEVERE, "bad resource file ! entity [{0}] must have an sprite !", id);
                 break;
             }
 
@@ -400,7 +399,7 @@ public class SkinHandler extends DefaultHandler
 	    //TODO
 	}
         else{
-            logger.log(Level.WARNING, "unpromoted entity [{0}]", id);
+            Logger.global.log(Level.WARNING, "unpromoted entity [{0}]", id);
         }
         return e;
     }
@@ -415,7 +414,7 @@ public class SkinHandler extends DefaultHandler
         try{
             return Keyword.valueOf(s);
         }catch(IllegalArgumentException e){
-            logger.log(Level.WARNING, "Unknown keyword [{0}] in resources.xml.", s);
+            Logger.global.log(Level.WARNING, "Unknown keyword [{0}] in resources.xml.", s);
         }
         return null;
     }

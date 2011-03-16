@@ -6,9 +6,8 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.open2jam.util.Logger;
 import java.net.URL;
 
 import org.lwjgl.BufferUtils;
@@ -25,7 +24,6 @@ import org.open2jam.util.OggInputStream;
 */
 public class SoundManager
 {
-    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private static final ArrayList<Integer> sample_buffer = new ArrayList<Integer>();
     private static final ArrayList<Integer> source_buffer = new ArrayList<Integer>();
@@ -50,7 +48,7 @@ public class SoundManager
             AL10.alListener(AL10.AL_ORIENTATION, listenerOri);
 
         } catch (LWJGLException ex) {
-            logger.severe("Could not initialize the OpenAL context !!");
+            Logger.global.severe("Could not initialize the OpenAL context !!");
         }
     }
 
@@ -139,7 +137,7 @@ public class SoundManager
             org.lwjgl.openal.Util.checkALError();
 
         } catch(IOException e) {
-            logger.log(Level.SEVERE, "IO Exception on OggInputStream : {0}", e.getMessage());
+            Logger.global.log(Level.SEVERE, "IO Exception on OggInputStream : {0}", e.getMessage());
         }
 
         sample_buffer.add(buffer.get(0));

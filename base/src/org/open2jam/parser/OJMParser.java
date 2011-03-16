@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
-import java.util.logging.Logger;
+import org.open2jam.util.Logger;
 import org.open2jam.util.ByteBufferInputStream;
 
 import org.open2jam.render.lwjgl.SoundManager;
@@ -17,8 +17,6 @@ import org.open2jam.render.lwjgl.SoundManager;
 
 class OJMParser
 {
-    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-
     /** the xor mask used in the M30 format */
     private static final byte[] nami = new byte[]{0x6E, 0x61, 0x6D, 0x69};
 
@@ -96,12 +94,12 @@ class OJMParser
                     break;
 
                 default:
-                    logger.warning("Unknown OJM signature !!");
+                    Logger.global.warning("Unknown OJM signature !!");
                     ret = new HashMap<Integer,Integer>();
             }
             f.close();
         }catch(IOException e) {
-            logger.log(Level.WARNING, "IO exception on file {0} : {1}", new Object[]{file.getName(), e.getMessage()});
+            Logger.global.log(Level.WARNING, "IO exception on file {0} : {1}", new Object[]{file.getName(), e.getMessage()});
             ret = new HashMap<Integer,Integer>();
         }
         return ret;
@@ -129,7 +127,7 @@ class OJMParser
         {
             // reached the end of the file before the samples_count
             if(buffer.remaining() < 52){
-                logger.log(Level.INFO, "Wrong number of samples on OJM header : {0}", file.getName());
+                Logger.global.log(Level.INFO, "Wrong number of samples on OJM header : {0}", file.getName());
                 break;
             }
             byte[] sample_name = new byte[32];
@@ -149,7 +147,7 @@ class OJMParser
 
             if(encryption_flag == 16)nami_xor(sample_data);
             else if(encryption_flag == 0); // let it pass
-            else if(encryption_flag < 16)logger.log(Level.WARNING, "Unknown encryption flag({0}) !", encryption_flag);
+            else if(encryption_flag < 16)Logger.global.log(Level.WARNING, "Unknown encryption flag({0}) !", encryption_flag);
 
             int id = SoundManager.newBuffer(
                 new OggInputStream(new ByteArrayInputStream(sample_data))
@@ -159,7 +157,7 @@ class OJMParser
                 value = 1000 + ref;
             }
             else if(codec_code != 5){
-               logger.log(Level.WARNING, "Unknown codec code [{0}] on OJM : {1}", new Object[]{codec_code, file.getName()});
+               Logger.global.log(Level.WARNING, "Unknown codec code [{0}] on OJM : {1}", new Object[]{codec_code, file.getName()});
             }
             samples.put(value, id);
         }

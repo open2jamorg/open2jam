@@ -2,7 +2,7 @@ package org.open2jam.render.lwjgl;
 
 import java.util.HashMap;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.open2jam.util.Logger;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -23,7 +23,6 @@ import org.open2jam.render.GameWindowCallback;
  */
 public class LWJGLGameWindow implements GameWindow {
 
-    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
 	/** The callback which should be notified of window events */
 	private GameWindowCallback callback;
@@ -36,8 +35,6 @@ public class LWJGLGameWindow implements GameWindow {
   
 	/** The height of the game display area */
 	private int height;
-
-    private float screen_scale_x = 1f, screen_scale_y = 1f;
 
 	/** The loader responsible for converting images into OpenGL textures */
 	private TextureLoader textureLoader;
@@ -92,7 +89,7 @@ public class LWJGLGameWindow implements GameWindow {
                 width = dm.getWidth();
                 height = dm.getHeight();
             }catch(LWJGLException e){
-                logger.log(Level.WARNING, "LWJGL Error: {0}", e.getMessage());
+                Logger.global.log(Level.WARNING, "LWJGL Error: {0}", e.getMessage());
             }
         }
 
@@ -110,7 +107,7 @@ public class LWJGLGameWindow implements GameWindow {
             try {
                 Display.create();
             } catch (LWJGLException ex) {
-                Logger.getLogger(LWJGLGameWindow.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.global.log(Level.SEVERE, null, ex);
                 callback.windowClosed();
                 return;
             }

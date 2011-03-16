@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.awt.GraphicsEnvironment;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.open2jam.util.Logger;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -35,7 +35,6 @@ import org.lwjgl.util.glu.GLU;
  */
 public class TrueTypeFont {
 
-    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
 	public final static int
 		ALIGN_LEFT = 0,
@@ -225,7 +224,7 @@ public class TrueTypeFont {
 					//.getTexture(font.toString(), imgTemp);
 
 		} catch (Exception e) {
-                    logger.log(Level.SEVERE, "Failed to create font: {0}", e.getMessage());
+                    Logger.global.log(Level.SEVERE, "Failed to create font: {0}", e.getMessage());
 		}
 	}
 
@@ -447,7 +446,7 @@ public class TrueTypeFont {
 			return textureId.get(0);
 
 		} catch (Exception e) {
-                    logger.log(Level.SEVERE, "Fatal error: {0}", e.getMessage());
+                    Logger.global.log(Level.SEVERE, "Fatal error: {0}", e.getMessage());
                 }
 
 		return -1;

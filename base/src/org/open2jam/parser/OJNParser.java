@@ -10,13 +10,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.open2jam.util.Logger;
 import org.open2jam.util.CharsetDetector;
 
 class OJNParser
 {
-    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-
     private static final String genre_map[] = {"Ballad","Rock","Dance","Techno","Hip-hop",
                     "Soul/R&B","Jazz","Funk","Classical","Traditional","Etc"};
 
@@ -36,7 +34,7 @@ class OJNParser
             f = new RandomAccessFile(file.getAbsolutePath(),"r");
             buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, 300);
         }catch(IOException e){
-            logger.log(Level.WARNING, "IO exception on reading OJN file {0}", file.getName());
+            Logger.global.log(Level.WARNING, "IO exception on reading OJN file {0}", file.getName());
             return null;
         }
 
@@ -49,7 +47,7 @@ class OJNParser
         int songid = buffer.getInt();
         int signature = buffer.getInt();
         if(signature != OJN_SIGNATURE){
-            logger.log(Level.WARNING, "File [{0}] isn't a OJN file !", file);
+            Logger.global.log(Level.WARNING, "File [{0}] isn't a OJN file !", file);
             return null;
         }
 
@@ -160,7 +158,7 @@ class OJNParser
         try {
             f.close();
         } catch (IOException ex) {
-            logger.log(Level.WARNING, "Error closing the file (lol?) {0}", ex);
+            Logger.global.log(Level.WARNING, "Error closing the file (lol?) {0}", ex);
         }
         return list;
     }
@@ -179,9 +177,9 @@ class OJNParser
                 readNoteBlock(event_list, buffer);
                 f.close();
         }catch(java.io.FileNotFoundException e){
-            logger.log(Level.WARNING, "File {0} not found !!", chart.getSource().getName());
+            Logger.global.log(Level.WARNING, "File {0} not found !!", chart.getSource().getName());
         } catch (IOException e){
-            logger.log(Level.WARNING, "IO exception on reading OJN file {0}", chart.getSource().getName());
+            Logger.global.log(Level.WARNING, "IO exception on reading OJN file {0}", chart.getSource().getName());
         }
         return event_list;
     }
@@ -261,7 +259,7 @@ class OJNParser
         try {
             return new String(ch,0,i,charset);
         } catch (UnsupportedEncodingException ex) {
-            logger.log(Level.WARNING, "Encoding [{0}] not supported !", charset);
+            Logger.global.log(Level.WARNING, "Encoding [{0}] not supported !", charset);
             return new String(ch,0,i);
         }
     }

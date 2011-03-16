@@ -7,7 +7,7 @@ package org.open2jam.gui;
 
 import java.net.URL;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.open2jam.util.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import org.open2jam.render.SkinChecker;
@@ -16,11 +16,10 @@ import org.open2jam.render.SkinChecker;
  *
  * @author CdK
  */
-public class SkinConfiguration extends javax.swing.JFrame {
+class SkinConfiguration extends javax.swing.JFrame {
 
     /** the config xml */
     private static final URL resources_xml = SkinConfiguration.class.getResource("/resources/resources.xml");
-    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     /** Creates new form SkinConfiguration */
     public SkinConfiguration() {
@@ -64,11 +63,11 @@ public class SkinConfiguration extends javax.swing.JFrame {
 
             System.out.println(sb.getStyles());
         } catch (ParserConfigurationException ex) {
-            logger.log(Level.SEVERE, "Skin load error {0}", ex);
+            Logger.global.log(Level.SEVERE, "Skin load error {0}", ex);
         } catch (org.xml.sax.SAXException ex) {
-            logger.log(Level.SEVERE, "Skin load error {0}", ex);
+            Logger.global.log(Level.SEVERE, "Skin load error {0}", ex);
         } catch (java.io.IOException ex) {
-            logger.log(Level.SEVERE, "Skin load error {0}", ex);
+            Logger.global.log(Level.SEVERE, "Skin load error {0}", ex);
         }
     }
 

@@ -9,14 +9,12 @@ import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.open2jam.util.Logger;
 import javax.imageio.ImageIO;
 import org.open2jam.util.ByteBufferInputStream;
 
 public class OJNChart extends Chart
 {
-    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-
     /** full path to the source file of this header */
     File source;
     public File getSource() { return source; }
@@ -71,7 +69,7 @@ public class OJNChart extends Chart
             f.close();
             return ImageIO.read(bis);
         }catch(IOException e){
-            logger.log(Level.WARNING, "IO exception getting image from file {0}", source.getName());
+            Logger.global.log(Level.WARNING, "IO exception getting image from file {0}", source.getName());
         }
         return null;
     }

@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.open2jam.util.Logger;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
@@ -40,8 +40,6 @@ public abstract class Render implements GameWindowCallback
 {
     /** the config xml */
     private static final URL resources_xml = TimeRender.class.getResource("/resources/resources.xml");
-    
-    static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private static final int JUDGMENT_SIZE = 64;
 
@@ -80,7 +78,7 @@ public abstract class Render implements GameWindowCallback
     int note_layer;
 
     /** the height of the notes */
-    double note_height;
+    double note_height; //TODO what is this ?
 
     /** the bpm at which the entities are falling */
     private double bpm;
@@ -222,14 +220,14 @@ public abstract class Render implements GameWindowCallback
         }catch(OutOfMemoryError e) {
             System.gc();
             JOptionPane.showMessageDialog(null, "Fatal Error", "System out of memory ! baillin out !!",JOptionPane.ERROR_MESSAGE);
-            logger.log(Level.SEVERE, "System out of memory ! baillin out !!{0}", e.getMessage());
+            Logger.global.log(Level.SEVERE, "System out of memory ! baillin out !!{0}", e.getMessage());
             System.exit(1);
         }
         // at this point the game window has gone away
 
         double precision = (hit_count / total_notes) * 100;
         double accuracy = (hit_sum / total_notes) * 100;
-        logger.log(Level.INFO,String.format("Precision : %.3f, Accuracy : %.3f", precision, accuracy));
+        Logger.global.log(Level.INFO,String.format("Precision : %.3f, Accuracy : %.3f", precision, accuracy));
     }
 
     /** play a sample */
@@ -250,7 +248,7 @@ public abstract class Render implements GameWindowCallback
             source = source_queue_iterator.next();
 
             if(source.equals(head)){
-                logger.warning("Source queue exausted !");
+                Logger.global.warning("Source queue exausted !");
                 return;
             }
         }
@@ -303,11 +301,11 @@ public abstract class Render implements GameWindowCallback
 
             System.out.println(sb.getStyles());
         } catch (ParserConfigurationException ex) {
-            logger.log(Level.SEVERE, "Skin load error {0}", ex);
+            Logger.global.log(Level.SEVERE, "Skin load error {0}", ex);
         } catch (org.xml.sax.SAXException ex) {
-            logger.log(Level.SEVERE, "Skin load error {0}", ex);
+            Logger.global.log(Level.SEVERE, "Skin load error {0}", ex);
         } catch (java.io.IOException ex) {
-            logger.log(Level.SEVERE, "Skin load error {0}", ex);
+            Logger.global.log(Level.SEVERE, "Skin load error {0}", ex);
         }
 
         // cover image load
@@ -318,7 +316,7 @@ public abstract class Render implements GameWindowCallback
             s.draw(0, 0);
             window.update();
         } catch (NullPointerException e){
-            logger.log(Level.INFO, "No cover image on file: {0}", chart.getSource().getName());
+            Logger.global.log(Level.INFO, "No cover image on file: {0}", chart.getSource().getName());
         }
 
         judgment_line_y2 = skin.judgment_line;
@@ -432,7 +430,7 @@ public abstract class Render implements GameWindowCallback
             for(int i=0;i<MAX_SOURCES;i++)
                 source_queue.push(SoundManager.newSource()); // creates sources
         }catch(org.lwjgl.openal.OpenALException e){
-            logger.log(Level.WARNING, "Couldn''t create enough sources({0})", MAX_SOURCES);
+            Logger.global.log(Level.WARNING, "Couldn''t create enough sources({0})", MAX_SOURCES);
         }
 
         source_queue_iterator = source_queue.iterator();
@@ -532,7 +530,7 @@ public abstract class Render implements GameWindowCallback
                 else if(e.getFlag() == Event.Flag.RELEASE){
                     LongNoteEntity lne = ln_buffer.remove(e.getChannel());
                     if(lne == null){
-                        logger.log(Level.WARNING, "Attempted to RELEASE note {0}", e.getChannel());
+                        Logger.global.log(Level.WARNING, "Attempted to RELEASE note {0}", e.getChannel());
                     }else{
                         lne.setEndTime(buffer_timer,velocity_integral(lne.getTime(),buffer_timer));
                     }

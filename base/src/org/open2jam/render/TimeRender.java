@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.logging.Level;
 
+import org.open2jam.util.Logger;
 import org.open2jam.util.SystemTimer;
 
 import org.open2jam.parser.Chart;
@@ -78,7 +79,7 @@ public class TimeRender extends Render
         
         // update our FPS counter if a second has passed
         if (lastFpsTime >= 1000) {
-            logger.log(Level.FINEST, "FPS: {0}", fps);
+            Logger.global.log(Level.FINEST, "FPS: {0}", fps);
             fps_entity.setNumber(fps);
             lastFpsTime = 0;
             fps = 0;

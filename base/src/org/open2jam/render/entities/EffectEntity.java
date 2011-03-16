@@ -11,8 +11,6 @@ public class EffectEntity extends AnimatedEntity
     /** keeps the last frame used. */
     private double last_frame = 0;
 
-    private boolean loop = false;
-
     public EffectEntity(SpriteList refs, double x, double y)
     {
         super(refs, x, y);
