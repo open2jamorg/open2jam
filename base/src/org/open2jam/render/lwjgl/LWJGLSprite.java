@@ -99,39 +99,22 @@ public class LWJGLSprite implements Sprite {
 
     private void createRectangle(int width, int height, int type)
     {
+       
+        //TODO do types
         GL11.glNewList(list_id, GL11.GL_COMPILE);
-            GL11.glBegin(GL11.GL_QUADS);
-
-            switch(type)
-            {
-                case 1: //Gradient fade top to down
-                    GL11.glColor4f(1f,0f,0f,1f);
-                    GL11.glVertex2f(0, 0);
-                    GL11.glVertex2f(0, height);
-
-                    GL11.glColor4f(0f,0f,1f,1f);
-                    GL11.glVertex2f(width,height);
-                    GL11.glVertex2f(width,0);
-                    break;
-                case 2: //Gradient fade down to top
-                    GL11.glColor4f(0f,0f,1f,1f);
-                    GL11.glVertex2f(0, 0);
-                    GL11.glVertex2f(0, height);
-
-                    GL11.glColor4f(1f,0f,0f,1f);
-                    GL11.glVertex2f(width,height);
-                    GL11.glVertex2f(width,0);
-                    break;
-                default: //normal rectangle
-                    GL11.glColor3f(1f,0f,1f);
-                    GL11.glVertex2f(0, 0);
-                    GL11.glVertex2f(0, height);
-                    GL11.glVertex2f(width,height);
-                    GL11.glVertex2f(width,0);
-                    break;
-            }
+            GL11.glBegin(GL11.GL_QUAD_STRIP);
+                GL11.glColor3f(0.0f,0.0f,0.0f); // black
+                GL11.glVertex2f(0, 0);
+                GL11.glVertex2f(width,0);
+                GL11.glColor4f(0.0f,0.0f,0.0f,0f); // alpha
+                GL11.glVertex2f(0,height/2);
+                GL11.glVertex2f(width, height/2);
+                GL11.glColor3f(0.0f,0.0f,0.0f); // black
+                GL11.glVertex2f(0,height);
+                GL11.glVertex2f(width, height);
             GL11.glEnd();
         GL11.glEndList();
+
     }
 
     /**

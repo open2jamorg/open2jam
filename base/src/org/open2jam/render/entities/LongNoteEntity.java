@@ -79,6 +79,13 @@ public class LongNoteEntity extends NoteEntity
     }
 
     @Override
+    public void setAlpha(float alpha)
+    {
+        sprite.setAlpha(alpha);
+        body_sprite.setAlpha(alpha);
+    }
+
+    @Override
     public void move(long delta)
     {
             super.move(delta);
@@ -90,7 +97,6 @@ public class LongNoteEntity extends NoteEntity
     {
         double end = getY();
         double local_y = y;
-        //if(local_y > render.getViewport())local_y = render.getViewport();
 	float sy = (float) ((local_y - end) / body_sprite.getHeight());
         body_sprite.draw(x, end, body_sprite.getScaleX(), sy);
         sprite.draw(x,local_y);

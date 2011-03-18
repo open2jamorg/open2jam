@@ -767,24 +767,23 @@ public abstract class Render implements GameWindowCallback
 
     protected void visibility(int value)
     {
-        int height = (int)Math.round((getViewport()+note_height)/4);
-        //TODO change this :_
-        int width  = (int)Math.round(skin.getEntityMap().get("NOTE_P1_7").getX()+skin.getEntityMap().get("NOTE_P1_7").getWidth());
-        Sprite vb  = ResourceFactory.get().doRectangle(width, height, 0);
-        Sprite vg1 = ResourceFactory.get().doRectangle(width, height, 1);
-        Sprite vg2 = ResourceFactory.get().doRectangle(width, height, 2);
+        int height = 0;
+        int width  = 0;
 
-        Entity e = new Entity(vb, 0, 0);
-        visibility_entity.getEntityList().add(e);
-        e = new Entity(vg1, 0, height);
-        visibility_entity.getEntityList().add(e);
-        e = new Entity(vg2, 0, height*2);
-        visibility_entity.getEntityList().add(e);
-        e = new Entity(vb, 0, height*3);
-        visibility_entity.getEntityList().add(e);
+        Sprite rec = null;
+        for(Event.Channel ev : Event.Channel.values())
+        {
+            if(ev.toString().startsWith("NOTE_") && skin.getEntityMap().get(ev.toString()) != null)
+            {
+                height = (int)Math.round((getViewport()+skin.getEntityMap().get(ev.toString()).getHeight()));
+                width = (int)Math.round(skin.getEntityMap().get(ev.toString()).getWidth());
+                rec  = ResourceFactory.get().doRectangle(width, height, 0);
+                visibility_entity.getEntityList().add(new Entity(rec, skin.getEntityMap().get(ev.toString()).getX(), 0));
+            }
+        }
 
         //TODO fix this :____
-        visibility_entity.setLayer(skin.max_layer);
+        visibility_entity.setLayer(10);
 
         entities_matrix.add(visibility_entity);
     }
