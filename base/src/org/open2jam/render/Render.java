@@ -21,6 +21,7 @@ import org.open2jam.parser.Event;
 import org.open2jam.parser.Chart;
 import org.open2jam.render.entities.BarEntity;
 import org.open2jam.render.entities.ComboCounterEntity;
+import org.open2jam.render.entities.CompositeEntity;
 import org.open2jam.render.entities.Entity;
 import org.open2jam.render.entities.LongNoteEntity;
 import org.open2jam.render.entities.MeasureEntity;
@@ -180,7 +181,8 @@ public abstract class Render implements GameWindowCallback
     private int channelModifier = 0;
 
     /** the visibility modifier */
-    private int visibilityModifier = 0;
+    protected int visibilityModifier = 0;
+    protected CompositeEntity visibility_entity;
 
     /** The volume */
     private float mainVolume = 0.75f;
@@ -396,8 +398,11 @@ public abstract class Render implements GameWindowCallback
         second_entity = (NumberEntity) skin.getEntityMap().get("SECOND_COUNTER");
         second_entity.showDigits(2);//show 2 digits
         entities_matrix.add(second_entity);
-
+        
         pills_draw = new LinkedList<Entity>();
+
+        visibility_entity = new CompositeEntity();
+        if(visibilityModifier != 0) visibility(visibilityModifier);
 
         for(Event.Channel c : keyboard_map.keySet())
         {
@@ -758,6 +763,30 @@ public abstract class Render implements GameWindowCallback
 		    break;
 	    }
 	}
+    }
+
+    protected void visibility(int value)
+    {
+        int height = (int)Math.round((getViewport()+note_height)/4);
+        //TODO change this :_
+        int width  = (int)Math.round(skin.getEntityMap().get("NOTE_P1_7").getX()+skin.getEntityMap().get("NOTE_P1_7").getWidth());
+        Sprite vb  = ResourceFactory.get().doRectangle(width, height, 0);
+        Sprite vg1 = ResourceFactory.get().doRectangle(width, height, 1);
+        Sprite vg2 = ResourceFactory.get().doRectangle(width, height, 2);
+
+        Entity e = new Entity(vb, 0, 0);
+        visibility_entity.getEntityList().add(e);
+        e = new Entity(vg1, 0, height);
+        visibility_entity.getEntityList().add(e);
+        e = new Entity(vg2, 0, height*2);
+        visibility_entity.getEntityList().add(e);
+        e = new Entity(vb, 0, height*3);
+        visibility_entity.getEntityList().add(e);
+
+        //TODO fix this :____
+        visibility_entity.setLayer(skin.max_layer);
+
+        entities_matrix.add(visibility_entity);
     }
 
     /**

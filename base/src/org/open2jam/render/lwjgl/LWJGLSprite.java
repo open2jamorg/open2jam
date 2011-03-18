@@ -62,6 +62,15 @@ public class LWJGLSprite implements Sprite {
         init(x,y,width,height);
     }
 
+    public LWJGLSprite(int w, int h, int type)
+    {
+        texture = null;
+        x = 0; y = 0;
+        this.width = w;
+        this.height = h;
+        createRectangle(width, height, type);
+    }
+
     private void init(int x, int y, int width, int height)
     {
         float u = ((float)x/texture.getWidth()); // top-left x
@@ -87,7 +96,44 @@ public class LWJGLSprite implements Sprite {
             GL11.glEnd();
         GL11.glEndList();
     }
-	
+
+    private void createRectangle(int width, int height, int type)
+    {
+        GL11.glNewList(list_id, GL11.GL_COMPILE);
+            GL11.glBegin(GL11.GL_QUADS);
+
+            switch(type)
+            {
+                case 1: //Gradient fade top to down
+                    GL11.glColor4f(1f,0f,0f,1f);
+                    GL11.glVertex2f(0, 0);
+                    GL11.glVertex2f(0, height);
+
+                    GL11.glColor4f(0f,0f,1f,1f);
+                    GL11.glVertex2f(width,height);
+                    GL11.glVertex2f(width,0);
+                    break;
+                case 2: //Gradient fade down to top
+                    GL11.glColor4f(0f,0f,1f,1f);
+                    GL11.glVertex2f(0, 0);
+                    GL11.glVertex2f(0, height);
+
+                    GL11.glColor4f(1f,0f,0f,1f);
+                    GL11.glVertex2f(width,height);
+                    GL11.glVertex2f(width,0);
+                    break;
+                default: //normal rectangle
+                    GL11.glColor3f(1f,0f,1f);
+                    GL11.glVertex2f(0, 0);
+                    GL11.glVertex2f(0, height);
+                    GL11.glVertex2f(width,height);
+                    GL11.glVertex2f(width,0);
+                    break;
+            }
+            GL11.glEnd();
+        GL11.glEndList();
+    }
+
     /**
      * Get the width of this sprite in pixels
      *
@@ -137,7 +183,7 @@ public class LWJGLSprite implements Sprite {
         GL11.glPushMatrix();
 
         // bind to the appropriate texture for this sprite
-        texture.bind();
+        if(texture!=null)texture.bind();
 
         // translate to the right location and prepare to draw
         GL11.glTranslatef(px, py, 0);

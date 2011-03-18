@@ -412,7 +412,6 @@
                 <StringItem index="3" value="Dark"/>
               </StringArray>
             </Property>
-            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="lbl_visibilityModifier">

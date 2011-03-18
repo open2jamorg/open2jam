@@ -118,4 +118,18 @@ public class ResourceFactory {
             }
             throw new RuntimeException("Unknown rendering type: "+renderingType);
         }
+
+        public Sprite doRectangle(int width, int height, int type)
+        {
+            if (window == null) {
+                    throw new RuntimeException("Attempt to retrieve sprite before game window was created");
+            }
+            switch (renderingType) {
+                    case OPENGL_LWJGL:
+                    {
+                            return new LWJGLSprite(width, height, type);
+                    }
+            }
+            throw new RuntimeException("Unknown rendering type: "+renderingType);
+        }
 }

@@ -283,7 +283,6 @@ public class NewInterface extends javax.swing.JFrame
         lbl_channelModifier.setText("Channel Modifier:");
 
         combo_visibilityModifier.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--None--", "Hidden", "Sudden", "Dark" }));
-        combo_visibilityModifier.setEnabled(false);
 
         lbl_visibilityModifier.setText("Visibility Modifier:");
 
@@ -468,7 +467,7 @@ public class NewInterface extends javax.swing.JFrame
 
         js_hispeed.setModel(new javax.swing.SpinnerNumberModel(1.0d, 0.5d, 10.0d, 0.5d));
 
-        btn_configuration.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        btn_configuration.setFont(new java.awt.Font("Tahoma", 0, 10));
         btn_configuration.setText("Go!");
         btn_configuration.setMaximumSize(new java.awt.Dimension(20, 20));
         btn_configuration.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -483,7 +482,7 @@ public class NewInterface extends javax.swing.JFrame
 
         lbl_skin_selection.setText("Skin selection:");
 
-        btn_skin.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        btn_skin.setFont(new java.awt.Font("Tahoma", 0, 10));
         btn_skin.setText("Go!");
         btn_skin.setMaximumSize(new java.awt.Dimension(20, 20));
         btn_skin.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -988,8 +987,8 @@ public class NewInterface extends javax.swing.JFrame
                         if(height1 < height2) return -1;
                         if(height1 == height2)
                         {
-                            if(hz1 > hz2) return 1;
-                            if(hz1 < hz2) return -1;
+                            if(hz1 > hz2) return -1;
+                            if(hz1 < hz2) return 1;
                             if(hz1 == hz2) return 0;
                         }
                     }
@@ -1004,7 +1003,7 @@ public class NewInterface extends javax.swing.JFrame
 
         Collections.sort(list, new DisplayComparator());
 
-        display_modes = list.toArray(new DisplayMode[display_modes.length]);
+        display_modes = list.toArray(new DisplayMode[list.size()]);
 
         model_songlist = new ChartListTableModel();
         model_chartlist = new ChartTableModel();
