@@ -771,19 +771,32 @@ public abstract class Render implements GameWindowCallback
         int width  = 0;
 
         Sprite rec = null;
+        // We will make a new entity with the masking rectangle for each note lane
+        // because we can't know for sure where the notes will be,
+        // meaning that they may not be together
         for(Event.Channel ev : Event.Channel.values())
         {
             if(ev.toString().startsWith("NOTE_") && skin.getEntityMap().get(ev.toString()) != null)
             {
                 height = (int)Math.round((getViewport()+skin.getEntityMap().get(ev.toString()).getHeight()));
                 width = (int)Math.round(skin.getEntityMap().get(ev.toString()).getWidth());
-                rec  = ResourceFactory.get().doRectangle(width, height, 0);
+                rec  = ResourceFactory.get().doRectangle(width, height, value);
                 visibility_entity.getEntityList().add(new Entity(rec, skin.getEntityMap().get(ev.toString()).getX(), 0));
             }
         }
 
-        //TODO fix this :____
-        visibility_entity.setLayer(10);
+        /* TODO what should it do:
+         * - Get the note layer and create a new layer for itself
+         * - Move judgment line to another layer (right now it hasn't a id in resources.xml
+         * it should to be able to do this
+         *
+         * So it would be:
+         *      measure_mark
+         *      notes
+         *      this modifier
+         *      judgmentline
+         */
+        visibility_entity.setLayer(9);
 
         entities_matrix.add(visibility_entity);
     }

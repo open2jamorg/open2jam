@@ -99,19 +99,50 @@ public class LWJGLSprite implements Sprite {
 
     private void createRectangle(int width, int height, int type)
     {
-       
+        int split = height/4;
         //TODO do types
         GL11.glNewList(list_id, GL11.GL_COMPILE);
             GL11.glBegin(GL11.GL_QUAD_STRIP);
-                GL11.glColor3f(0.0f,0.0f,0.0f); // black
-                GL11.glVertex2f(0, 0);
-                GL11.glVertex2f(width,0);
-                GL11.glColor4f(0.0f,0.0f,0.0f,0f); // alpha
-                GL11.glVertex2f(0,height/2);
-                GL11.glVertex2f(width, height/2);
-                GL11.glColor3f(0.0f,0.0f,0.0f); // black
-                GL11.glVertex2f(0,height);
-                GL11.glVertex2f(width, height);
+                switch(type)
+                {
+                    case 1: //hidden (Hidden upper part)
+                    GL11.glColor3f(0.0f,0.0f,0.0f); // first black rec
+                    GL11.glVertex2f(0, 0);
+                    GL11.glVertex2f(width,0);
+                    GL11.glVertex2f(0,split);
+                    GL11.glVertex2f(width, split);
+                    GL11.glColor4f(0.0f,0.0f,0.0f,0f); // middle alpha
+                    GL11.glVertex2f(0,split*2);
+                    GL11.glVertex2f(width, split*2);
+                    break;
+                    case 2:
+                    GL11.glColor4f(0.0f,0.0f,0.0f,0f); // middle alpha
+                    GL11.glVertex2f(0,split*2);
+                    GL11.glVertex2f(width, split*2);
+                    GL11.glColor3f(0.0f,0.0f,0.0f); // second black rec
+                    GL11.glVertex2f(0,split*3);
+                    GL11.glVertex2f(width, split*3);
+                    GL11.glVertex2f(0,height);
+                    GL11.glVertex2f(width, height);
+                    break;
+                    case 3: //dark (hidden upper and lower part)
+                    GL11.glColor3f(0.0f,0.0f,0.0f); // first black rec
+                    GL11.glVertex2f(0, 0);
+                    GL11.glVertex2f(width,0);
+                    GL11.glVertex2f(0,split);
+                    GL11.glVertex2f(width, split);
+                    GL11.glColor4f(0.0f,0.0f,0.0f,0f); // middle alpha
+                    GL11.glVertex2f(0,split*2);
+                    GL11.glVertex2f(width, split*2);
+                    GL11.glColor3f(0.0f,0.0f,0.0f); // second black rec
+                    GL11.glVertex2f(0,split*3);
+                    GL11.glVertex2f(width, split*3);
+                    GL11.glVertex2f(0,height);
+                    GL11.glVertex2f(width, height);
+                    break;
+                    default: //none
+                    break;
+                }
             GL11.glEnd();
         GL11.glEndList();
 
