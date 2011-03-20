@@ -4,7 +4,6 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
-import org.open2jam.util.Logger;
 import org.lwjgl.opengl.GL11;
 import org.open2jam.render.Sprite;
 

@@ -232,9 +232,9 @@ class OJNParser
                     pan -= 8;
                     pan /= 16;
 
-                    value--;
+                    value--; // make zero-based ( zero was the "ignore" value )
                     if(type == 0){
-                            event_list.add(new Event(channel,measure,position,value,Event.Flag.NONE,volume, pan));
+                        event_list.add(new Event(channel,measure,position,value,Event.Flag.NONE,volume, pan));
                     }
                     else if(type == 2){
                         event_list.add(new Event(channel,measure,position,value,Event.Flag.HOLD,volume, pan));
@@ -243,7 +243,7 @@ class OJNParser
                         event_list.add(new Event(channel,measure,position,value,Event.Flag.RELEASE,volume, pan));
                     }
                     else if(type == 4){ // M### auto-play
-                        event_list.add(new Event(channel,measure,position,1000+value,Event.Flag.RELEASE,volume, pan));
+                        event_list.add(new Event(channel,measure,position,1000+value,Event.Flag.NONE,volume, pan));
                     }
                 }
             }
@@ -254,7 +254,7 @@ class OJNParser
     private static String bytes2string(byte[] ch)
     {
         int i = 0;
-        while(ch[i]!=0 && i<ch.length)i++; // find \0 terminator
+        while(i<ch.length && ch[i]!=0)i++; // find \0 terminator
         String charset = CharsetDetector.analyze(ch);
         try {
             return new String(ch,0,i,charset);

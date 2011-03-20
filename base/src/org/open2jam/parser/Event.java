@@ -16,12 +16,12 @@ public class Event implements Comparable<Event>
             NOTE_SC,                 //P1-NOTE_SC / P1-NOTE_8
             NOTE_8,                  //P2-NOTE_1
             NOTE_9,                  //P2-NOTE_2
-            NOTE_10,                  //P2-NOTE_3
-            NOTE_11,                  //P2-NOTE_4
-            NOTE_12,                  //P2-NOTE_5
-            NOTE_13,                  //P2-NOTE_6
-            NOTE_14,                  //P2-NOTE_7
-            NOTE_SC2,                 //P2-NOTE_SC / P2-NOTE_8
+            NOTE_10,                 //P2-NOTE_3
+            NOTE_11,                 //P2-NOTE_4
+            NOTE_12,                 //P2-NOTE_5
+            NOTE_13,                 //P2-NOTE_6
+            NOTE_14,                 //P2-NOTE_7
+            NOTE_SC2,                //P2-NOTE_SC / P2-NOTE_8
             AUTO_PLAY
      }
 

@@ -880,7 +880,6 @@ public class Interface extends javax.swing.JFrame
 
                     if(dm1.getBitsPerPixel() == dm2.getBitsPerPixel())
                     {
-
                         if(dm1.getWidth() == dm2.getWidth())
                         {
                             if(dm1.getHeight() == dm2.getHeight())
@@ -938,8 +937,10 @@ public class Interface extends javax.swing.JFrame
                 obj.close();
             } catch (IOException ex) {
                 Logger.global.log(Level.SEVERE, "{0}", ex);
+                updateSelection();
             } catch (ClassNotFoundException ex) {
                 Logger.global.log(Level.SEVERE, "{0}", ex);
+                updateSelection();
             }
         }
         else {

@@ -77,9 +77,6 @@ public abstract class Render implements GameWindowCallback
     /** the layer of the notes */
     int note_layer;
 
-    /** the height of the notes */
-    double note_height; //TODO what is this ?
-
     /** the bpm at which the entities are falling */
     private double bpm;
 
@@ -104,7 +101,7 @@ public abstract class Render implements GameWindowCallback
     ** basically, each list is a layer of entities
     ** the layers are rendered in order
     ** so entities at layer X will always be rendered before layer X+1 */
-       EntityMatrix entities_matrix;
+    final EntityMatrix entities_matrix;
 
     /** this iterator is used by the update_note_buffer
      * to go through the events on the chart */
@@ -153,8 +150,6 @@ public abstract class Render implements GameWindowCallback
 
     BarEntity lifebar_entity;
 
-    int pills = 0;
-
     LinkedList<Entity> pills_draw;
 
     int consecutive_cools = 0;
@@ -180,9 +175,9 @@ public abstract class Render implements GameWindowCallback
     private int channelModifier = 0;
 
     /** The volume */
-    private float mainVolume = 0.75f;
-    private float keyVolume = 0.75f;
-    private float bgmVolume = 0.75f;
+    private final float mainVolume;
+    private final float keyVolume;
+    private final float bgmVolume;
     private final int visibilityModifier;
 
     static {
@@ -193,6 +188,7 @@ public abstract class Render implements GameWindowCallback
     {
         keyboard_map = Config.get().getKeyboardMap(Config.KeyboardType.K7);
         window = ResourceFactory.get().getGameWindow();
+        entities_matrix = new EntityMatrix();
         this.chart = chart;
         this.hispeed = hispeed;
         velocity_tree = new IntervalTree<Double>();
@@ -219,8 +215,8 @@ public abstract class Render implements GameWindowCallback
             window.startRendering();
         }catch(OutOfMemoryError e) {
             System.gc();
-            JOptionPane.showMessageDialog(null, "Fatal Error", "System out of memory ! baillin out !!",JOptionPane.ERROR_MESSAGE);
             Logger.global.log(Level.SEVERE, "System out of memory ! baillin out !!{0}", e.getMessage());
+            JOptionPane.showMessageDialog(null, "Fatal Error", "System out of memory ! baillin out !!",JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
         // at this point the game window has gone away
@@ -298,8 +294,6 @@ public abstract class Render implements GameWindowCallback
             SkinHandler sb = new SkinHandler("o2jam", window.getResolutionWidth(), window.getResolutionHeight());
             SAXParserFactory.newInstance().newSAXParser().parse(resources_xml.openStream(), sb);
             skin = sb.getResult();
-
-            System.out.println(sb.getStyles());
         } catch (ParserConfigurationException ex) {
             Logger.global.log(Level.SEVERE, "Skin load error {0}", ex);
         } catch (org.xml.sax.SAXException ex) {
@@ -322,14 +316,10 @@ public abstract class Render implements GameWindowCallback
         judgment_line_y2 = skin.judgment_line;
 	updateHispeed();
 
-        entities_matrix = new EntityMatrix(skin.max_layer+1);
-
         bpm = chart.getBPM();
         buffer_bpm = chart.getBPM();
 
         note_layer = skin.getEntityMap().get("NOTE_1").getLayer();
-
-        note_height = skin.getEntityMap().get("NOTE_1").getHeight();
 
         // adding static entities
         for(Entity e : skin.getEntityList()){
@@ -627,7 +617,7 @@ public abstract class Render implements GameWindowCallback
                 break;
             }
         }
-        // pad 10s to make sure the songs ends
+        // pad 10s to make sure the song ends
         velocity_tree.addInterval(last_bpm_change, timer+10000, my_note_speed);
         velocity_tree.build();
     }

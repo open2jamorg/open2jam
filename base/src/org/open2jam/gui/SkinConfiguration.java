@@ -61,7 +61,6 @@ class SkinConfiguration extends javax.swing.JFrame {
             SkinChecker sb = new SkinChecker("o2jam");
             SAXParserFactory.newInstance().newSAXParser().parse(resources_xml.openStream(), sb);
 
-            System.out.println(sb.getStyles());
         } catch (ParserConfigurationException ex) {
             Logger.global.log(Level.SEVERE, "Skin load error {0}", ex);
         } catch (org.xml.sax.SAXException ex) {

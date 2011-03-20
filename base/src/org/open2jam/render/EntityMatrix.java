@@ -16,10 +16,9 @@ class EntityMatrix
 {
     private final ArrayList<LinkedList<Entity>> matrix;
     
-    public EntityMatrix(int layers)
+    public EntityMatrix()
     {
-        matrix = new ArrayList<LinkedList<Entity>>(layers);
-        for(int i=0;i<layers;i++)matrix.add(new LinkedList<Entity>());
+        matrix = new ArrayList<LinkedList<Entity>>();
     }
 
     /**
@@ -32,13 +31,15 @@ class EntityMatrix
             for(Entity i : ((CompositeEntity) e).getEntityList())
                 this.add(i);
         }
-        else
-        matrix.get(e.getLayer()).add(e);
+        else {
+            for(int i=matrix.size()-1; i < e.getLayer(); i++)matrix.add(new LinkedList<Entity>());
+            matrix.get(e.getLayer()).add(e);
+        }
     }
 
     public boolean isEmpty(int layer)
     {
-        return matrix.get(layer).isEmpty();
+        return matrix.size() > layer && matrix.get(layer).isEmpty();
     }
 
     public Iterator<LinkedList<Entity>> iterator()

@@ -22,7 +22,7 @@ import org.open2jam.render.lwjgl.SoundManager;
 
 public class TimeRender extends Render
 {
-    private static final double AUTOPLAY_THRESHOLD = 50;
+    private static final double AUTOPLAY_THRESHOLD = 40;
 
     private enum JUDGE {
         PERFECT(20), COOL(41), GOOD(125), BAD(173), MISS(-1);
@@ -272,7 +272,7 @@ public class TimeRender extends Render
             case COOL:
                 jambar_entity.addNumber(2);
                 consecutive_cools++;
-                if(lifebar_entity.getNumber() <= lifebar_entity.getLimit())lifebar_entity.addNumber(2);
+                lifebar_entity.addNumber(2);
 
                 score_value = 200 + (jamcombo_entity.getNumber()*10);
             break;
@@ -280,18 +280,16 @@ public class TimeRender extends Render
             case GOOD:
                 jambar_entity.addNumber(1);
                 consecutive_cools = 0;
-                //if(lifebar_entity.getNumber() <= lifebar_entity.getLimit())lifebar_entity.addNumber(5);
 
                  score_value = 100;
             break;
 
             case BAD:
-                if(pills > 0)
+                if(pills_draw.size() > 0)
                 {
                     judge = JUDGE.GOOD;
                     jambar_entity.addNumber(1);
-                    pills--;
-                    pills_draw.getLast().setAlive(false);
+                    pills_draw.removeLast().setAlive(false);
 
                     score_value = 100; // TODO: not sure
                 }
@@ -327,11 +325,10 @@ public class TimeRender extends Render
             jamcombo_entity.incNumber();
         }
 
-        if(consecutive_cools >= 15 && pills < 5)
+        if(consecutive_cools >= 15 && pills_draw.size() < 5)
         {
             consecutive_cools -= 15;
-            pills++;
-            Entity ee = skin.getEntityMap().get("PILL_"+pills).copy();
+            Entity ee = skin.getEntityMap().get("PILL_"+(pills_draw.size()+1)).copy();
             entities_matrix.add(ee);
             pills_draw.add(ee);
         }
@@ -350,34 +347,14 @@ public class TimeRender extends Render
 
     private void do_autoplay(long now)
     {
-        for(Map.Entry<Event.Channel,Integer> entry : keyboard_map.entrySet())
+        for(Event.Channel c : keyboard_map.keySet())
         {
-            Event.Channel c = entry.getKey();
-
             NoteEntity ne = nextNoteKey(c);
 
             if(ne == null)continue;
 
-            long hit = 0;
-            if(ne instanceof LongNoteEntity)
-            {
-                if(ne.getState() == NoteEntity.State.NOT_JUDGED)
-                {
-                    hit = ne.testTimeHit(ne.getTime());
-                    if(Math.abs(ne.getTime() - now) > AUTOPLAY_THRESHOLD)continue;
-                }
-                else if(ne.getState() == NoteEntity.State.LN_HOLD)
-                {
-                    hit = ne.testTimeHit(((LongNoteEntity)ne).getEndTime());
-                    if(Math.abs(((LongNoteEntity)ne).getEndTime() - now) > AUTOPLAY_THRESHOLD)continue;
-                }
-            }
-            else
-            {
-                hit = ne.testTimeHit(ne.getTime());
-                if(Math.abs(ne.getTime() - now) > AUTOPLAY_THRESHOLD)continue;
-            }
-
+            long hit = ne.testTimeHit(now);
+            if(hit > AUTOPLAY_THRESHOLD)continue;
             ne.setHit(hit);
             
             if(ne instanceof LongNoteEntity)

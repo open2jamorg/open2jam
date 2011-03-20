@@ -10,7 +10,7 @@ import org.open2jam.render.SpriteList;
  */
 public class BarEntity extends AnimatedEntity
 {
-    private int LIMIT = 1;
+    private int limit = 1;
     private int number = 0;
 
     public enum FillDirection {
@@ -28,7 +28,8 @@ public class BarEntity extends AnimatedEntity
     }
 
     public void setNumber(Integer i){
-        this.number = i;
+        if(i <= limit) number = i;
+        else number = limit;
     }
 
     public int getNumber(){
@@ -37,11 +38,12 @@ public class BarEntity extends AnimatedEntity
 
     public void addNumber(int add)
     {
-        number += add;
+        if(number + add <= limit) number += add;
+        else number = limit;
     }
 
-    public void setLimit(int limit){ LIMIT = limit; }
-    public int getLimit() {return LIMIT; }
+    public void setLimit(int limit){ this.limit = limit; }
+    public int getLimit() {return limit; }
 
     public void setFillDirection(FillDirection value) { direction = value; }
     public FillDirection getFillDirection() { return direction; }
@@ -49,7 +51,7 @@ public class BarEntity extends AnimatedEntity
     @Override
     public void draw()
     {
-        float perc = ((float)number / LIMIT);
+        float perc = ((float)number / limit);
         double px = x;
         double py = y;
         // TODO: ideally, this should be called only when the number changes
