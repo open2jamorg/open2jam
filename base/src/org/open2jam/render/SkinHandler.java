@@ -265,6 +265,10 @@ public class SkinHandler extends DefaultHandler
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
             e = new MeasureEntity(s, 0, 0);
         }
+        else if(id.equals("JUDGMENT_LINE")){
+            SpriteList s = sprite_buffer.get(atts.get("sprite"));
+            e = new AnimatedEntity(s, 0, 0);
+        }
         else if(id.startsWith("EFFECT_JUDGMENT_")){
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
             e = new JudgmentEntity(s,0, 0);

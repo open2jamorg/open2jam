@@ -100,7 +100,7 @@ public class LWJGLSprite implements Sprite {
     private void createRectangle(int width, int height, int type)
     {
         int split = height/4;
-        //TODO do types
+
         GL11.glNewList(list_id, GL11.GL_COMPILE);
             GL11.glBegin(GL11.GL_QUAD_STRIP);
                 switch(type)
@@ -145,7 +145,6 @@ public class LWJGLSprite implements Sprite {
                 }
             GL11.glEnd();
         GL11.glEndList();
-
     }
 
     /**

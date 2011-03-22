@@ -47,9 +47,10 @@ public class SkinConfiguration extends javax.swing.JFrame {
         panel_log = new javax.swing.JPanel();
         scroll_logger = new javax.swing.JScrollPane();
         txt_logger = new javax.swing.JTextPane();
-        btn_toggle_logger = new javax.swing.JToggleButton();
         lbl_log = new javax.swing.JLabel();
         combo_log = new javax.swing.JComboBox();
+        btn_toggle_logger = new javax.swing.JToggleButton();
+        panel_selection = new javax.swing.JPanel();
 
         setTitle("Skin configuration");
 
@@ -73,13 +74,6 @@ public class SkinConfiguration extends javax.swing.JFrame {
         txt_logger.setFont(txt_logger.getFont().deriveFont(txt_logger.getFont().getSize()-1f));
         scroll_logger.setViewportView(txt_logger);
 
-        btn_toggle_logger.setText("Hide log");
-        btn_toggle_logger.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_toggle_loggerActionPerformed(evt);
-            }
-        });
-
         lbl_log.setText("Log:");
 
         combo_log.addActionListener(new java.awt.event.ActionListener() {
@@ -97,8 +91,6 @@ public class SkinConfiguration extends javax.swing.JFrame {
                 .addGroup(panel_logLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(scroll_logger, javax.swing.GroupLayout.DEFAULT_SIZE, 711, Short.MAX_VALUE)
                     .addGroup(panel_logLayout.createSequentialGroup()
-                        .addComponent(btn_toggle_logger)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(lbl_log)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(combo_log, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -109,12 +101,29 @@ public class SkinConfiguration extends javax.swing.JFrame {
             .addGroup(panel_logLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(scroll_logger, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(panel_logLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btn_toggle_logger)
                     .addComponent(lbl_log)
                     .addComponent(combo_log, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        btn_toggle_logger.setText("Hide log");
+        btn_toggle_logger.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_toggle_loggerActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panel_selectionLayout = new javax.swing.GroupLayout(panel_selection);
+        panel_selection.setLayout(panel_selectionLayout);
+        panel_selectionLayout.setHorizontalGroup(
+            panel_selectionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 731, Short.MAX_VALUE)
+        );
+        panel_selectionLayout.setVerticalGroup(
+            panel_selectionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 195, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -124,8 +133,11 @@ public class SkinConfiguration extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(panel_selection, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panel_log, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(btn_toggle_logger)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 532, Short.MAX_VALUE)
                         .addComponent(btn_save)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_cancel)))
@@ -134,12 +146,15 @@ public class SkinConfiguration extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(214, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(panel_selection, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(panel_log, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_cancel)
-                    .addComponent(btn_save))
+                    .addComponent(btn_save)
+                    .addComponent(btn_toggle_logger))
                 .addContainerGap())
         );
 
@@ -147,9 +162,10 @@ public class SkinConfiguration extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_toggle_loggerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_toggle_loggerActionPerformed
-        scroll_logger.setVisible(!scroll_logger.isVisible());
-        lbl_log.setVisible(!lbl_log.isVisible());
-        combo_log.setVisible(!combo_log.isVisible());
+//        scroll_logger.setVisible(!scroll_logger.isVisible());
+//        lbl_log.setVisible(!lbl_log.isVisible());
+//        combo_log.setVisible(!combo_log.isVisible());
+        panel_log.setVisible(!panel_log.isVisible());
         btn_toggle_logger.setText(btn_toggle_logger.isSelected() ? "Show log" : "Hide log");
     }//GEN-LAST:event_btn_toggle_loggerActionPerformed
 
@@ -187,9 +203,10 @@ public class SkinConfiguration extends javax.swing.JFrame {
 
         DefaultComboBoxModel theModel = (DefaultComboBoxModel)combo_log.getModel();
         theModel.removeAllElements();
-        combo_log.addItem("ALL");
+        
         for(SkinChecker.Log l : SkinChecker.Log.values())
             combo_log.addItem(l.toString());
+        combo_log.addItem("ALL");
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -199,6 +216,7 @@ public class SkinConfiguration extends javax.swing.JFrame {
     private static javax.swing.JComboBox combo_log;
     private static javax.swing.JLabel lbl_log;
     private static javax.swing.JPanel panel_log;
+    private static javax.swing.JPanel panel_selection;
     private static javax.swing.JScrollPane scroll_logger;
     private static javax.swing.JTextPane txt_logger;
     // End of variables declaration//GEN-END:variables

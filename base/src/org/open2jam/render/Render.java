@@ -174,6 +174,8 @@ public abstract class Render implements GameWindowCallback
     /** the maxcombo counter */
     protected NumberEntity maxcombo_entity;
 
+    protected Entity judgment_line;
+
     /** statistics variables */
     protected double hit_sum = 0, hit_count = 0, total_notes = 0;
 
@@ -398,11 +400,14 @@ public abstract class Render implements GameWindowCallback
         second_entity = (NumberEntity) skin.getEntityMap().get("SECOND_COUNTER");
         second_entity.showDigits(2);//show 2 digits
         entities_matrix.add(second_entity);
-        
+
         pills_draw = new LinkedList<Entity>();
 
         visibility_entity = new CompositeEntity();
         if(visibilityModifier != 0) visibility(visibilityModifier);
+
+        judgment_line = (Entity) skin.getEntityMap().get("JUDGMENT_LINE");
+        entities_matrix.add(judgment_line);
 
         for(Event.Channel c : keyboard_map.keySet())
         {
@@ -796,9 +801,19 @@ public abstract class Render implements GameWindowCallback
          *      this modifier
          *      judgmentline
          */
-        visibility_entity.setLayer(9);
+
+        
+        int layer = note_layer+1;
+        for(Entity e : skin.getEntityList())
+            if(e.getLayer() > layer) layer++;
+
+        visibility_entity.setLayer(layer);
+        
+        skin.getEntityMap().get("MEASURE_MARK").setLayer(layer);
+        if(value != 1)skin.getEntityMap().get("JUDGMENT_LINE").setLayer(layer);
 
         entities_matrix.add(visibility_entity);
+        return;
     }
 
     /**

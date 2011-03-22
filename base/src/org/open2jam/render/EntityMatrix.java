@@ -18,7 +18,7 @@ public class EntityMatrix
     
     public EntityMatrix(int layers)
     {
-        matrix = new ArrayList<LinkedList<Entity>>(layers);
+        matrix = new ArrayList<LinkedList<Entity>>();
         for(int i=0;i<layers;i++)matrix.add(new LinkedList<Entity>());
     }
 

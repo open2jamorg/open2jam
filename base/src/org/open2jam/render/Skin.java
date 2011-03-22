@@ -2,9 +2,6 @@ package org.open2jam.render;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.TreeMap;
 import org.open2jam.render.entities.Entity;
 
 /**
@@ -38,5 +35,14 @@ public class Skin
 
     public ArrayList<Entity> getEntityList(){
         return other_entities;
+    }
+
+    public ArrayList<Entity> getAllEntities(){
+        ArrayList<Entity> al = new ArrayList<Entity>();
+
+        al.addAll(named_entities.values());
+        al.addAll(other_entities);
+
+        return al;
     }
 }
