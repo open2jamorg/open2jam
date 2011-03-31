@@ -789,27 +789,15 @@ public abstract class Render implements GameWindowCallback
                 visibility_entity.getEntityList().add(new Entity(rec, skin.getEntityMap().get(ev.toString()).getX(), 0));
             }
         }
-
-        /* TODO what should it do:
-         * - Get the note layer and create a new layer for itself
-         * - Move judgment line to another layer (right now it hasn't a id in resources.xml
-         * it should to be able to do this
-         *
-         * So it would be:
-         *      measure_mark
-         *      notes
-         *      this modifier
-         *      judgmentline
-         */
-
         
         int layer = note_layer+1;
+
         for(Entity e : skin.getEntityList())
             if(e.getLayer() > layer) layer++;
 
         visibility_entity.setLayer(layer);
         
-        skin.getEntityMap().get("MEASURE_MARK").setLayer(layer);
+//        skin.getEntityMap().get("MEASURE_MARK").setLayer(layer);
         if(value != 1)skin.getEntityMap().get("JUDGMENT_LINE").setLayer(layer);
 
         entities_matrix.add(visibility_entity);

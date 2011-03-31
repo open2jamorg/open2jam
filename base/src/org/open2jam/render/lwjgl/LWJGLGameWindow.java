@@ -1,5 +1,8 @@
 package org.open2jam.render.lwjgl;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -9,6 +12,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.open2jam.render.GameWindow;
 import org.open2jam.render.GameWindowCallback;
@@ -149,6 +153,8 @@ public class LWJGLGameWindow implements GameWindow {
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glLoadIdentity();
 
+            initFBO();
+
             callback.initialise();
 
             gameLoop();
@@ -197,11 +203,15 @@ public class LWJGLGameWindow implements GameWindow {
                     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
                     GL11.glLoadIdentity();
 
-                    // scale
+                    //first we draw everything in the fbo
+                    drawToFBO();
+                    //then scale
                     GL11.glScalef(scale_x, scale_y, 1);
-
+                    //then draw back the fbo texture
+                    drawFBO();
+                    
                     // let subsystem paint
-                    callback.frameRendering();
+//                    callback.frameRendering();
 
                     // update window contents
                     Display.update();
@@ -214,7 +224,110 @@ public class LWJGLGameWindow implements GameWindow {
 	}
 
     public void destroy() {
+        destroyFBO();
         gameRunning = false;
         callback.windowClosed();
+    }
+
+    int fboID;
+    int texID;
+    public void initFBO()
+    {
+        //create the framebuffer object
+        IntBuffer tmp = ByteBuffer.allocateDirect(1*4).order(ByteOrder.nativeOrder()).asIntBuffer();
+        EXTFramebufferObject.glGenFramebuffersEXT(tmp);
+        fboID = tmp.get();
+
+        //now the texture
+        tmp = ByteBuffer.allocateDirect(1*4).order(ByteOrder.nativeOrder()).asIntBuffer();
+        GL11.glGenTextures(tmp);
+        texID = tmp.get();
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, texID);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, width, height, 0,
+                          GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE,(IntBuffer) null);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+
+        //attach the texture to the fbo
+        EXTFramebufferObject.glBindFramebufferEXT( EXTFramebufferObject.GL_FRAMEBUFFER_EXT, fboID );
+
+        EXTFramebufferObject.glFramebufferTexture2DEXT( EXTFramebufferObject.GL_FRAMEBUFFER_EXT,
+                                                        EXTFramebufferObject.GL_COLOR_ATTACHMENT0_EXT,
+                                                        GL11.GL_TEXTURE_2D, texID, 0);
+
+        // check if everything is ok
+        int framebuffer = EXTFramebufferObject.glCheckFramebufferStatusEXT( EXTFramebufferObject.GL_FRAMEBUFFER_EXT );
+        switch ( framebuffer ) {
+            case EXTFramebufferObject.GL_FRAMEBUFFER_COMPLETE_EXT:
+                    break;
+            case EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
+                    throw new RuntimeException( "FrameBuffer: " + fboID
+                                    + ", has caused a GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT exception" );
+            case EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
+                    throw new RuntimeException( "FrameBuffer: " + fboID
+                                    + ", has caused a GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT exception" );
+            case EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
+                    throw new RuntimeException( "FrameBuffer: " + fboID
+                                    + ", has caused a GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT exception" );
+            case EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
+                    throw new RuntimeException( "FrameBuffer: " + fboID
+                                    + ", has caused a GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT exception" );
+            case EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
+                    throw new RuntimeException( "FrameBuffer: " + fboID
+                                    + ", has caused a GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT exception" );
+            case EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
+                    throw new RuntimeException( "FrameBuffer: " + fboID
+                                    + ", has caused a GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT exception" );
+            default:
+                    throw new RuntimeException( "Unexpected reply from glCheckFramebufferStatusEXT: " + framebuffer );
+        }
+
+        EXTFramebufferObject.glBindFramebufferEXT( EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0 );
+    }
+
+    public void drawToFBO()
+    {
+        EXTFramebufferObject.glBindFramebufferEXT( EXTFramebufferObject.GL_FRAMEBUFFER_EXT, fboID );
+
+            GL11.glPushAttrib(GL11.GL_VIEWPORT_BIT);
+            GL11.glViewport( 0, 0, width, height );
+
+            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+            GL11.glLoadIdentity();
+
+            if(scale_x < 1f || scale_y < 1f)
+            {
+                GL11.glScalef(scale_x, scale_y, 1);
+            }
+
+            callback.frameRendering();
+
+            GL11.glPopAttrib();
+        EXTFramebufferObject.glBindFramebufferEXT( EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0 );
+    }
+
+    public void drawFBO()
+    {
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, texID);
+            GL11.glBegin(GL11.GL_QUADS);
+
+            GL11.glTexCoord2f(0f, 1f);
+            GL11.glVertex2f(0, 0);
+
+            GL11.glTexCoord2f(0f, 0f);
+            GL11.glVertex2f(0, height);
+
+            GL11.glTexCoord2f(1f, 0f);
+            GL11.glVertex2f(width,height);
+
+            GL11.glTexCoord2f(1f, 1f);
+            GL11.glVertex2f(width,0);
+
+            GL11.glEnd();
+    }
+
+    public void destroyFBO()
+    {
+        EXTFramebufferObject.glDeleteFramebuffersEXT(fboID);
     }
 }
