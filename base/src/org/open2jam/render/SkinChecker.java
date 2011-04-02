@@ -18,8 +18,30 @@ public class SkinChecker extends DefaultHandler
     private enum Keyword {
         Resources, skin, spriteset, styles, style, sprite, frame, layer, entity;
     }
-
-    HashMap<String, Boolean> IDs;
+    
+    String[] ids = {
+        "NOTE_",
+        "MEASURE_MARK",
+        "JUDGMENT_LINE",
+        "EFFECT_JUDGMENT_",
+        "EFFECT_LONGFLARE",
+        "EFFECT_CLICK",
+        "PRESSED_NOTE",
+        "FPS_COUNTER",
+        "COUNTER_JUDGMENT_",
+        "MAXCOMBO_COUNTER",
+        "SCORE_COUNTER",
+        "JAM_COUNTER",
+        "COMBO_COUNTER",
+        "MINUTE_COUNTER",
+        "SECOND_COUNTER",
+        "COMBO_TITLE",
+        "JAM_TITLE",
+        "PILL_",
+        "LIFE_BAR",
+        "JAM_BAR",
+        "TIME_BAR"
+    };
 
     ArrayList<String> error;
     ArrayList<String> warning;
@@ -100,11 +122,45 @@ public class SkinChecker extends DefaultHandler
             case layer:{
                 if(check(k, atts_map, "id", Log.ERROR, "There is NO id!"))
                     this.layer = Integer.parseInt(atts_map.get("id"));
-//                if(this.layer > result.max_layer)result.max_layer = this.layer;
+                if(this.layer > result.max_layer)result.max_layer = this.layer;
             }break;
 
             case sprite:{
-                check(k, atts_map, "id", Log.ERROR, "There is NO id!");
+                check(k, atts_map, "framespeed", Log.INFO, "If this sprite is animated it should have a framespeed value");
+                check(k, atts_map, "id", Log.ERROR, "MUST be an ID!");
+            }break;
+
+            case frame:{
+                int x, y, w, h;
+                x = y = w = h = 0;
+                check(k, atts_map, "x", Log.WARNING, "There is no x attribute, using "+x);
+                check(k, atts_map, "y", Log.WARNING, "There is no y attribute, using "+y);
+                check(k, atts_map, "w", Log.WARNING, "There is no w attribute, using "+w);
+                check(k, atts_map, "h", Log.WARNING, "There is no h attribute, using "+h);
+
+                float sx = 1, sy = 1;
+                check(k, atts_map, "scale_x", Log.INFO, "There is no scale_x attribute, using "+sx);
+                check(k, atts_map, "scale_y", Log.INFO, "There is no scale_x attribute, using "+sy);
+                check(k, atts_map, "scale", Log.INFO, "There is no scale_x attribute, using "+sx);
+
+                URL url = null;
+                if(check(k, atts_map, "file", Log.ERROR, "There is NO file!"))
+                    url = SkinChecker.class.getResource(FILE_PATH_PREFIX+atts_map.get("file"));
+                if(url == null)
+                    check(k, atts_map, "filepath", Log.ERROR, "I can't find the file "+FILE_PATH_PREFIX+atts_map.get("file"));
+            }break;
+
+            case style:{
+                check(k, atts_map, "id", Log.ERROR, "Where is the ID?");
+            }break;
+            case styles:{
+                check(k, atts_map, "id", Log.ERROR, "Where is the ID?");
+            }break;
+
+            case entity:{
+            if(check(k, atts_map, "id", Log.INFO, "Without an ID it will be treated as an automatic entity"))
+                checkEntity(atts_map.get("id"));
+            check(k, atts_map, "sprite", Log.ERROR, "And my sprites?????");
             }break;
         }
     }
@@ -117,72 +173,7 @@ public class SkinChecker extends DefaultHandler
 
         switch(k)
         {
-            case frame:{
-                int x, y, w, h;
-                x = y = w = h = 0;
-                if(check(k, atts, "x", Log.WARNING, "There is no x attribute, using "+x))
-                    x = Integer.parseInt(atts.get("x"));
-                if(check(k, atts, "y", Log.WARNING, "There is no y attribute, using "+y))
-                    y = Integer.parseInt(atts.get("y"));
-                if(check(k, atts, "w", Log.WARNING, "There is no w attribute, using "+w))
-                    w = Integer.parseInt(atts.get("w"));
-                if(check(k, atts, "h", Log.WARNING, "There is no h attribute, using "+h))
-                    h = Integer.parseInt(atts.get("h"));
 
-                float sx = 1, sy = 1;
-                if(check(k, atts, "scale_x", Log.INFO, "There is no scale_x attribute, using "+sx))
-                    sx = Float.parseFloat(atts.get("scale_x"));
-                if(check(k, atts, "scale_y", Log.INFO, "There is no scale_x attribute, using "+sy))
-                    sy = Float.parseFloat(atts.get("scale_y"));
-                if(check(k, atts, "scale", Log.INFO, "There is no scale_x attribute, using "+sx))
-                    sy = sx = Float.parseFloat(atts.get("scale"));
-
-                URL url = null;
-                if(check(k, atts, "file", Log.ERROR, "There is NO file!"))
-                    url = SkinChecker.class.getResource(FILE_PATH_PREFIX+atts.get("file"));
-                if(url == null)
-                    check(k, atts, "filepath", Log.ERROR, "I can't find the file "+FILE_PATH_PREFIX+atts.get("file"));
-            }break;
-
-            case sprite:{
-                double framespeed = 0;
-                if(check(k, atts, "framespeed", Log.INFO, "If this sprite is animated it should have a framespeed value"))
-                    framespeed = Double.parseDouble(atts.get("framespeed"));
-
-                String id = null;
-                if(atts.containsKey("id"))id = atts.get("id");
-                else {
-                    logger.severe("bad resource file ! sprite must have an ID !");
-                    break;
-                }
-            }break;
-
-            case style:{
-                style_list.add(atts.get("id"));
-            }break;
-            case styles:{
-                ArrayList<String> al = new ArrayList<String>();
-                al.addAll(style_list);
-                styles_map.put(atts.get("id"), al);
-                style_list.clear();
-            }break;
-
-            case entity:{
-            String id = null;
-            if(atts.containsKey("id"))id = atts.get("id");
-
-            String sprites[] = null;
-            if(atts.containsKey("sprite"))sprites = atts.get("sprite").split(",");
-            else {
-                logger.log(Level.SEVERE, "bad resource file ! entity [{0}] must have an sprite !", id);
-                break;
-            }
-
-            if(sprites[0].trim().equals("")){
-                logger.log(Level.SEVERE, "bad resource file ! entity [{0}] must have an sprite !", id);
-                break;
-            }
-            }break;
         }
     }
 
@@ -208,7 +199,7 @@ public class SkinChecker extends DefaultHandler
 
     private boolean check(Keyword k, HashMap<String,String> atts, String att, Log l, String msg)
     {
-        if(!atts.containsKey(att))
+        if(!atts.containsKey(att) || atts.get(att).isEmpty())
         {
             getLog(l).add("<b>&lt;"+k.toString()+" : "+locator.getLineNumber()+"&gt;</b> <i>"+att+"</i>: \""+msg+"\"");
             return false;
@@ -222,6 +213,16 @@ public class SkinChecker extends DefaultHandler
         HashMap<String, String> hm = new HashMap<String, String>();
         hm.putAll(atts);
         return check(k, hm, att, l, msg);
+    }
+
+    public void checkEntity(String id)
+    {
+        for(String s : ids)
+        {
+            if(id.equals(s) || id.startsWith(s))
+                return;
+        }
+        getLog(Log.ERROR).add("<b>&lt;entity : "+locator.getLineNumber()+"&gt;</b> <i>id</i>: \"Unknown ID <i>"+id+"</i>\"");
     }
 
     public int getBaseW() { return baseW; }

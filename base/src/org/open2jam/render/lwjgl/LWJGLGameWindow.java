@@ -206,7 +206,9 @@ public class LWJGLGameWindow implements GameWindow {
                     //first we draw everything in the fbo
                     drawToFBO();
                     //then scale
-                    GL11.glScalef(scale_x, scale_y, 1);
+                    if(scale_x >= 1f || scale_y >= 1f)
+                        GL11.glScalef(scale_x, scale_y, 1);
+
                     //then draw back the fbo texture
                     drawFBO();
                     
@@ -296,9 +298,7 @@ public class LWJGLGameWindow implements GameWindow {
             GL11.glLoadIdentity();
 
             if(scale_x < 1f || scale_y < 1f)
-            {
                 GL11.glScalef(scale_x, scale_y, 1);
-            }
 
             callback.frameRendering();
 
