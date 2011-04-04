@@ -43,6 +43,9 @@ public class LWJGLGameWindow implements GameWindow {
 	/** The height of the game display area */
 	private int height;
 
+        /** The bilinear filter */
+        private boolean bilinear;
+
 	/** The loader responsible for converting images into OpenGL textures */
 	private TextureLoader textureLoader;
   
@@ -90,13 +93,14 @@ public class LWJGLGameWindow implements GameWindow {
 	 * @param x The width of the game display area
 	 * @param y The height of the game display area
 	 */
-	public void setDisplay(DisplayMode dm, boolean vsync, boolean fs) {
+	public void setDisplay(DisplayMode dm, boolean vsync, boolean fs, boolean bilinear) {
             try{
                 Display.setDisplayMode(dm);
                 Display.setVSyncEnabled(vsync);
                 Display.setFullscreen(fs);
                 width = dm.getWidth();
                 height = dm.getHeight();
+                this.bilinear = bilinear;
             }catch(LWJGLException e){
                 logger.log(Level.WARNING, "LWJGL Error: {0}", e.getMessage());
             }
@@ -151,7 +155,7 @@ public class LWJGLGameWindow implements GameWindow {
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glLoadIdentity();
 
-            initFBO();
+            if(bilinear)initFBO();
 
             callback.initialise();
 
@@ -204,17 +208,20 @@ public class LWJGLGameWindow implements GameWindow {
                     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
                     GL11.glLoadIdentity();
 
-                    //first we draw everything in the fbo
-                    drawToFBO();
-                    //then scale
-
-                    GL11.glScalef(scale_x >= 1f ? scale_x : scale_x2, scale_y >= 1f ? scale_y : scale_y2, 1);
-
-                    //then draw back the fbo texture
-                    drawFBO();
-                    
-                    // let subsystem paint
-//                    callback.frameRendering();
+                    if(bilinear)
+                    {
+                        //first we draw everything in the fbo
+                        drawToFBO();
+                        //then scale
+                        GL11.glScalef(scale_x >= 1f ? scale_x : scale_x2, scale_y >= 1f ? scale_y : scale_y2, 1);
+                        //then draw back the fbo texture
+                        drawFBO();
+                    }
+                    else
+                    {
+                        GL11.glScalef(scale_x, scale_y, 1);
+                        callback.frameRendering();
+                    }
 
                     // update window contents
                     Display.update();

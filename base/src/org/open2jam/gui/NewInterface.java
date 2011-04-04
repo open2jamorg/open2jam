@@ -205,6 +205,7 @@ public class NewInterface extends javax.swing.JFrame
         btn_skin = new javax.swing.JButton();
         combo_dirs = new javax.swing.JComboBox();
         btn_reload = new javax.swing.JButton();
+        jc_bilinear = new javax.swing.JCheckBox();
         table_scroll = new javax.swing.JScrollPane();
         table_songlist = new javax.swing.JTable();
         txt_filter = new javax.swing.JTextField();
@@ -506,6 +507,9 @@ public class NewInterface extends javax.swing.JFrame
             }
         });
 
+        jc_bilinear.setSelected(true);
+        jc_bilinear.setText("Bilinear filter");
+
         javax.swing.GroupLayout panel_settingLayout = new javax.swing.GroupLayout(panel_setting);
         panel_setting.setLayout(panel_settingLayout);
         panel_settingLayout.setHorizontalGroup(
@@ -513,6 +517,7 @@ public class NewInterface extends javax.swing.JFrame
             .addGroup(panel_settingLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jc_bilinear)
                     .addGroup(panel_settingLayout.createSequentialGroup()
                         .addComponent(jr_rank_easy)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -590,7 +595,9 @@ public class NewInterface extends javax.swing.JFrame
                 .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jc_vsync)
                     .addComponent(jc_full_screen))
-                .addGap(31, 31, 31)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jc_bilinear)
+                .addGap(8, 8, 8)
                 .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbl_dirKey)
                     .addComponent(btn_configuration, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -806,6 +813,7 @@ public class NewInterface extends javax.swing.JFrame
 	    }
 	    final boolean vsync = jc_vsync.isSelected();
 	    final boolean fs = jc_full_screen.isSelected();
+            final boolean bilinear = jc_bilinear.isSelected();
 
 	    final boolean autoplay = jc_autoplay.isSelected();
 
@@ -829,7 +837,7 @@ public class NewInterface extends javax.swing.JFrame
                         r = new BeatmaniaRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
                     else
                         r = new O2jamRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
-                    r.setDisplay(dm, vsync, false);
+                    r.setDisplay(dm, vsync, false, bilinear);
                     r.startRendering();
                 }
             }
@@ -840,7 +848,7 @@ public class NewInterface extends javax.swing.JFrame
                     r = new BeatmaniaRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
                 else
                     r = new O2jamRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
-                r.setDisplay(dm, vsync, fs);
+                r.setDisplay(dm, vsync, fs, bilinear);
                 r.startRendering();
             }
 	}
@@ -899,6 +907,7 @@ public class NewInterface extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JCheckBox jc_autoplay;
+    private javax.swing.JCheckBox jc_bilinear;
     private javax.swing.JCheckBox jc_custom_size;
     private javax.swing.JCheckBox jc_full_screen;
     private javax.swing.JCheckBox jc_timed_judgment;

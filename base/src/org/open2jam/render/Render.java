@@ -211,8 +211,8 @@ public abstract class Render implements GameWindowCallback
     }
 
     /** set the screen dimensions */
-    public void setDisplay(DisplayMode dm, boolean vsync, boolean fs) {
-        window.setDisplay(dm,vsync,fs);
+    public void setDisplay(DisplayMode dm, boolean vsync, boolean fs, boolean bilinear) {
+        window.setDisplay(dm,vsync,fs,bilinear);
     }
 
     /* make the rendering start */
