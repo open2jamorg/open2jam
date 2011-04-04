@@ -155,7 +155,8 @@ public class LWJGLGameWindow implements GameWindow {
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glLoadIdentity();
 
-            if(bilinear)initFBO();
+            if(bilinear)
+                bilinear = initFBO();
 
             callback.initialise();
 
@@ -241,7 +242,7 @@ public class LWJGLGameWindow implements GameWindow {
 
     int fboID;
     int texID;
-    public void initFBO()
+    public boolean initFBO()
     {
         //create the framebuffer object
         IntBuffer tmp = ByteBuffer.allocateDirect(1*4).order(ByteOrder.nativeOrder()).asIntBuffer();
@@ -267,32 +268,15 @@ public class LWJGLGameWindow implements GameWindow {
 
         // check if everything is ok
         int framebuffer = EXTFramebufferObject.glCheckFramebufferStatusEXT( EXTFramebufferObject.GL_FRAMEBUFFER_EXT );
-        switch ( framebuffer ) {
-            case EXTFramebufferObject.GL_FRAMEBUFFER_COMPLETE_EXT:
-                    break;
-            case EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
-                    throw new RuntimeException( "FrameBuffer: " + fboID
-                                    + ", has caused a GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT exception" );
-            case EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
-                    throw new RuntimeException( "FrameBuffer: " + fboID
-                                    + ", has caused a GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT exception" );
-            case EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
-                    throw new RuntimeException( "FrameBuffer: " + fboID
-                                    + ", has caused a GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT exception" );
-            case EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
-                    throw new RuntimeException( "FrameBuffer: " + fboID
-                                    + ", has caused a GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT exception" );
-            case EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
-                    throw new RuntimeException( "FrameBuffer: " + fboID
-                                    + ", has caused a GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT exception" );
-            case EXTFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
-                    throw new RuntimeException( "FrameBuffer: " + fboID
-                                    + ", has caused a GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT exception" );
-            default:
-                    throw new RuntimeException( "Unexpected reply from glCheckFramebufferStatusEXT: " + framebuffer );
+
+        if(framebuffer != EXTFramebufferObject.GL_FRAMEBUFFER_COMPLETE_EXT){
+            logger.log(Level.WARNING, "FBO wasn't initialized!!!");
+            return false;
         }
 
         EXTFramebufferObject.glBindFramebufferEXT( EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0 );
+
+        return true;
     }
 
     public void drawToFBO()
