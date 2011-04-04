@@ -94,6 +94,7 @@ public class SkinHandler extends DefaultHandler
 
 		result.screen_scale_x = (float) (this.targetW/this.baseW);
 		result.screen_scale_y = (float) (this.targetH/this.baseH);
+                ResourceFactory.get().getGameWindow().initScales(this.baseW, this.baseH);
             }break;
 
             case layer:{
@@ -137,7 +138,6 @@ public class SkinHandler extends DefaultHandler
                     logger.log(Level.WARNING, "Sprite resource load error !! {0}", e);
                     break;
                 }
-                ResourceFactory.get().getGameWindow().setScale(result.screen_scale_x,result.screen_scale_y);
                 s.setScale(sx, sy);
                 frame_buffer.add(s);
             }break;

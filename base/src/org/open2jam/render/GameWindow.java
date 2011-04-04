@@ -34,7 +34,7 @@ public interface GameWindow {
 	 */
 	public void startRendering();
 
-        public void setScale(float x, float y);
+        public void initScales(double width, double height);
 	
 	/**
 	 * Set the callback that should be notified of the window

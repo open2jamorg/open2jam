@@ -43,16 +43,14 @@ public class LWJGLGameWindow implements GameWindow {
 	/** The height of the game display area */
 	private int height;
 
-        private float screen_scale_x = 1f, screen_scale_y = 1f;
-
 	/** The loader responsible for converting images into OpenGL textures */
 	private TextureLoader textureLoader;
   
 	/** Title of window, we get it before our window is ready, so store it till needed */
 	private String title;
 
-
         private float scale_x = 1f, scale_y = 1f;
+        private float scale_x2 = 1f, scale_y2 = 1f;
 
 	/**
 	 * Create a new game window that will use OpenGL to 
@@ -186,11 +184,14 @@ public class LWJGLGameWindow implements GameWindow {
             return Keyboard.isKeyDown(keyCode);
 	}
 
-        public void setScale(float x, float y){
-            scale_x = x;
-            scale_y = y;
+        public void initScales(double w, double h){
+            scale_x = (float) (width/w);
+            scale_y = (float) (height/h);
+        //TODO idk :/ it works so... needs a refactor
+            scale_x2 = (float) (w/width);
+            scale_y2 = (float) (h/height);
         }
-  
+
 	/**
 	 * Run the main game loop. This method keeps rendering the scene
 	 * and requesting that the callback update its screen.
@@ -206,8 +207,8 @@ public class LWJGLGameWindow implements GameWindow {
                     //first we draw everything in the fbo
                     drawToFBO();
                     //then scale
-                    if(scale_x >= 1f || scale_y >= 1f)
-                        GL11.glScalef(scale_x, scale_y, 1);
+
+                    GL11.glScalef(scale_x >= 1f ? scale_x : scale_x2, scale_y >= 1f ? scale_y : scale_y2, 1);
 
                     //then draw back the fbo texture
                     drawFBO();
@@ -297,8 +298,7 @@ public class LWJGLGameWindow implements GameWindow {
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
             GL11.glLoadIdentity();
 
-            if(scale_x < 1f || scale_y < 1f)
-                GL11.glScalef(scale_x, scale_y, 1);
+            GL11.glScalef(scale_x < 1f ? scale_x : 1f, scale_y < 1f ? scale_y : 1f, 1);
 
             callback.frameRendering();
 
