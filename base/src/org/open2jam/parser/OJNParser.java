@@ -242,7 +242,7 @@ public class OJNParser
                         event_list.add(new Event(channel,measure,position,value,Event.Flag.RELEASE,volume, pan));
                     }
                     else if(type == 4){ // M### auto-play
-                        event_list.add(new Event(channel,measure,position,1000+value,Event.Flag.RELEASE,volume, pan));
+                        event_list.add(new Event(channel,measure,position,1000+value,Event.Flag.NONE,volume, pan));
                     }
                 }
             }

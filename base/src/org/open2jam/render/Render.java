@@ -711,11 +711,9 @@ public abstract class Render implements GameWindowCallback
     }
 
     /**
-     * This function will randomize the notes, need more work
-     *
-     * TODO:
-     * * Don't overlap the notes
-     * * ADD P2 SUPPORT
+     * This function will randomize the notes
+     * o2jam randomize the pattern each measure unless a longnote is in between measures
+     * This implementation keeps the randomization of the previous measure if that happens
      * @param buffer
      */
     public void channelRandom(Iterator<Event> buffer)
@@ -741,51 +739,46 @@ public abstract class Render implements GameWindowCallback
 
             if(e.getMeasure() > last_measure)
             {
-                Collections.shuffle(channelSwap);
+                if(lnMap.isEmpty())
+                    Collections.shuffle(channelSwap);
                 last_measure = e.getMeasure();
             }
 
 	    switch(e.getChannel())
 	    {
 		case NOTE_P1_1: 
-                    getRandomChannel(e, lnMap, channelSwap.get(0));
+                    setRandomChannel(e, lnMap, channelSwap.get(0));
                 break;
 		case NOTE_P1_2:
-                    getRandomChannel(e, lnMap, channelSwap.get(1));
+                    setRandomChannel(e, lnMap, channelSwap.get(1));
                 break;
 		case NOTE_P1_3:
-                    getRandomChannel(e, lnMap, channelSwap.get(2));
+                    setRandomChannel(e, lnMap, channelSwap.get(2));
                 break;
 		case NOTE_P1_4:
-                    getRandomChannel(e, lnMap, channelSwap.get(3));
+                    setRandomChannel(e, lnMap, channelSwap.get(3));
                 break;
 		case NOTE_P1_5:
-                    getRandomChannel(e, lnMap, channelSwap.get(4));
+                    setRandomChannel(e, lnMap, channelSwap.get(4));
                 break;
 		case NOTE_P1_6:
-                    getRandomChannel(e, lnMap, channelSwap.get(5));
+                    setRandomChannel(e, lnMap, channelSwap.get(5));
                 break;
 		case NOTE_P1_7:
-                    getRandomChannel(e, lnMap, channelSwap.get(6));
+                    setRandomChannel(e, lnMap, channelSwap.get(6));
                 break;
 	    }
 	}
     }
 
-    protected void getRandomChannel(Event e, EnumMap<Event.Channel, Event.Channel> lnMap, Event.Channel random)
+    protected void setRandomChannel(Event e, EnumMap<Event.Channel, Event.Channel> lnMap, Event.Channel random)
     {
         Event.Channel c = random;
 
-        // TODO I don't know why but this is fucked up and i'm tired :/ it works but longnotes are broken...
-        // if there are over 9000 longnotes at the same time just it start to screw everything :/
         if(e.getFlag() == Event.Flag.HOLD || e.getFlag() == Event.Flag.RELEASE)
         {
             if(!lnMap.containsKey(e.getChannel()))
-            {
-                if(e.getFlag() == Event.Flag.RELEASE)System.out.println("Release before hold: "+e.getChannel());
-                if(e.getFlag() == Event.Flag.HOLD)System.out.println("Hold before release: "+e.getChannel());
                 lnMap.put(e.getChannel(), c);
-            }
             else
                 c = lnMap.remove(e.getChannel());
         }
