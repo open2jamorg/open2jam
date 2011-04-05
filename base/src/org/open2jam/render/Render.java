@@ -720,9 +720,7 @@ public abstract class Render implements GameWindowCallback
      */
     public void channelRandom(Iterator<Event> buffer)
     {
-	EnumMap<Event.Channel, Event.Channel> ln = new EnumMap<Event.Channel, Event.Channel>(Event.Channel.class);
-
-	List<Event.Channel> channelSwap = new LinkedList<Event.Channel>();
+        List<Event.Channel> channelSwap = new LinkedList<Event.Channel>();
 
 	channelSwap.add(Event.Channel.NOTE_P1_1);
 	channelSwap.add(Event.Channel.NOTE_P1_2);
@@ -734,40 +732,73 @@ public abstract class Render implements GameWindowCallback
 
 	Collections.shuffle(channelSwap);
 
+        EnumMap<Event.Channel, Event.Channel> lnMap = new EnumMap<Event.Channel, Event.Channel>(Event.Channel.class);
+
+        int last_measure = -1;
 	while(buffer.hasNext())
 	{
 	    Event e = buffer.next();
 
+            if(e.getMeasure() > last_measure)
+            {
+                Collections.shuffle(channelSwap);
+                last_measure = e.getMeasure();
+            }
+
 	    switch(e.getChannel())
 	    {
-		    case NOTE_P1_1:case NOTE_P1_2:
-		    case NOTE_P1_3:case NOTE_P1_4:
-		    case NOTE_P1_5:case NOTE_P1_6:case NOTE_P1_7:
-
-			Event.Channel chan = e.getChannel();
-
-			int temp = (int)(Math.random()*7);
-			chan = channelSwap.get(temp);
-
-			if(e.getFlag() == Event.Flag.NONE){
-			    e.setChannel(chan);
-			}
-                        //WTF it seems that the release flag can be BEFORE the hold one :/
-			else if(e.getFlag() == Event.Flag.HOLD || e.getFlag() == Event.Flag.RELEASE){
-			    if(ln.get(e.getChannel()) != null)
-			    {
-				e.setChannel(ln.get(e.getChannel()));
-				ln.remove(e.getChannel());
-			    }
-                            else
-                            {
-                                ln.put(e.getChannel(), chan);
-                                e.setChannel(chan);
-                            }
-			}
-		    break;
+		case NOTE_P1_1: 
+                    getRandomChannel(e, lnMap, channelSwap.get(0));
+                break;
+		case NOTE_P1_2:
+                    getRandomChannel(e, lnMap, channelSwap.get(1));
+                break;
+		case NOTE_P1_3:
+                    getRandomChannel(e, lnMap, channelSwap.get(2));
+                break;
+		case NOTE_P1_4:
+                    getRandomChannel(e, lnMap, channelSwap.get(3));
+                break;
+		case NOTE_P1_5:
+                    getRandomChannel(e, lnMap, channelSwap.get(4));
+                break;
+		case NOTE_P1_6:
+                    getRandomChannel(e, lnMap, channelSwap.get(5));
+                break;
+		case NOTE_P1_7:
+                    getRandomChannel(e, lnMap, channelSwap.get(6));
+                break;
 	    }
 	}
+    }
+
+    protected void getRandomChannel(Event e, EnumMap<Event.Channel, Event.Channel> lnMap, Event.Channel random)
+    {
+        Event.Channel c = random;
+
+        // TODO I don't know why but this is fucked up and i'm tired :/ it works but longnotes are broken...
+        // if there are over 9000 longnotes at the same time just it start to screw everything :/
+        if(e.getFlag() == Event.Flag.HOLD || e.getFlag() == Event.Flag.RELEASE)
+        {
+            if(!lnMap.containsKey(e.getChannel()))
+            {
+                if(e.getFlag() == Event.Flag.RELEASE)System.out.println("Release before hold: "+e.getChannel());
+                if(e.getFlag() == Event.Flag.HOLD)System.out.println("Hold before release: "+e.getChannel());
+                lnMap.put(e.getChannel(), c);
+            }
+            else
+                c = lnMap.remove(e.getChannel());
+        }
+        else if(e.getFlag() == Event.Flag.NONE)
+            c = lnMap.containsValue(c) ? Event.Channel.NONE : c;
+
+        if(c == null)
+        {
+            logger.log(Level.WARNING, "FUCK THIS RANDOMNESS! I mean... channel null :/");
+            c = random;
+        }
+
+        e.setChannel(c);
     }
 
     protected void visibility(int value)
