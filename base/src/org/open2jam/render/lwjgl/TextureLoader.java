@@ -94,9 +94,6 @@ class TextureLoader {
 
     public Texture createTexture(BufferedImage image)
     {
-        /**
-         * TODO !!! find another way to make the scale smoooooth and without gaps
-         */
        return createTexture(image,
                          GL11.GL_TEXTURE_2D, // target
                          GL11.GL_RGBA,     // dst pixel format

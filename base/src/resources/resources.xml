@@ -500,11 +500,11 @@
     <!-- counters and judgment sprites -->
     <layer id="11">
 	<!-- <entity id="COMBO_TITLE" x="67" y="186" sprite="combo_title" /> -->
-        <entity x="67" y="186" sprite="combo_title" /> 
+
         
         <entity id="COMBO_COUNTER" x="99" y="250" sprite="combo_number_0,
 	combo_number_1, combo_number_2, combo_number_3, combo_number_4, combo_number_5, 
-	combo_number_6, combo_number_7, combo_number_8, combo_number_9" />
+	combo_number_6, combo_number_7, combo_number_8, combo_number_9, combo_title" />
 
 	<entity id="FPS_COUNTER" x="798" y="5" sprite="score_number_0, score_number_1,
 	 score_number_2, score_number_3, score_number_4, score_number_5, score_number_6, 
@@ -526,10 +526,10 @@
 	 score_number_7, score_number_8, score_number_9" />
 
         <!--<entity id="JAM_TITLE" x="65" y="45" sprite="jam_title" /> -->
-        <entity x="65" y="45" sprite="jam_title" /> 
+
 	<entity id="JAM_COUNTER" x="99" y="80" sprite="jam_number_0, jam_number_1,
 	 jam_number_2, jam_number_3, jam_number_4, jam_number_5, jam_number_6,
-	 jam_number_7, jam_number_8, jam_number_9" />
+	 jam_number_7, jam_number_8, jam_number_9, jam_title" />
 
 	<entity id="MINUTE_COUNTER" x="346" y="569" sprite="time_number_0, time_number_1, 
 	time_number_2, time_number_3, time_number_4, time_number_5, time_number_6, 

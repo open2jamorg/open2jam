@@ -1,5 +1,6 @@
 package org.open2jam.render.entities;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -30,11 +31,16 @@ public class ComboCounterEntity extends NumberEntity
 
     private int count_threshold = 0;
 
+    private Entity title_sprite = null;
+
     public ComboCounterEntity(Collection<Entity> list, double x, double y)
     {
         super(list,x,y);
         base_y = y;
         base_x = x;
+        ArrayList<Entity> al = new ArrayList<Entity>();
+        al.addAll(list);
+        if(list.size()>10)title_sprite = al.get(10);
     }
 
     @Override
@@ -42,6 +48,9 @@ public class ComboCounterEntity extends NumberEntity
     {
         base_x = x;
         base_y = y;
+        if(title_sprite == null)return;
+        System.out.println(title_sprite.getX()+", "+ title_sprite.getY());
+        title_sprite.setPos(x, y);
     }
 
     @Override
@@ -68,6 +77,7 @@ public class ComboCounterEntity extends NumberEntity
     public void move(long delta)
     {
         super.move(delta);
+        if(title_sprite != null) title_sprite.move(delta);
         to_show -= delta;
         if(y > base_y)y += delta * wobble_dy;
     }
@@ -97,5 +107,10 @@ public class ComboCounterEntity extends NumberEntity
             entity_list.get(i).draw();
             tx += entity_list.get(i).getWidth();
         }
+        if(title_sprite == null) return;
+        double title_x = base_x-(title_sprite.getWidth()/2);
+        double title_y = base_y-(entity_list.get(0).getHeight());
+        title_sprite.setPos(title_x, title_y);
+        title_sprite.draw();
     }
 }

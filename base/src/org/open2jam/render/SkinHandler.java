@@ -281,13 +281,13 @@ public class SkinHandler extends DefaultHandler
         }
         else if(id.startsWith("PRESSED_NOTE_")){
             SpriteList sl = sprite_buffer.get(atts.get("sprite"));
-            e = new Entity(sl, 0, 0);
+            e = new AnimatedEntity(sl, 0, 0);
         }
         else if(id.equals("FPS_COUNTER")){
             ArrayList<Entity> list = new ArrayList<Entity>();
             for(String s : atts.get("sprite").split(",")){
                 s = s.trim();
-                list.add( new Entity(sprite_buffer.get(s),0,0));
+                list.add( new AnimatedEntity(sprite_buffer.get(s),0,0));
             }
             e = new NumberEntity(list, 0, 0);
         }
@@ -295,7 +295,7 @@ public class SkinHandler extends DefaultHandler
             ArrayList<Entity> list = new ArrayList<Entity>();
             for(String s : atts.get("sprite").split(",")){
                 s = s.trim();
-                list.add( new Entity(sprite_buffer.get(s),0,0));
+                list.add( new AnimatedEntity(sprite_buffer.get(s),0,0));
             }
 	    e = new NumberEntity(list, 0, 0);
 	}
@@ -303,7 +303,7 @@ public class SkinHandler extends DefaultHandler
             ArrayList<Entity> list = new ArrayList<Entity>();
             for(String s : atts.get("sprite").split(",")){
                 s = s.trim();
-                list.add( new Entity(sprite_buffer.get(s),0,0));
+                list.add( new AnimatedEntity(sprite_buffer.get(s),0,0));
             }
 	    e = new NumberEntity(list, 0, 0);
 	}
@@ -311,7 +311,7 @@ public class SkinHandler extends DefaultHandler
             ArrayList<Entity> list = new ArrayList<Entity>();
             for(String s : atts.get("sprite").split(",")){
                 s = s.trim();
-                list.add( new Entity(sprite_buffer.get(s),0,0));
+                list.add( new AnimatedEntity(sprite_buffer.get(s),0,0));
             }
 	    e = new NumberEntity(list, 0, 0);
 	}
@@ -319,7 +319,7 @@ public class SkinHandler extends DefaultHandler
             ArrayList<Entity> list = new ArrayList<Entity>();
             for(String s : atts.get("sprite").split(",")){
                 s = s.trim();
-                list.add( new Entity(sprite_buffer.get(s),0,0));
+                list.add( new AnimatedEntity(sprite_buffer.get(s),0,0));
             }
 	    e = new NumberEntity(list, 0, 0);
 	}
@@ -327,7 +327,7 @@ public class SkinHandler extends DefaultHandler
             ArrayList<Entity> list = new ArrayList<Entity>();
             for(String s : atts.get("sprite").split(",")){
                 s = s.trim();
-                list.add( new Entity(sprite_buffer.get(s),0,0));
+                list.add( new AnimatedEntity(sprite_buffer.get(s),0,0));
             }
 	    e = new NumberEntity(list, 0, 0);
 	}
@@ -335,7 +335,7 @@ public class SkinHandler extends DefaultHandler
             ArrayList<Entity> list = new ArrayList<Entity>();
             for(String s : atts.get("sprite").split(",")){
                 s = s.trim();
-                list.add( new Entity(sprite_buffer.get(s),0,0));
+                list.add( new AnimatedEntity(sprite_buffer.get(s),0,0));
             }
 	    e = new NumberEntity(list, 0, 0);
 	}
@@ -343,7 +343,7 @@ public class SkinHandler extends DefaultHandler
             ArrayList<Entity> list = new ArrayList<Entity>();
             for(String s : atts.get("sprite").split(",")){
                 s = s.trim();
-                list.add( new Entity(sprite_buffer.get(s),0,0));
+                list.add( new AnimatedEntity(sprite_buffer.get(s),0,0));
             }
 	    e = new NumberEntity(list, 0, 0);
 	}
@@ -351,7 +351,7 @@ public class SkinHandler extends DefaultHandler
             ArrayList<Entity> list = new ArrayList<Entity>();
             for(String s : atts.get("sprite").split(",")){
                 s = s.trim();
-                list.add( new Entity(sprite_buffer.get(s),0,0));
+                list.add( new AnimatedEntity(sprite_buffer.get(s),0,0));
             }
 	    e = new ComboCounterEntity(list, 0, 0);
 	}
@@ -359,23 +359,23 @@ public class SkinHandler extends DefaultHandler
             ArrayList<Entity> list = new ArrayList<Entity>();
             for(String s : atts.get("sprite").split(",")){
                 s = s.trim();
-                list.add( new Entity(sprite_buffer.get(s),0,0));
+                list.add( new AnimatedEntity(sprite_buffer.get(s),0,0));
             }
 	    e = new ComboCounterEntity(list, 0, 0);
         }
         else if(id.equals("COMBO_TITLE")){
             SpriteList sl = sprite_buffer.get(atts.get("sprite"));
-            e = new Entity(sl, 0, 0);
+            e = new AnimatedEntity(sl, 0, 0);
         }
         else if(id.equals("JAM_TITLE")){
             SpriteList sl = sprite_buffer.get(atts.get("sprite"));
-            e = new Entity(sl, 0, 0);
+            e = new AnimatedEntity(sl, 0, 0);
         }
         else if(id.equals("MINUTE_COUNTER")){
             ArrayList<Entity> list = new ArrayList<Entity>();
             for(String s : atts.get("sprite").split(",")){
                 s = s.trim();
-                list.add( new Entity(sprite_buffer.get(s),0,0));
+                list.add( new AnimatedEntity(sprite_buffer.get(s),0,0));
             }
 	    e = new NumberEntity(list, 0, 0);
         }
@@ -383,7 +383,7 @@ public class SkinHandler extends DefaultHandler
             ArrayList<Entity> list = new ArrayList<Entity>();
             for(String s : atts.get("sprite").split(",")){
                 s = s.trim();
-                list.add( new Entity(sprite_buffer.get(s),0,0));
+                list.add( new AnimatedEntity(sprite_buffer.get(s),0,0));
             }
 	    e = new NumberEntity(list, 0, 0);
         }

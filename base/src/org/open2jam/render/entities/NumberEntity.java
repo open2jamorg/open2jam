@@ -17,6 +17,7 @@ public class NumberEntity extends Entity
     {
         entity_list = new ArrayList<Entity>();
         entity_list.addAll(list);
+        if(entity_list.size()>10) entity_list.remove(10);
         this.x = x;
         this.y = y;
         sprite = entity_list.get(0).sprite;
@@ -52,6 +53,12 @@ public class NumberEntity extends Entity
         show_digits = number;
     }
 
+    @Override
+    public void move(long delta)
+    {
+        super.move(delta);
+    }
+    
     @Override
     public void draw()
     {
