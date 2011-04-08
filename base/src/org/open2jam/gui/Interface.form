@@ -45,7 +45,7 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="About"/>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-              <Color id="Default Cursor"/>
+              <Color id="Cursor predeterminado"/>
             </Property>
           </Properties>
           <Events>
@@ -140,7 +140,7 @@
                           <Component id="lbl_bgm_vol" alignment="2" min="-2" max="-2" attributes="0"/>
                           <Component id="slider_bgm_vol" alignment="2" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace pref="7" max="32767" attributes="0"/>
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -175,11 +175,11 @@
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="lbl_keys" min="-2" max="-2" attributes="0"/>
-                                      <Component id="lbl_level" alignment="0" pref="216" max="32767" attributes="0"/>
-                                      <Component id="lbl_notes" alignment="0" pref="216" max="32767" attributes="0"/>
-                                      <Component id="lbl_time" alignment="0" pref="216" max="32767" attributes="0"/>
-                                      <Component id="lbl_genre" alignment="0" pref="216" max="32767" attributes="0"/>
-                                      <Component id="lbl_bpm" alignment="0" pref="216" max="32767" attributes="0"/>
+                                      <Component id="lbl_level" alignment="0" pref="227" max="32767" attributes="0"/>
+                                      <Component id="lbl_notes" alignment="0" pref="227" max="32767" attributes="0"/>
+                                      <Component id="lbl_time" alignment="0" pref="227" max="32767" attributes="0"/>
+                                      <Component id="lbl_genre" alignment="0" pref="227" max="32767" attributes="0"/>
+                                      <Component id="lbl_bpm" alignment="0" pref="227" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                               <Component id="lbl_filename" min="-2" max="-2" attributes="0"/>
@@ -257,7 +257,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="lbl_artist" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="table_scroll2" pref="245" max="32767" attributes="0"/>
+                  <Component id="table_scroll2" pref="246" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="lbl_visibilityModifier" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -512,9 +512,10 @@
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="btn_configuration" min="-2" pref="163" max="-2" attributes="1"/>
-                          <EmptySpace pref="29" max="32767" attributes="0"/>
+                          <EmptySpace pref="17" max="32767" attributes="0"/>
                       </Group>
                       <Component id="btn_skin" alignment="0" min="-2" pref="163" max="-2" attributes="1"/>
+                      <Component id="jc_bilinear" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -557,7 +558,9 @@
                       <Component id="jc_vsync" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jc_full_screen" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jc_bilinear" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                   <Component id="btn_configuration" min="-2" max="-2" attributes="1"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="btn_skin" min="-2" max="-2" attributes="1"/>
@@ -750,6 +753,12 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_reloadActionPerformed"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="jc_bilinear">
+          <Properties>
+            <Property name="selected" type="boolean" value="true"/>
+            <Property name="text" type="java.lang.String" value="Bilinear filter"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>

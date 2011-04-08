@@ -21,6 +21,7 @@ import org.open2jam.parser.Event;
 import org.open2jam.parser.Chart;
 import org.open2jam.render.entities.BarEntity;
 import org.open2jam.render.entities.ComboCounterEntity;
+import org.open2jam.render.entities.CompositeEntity;
 import org.open2jam.render.entities.Entity;
 import org.open2jam.render.entities.LongNoteEntity;
 import org.open2jam.render.entities.MeasureEntity;
@@ -166,6 +167,8 @@ public abstract class Render implements GameWindowCallback
     /** the maxcombo counter */
     NumberEntity maxcombo_entity;
 
+    protected Entity judgment_line;
+
     /** statistics variables */
     double hit_sum = 0;
     double hit_count = 0;
@@ -174,6 +177,7 @@ public abstract class Render implements GameWindowCallback
     /** the channelMirror, random select */
     private int channelModifier = 0;
 
+    protected CompositeEntity visibility_entity;
     /** The volume */
     private final float mainVolume;
     private final float keyVolume;
@@ -201,8 +205,8 @@ public abstract class Render implements GameWindowCallback
     }
 
     /** set the screen dimensions */
-    public void setDisplay(DisplayMode dm, boolean vsync, boolean fs) {
-        window.setDisplay(dm,vsync,fs);
+    public void setDisplay(DisplayMode dm, boolean vsync, boolean fs, boolean bilinear) {
+        window.setDisplay(dm,vsync,fs,bilinear);
     }
 
     /* make the rendering start */
@@ -379,6 +383,12 @@ public abstract class Render implements GameWindowCallback
         entities_matrix.add(second_entity);
 
         pills_draw = new LinkedList<Entity>();
+
+        visibility_entity = new CompositeEntity();
+        if(visibilityModifier != 0) visibility(visibilityModifier);
+
+        judgment_line = (Entity) skin.getEntityMap().get("JUDGMENT_LINE");
+        entities_matrix.add(judgment_line);
 
         for(Event.Channel c : keyboard_map.keySet())
         {
@@ -681,18 +691,14 @@ public abstract class Render implements GameWindowCallback
     }
 
     /**
-     * This function will randomize the notes, need more work
-     *
-     * TODO:
-     * * Don't overlap the notes
-     * * ADD P2 SUPPORT
+     * This function will randomize the notes
+     * o2jam randomize the pattern each measure unless a longnote is in between measures
+     * This implementation keeps the randomization of the previous measure if that happens
      * @param buffer
      */
     void channelRandom(Iterator<Event> buffer)
     {
-	EnumMap<Event.Channel, Event.Channel> ln = new EnumMap<Event.Channel, Event.Channel>(Event.Channel.class);
-
-	List<Event.Channel> channelSwap = new LinkedList<Event.Channel>();
+        List<Event.Channel> channelSwap = new LinkedList<Event.Channel>();
 
 	channelSwap.add(Event.Channel.NOTE_1);
 	channelSwap.add(Event.Channel.NOTE_2);
@@ -704,40 +710,102 @@ public abstract class Render implements GameWindowCallback
 
 	Collections.shuffle(channelSwap);
 
+        EnumMap<Event.Channel, Event.Channel> lnMap = new EnumMap<Event.Channel, Event.Channel>(Event.Channel.class);
+
+        int last_measure = -1;
 	while(buffer.hasNext())
 	{
 	    Event e = buffer.next();
 
+            if(e.getMeasure() > last_measure)
+            {
+                if(lnMap.isEmpty())
+                    Collections.shuffle(channelSwap);
+                last_measure = e.getMeasure();
+            }
+
 	    switch(e.getChannel())
 	    {
-		    case NOTE_1:case NOTE_2:
-		    case NOTE_3:case NOTE_4:
-		    case NOTE_5:case NOTE_6:case NOTE_7:
-
-			Event.Channel chan = e.getChannel();
-
-			int temp = (int)(Math.random()*7);
-			chan = channelSwap.get(temp);
-
-			if(e.getFlag() == Event.Flag.NONE){
-			    e.setChannel(chan);
-			}
-                        //WTF it seems that the release flag can be BEFORE the hold one :/
-			else if(e.getFlag() == Event.Flag.HOLD || e.getFlag() == Event.Flag.RELEASE){
-			    if(ln.get(e.getChannel()) != null)
-			    {
-				e.setChannel(ln.get(e.getChannel()));
-				ln.remove(e.getChannel());
-			    }
-                            else
-                            {
-                                ln.put(e.getChannel(), chan);
-                                e.setChannel(chan);
-                            }
-			}
-		    break;
+		case NOTE_1: 
+                    setRandomChannel(e, lnMap, channelSwap.get(0));
+                break;
+		case NOTE_2:
+                    setRandomChannel(e, lnMap, channelSwap.get(1));
+                break;
+		case NOTE_3:
+                    setRandomChannel(e, lnMap, channelSwap.get(2));
+                break;
+		case NOTE_4:
+                    setRandomChannel(e, lnMap, channelSwap.get(3));
+                break;
+		case NOTE_5:
+                    setRandomChannel(e, lnMap, channelSwap.get(4));
+                break;
+		case NOTE_6:
+                    setRandomChannel(e, lnMap, channelSwap.get(5));
+                break;
+		case NOTE_7:
+                    setRandomChannel(e, lnMap, channelSwap.get(6));
+                break;
 	    }
 	}
+    }
+
+    protected void setRandomChannel(Event e, EnumMap<Event.Channel, Event.Channel> lnMap, Event.Channel random)
+    {
+        Event.Channel c = random;
+
+        if(e.getFlag() == Event.Flag.HOLD || e.getFlag() == Event.Flag.RELEASE)
+        {
+            if(!lnMap.containsKey(e.getChannel()))
+                lnMap.put(e.getChannel(), c);
+            else
+                c = lnMap.remove(e.getChannel());
+        }
+        else if(e.getFlag() == Event.Flag.NONE)
+            c = lnMap.containsValue(c) ? Event.Channel.NONE : c;
+
+        if(c == null)
+        {
+            Logger.global.log(Level.WARNING, "FUCK THIS RANDOMNESS! I mean... channel null :/");
+            c = random;
+        }
+
+        e.setChannel(c);
+    }
+
+    protected void visibility(int value)
+    {
+        int height = 0;
+        int width  = 0;
+
+        Sprite rec = null;
+        // We will make a new entity with the masking rectangle for each note lane
+        // because we can't know for sure where the notes will be,
+        // meaning that they may not be together
+        for(Event.Channel ev : Event.Channel.values())
+        {
+            if(ev.toString().startsWith("NOTE_") && skin.getEntityMap().get(ev.toString()) != null)
+            {
+                height = (int)Math.round((getViewport()+skin.getEntityMap().get(ev.toString()).getHeight()));
+                width = (int)Math.round(skin.getEntityMap().get(ev.toString()).getWidth());
+                rec  = ResourceFactory.get().doRectangle(width, height, value);
+                visibility_entity.getEntityList().add(new Entity(rec, skin.getEntityMap().get(ev.toString()).getX(), 0));
+            }
+        }
+        
+        int layer = note_layer+1;
+
+        for(Entity e : skin.getEntityList())
+            if(e.getLayer() > layer) layer++;
+
+        visibility_entity.setLayer(layer);
+        
+//        skin.getEntityMap().get("MEASURE_MARK").setLayer(layer);
+        if(value != 1)skin.getEntityMap().get("JUDGMENT_LINE").setLayer(layer);
+
+        entities_matrix.add(visibility_entity);
+        return;
     }
 
     /**

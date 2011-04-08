@@ -36,4 +36,13 @@ public class Skin
     public ArrayList<Entity> getEntityList(){
         return other_entities;
     }
+
+    public ArrayList<Entity> getAllEntities(){
+        ArrayList<Entity> al = new ArrayList<Entity>();
+
+        al.addAll(named_entities.values());
+        al.addAll(other_entities);
+
+        return al;
+    }
 }

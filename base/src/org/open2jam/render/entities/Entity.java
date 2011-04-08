@@ -39,7 +39,17 @@ public class Entity implements Copyable<Entity>
         height = sprite.getHeight();
     }
 
-    Entity(Entity org) {
+    public Entity(Sprite s, double x, double y)
+    {
+        this.frames = null;
+        this.sprite = s;
+        this.x = x;
+        this.y = y;
+        width = sprite.getWidth();
+        height = sprite.getHeight();
+    }
+
+    protected Entity(Entity org) {
         this.alive = org.alive;
         this.sprite = org.sprite;
         this.frames = org.frames;

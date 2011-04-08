@@ -129,8 +129,8 @@ public class Interface extends javax.swing.JFrame
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        ButtonGroup rank_group = new ButtonGroup();
-        JPanel panel_info = new JPanel();
+        rank_group = new javax.swing.ButtonGroup();
+        panel_info = new javax.swing.JPanel();
         lbl_title = new javax.swing.JLabel();
         lbl_artist = new javax.swing.JLabel();
         lbl_bpm = new javax.swing.JLabel();
@@ -138,62 +138,63 @@ public class Interface extends javax.swing.JFrame
         lbl_notes = new javax.swing.JLabel();
         lbl_time = new javax.swing.JLabel();
         lbl_genre = new javax.swing.JLabel();
-        JLabel lbl_bpm1 = new JLabel();
-        JLabel lbl_genre1 = new JLabel();
-        JLabel lbl_level1 = new JLabel();
-        JLabel lbl_notes1 = new JLabel();
-        JLabel lbl_time1 = new JLabel();
-        JButton bt_play = new JButton();
+        lbl_bpm1 = new javax.swing.JLabel();
+        lbl_genre1 = new javax.swing.JLabel();
+        lbl_level1 = new javax.swing.JLabel();
+        lbl_notes1 = new javax.swing.JLabel();
+        lbl_time1 = new javax.swing.JLabel();
+        bt_play = new javax.swing.JButton();
         lbl_cover = new javax.swing.JLabel();
-        JLabel lbl_keys1 = new JLabel();
+        lbl_keys1 = new javax.swing.JLabel();
         lbl_keys = new javax.swing.JLabel();
         jc_autoplay = new javax.swing.JCheckBox();
         combo_channelModifier = new javax.swing.JComboBox();
-        JLabel lbl_channelModifier = new JLabel();
+        lbl_channelModifier = new javax.swing.JLabel();
         combo_visibilityModifier = new javax.swing.JComboBox();
-        JLabel lbl_visibilityModifier = new JLabel();
+        lbl_visibilityModifier = new javax.swing.JLabel();
         lbl_filename = new javax.swing.JLabel();
-        JScrollPane table_scroll2 = new JScrollPane();
+        table_scroll2 = new javax.swing.JScrollPane();
         table_chartlist = new javax.swing.JTable();
         jc_timed_judgment = new javax.swing.JCheckBox();
-        JPanel panel_setting = new JPanel();
-        JRadioButton jr_rank_hard = new JRadioButton();
+        panel_setting = new javax.swing.JPanel();
+        jr_rank_hard = new javax.swing.JRadioButton();
         combo_displays = new javax.swing.JComboBox();
         txt_res_height = new javax.swing.JTextField();
         txt_res_width = new javax.swing.JTextField();
         jc_vsync = new javax.swing.JCheckBox();
         lbl_rank = new javax.swing.JLabel();
-        JLabel lbl_display = new JLabel();
+        lbl_display = new javax.swing.JLabel();
         jc_custom_size = new javax.swing.JCheckBox();
-        JRadioButton jr_rank_easy = new JRadioButton();
-        JLabel lbl_hispeed = new JLabel();
+        jr_rank_easy = new javax.swing.JRadioButton();
+        lbl_hispeed = new javax.swing.JLabel();
         lbl_res_x = new javax.swing.JLabel();
-        JRadioButton jr_rank_normal = new JRadioButton();
+        jr_rank_normal = new javax.swing.JRadioButton();
         jc_full_screen = new javax.swing.JCheckBox();
         bt_choose_dir = new javax.swing.JButton();
         load_progress = new javax.swing.JProgressBar();
         js_hispeed = new javax.swing.JSpinner();
-        JButton btn_configuration = new JButton();
-        JButton btn_skin = new JButton();
+        btn_configuration = new javax.swing.JButton();
+        btn_skin = new javax.swing.JButton();
         combo_dirs = new javax.swing.JComboBox();
         btn_reload = new javax.swing.JButton();
+        jc_bilinear = new javax.swing.JCheckBox();
         table_scroll = new javax.swing.JScrollPane();
         table_songlist = new javax.swing.JTable();
         txt_filter = new javax.swing.JTextField();
-        JLabel jLabel1 = new JLabel();
+        jLabel1 = new javax.swing.JLabel();
         slider_main_vol = new javax.swing.JSlider();
         slider_key_vol = new javax.swing.JSlider();
         slider_bgm_vol = new javax.swing.JSlider();
-        JLabel lbl_main_vol = new JLabel();
-        JLabel lbl_key_vol = new JLabel();
-        JLabel lbl_bgm_vol = new JLabel();
-        JMenuBar jMenuBar1 = new JMenuBar();
-        JMenu jMenu1 = new JMenu();
-        JMenuItem mitem_exit = new JMenuItem();
-        JMenu jMenu3 = new JMenu();
-        JMenuItem jMenuItem1 = new JMenuItem();
-        JMenuItem jMenuItem2 = new JMenuItem();
-        JMenu menu_about = new JMenu();
+        lbl_main_vol = new javax.swing.JLabel();
+        lbl_key_vol = new javax.swing.JLabel();
+        lbl_bgm_vol = new javax.swing.JLabel();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        mitem_exit = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
+        menu_about = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Open2Jam");
@@ -293,11 +294,11 @@ public class Interface extends javax.swing.JFrame
                                 .addGap(18, 18, 18)
                                 .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(lbl_keys)
-                                    .addComponent(lbl_level, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
-                                    .addComponent(lbl_notes, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
-                                    .addComponent(lbl_time, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
-                                    .addComponent(lbl_genre, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
-                                    .addComponent(lbl_bpm, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)))
+                                    .addComponent(lbl_level, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
+                                    .addComponent(lbl_notes, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
+                                    .addComponent(lbl_time, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
+                                    .addComponent(lbl_genre, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
+                                    .addComponent(lbl_bpm, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)))
                             .addComponent(lbl_filename)))
                     .addComponent(lbl_artist, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
                     .addGroup(panel_infoLayout.createSequentialGroup()
@@ -355,7 +356,7 @@ public class Interface extends javax.swing.JFrame
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbl_artist)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
+                .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbl_visibilityModifier)
@@ -475,6 +476,9 @@ public class Interface extends javax.swing.JFrame
             }
         });
 
+        jc_bilinear.setSelected(true);
+        jc_bilinear.setText("Bilinear filter");
+
         javax.swing.GroupLayout panel_settingLayout = new javax.swing.GroupLayout(panel_setting);
         panel_setting.setLayout(panel_settingLayout);
         panel_settingLayout.setHorizontalGroup(
@@ -518,8 +522,9 @@ public class Interface extends javax.swing.JFrame
                         .addComponent(btn_reload))
                     .addGroup(panel_settingLayout.createSequentialGroup()
                         .addComponent(btn_configuration, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE))
-                    .addComponent(btn_skin, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE))
+                    .addComponent(btn_skin, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jc_bilinear))
                 .addContainerGap())
         );
         panel_settingLayout.setVerticalGroup(
@@ -554,7 +559,9 @@ public class Interface extends javax.swing.JFrame
                 .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jc_vsync)
                     .addComponent(jc_full_screen))
-                .addGap(31, 31, 31)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jc_bilinear)
+                .addGap(8, 8, 8)
                 .addComponent(btn_configuration, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_skin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -678,7 +685,7 @@ public class Interface extends javax.swing.JFrame
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                             .addComponent(lbl_bgm_vol)
                             .addComponent(slider_bgm_vol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
                         .addComponent(jLabel1)))
                 .addContainerGap())
         );
@@ -778,6 +785,8 @@ public class Interface extends javax.swing.JFrame
             final int keyVol = slider_key_vol.getValue();
             final int bgmVol = slider_bgm_vol.getValue();
 
+            final boolean bilinear = jc_bilinear.isSelected();
+
             if(!dm.isFullscreenCapable() && fs)
             {
                 String str = "This monitor can't support the selected resolution.\n"
@@ -793,7 +802,7 @@ public class Interface extends javax.swing.JFrame
                 r = new TimeRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
             else
                 r = new DistanceRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
-            r.setDisplay(dm, vsync, fs);
+            r.setDisplay(dm, vsync, fs, bilinear);
             r.startRendering();
 	}
     }//GEN-LAST:event_bt_playActionPerformed
@@ -831,35 +840,67 @@ public class Interface extends javax.swing.JFrame
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bt_choose_dir;
+    private javax.swing.JButton bt_play;
+    private javax.swing.JButton btn_configuration;
     private javax.swing.JButton btn_reload;
+    private javax.swing.JButton btn_skin;
     private javax.swing.JComboBox combo_channelModifier;
     private javax.swing.JComboBox combo_dirs;
     private javax.swing.JComboBox combo_displays;
     private javax.swing.JComboBox combo_visibilityModifier;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JCheckBox jc_autoplay;
+    private javax.swing.JCheckBox jc_bilinear;
     private javax.swing.JCheckBox jc_custom_size;
     private javax.swing.JCheckBox jc_full_screen;
     private javax.swing.JCheckBox jc_timed_judgment;
     private javax.swing.JCheckBox jc_vsync;
+    private javax.swing.JRadioButton jr_rank_easy;
+    private javax.swing.JRadioButton jr_rank_hard;
+    private javax.swing.JRadioButton jr_rank_normal;
     private javax.swing.JSpinner js_hispeed;
     private javax.swing.JLabel lbl_artist;
+    private javax.swing.JLabel lbl_bgm_vol;
     private javax.swing.JLabel lbl_bpm;
+    private javax.swing.JLabel lbl_bpm1;
+    private javax.swing.JLabel lbl_channelModifier;
     private javax.swing.JLabel lbl_cover;
+    private javax.swing.JLabel lbl_display;
     private javax.swing.JLabel lbl_filename;
     private javax.swing.JLabel lbl_genre;
+    private javax.swing.JLabel lbl_genre1;
+    private javax.swing.JLabel lbl_hispeed;
+    private javax.swing.JLabel lbl_key_vol;
     private javax.swing.JLabel lbl_keys;
+    private javax.swing.JLabel lbl_keys1;
     private javax.swing.JLabel lbl_level;
+    private javax.swing.JLabel lbl_level1;
+    private javax.swing.JLabel lbl_main_vol;
     private javax.swing.JLabel lbl_notes;
+    private javax.swing.JLabel lbl_notes1;
     private javax.swing.JLabel lbl_rank;
     private javax.swing.JLabel lbl_res_x;
     private javax.swing.JLabel lbl_time;
+    private javax.swing.JLabel lbl_time1;
     private javax.swing.JLabel lbl_title;
+    private javax.swing.JLabel lbl_visibilityModifier;
     private javax.swing.JProgressBar load_progress;
+    private javax.swing.JMenu menu_about;
+    private javax.swing.JMenuItem mitem_exit;
+    private javax.swing.JPanel panel_info;
+    private javax.swing.JPanel panel_setting;
+    private javax.swing.ButtonGroup rank_group;
     private javax.swing.JSlider slider_bgm_vol;
     private javax.swing.JSlider slider_key_vol;
     private javax.swing.JSlider slider_main_vol;
     private javax.swing.JTable table_chartlist;
     private javax.swing.JScrollPane table_scroll;
+    private javax.swing.JScrollPane table_scroll2;
     private javax.swing.JTable table_songlist;
     private javax.swing.JTextField txt_filter;
     private javax.swing.JTextField txt_res_height;

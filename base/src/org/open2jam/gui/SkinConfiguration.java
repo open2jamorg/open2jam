@@ -1,13 +1,10 @@
 package org.open2jam.gui;
-/*
- * SkinConfiguration.java
- *
- * Created on 14-mar-2011, 12:06:38
- */
-
 import java.net.URL;
+import java.util.Iterator;
+
 import java.util.logging.Level;
 import org.open2jam.util.Logger;
+import javax.swing.DefaultComboBoxModel;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import org.open2jam.render.SkinChecker;
@@ -20,6 +17,11 @@ class SkinConfiguration extends javax.swing.JFrame {
 
     /** the config xml */
     private static final URL resources_xml = SkinConfiguration.class.getResource("/resources/resources.xml");
+
+    SkinChecker checker;
+
+    private static int skinW = 800;
+    private static int skinH = 600;
 
     /** Creates new form SkinConfiguration */
     public SkinConfiguration() {
@@ -38,29 +40,157 @@ class SkinConfiguration extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        btn_cancel = new javax.swing.JButton();
+        btn_save = new javax.swing.JButton();
+        panel_log = new javax.swing.JPanel();
+        scroll_logger = new javax.swing.JScrollPane();
+        txt_logger = new javax.swing.JTextPane();
+        lbl_log = new javax.swing.JLabel();
+        combo_log = new javax.swing.JComboBox();
+        btn_toggle_logger = new javax.swing.JToggleButton();
+        panel_selection = new javax.swing.JPanel();
+
         setTitle("Skin configuration");
+
+        btn_cancel.setText("Cancel");
+        btn_cancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_cancelActionPerformed(evt);
+            }
+        });
+
+        btn_save.setText("Save");
+        btn_save.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_saveActionPerformed(evt);
+            }
+        });
+
+        txt_logger.setBorder(null);
+        txt_logger.setContentType("text/html");
+        txt_logger.setEditable(false);
+        txt_logger.setFont(txt_logger.getFont().deriveFont(txt_logger.getFont().getSize()-1f));
+        scroll_logger.setViewportView(txt_logger);
+
+        lbl_log.setText("Log:");
+
+        combo_log.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                combo_logActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panel_logLayout = new javax.swing.GroupLayout(panel_log);
+        panel_log.setLayout(panel_logLayout);
+        panel_logLayout.setHorizontalGroup(
+            panel_logLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_logLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panel_logLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(scroll_logger, javax.swing.GroupLayout.DEFAULT_SIZE, 711, Short.MAX_VALUE)
+                    .addGroup(panel_logLayout.createSequentialGroup()
+                        .addComponent(lbl_log)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(combo_log, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        panel_logLayout.setVerticalGroup(
+            panel_logLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_logLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(scroll_logger, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(panel_logLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbl_log)
+                    .addComponent(combo_log, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+
+        btn_toggle_logger.setText("Hide log");
+        btn_toggle_logger.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_toggle_loggerActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panel_selectionLayout = new javax.swing.GroupLayout(panel_selection);
+        panel_selection.setLayout(panel_selectionLayout);
+        panel_selectionLayout.setHorizontalGroup(
+            panel_selectionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 731, Short.MAX_VALUE)
+        );
+        panel_selectionLayout.setVerticalGroup(
+            panel_selectionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 195, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(panel_selection, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panel_log, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btn_toggle_logger)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 532, Short.MAX_VALUE)
+                        .addComponent(btn_save)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_cancel)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(panel_selection, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(panel_log, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_cancel)
+                    .addComponent(btn_save)
+                    .addComponent(btn_toggle_logger))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btn_toggle_loggerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_toggle_loggerActionPerformed
+//        scroll_logger.setVisible(!scroll_logger.isVisible());
+//        lbl_log.setVisible(!lbl_log.isVisible());
+//        combo_log.setVisible(!combo_log.isVisible());
+        panel_log.setVisible(!panel_log.isVisible());
+        btn_toggle_logger.setText(btn_toggle_logger.isSelected() ? "Show log" : "Hide log");
+    }//GEN-LAST:event_btn_toggle_loggerActionPerformed
+
+    private void btn_saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_saveActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btn_saveActionPerformed
+
+    private void btn_cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btn_cancelActionPerformed
+
+    private void combo_logActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_logActionPerformed
+        txt_logger.setText(createLog((String)combo_log.getSelectedItem()));
+        txt_logger.setCaretPosition(0); //we want it from the start
+    }//GEN-LAST:event_combo_logActionPerformed
+
     private void initLogic()
     {
-        // skin load
+        // skin load & check
         try {
-            SkinChecker sb = new SkinChecker("o2jam");
-            SAXParserFactory.newInstance().newSAXParser().parse(resources_xml.openStream(), sb);
+            checker = new SkinChecker();
+            SAXParserFactory.newInstance().newSAXParser().parse(resources_xml.openStream(), checker);
 
+            skinH = checker.getBaseH();
+            skinW = checker.getBaseW();
+            
+            System.out.println(skinW+" "+skinH);
         } catch (ParserConfigurationException ex) {
             Logger.global.log(Level.SEVERE, "Skin load error {0}", ex);
         } catch (org.xml.sax.SAXException ex) {
@@ -68,9 +198,43 @@ class SkinConfiguration extends javax.swing.JFrame {
         } catch (java.io.IOException ex) {
             Logger.global.log(Level.SEVERE, "Skin load error {0}", ex);
         }
+
+        DefaultComboBoxModel theModel = (DefaultComboBoxModel)combo_log.getModel();
+        theModel.removeAllElements();
+        
+        for(SkinChecker.Log l : SkinChecker.Log.values())
+            combo_log.addItem(l.toString());
+        combo_log.addItem("ALL");
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private static javax.swing.JButton btn_cancel;
+    private static javax.swing.JButton btn_save;
+    private static javax.swing.JToggleButton btn_toggle_logger;
+    private static javax.swing.JComboBox combo_log;
+    private static javax.swing.JLabel lbl_log;
+    private static javax.swing.JPanel panel_log;
+    private static javax.swing.JPanel panel_selection;
+    private static javax.swing.JScrollPane scroll_logger;
+    private static javax.swing.JTextPane txt_logger;
     // End of variables declaration//GEN-END:variables
 
+
+    private String createLog (String value) {
+        String s = "<html>";
+
+        Iterator err = checker.getLog(SkinChecker.Log.ERROR).iterator();
+        Iterator war = checker.getLog(SkinChecker.Log.WARNING).iterator();
+        Iterator inf = checker.getLog(SkinChecker.Log.INFO).iterator();
+
+        if(value.equals("ALL") || value.equals("ERROR")) {
+            while(err.hasNext())  s += "<font color=rgb(255,0,0)>[ERROR] "+err.next()+"</font><br />"; }
+        if(value.equals("ALL") || value.equals("WARNING")) {
+        while(war.hasNext())  s += "<font color=rgb(150,130,0)>[WARNING] "+war.next()+"</font><br />"; }
+        if(value.equals("ALL") || value.equals("INFO")) {
+        while(inf.hasNext())  s += "<font color=rgb(0,0,255)>[INFO] "+inf.next()+"</font><br />"; }
+
+        s += "</html>";
+        return s;
+    }
 }

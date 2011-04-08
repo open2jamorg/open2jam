@@ -79,9 +79,10 @@ public class CompositeEntity extends Entity
         Iterator<Entity> i = entity_list.iterator();
         while(i.hasNext()){
             Entity e = i.next();
-            if(!e.isAlive())i.remove();
+            if(!e.isAlive()) return false;
         }
-        return !entity_list.isEmpty();
+        return true;
+
     }
 
 
