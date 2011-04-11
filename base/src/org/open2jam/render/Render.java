@@ -787,7 +787,7 @@ public abstract class Render implements GameWindowCallback
         {
             if(ev.toString().startsWith("NOTE_") && skin.getEntityMap().get(ev.toString()) != null)
             {
-                height = (int)Math.round((getViewport()+skin.getEntityMap().get(ev.toString()).getHeight()));
+                height = (int)Math.round((getViewport()));
                 width = (int)Math.round(skin.getEntityMap().get(ev.toString()).getWidth());
                 rec  = ResourceFactory.get().doRectangle(width, height, value);
                 visibility_entity.getEntityList().add(new Entity(rec, skin.getEntityMap().get(ev.toString()).getX(), 0));
@@ -799,8 +799,15 @@ public abstract class Render implements GameWindowCallback
         for(Entity e : skin.getEntityList())
             if(e.getLayer() > layer) layer++;
 
-        visibility_entity.setLayer(layer);
-        
+        visibility_entity.setLayer(++layer);
+
+        for(Entity e : skin.getAllEntities())
+        {
+            int l = e.getLayer();
+            if(l >= layer)
+                e.setLayer(++l);
+        }
+
 //        skin.getEntityMap().get("MEASURE_MARK").setLayer(layer);
         if(value != 1)skin.getEntityMap().get("JUDGMENT_LINE").setLayer(layer);
 
