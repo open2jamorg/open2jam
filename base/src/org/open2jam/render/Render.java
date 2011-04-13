@@ -787,7 +787,7 @@ public abstract class Render implements GameWindowCallback
         {
             if(ev.toString().startsWith("NOTE_") && skin.getEntityMap().get(ev.toString()) != null)
             {
-                height = (int)Math.round((getViewport()));
+                height = (int)Math.round(getViewport());
                 width = (int)Math.round(skin.getEntityMap().get(ev.toString()).getWidth());
                 rec  = ResourceFactory.get().doRectangle(width, height, value);
                 visibility_entity.getEntityList().add(new Entity(rec, skin.getEntityMap().get(ev.toString()).getX(), 0));

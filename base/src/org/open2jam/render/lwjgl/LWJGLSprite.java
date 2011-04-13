@@ -103,17 +103,7 @@ public class LWJGLSprite implements Sprite {
             GL11.glBegin(GL11.GL_QUAD_STRIP);
                 switch(type)
                 {
-                    case 1: //hidden (Hidden upper part)
-                    GL11.glColor3f(0.0f,0.0f,0.0f); // first black rec
-                    GL11.glVertex2f(0, 0);
-                    GL11.glVertex2f(width,0);
-                    GL11.glVertex2f(0,split);
-                    GL11.glVertex2f(width, split);
-                    GL11.glColor4f(0.0f,0.0f,0.0f,0f); // middle alpha
-                    GL11.glVertex2f(0,split*2);
-                    GL11.glVertex2f(width, split*2);
-                    break;
-                    case 2:
+                    case 1: //hidden (hidden lower part)
                     GL11.glColor4f(0.0f,0.0f,0.0f,0f); // middle alpha
                     GL11.glVertex2f(0,split*2);
                     GL11.glVertex2f(width, split*2);
@@ -123,7 +113,20 @@ public class LWJGLSprite implements Sprite {
                     GL11.glVertex2f(0,height);
                     GL11.glVertex2f(width, height);
                     break;
-                    case 3: //dark (hidden upper and lower part)
+                    case 2: //sudden (only shows the lower part)
+                    GL11.glColor3f(0.0f,0.0f,0.0f); // first black rec
+                    GL11.glVertex2f(0, 0);
+                    GL11.glVertex2f(width,0);
+                    GL11.glVertex2f(0,split*2);
+                    GL11.glVertex2f(width, split*2);
+                    GL11.glColor4f(0.0f,0.0f,0.0f,0f); // middle alpha
+                    GL11.glVertex2f(0,split*3);
+                    GL11.glVertex2f(width, split*3);
+                    GL11.glColor4f(0.0f,0.0f,0.0f,0f); // middle alpha
+                    GL11.glVertex2f(0,height);
+                    GL11.glVertex2f(width, height);
+                    break;
+                    case 3: //dark (only shows the middle part)
                     GL11.glColor3f(0.0f,0.0f,0.0f); // first black rec
                     GL11.glVertex2f(0, 0);
                     GL11.glVertex2f(width,0);
