@@ -83,7 +83,7 @@ public class DistanceRender extends Render
         if (lastFpsTime >= 1000) {
             Logger.global.log(Level.FINEST, "FPS: {0}", fps);
             fps_entity.setNumber(fps);
-            lastFpsTime = 0;
+            lastFpsTime = lastFpsTime-1000;
             fps = 0;
 
             //the timer counter
