@@ -9,12 +9,12 @@ import java.util.List;
  * time
  * @author Kevin Dolan
  * http://thekevindolan.com/2010/02/interval-tree/index.html
- * @param <Type> the type of objects to associate
+ * @param <K,V> the type of objects to associate
  */
-public class IntervalTree<Type> {
+public class IntervalTree<K extends Comparable<K>,V> {
 
-	private IntervalNode<Type> head;
-	private final List<Interval<Type>> intervalList;
+	private IntervalNode<K,V> head;
+	private final List<Interval<K,V>> intervalList;
 	private boolean inSync;
 	private int size;
 	
@@ -22,8 +22,8 @@ public class IntervalTree<Type> {
 	 * Instantiate a new interval tree with no intervals
 	 */
 	public IntervalTree() {
-		this.head = new IntervalNode<Type>();
-		this.intervalList = new ArrayList<Interval<Type>>();
+		this.head = new IntervalNode<K,V>();
+		this.intervalList = new ArrayList<Interval<K,V>>();
 		this.inSync = true;
 		this.size = 0;
 	}
@@ -32,9 +32,9 @@ public class IntervalTree<Type> {
 	 * Instantiate and build an interval tree with a preset list of intervals
 	 * @param intervalList the list of intervals to use
 	 */
-	public IntervalTree(List<Interval<Type>> intervalList) {
-		this.head = new IntervalNode<Type>(intervalList);
-		this.intervalList = new ArrayList<Interval<Type>>();
+	public IntervalTree(List<Interval<K,V>> intervalList) {
+		this.head = new IntervalNode<K,V>(intervalList);
+		this.intervalList = new ArrayList<Interval<K,V>>();
 		this.intervalList.addAll(intervalList);
 		this.inSync = true;
 		this.size = intervalList.size();
@@ -46,10 +46,10 @@ public class IntervalTree<Type> {
 	 * @param time the time to stab
 	 * @return	   the data associated with all intervals that contain time
 	 */
-	public List<Type> get(long time) {
-		List<Interval<Type>> intervals = getIntervals(time);
-		List<Type> result = new ArrayList<Type>();
-		for(Interval<Type> interval : intervals)
+	public List<V> get(K time) {
+		List<Interval<K,V>> intervals = getIntervals(time);
+		List<V> result = new ArrayList<V>();
+		for(Interval<K,V> interval : intervals)
 			result.add(interval.getData());
 		return result;
 	}
@@ -60,7 +60,7 @@ public class IntervalTree<Type> {
 	 * @param time the time to stab
 	 * @return	   all intervals that contain time
 	 */
-	public List<Interval<Type>> getIntervals(long time) {
+	public List<Interval<K,V>> getIntervals(K time) {
 		build();
 		return head.stab(time);
 	}
@@ -72,10 +72,10 @@ public class IntervalTree<Type> {
 	 * @param end	the end of the interval to check
 	 * @return	  	the data associated with all intervals that intersect target
 	 */
-	public List<Type> get(long start, long end) {
-		List<Interval<Type>> intervals = getIntervals(start, end);
-		List<Type> result = new ArrayList<Type>();
-		for(Interval<Type> interval : intervals)
+	public List<V> get(K start, K end) {
+		List<Interval<K,V>> intervals = getIntervals(start, end);
+		List<V> result = new ArrayList<V>();
+		for(Interval<K,V> interval : intervals)
 			result.add(interval.getData());
 		return result;
 	}
@@ -87,9 +87,9 @@ public class IntervalTree<Type> {
 	 * @param end	the end of the interval to check
 	 * @return	  	all intervals that intersect target
 	 */
-	public List<Interval<Type>> getIntervals(long start, long end) {
+	public List<Interval<K,V>> getIntervals(K start, K end) {
 		build();
-		return head.query(new Interval<Type>(start, end, null));
+		return head.query(new Interval<K,V>(start, end, null));
 	}
 	
 	/**
@@ -97,7 +97,7 @@ public class IntervalTree<Type> {
 	 * Will not rebuild the tree until the next query or call to build
 	 * @param interval the interval object to add
 	 */
-	public void addInterval(Interval<Type> interval) {
+	public void addInterval(Interval<K,V> interval) {
 		intervalList.add(interval);
 		inSync = false;
 	}
@@ -109,8 +109,8 @@ public class IntervalTree<Type> {
 	 * @param end	the end of the interval
 	 * @param data	the data to associate
 	 */
-	public void addInterval(long begin, long end, Type data) {
-		intervalList.add(new Interval<Type>(begin, end, data));
+	public void addInterval(K begin, K end, V data) {
+		intervalList.add(new Interval<K,V>(begin, end, data));
 		inSync = false;
 	}
 	
@@ -128,7 +128,7 @@ public class IntervalTree<Type> {
 	 */
 	public void build() {
 		if(!inSync) {
-			head = new IntervalNode<Type>(intervalList);
+			head = new IntervalNode<K,V>(intervalList);
 			inSync = true;
 			size = intervalList.size();
 		}
@@ -153,7 +153,7 @@ public class IntervalTree<Type> {
 		return nodeString(head,0);
 	}
 	
-	private String nodeString(IntervalNode<Type> node, int level) {		
+	private String nodeString(IntervalNode<K,V> node, int level) {
 		if(node == null)
 			return "";
 		
