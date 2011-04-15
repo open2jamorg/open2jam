@@ -487,7 +487,7 @@ public abstract class Render implements GameWindowCallback
             Event e = buffer_iterator.next();
             while(e.getMeasure() > buffer_measure) // this is the start of a new measure
             {
-                buffer_timer += Math.round((240000 * (fractional_measure-buffer_measure_pointer)) / buffer_bpm);
+                buffer_timer += (240000 * (fractional_measure-buffer_measure_pointer)) / buffer_bpm;
                 MeasureEntity m = (MeasureEntity) skin.getEntityMap().get("MEASURE_MARK").copy();
                 m.setTime(buffer_timer);
                 entities_matrix.add(m);
@@ -496,7 +496,7 @@ public abstract class Render implements GameWindowCallback
                 buffer_measure_pointer = 0;
             }
 
-            buffer_timer += Math.round((240000 * (e.getPosition()-buffer_measure_pointer)) / buffer_bpm);
+            buffer_timer += (240000 * (e.getPosition()-buffer_measure_pointer)) / buffer_bpm;
             buffer_measure_pointer = e.getPosition();
 
             switch(e.getChannel())
@@ -605,12 +605,12 @@ public abstract class Render implements GameWindowCallback
             Event e = it.next();
             while(e.getMeasure() > measure)
             {
-                timer += Math.round((240000 * (frac_measure-measure_pointer)) / my_bpm);
+                timer += (240000 * (frac_measure-measure_pointer)) / my_bpm;
                 measure++;
                 frac_measure = 1;
                 measure_pointer = 0;
             }
-            timer += Math.round((240000 * (e.getPosition()-measure_pointer)) / my_bpm);
+            timer += (240000 * (e.getPosition()-measure_pointer)) / my_bpm;
             measure_pointer = e.getPosition();
 
             switch(e.getChannel())
