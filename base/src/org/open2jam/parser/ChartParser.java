@@ -16,6 +16,7 @@ public class ChartParser
 	{
 		if(OJNParser.canRead(file))return OJNParser.parseFile(file);
 		if(BMSParser.canRead(file))return BMSParser.parseFile(file);
+                if(PTParser.canRead(file)) return PTParser.parseFile(file);
 		return null;
 	}
 }
