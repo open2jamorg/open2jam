@@ -7,9 +7,9 @@ package org.open2jam.render.entities;
  */
 public interface TimeEntity {
 
-    public void setTime(long t);
+    public void setTime(double t);
 
-    public long getTime();
+    public double getTime();
 
     /**
      * judgment time.

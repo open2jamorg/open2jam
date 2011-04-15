@@ -6,7 +6,7 @@ import org.open2jam.render.SpriteList;
 public class MeasureEntity extends AnimatedEntity implements TimeEntity
 {
     
-    private long time_to_hit;
+    private double time_to_hit;
 
     public MeasureEntity(SpriteList sl, double x, double y)
     {
@@ -28,11 +28,11 @@ public class MeasureEntity extends AnimatedEntity implements TimeEntity
         return new MeasureEntity(this);
     }
 
-    public void setTime(long t) {
+    public void setTime(double t) {
         time_to_hit = t;
     }
 
-    public long getTime() {
+    public double getTime() {
         return time_to_hit;
     }
 }

@@ -4,41 +4,41 @@ package org.open2jam.util;
  * The Interval class maintains an interval with some associated data
  * @author Kevin Dolan
  * http://thekevindolan.com/2010/02/interval-tree/index.html
- * @param <Type> The type of data being stored
+ * @param <V> The V of data being stored
  */
-public class Interval<Type> implements Comparable<Interval<Type>> {
+public class Interval<K extends Comparable<K>,V> implements Comparable<Interval<K,V>> {
 
-	private long start;
-	private long end;
-	private Type data;
+	private K start;
+	private K end;
+	private V data;
 	
-	public Interval(long start, long end, Type data) {
+	public Interval(K start, K end, V data) {
 		this.start = start;
 		this.end = end;
 		this.data = data;
 	}
 
-	public long getStart() {
+	public K getStart() {
 		return start;
 	}
 
-	public void setStart(long start) {
+	public void setStart(K start) {
 		this.start = start;
 	}
 
-	public long getEnd() {
+	public K getEnd() {
 		return end;
 	}
 
-	public void setEnd(long end) {
+	public void setEnd(K end) {
 		this.end = end;
 	}
 
-	public Type getData() {
+	public V getData() {
 		return data;
 	}
 
-	public void setData(Type data) {
+	public void setData(V data) {
 		this.data = data;
 	}
 	
@@ -46,16 +46,18 @@ public class Interval<Type> implements Comparable<Interval<Type>> {
 	 * @param time
 	 * @return	true if this interval contains time (invlusive)
 	 */
-	public boolean contains(long time) {
-		return time < end && time > start;
+	public boolean contains(K time) {
+                return time.compareTo(end) < 0 && time.compareTo(start) > 0;
+		// return time < end && time > start;
 	}
 	
 	/**
 	 * @param other
 	 * @return	return true if this interval intersects other
 	 */
-	public boolean intersects(Interval<?> other) {
-		return other.getEnd() > start && other.getStart() < end;
+	public boolean intersects(Interval<K,?> other) {
+                return other.getEnd().compareTo(start) > 0 && other.getStart().compareTo(end) < 0;
+		//return other.getEnd() > start && other.getStart() < end;
 	}
 	
 	/**
@@ -64,7 +66,18 @@ public class Interval<Type> implements Comparable<Interval<Type>> {
 	 * @param other
 	 * @return 1 or -1
 	 */
-	public int compareTo(Interval<Type> other) {		
+	public int compareTo(Interval<K,V> other) {
+
+            int i = start.compareTo(other.getStart());
+            int j = end.compareTo(other.getStart());
+
+            if(i < 0)return -1;
+            else if (i > 0)return 1;
+            else if (j < 0)return -1;
+            else if (j > 0)return 1;
+            else return 0;
+
+                /*
 		if(start < other.getStart())
 			return -1;
 		else if(start > other.getStart())
@@ -75,6 +88,7 @@ public class Interval<Type> implements Comparable<Interval<Type>> {
 			return 1;
 		else
 			return 0;
+                 */
 	}
 	
 }

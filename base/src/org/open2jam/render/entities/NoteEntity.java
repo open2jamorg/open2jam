@@ -15,7 +15,7 @@ public class NoteEntity extends AnimatedEntity implements TimeEntity
 
     private double hit = 0;
 
-    long time_to_hit;
+    double time_to_hit;
 
     public enum State {
         NOT_JUDGED,
@@ -55,7 +55,7 @@ public class NoteEntity extends AnimatedEntity implements TimeEntity
         return testHit(y, y + height, jy1, jy2);
     }
 
-    public long testTimeHit(long now)
+    public double testTimeHit(double now)
     {
         return Math.abs(time_to_hit-now);
     }
@@ -69,10 +69,10 @@ public class NoteEntity extends AnimatedEntity implements TimeEntity
         return p;
     }
 
-    public void setTime(long time){
+    public void setTime(double time){
         this.time_to_hit = time;
     }
-    public long getTime() {
+    public double getTime() {
         return time_to_hit;
     }
     

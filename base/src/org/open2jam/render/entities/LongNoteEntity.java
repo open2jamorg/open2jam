@@ -11,7 +11,7 @@ public class LongNoteEntity extends NoteEntity
 
     /** the size of the long note, this is constant once defined end_time */
     private Double end_dist = null;
-    private Long end_time = null;
+    private Double end_time = null;
 
     public LongNoteEntity(SpriteList head_frames, SpriteList body_frames, Event.Channel ch, double x, double y)
     {
@@ -28,12 +28,12 @@ public class LongNoteEntity extends NoteEntity
         this.end_time = org.end_time;
     }
 
-    public void setEndTime(long time, double note_size){
+    public void setEndTime(double time, double note_size){
         this.end_time = time;
         end_dist = note_size;
     }
 
-    public long getEndTime() {
+    public double getEndTime() {
         return end_time == null ? -10 : end_time;
     }
 
@@ -67,7 +67,7 @@ public class LongNoteEntity extends NoteEntity
     }
 
     @Override
-    public long testTimeHit(long now)
+    public double testTimeHit(double now)
     {
         if(state == State.NOT_JUDGED)return Math.abs(time_to_hit-now);
         else if(end_time != null)return Math.abs(end_time-now);

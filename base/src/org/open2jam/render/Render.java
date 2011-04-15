@@ -195,7 +195,7 @@ public abstract class Render implements GameWindowCallback
         entities_matrix = new EntityMatrix();
         this.chart = chart;
         this.hispeed = hispeed;
-        velocity_tree = new IntervalTree<Double>();
+        velocity_tree = new IntervalTree<Double,Double>();
         this.AUTOPLAY = autoplay;
         this.channelModifier = channelModifier;
         this.visibilityModifier = visibilityModifier;
@@ -470,7 +470,7 @@ public abstract class Render implements GameWindowCallback
 
     private double fractional_measure = 1;
 
-    private long buffer_timer = 0;
+    private double buffer_timer = 0;
 
     private double buffer_bpm;
 
@@ -553,7 +553,7 @@ public abstract class Render implements GameWindowCallback
         }
     }
 
-    private final IntervalTree<Double> velocity_tree;
+    private final IntervalTree<Double,Double> velocity_tree;
     /**
      * given a time segment, returns the distance, in pixels,
      * from each segment based on the bpm.
@@ -564,16 +564,16 @@ public abstract class Render implements GameWindowCallback
      * t0     a    b   t1  ->  b -  a
      *  a    t0   t1    b  -> t1 - t0
      */
-    double velocity_integral(long t0, long t1)
+    double velocity_integral(double t0, double t1)
     {
         int sign = 1;
         if(t0 > t1){
-            long tmp = t1;t1 = t0;t0 = tmp; // swap
+            double tmp = t1;t1 = t0;t0 = tmp; // swap
             sign = -1;
         }
-        List<Interval<Double>> list = velocity_tree.getIntervals(t0, t1);
+        List<Interval<Double,Double>> list = velocity_tree.getIntervals(t0, t1);
         double integral = 0;
-        for(Interval<Double> i : list)
+        for(Interval<Double,Double> i : list)
         {
             if(i.getStart() < t0) // 1st or 4th case
             {
@@ -595,8 +595,7 @@ public abstract class Render implements GameWindowCallback
     private void construct_velocity_tree(Iterator<Event> it)
     {
         int measure = 0;
-        long last_bpm_change = 0;
-        long timer = 0;
+        double timer = 0, last_bpm_change = 0;
         double my_bpm = this.bpm;
         double frac_measure = 1;
         double measure_pointer = 0;

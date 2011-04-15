@@ -17,7 +17,7 @@ public class SampleEntity extends Entity implements TimeEntity
     private final Event.SoundSample value;
     private final Render render;
 
-    private long time_to_hit;
+    private double time_to_hit;
 
     public SampleEntity(Render r, Event.SoundSample value, double y)
     {
@@ -54,11 +54,11 @@ public class SampleEntity extends Entity implements TimeEntity
         return new SampleEntity(this);
     }
 
-    public void setTime(long t) {
+    public void setTime(double t) {
         this.time_to_hit = t;
     }
 
-    public long getTime() {
+    public double getTime() {
         return time_to_hit;
     }
 }

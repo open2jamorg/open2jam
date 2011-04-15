@@ -353,7 +353,7 @@ public class TimeRender extends Render
 
             if(ne == null)continue;
 
-            long hit = ne.testTimeHit(now);
+            double hit = ne.testTimeHit(now);
             if(hit > AUTOPLAY_THRESHOLD)continue;
             ne.setHit(hit);
             
@@ -408,7 +408,7 @@ public class TimeRender extends Render
                     queueSample(e.getSample());
                    
                     JUDGE judge;
-                    long hit = e.testTimeHit(now);
+                    double hit = e.testTimeHit(now);
                     judge = ratePrecision(hit);
                     e.setHit(hit);
 
@@ -440,7 +440,7 @@ public class TimeRender extends Render
 
                 if(e == null || e.getState() != NoteEntity.State.LN_HOLD)continue;
 
-                long hit = e.testTimeHit(now);
+                double hit = e.testTimeHit(now);
                 e.setHit(hit);
 
                 e.setState(NoteEntity.State.JUDGE);
@@ -449,7 +449,7 @@ public class TimeRender extends Render
     }
 
 
-    private JUDGE ratePrecision(long hit)
+    private JUDGE ratePrecision(double hit)
     {
         if(hit <= JUDGE.PERFECT.value)  // PERFECT
             return JUDGE.PERFECT;
