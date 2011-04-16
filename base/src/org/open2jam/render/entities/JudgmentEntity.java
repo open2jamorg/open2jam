@@ -25,7 +25,7 @@ public class JudgmentEntity extends AnimatedEntity
     }
 
     @Override
-    public void move(long delta)
+    public void move(double delta)
     {
         super.move(delta);
         show_time -= delta;

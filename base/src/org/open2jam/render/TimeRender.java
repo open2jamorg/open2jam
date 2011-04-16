@@ -71,8 +71,8 @@ public class TimeRender extends Render
         // work out how long its been since the last update, this
         // will be used to calculate how far the entities should
         // move this loop
-        long now = SystemTimer.getTime();
-        long delta = now - lastLoopTime;
+        double now = SystemTimer.getTime();
+        double delta = now - lastLoopTime;
         lastLoopTime = now;
         lastFpsTime += delta;
         fps++;
@@ -345,7 +345,7 @@ public class TimeRender extends Render
         return judge;
     }
 
-    private void do_autoplay(long now)
+    private void do_autoplay(double now)
     {
         for(Event.Channel c : keyboard_map.keySet())
         {
@@ -383,7 +383,7 @@ public class TimeRender extends Render
         }
     }
 
-    private void check_keyboard(long now)
+    private void check_keyboard(double now)
     {
 	for(Map.Entry<Event.Channel,Integer> entry : keyboard_map.entrySet())
         {

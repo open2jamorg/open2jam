@@ -7,14 +7,14 @@ package org.open2jam.util;
  */
 public class SystemTimer {
     /** The number of nanoseconds per millisecond */
-    private static final int nanoTicksPerMilli = 1000000;// 10^6
+    private static final double nanoTicksPerMilli = 1000000;// 10^6
 	
     /**
      * Get the high resolution time in milliseconds
      *
      * @return The high resolution time in milliseconds
      */
-    public static long getTime() {
+    public static double getTime() {
         return System.nanoTime() / nanoTicksPerMilli;
     }
 	

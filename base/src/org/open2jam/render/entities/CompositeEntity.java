@@ -38,7 +38,7 @@ public class CompositeEntity extends Entity
     }
     
     @Override
-    public void move(long delta)
+    public void move(double delta)
     {
         super.move(delta);
         for(Entity e : entity_list)e.move(delta);

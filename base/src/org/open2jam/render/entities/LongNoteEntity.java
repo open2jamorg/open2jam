@@ -82,7 +82,7 @@ public class LongNoteEntity extends NoteEntity
     }
 
     @Override
-    public void move(long delta)
+    public void move(double delta)
     {
             super.move(delta);
             body_sprite = body_frames.get((int)sub_frame);
