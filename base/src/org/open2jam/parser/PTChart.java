@@ -3,6 +3,7 @@ package org.open2jam.parser;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -11,11 +12,9 @@ import javax.imageio.ImageIO;
 
 public class PTChart extends Chart
 {
-    int lntype;
+    int eztr_start = 0;
 
     File source;
-    int lnobj;
-
     public File getSource() { return source; }
 
     int level;
@@ -39,10 +38,11 @@ public class PTChart extends Chart
     public String getGenre() {
         return genre;
     }
-
+    
     Map<String, Integer> sample_files;
+    File sample_file;
     public Map<Integer,Integer> getSamples() {
-        return null;
+        return new HashMap<Integer, Integer>();
     }
 
     double bpm = 130;

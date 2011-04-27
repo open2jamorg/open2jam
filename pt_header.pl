@@ -13,7 +13,16 @@ read DATA, $header, 24 or die $!;
 
 my $h = unpack2hash(join(' ',qw/
 Z4:$signature
-c14:$unk
+S:$unk1
+S:$maxpos
+S:$unk3
+S:$unk4
+S:$unk5
+s:$length
+S:$unk7
+S:$unk8
+S:$unk9
+S:$unk10
 /), $header);
 
 print Dumper $h;
@@ -46,7 +55,7 @@ while(!eof DATA)
 		
 		read DATA, $header, 74 or die $!;
 		my $nh = unpack2hash(join(' ',qw/
-		Z66:$name
+		A66:$name
 		i:$legth_block
 		i:$offset
 		/), $header);
@@ -68,8 +77,8 @@ while(!eof DATA)
 					f:$bpm
 					c2:$unk2
 					/), $header);
-					
-					print "---BPM--- POS: $nh->{'position'} BPM: $nh->{'bpm'}\n";
+					my $measure = $nh->{'position'}/192;
+					print "---BPM--- POS: $nh->{'position'} MEASURE: $measure BPM: $nh->{'bpm'}\n";
 				}
 				case [3..9]
 				{
@@ -84,9 +93,9 @@ while(!eof DATA)
 					C:$length
 					c:$unk3
 					/), $header);
-					
+					my $measure = $nh->{'position'}/192;
 					print "---NOTE[$eztr_cnt]--- ";
-					print "POS: $nh->{'position'} ";
+					print "POS: $nh->{'position'} MEASURE: $measure ";
 					print "ID: $nh->{'sample_id'} ";
 					print "LENGTH: $nh->{'length'} ";
 					print "VOL/PAN: $nh->{'vol'}/$nh->{'pan'}\n";
@@ -104,9 +113,9 @@ while(!eof DATA)
 					C:$length
 					c:$unk3
 					/), $header);
-					
+					my $measure = $nh->{'position'}/192;
 					print "---SCRATCH--- ";
-					print "POS: $nh->{'position'} ";
+					print "POS: $nh->{'position'} MEASURE: $measure ";
 					print "ID: $nh->{'sample_id'} ";
 					print "LENGTH: $nh->{'length'} ";
 					print "VOL/PAN: $nh->{'vol'}/$nh->{'pan'}\n";
@@ -124,9 +133,9 @@ while(!eof DATA)
 					C:$length
 					c:$unk3
 					/), $header);
-					
+					my $measure = $nh->{'position'}/192;
 					print "---PEDAL--- ";
-					print "POS: $nh->{'position'} ";
+					print "POS: $nh->{'position'} MEASURE: $measure ";
 					print "ID: $nh->{'sample_id'} ";
 					print "LENGTH: $nh->{'length'} ";
 					print "VOL/PAN: $nh->{'vol'}/$nh->{'pan'}\n";
@@ -144,14 +153,14 @@ while(!eof DATA)
 					C:$length
 					c:$unk3
 					/), $header);
-					
+					my $measure = $nh->{'position'}/192;
 					print "---BGM[$eztr_cnt]--- ";
-					print "POS: $nh->{'position'} ";
+					print "POS: $nh->{'position'} MEASURE: $measure ";
 					print "ID: $nh->{'sample_id'} ";
 					print "LENGTH: $nh->{'length'} ";
 					print "VOL/PAN: $nh->{'vol'}/$nh->{'pan'}\n";
 				}
-				case [32..63]
+				else
 				{
 					read DATA, $header, 11 or die $!;
 					my $nh = unpack2hash(join(' ',qw/
@@ -164,9 +173,9 @@ while(!eof DATA)
 					C:$length
 					c:$unk3
 					/), $header);
-					
+					my $measure = $nh->{'position'}/192;
 					print "---UNK[$eztr_cnt]--- ";
-					print "POS: $nh->{'position'} ";
+					print "POS: $nh->{'position'} MEASURE: $measure ";
 					print "ID: $nh->{'sample_id'} ";
 					print "LENGTH: $nh->{'length'} ";
 					print "VOL/PAN: $nh->{'vol'}/$nh->{'pan'}\n";
