@@ -15,10 +15,17 @@ import org.open2jam.util.Logger;
 
 class PTParser
 {
-    private static final int EZTR = 0x52545A45;
-    private static final int HEADER_OFFSET = 0x18;
-    private static final int SMP_BLOCK = 0x42;
-    private static final int EZTR_HEADER = 0x4E;
+    /** the PTFF signature in little endian */
+    private static final int PTFF_SIGNATURE = 0x46465450;
+    /** the long of the ptff header */
+    private static final int PTFF_BLOCK = 0x18;
+    /** the long of the samplename block */
+    private static final int SAMPLE_BLOCK = 0x42;
+    /** the EZTR signature in little endian */
+    private static final int EZTR_SIGNATURE = 0x52545A45;
+    /** the long of the eztr header */
+    private static final int EZTR_BLOCK = 0x4E;
+
 
     public static boolean canRead(File f)
     {
@@ -109,6 +116,30 @@ class PTParser
 
         chart.sample_files = getSampleNames(chart);
 
+        try{
+            RandomAccessFile rf = new RandomAccessFile(f.getAbsolutePath(), "r");
+            ByteBuffer buffer = rf.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, PTFF_BLOCK);
+            buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
+            int ptff_signature = buffer.getInt();
+            int unk1 = buffer.getInt();
+            float bpm = buffer.getFloat();
+            int unk2 = buffer.getInt();
+            int unk3 = buffer.getInt();
+            int unk4 = buffer.getInt();
+            if(ptff_signature != PTFF_SIGNATURE)
+            {
+                Logger.global.log(Level.WARNING, "File [{0}] isn't a PTFF file !", f);
+                return null;
+            }
+
+            chart.bpm = bpm;
+
+        }catch(java.io.FileNotFoundException e){
+            Logger.global.log(Level.WARNING, "File {0} not found !!", chart.getSource().getName());
+        } catch (IOException e){
+            Logger.global.log(Level.WARNING, "IO exception on reading PT file {0}", chart.getSource().getName());
+        }
+
         return chart;
     }
 
@@ -123,7 +154,7 @@ class PTParser
                 int eztr_block = 0;
                 for(int counter = 0; counter < 64; counter++)
                 {
-                    ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, start+eztr_block, EZTR_HEADER);
+                    ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, start+eztr_block, EZTR_BLOCK);
                     buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
                     int eztr = buffer.getInt();
                     byte name[] = new byte[66];
@@ -131,7 +162,7 @@ class PTParser
                     int unk1 = buffer.getInt();
                     offset = buffer.getInt();
 
-                    eztr_block += EZTR_HEADER;
+                    eztr_block += EZTR_BLOCK;
                     int note_block = 11;
 
                     for(int i = 0; i < offset/note_block; i++)
@@ -196,13 +227,13 @@ class PTParser
         HashMap<String, Integer> samples = new HashMap<String, Integer>();
         try{
                 RandomAccessFile f = new RandomAccessFile(chart.getSource().getAbsolutePath(), "r");
-                int offset = HEADER_OFFSET;
+                int offset = PTFF_BLOCK;
                 for(int i = 0; i < 255 ;i++) // I think the maximum samples are 255
                 {
-                    offset = HEADER_OFFSET+(SMP_BLOCK*i);
-                    ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, offset, SMP_BLOCK);
+                    offset = PTFF_BLOCK+(SAMPLE_BLOCK*i);
+                    ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, offset, SAMPLE_BLOCK);
                     buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
-                    if(buffer.getInt() == EZTR) //if EZTR stop it
+                    if(buffer.getInt() == EZTR_SIGNATURE) //if EZTR stop it
                     {
                         chart.eztr_start = offset;
                         break;
@@ -228,7 +259,8 @@ class PTParser
         while(buffer.hasRemaining())
         {
             double pos = buffer.getInt();
-            int unk1 = buffer.get();
+            int unk1 = buffer.get(); //some kind of... idk status? check? just garbage? idk but if it's 2 or 4 i'm sure we should skip it
+            if(unk1 == 0x02 || unk1 == 0x04) break;
             // the measure is the int part of (pos/192) the position is the fractional one
             int measure = (int)pos/192;
             double position = (pos/192)-measure;
@@ -236,7 +268,7 @@ class PTParser
             {
                 float bpm = buffer.getFloat();
                 short unk2 = buffer.getShort();
-                if(bpm < 0) continue;
+                if(bpm < 0) break;
                 event_list.add(new Event(channel,measure,position,bpm,Event.Flag.NONE));
                 System.out.println("BPM CHANGE @ "+measure+" : "+position+" VALUE "+bpm);
             }
@@ -259,7 +291,7 @@ class PTParser
                     pan /= 0x7F;
 
                 if(length < 6) continue;
-                System.out.println("EVENT @ "+measure+" : "+position+" VALUE "+sample_id+" LENGTH "+length+" VOL/PAN "+vol+"/"+pan);
+//                System.out.println("EVENT ["+channel.toString()+"] @ "+measure+" : "+position+" VALUE "+sample_id+" LENGTH "+length+" VOL/PAN "+vol+"/"+pan);
                 if(length == 6)
                 {
                     event_list.add(new Event(channel,measure,position,sample_id,Event.Flag.NONE,vol, pan));

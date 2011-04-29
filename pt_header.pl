@@ -13,16 +13,11 @@ read DATA, $header, 24 or die $!;
 
 my $h = unpack2hash(join(' ',qw/
 Z4:$signature
-S:$unk1
-S:$maxpos
-S:$unk3
-S:$unk4
-S:$unk5
-s:$length
-S:$unk7
-S:$unk8
-S:$unk9
-S:$unk10
+i:$unk1
+f:$bpm
+i:$unk2
+i:$unk3
+i:$unk4
 /), $header);
 
 print Dumper $h;
@@ -78,7 +73,7 @@ while(!eof DATA)
 					c2:$unk2
 					/), $header);
 					my $measure = $nh->{'position'}/192;
-					print "---BPM--- POS: $nh->{'position'} MEASURE: $measure BPM: $nh->{'bpm'}\n";
+					print "---BPM--- POS: $nh->{'position'} MEASURE: $measure BPM: $nh->{'bpm'}    UNK1: $nh->{'unk1'}\n";
 				}
 				case [3..9]
 				{
@@ -98,7 +93,7 @@ while(!eof DATA)
 					print "POS: $nh->{'position'} MEASURE: $measure ";
 					print "ID: $nh->{'sample_id'} ";
 					print "LENGTH: $nh->{'length'} ";
-					print "VOL/PAN: $nh->{'vol'}/$nh->{'pan'}\n";
+					print "VOL/PAN: $nh->{'vol'}/$nh->{'pan'}    UNK1: $nh->{'unk1'}\n";
 				}
 				case 10
 				{
@@ -118,7 +113,7 @@ while(!eof DATA)
 					print "POS: $nh->{'position'} MEASURE: $measure ";
 					print "ID: $nh->{'sample_id'} ";
 					print "LENGTH: $nh->{'length'} ";
-					print "VOL/PAN: $nh->{'vol'}/$nh->{'pan'}\n";
+					print "VOL/PAN: $nh->{'vol'}/$nh->{'pan'}    UNK1: $nh->{'unk1'}\n";
 				}
 				case 11
 				{
@@ -138,7 +133,7 @@ while(!eof DATA)
 					print "POS: $nh->{'position'} MEASURE: $measure ";
 					print "ID: $nh->{'sample_id'} ";
 					print "LENGTH: $nh->{'length'} ";
-					print "VOL/PAN: $nh->{'vol'}/$nh->{'pan'}\n";
+					print "VOL/PAN: $nh->{'vol'}/$nh->{'pan'}    UNK1: $nh->{'unk1'}\n";
 				}
 				case [22..31]
 				{
@@ -158,7 +153,7 @@ while(!eof DATA)
 					print "POS: $nh->{'position'} MEASURE: $measure ";
 					print "ID: $nh->{'sample_id'} ";
 					print "LENGTH: $nh->{'length'} ";
-					print "VOL/PAN: $nh->{'vol'}/$nh->{'pan'}\n";
+					print "VOL/PAN: $nh->{'vol'}/$nh->{'pan'}    UNK1: $nh->{'unk1'}\n";
 				}
 				else
 				{
@@ -178,7 +173,7 @@ while(!eof DATA)
 					print "POS: $nh->{'position'} MEASURE: $measure ";
 					print "ID: $nh->{'sample_id'} ";
 					print "LENGTH: $nh->{'length'} ";
-					print "VOL/PAN: $nh->{'vol'}/$nh->{'pan'}\n";
+					print "VOL/PAN: $nh->{'vol'}/$nh->{'pan'}    UNK1: $nh->{'unk1'}\n";
 				}
 			}
 			$cnt++;
