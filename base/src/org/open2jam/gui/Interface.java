@@ -267,7 +267,7 @@ public class Interface extends javax.swing.JFrame
         table_scroll2.setViewportView(table_chartlist);
 
         jc_timed_judgment.setSelected(true);
-        jc_timed_judgment.setText("Use timed judment");
+        jc_timed_judgment.setText("Use timed judgment");
         jc_timed_judgment.setToolTipText("Like Bemani games");
 
         javax.swing.GroupLayout panel_infoLayout = new javax.swing.GroupLayout(panel_info);
@@ -451,7 +451,7 @@ public class Interface extends javax.swing.JFrame
             }
         });
 
-        btn_skin.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        btn_skin.setFont(new java.awt.Font("Tahoma", 0, 10));
         btn_skin.setText("Skin Selection");
         btn_skin.setEnabled(false);
         btn_skin.setMaximumSize(new java.awt.Dimension(20, 20));

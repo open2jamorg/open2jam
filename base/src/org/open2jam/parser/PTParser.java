@@ -25,6 +25,8 @@ class PTParser
     private static final int EZTR_SIGNATURE = 0x52545A45;
     /** the long of the eztr header */
     private static final int EZTR_BLOCK = 0x4E;
+    /** the long of the event block */
+    private static final int EVENT_BLOCK = 0xB;
 
 
     public static boolean canRead(File f)
@@ -162,53 +164,56 @@ class PTParser
                     int unk1 = buffer.getInt();
                     offset = buffer.getInt();
 
-                    eztr_block += EZTR_BLOCK;
-                    int note_block = 11;
-
-                    for(int i = 0; i < offset/note_block; i++)
+                    if (eztr != EZTR_SIGNATURE)
                     {
-                        buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, start+eztr_block+(i*note_block), note_block);
+                        Logger.global.log(Level.WARNING, "Something went wrong with the parser. Iteration {0} ... OH NOES!!!!11!!one!1", counter);
+                        return null;
+                    }
+                    
+                    eztr_block += EZTR_BLOCK;
+
+                    for(int i = 0; i < offset/EVENT_BLOCK; i++)
+                    {
+                        buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, start+eztr_block+(i*EVENT_BLOCK), EVENT_BLOCK);
                         buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
                         switch(counter)
                         {
-                            case 0:
+                            case 0: //BPM changes
                                 readChunk(event_list, Event.Channel.BPM_CHANGE, buffer);
                             break;
-                            case 3:
+                            //case 1: case 2: DUMMIES
+                            case 3: // NOTE 1 p1
                                 readChunk(event_list, Event.Channel.NOTE_1, buffer);
                             break;
-                            case 4:
+                            case 4: // NOTE 2 p1
                                 readChunk(event_list, Event.Channel.NOTE_2, buffer);
                             break;
-                            case 5:
+                            case 5: // NOTE 3 p1
                                 readChunk(event_list, Event.Channel.NOTE_3, buffer);
                             break;
-                            case 6:
+                            case 6: // NOTE 4 p1
                                 readChunk(event_list, Event.Channel.NOTE_4, buffer);
                             break;
-                            case 7:
+                            case 7: // NOTE 5 p1
                                 readChunk(event_list, Event.Channel.NOTE_5, buffer);
                             break;
-                            case 8:
-                            case 10:
+                            case 8: // NOTE 6 p1 <- seems empty
+                            case 10:// SCRATCH p1 <- seems to use it as note 6
                                 readChunk(event_list, Event.Channel.NOTE_6, buffer);
                             break;
-                            case 9:
-                            case 11:
+                            case 9: // NOTE 7 p1 <- seems empty
+                            case 11:// PEDAL p1 <- seems to use it as note 7
                                 readChunk(event_list, Event.Channel.NOTE_7, buffer);
                             break;
-                            case 22:
-                            case 23:
-                            case 24:
-                            case 25:
-                            case 26:
-                            case 27:
-                            case 28:
-                            case 29:
-                            case 30:
-                            case 31:
+                            //case 12: case 13: case 14: case 15: case 16: NOTE 1 to 5 p2 <- seems not used
+                            //case 17: case 18: NOTE 6 and 7 p2 <- seems not used
+                            //case 19: case 20: SCRATCH and PEDAL p2 <- seems not used
+                            //case 21: LIGHTS? <- seems not used
+                            case 22: case 23: case 24: case 25: case 26: // BGM
+                            case 27: case 28: case 29: case 30: case 31: // BGM
                                 readChunk(event_list, Event.Channel.AUTO_PLAY, buffer);
                             break;
+                            //case 31 to 63 UNKNOWN maybe for bga?
                         }
                     }
                     eztr_block += offset;
@@ -228,7 +233,7 @@ class PTParser
         try{
                 RandomAccessFile f = new RandomAccessFile(chart.getSource().getAbsolutePath(), "r");
                 int offset = PTFF_BLOCK;
-                for(int i = 0; i < 255 ;i++) // I think the maximum samples are 255
+                for(int i = 0;;i++)
                 {
                     offset = PTFF_BLOCK+(SAMPLE_BLOCK*i);
                     ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, offset, SAMPLE_BLOCK);
@@ -259,9 +264,10 @@ class PTParser
         while(buffer.hasRemaining())
         {
             double pos = buffer.getInt();
-            int unk1 = buffer.get(); //some kind of... idk status? check? just garbage? idk but if it's 2 or 4 i'm sure we should skip it
+            int unk1 = buffer.get(); //some kind of... idk status? check? just garbage? idk but if it's 2 or 4 i'm pretty sure we should skip it
+                                     //because when it's 2 or 4 the values are 0 or negavite or worse xD
             if(unk1 == 0x02 || unk1 == 0x04) break;
-            // the measure is the int part of (pos/192) the position is the fractional one
+            // the measure is the integer part of (pos/192) the position is the fractional one
             int measure = (int)pos/192;
             double position = (pos/192)-measure;
             if(channel == Event.Channel.BPM_CHANGE)
