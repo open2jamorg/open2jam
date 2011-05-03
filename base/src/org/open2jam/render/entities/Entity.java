@@ -74,7 +74,7 @@ public class Entity implements Copyable<Entity>
      *
      * @param delta The ammount of time that has passed in milliseconds
      */
-    public void move(long delta) {
+    public void move(double delta) {
         // update the location of the entity based on move speeds
         x += delta * dx;
         y += delta * dy;

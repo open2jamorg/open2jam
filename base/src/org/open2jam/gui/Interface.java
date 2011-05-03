@@ -981,8 +981,7 @@ public class Interface extends javax.swing.JFrame
                 ObjectInputStream obj = new ObjectInputStream(gzip);
                 @SuppressWarnings("unchecked") // yes, I'm sure its a list of chartlist
                 List<ChartList> l = (List<ChartList>) obj.readObject();
-                model_songlist.clear();
-                for(ChartList c : l)model_songlist.addRow(c);
+                model_songlist.setRawList(l);
                 obj.close();
             } catch (IOException ex) {
                 Logger.global.log(Level.SEVERE, "{0}", ex);

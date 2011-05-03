@@ -36,7 +36,7 @@ public class SampleEntity extends Entity implements TimeEntity
     }
 
     @Override
-    public void move(long delta) {}
+    public void move(double delta) {}
 
     @Override
     public void judgment()

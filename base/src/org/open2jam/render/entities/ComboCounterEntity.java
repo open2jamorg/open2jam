@@ -74,7 +74,7 @@ public class ComboCounterEntity extends NumberEntity
     }
 
     @Override
-    public void move(long delta)
+    public void move(double delta)
     {
         super.move(delta);
         if(title_sprite != null) title_sprite.move(delta);

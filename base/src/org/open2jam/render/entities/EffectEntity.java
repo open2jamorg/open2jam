@@ -22,7 +22,7 @@ public class EffectEntity extends AnimatedEntity
     }
 
     @Override
-    public void move(long delta)
+    public void move(double delta)
     {
         super.move(delta);
         if(sub_frame < last_frame) alive = false; // we already looped over, now we die

@@ -71,8 +71,6 @@ class ChartModelLoader extends SwingWorker<ChartListTableModel,ChartList>
 
     @Override
      protected void process(List<ChartList> chunks) {
-         for (ChartList row : chunks) {
-             table_model.addRow(row);
-         }
+        table_model.addRows(chunks);
      }
 }

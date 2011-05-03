@@ -14,7 +14,7 @@ import org.open2jam.parser.ChartList;
  */
 public class ChartListTableModel implements TableModel
 {
-    private final List<ChartList> items;
+    private List<ChartList> items;
     private final String[] col_names = new String[] { "Name", "Level", "Genre" };
     private int rank;
     
@@ -31,9 +31,14 @@ public class ChartListTableModel implements TableModel
         items.clear();
     }
 
-    public void addRow(ChartList h)
+    public void addRows(List<ChartList> l)
     {
-        items.add(h);
+        items.addAll(l);
+        fireListeners();
+    }
+
+    public void setRawList(List<ChartList> list) {
+        items = list;
         fireListeners();
     }
 

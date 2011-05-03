@@ -73,8 +73,8 @@ public class DistanceRender extends Render
         // work out how long its been since the last update, this
         // will be used to calculate how far the entities should
         // move this loop
-        long now = SystemTimer.getTime();
-        long delta = now - lastLoopTime;
+        double now = SystemTimer.getTime();
+        double delta = now - lastLoopTime;
         lastLoopTime = now;
         lastFpsTime += delta;
         fps++;

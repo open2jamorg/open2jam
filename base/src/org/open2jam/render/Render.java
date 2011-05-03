@@ -90,13 +90,13 @@ public abstract class Render implements GameWindowCallback
     private Map<Integer, Integer> samples;
 
     /** The time at which the last rendering looped started from the point of view of the game logic */
-    long lastLoopTime;
+    double lastLoopTime;
 
     /** The time since the last record of fps */
-    long lastFpsTime = 0;
+    double lastFpsTime = 0;
 
     /** the time it started rendering */
-    long start_time;
+    double start_time;
 
        /** a list of list of entities.
     ** basically, each list is a layer of entities
@@ -480,7 +480,7 @@ public abstract class Render implements GameWindowCallback
     /** update the note layer of the entities_matrix.
     *** note buffering is equally distributed between the frames
     **/
-    void update_note_buffer(long now)
+    void update_note_buffer(double now)
     {
         while(buffer_iterator.hasNext() && getViewport() - velocity_integral(now,buffer_timer) > -10)
         {
