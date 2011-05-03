@@ -140,8 +140,8 @@ public class SkinChecker extends DefaultHandler
 
                 float sx = 1, sy = 1;
                 check(k, atts_map, "scale_x", Log.INFO, "There is no scale_x attribute, using "+sx);
-                check(k, atts_map, "scale_y", Log.INFO, "There is no scale_x attribute, using "+sy);
-                check(k, atts_map, "scale", Log.INFO, "There is no scale_x attribute, using "+sx);
+                check(k, atts_map, "scale_y", Log.INFO, "There is no scale_y attribute, using "+sy);
+                check(k, atts_map, "scale", Log.INFO, "There is no scale attribute, using "+sx);
 
                 URL url = null;
                 if(check(k, atts_map, "file", Log.ERROR, "There is NO file!"))

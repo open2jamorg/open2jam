@@ -830,6 +830,14 @@ public class Interface extends javax.swing.JFrame
         if(dir_list.isEmpty()) return;
         if(combo_dirs.getSelectedIndex()<0)return;
         File s = dir_list.get(combo_dirs.getSelectedIndex());
+        if(cwd == s) return;
+        if(!s.exists())
+        {
+            JOptionPane.showMessageDialog(this, "WOW! Wait, the folder doesn't exist!", "Error opening folder", JOptionPane.ERROR_MESSAGE, null);
+            dir_list.remove(s);
+            combo_dirs.removeItemAt(combo_dirs.getSelectedIndex());
+            return;
+        }
         loadDir(s);
     }//GEN-LAST:event_combo_dirsActionPerformed
 

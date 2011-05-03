@@ -2,6 +2,7 @@ package org.open2jam.parser;
 
 import java.util.logging.Level;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -28,6 +29,12 @@ class PTParser
     /** the long of the event block */
     private static final int EVENT_BLOCK = 0xB;
 
+    private static final FileFilter pt_filter = new FileFilter(){
+        public boolean accept(File f){
+            String s = f.getName().toLowerCase();
+            return (!f.isDirectory()) && (s.endsWith(".pt"));
+        }
+    };
 
     public static boolean canRead(File f)
     {
@@ -38,15 +45,14 @@ class PTParser
     {
         ChartList list = new ChartList();
         list.source_file = file;
-        System.out.println(file.toString());
-        PTChart chart;
+
         try {
-            chart = parsePTheader(file);
+            PTChart chart = parsePTheader(file);
             if (chart != null) list.add(chart);
         } catch (IOException ex) {
             Logger.global.log(Level.WARNING, "Problem opening the file :/ {0}", ex);
         }
-
+        
 
         Collections.sort(list);
         if (list.isEmpty()) return null;
@@ -55,69 +61,8 @@ class PTParser
 
     private static PTChart parsePTheader(File f) throws IOException
     {
-        /*
-         * There is nothing in the pt files nor pak ones that indicates the title,
-         * artist, noter, etc. So we need to search in the db i made to get it.
-         * The ideal filename is:
-         * ai_normal_7k.pt or ai_hd_5key.pt
-         * Now:
-         * ai -> it's the key we will look for in the db, also it's the name of the pak file. Ex. ai.pak
-         * normal, hd -> the difficulty, can be easy(ez), normal(nm), hard(hd), mx, sc
-         * 7k, 5key -> the keys
-         */
-        HashMap<String, ArrayList<String>> hm = null;
-        try
-        {
-            hm = DJMaxDBLoader.getDB();
-        }
-        catch(IOException e)
-        {
-            Logger.global.log(Level.WARNING, "Can't open the djmax db :/ {0}", e);
-            return null;
-        }
-        if(hm.isEmpty()) return null;
-        String[] splits = f.getName().toLowerCase().split("([^(a-zA-Z0-9)])");
-        String name = "";
-        int level = 6;
-        int keys = 2;
-        for(String s : splits)
-        {
-            if(hm.containsKey(s))
-                name = s;
-            if(s.equals("easy") || s.equals("ez"))
-                level = 2;
-            if(s.equals("normal") || s.equals("nm"))
-                level = 4;
-            if(s.equals("hard") || s.equals("hd"))
-                level = 6;
-            if(s.equals("mx"))
-                level = 8;
-            if(s.equals("sc"))
-                level = 10;
-
-            if(s.matches("(5k.*)"))
-                keys = 1;
-        }
-        if(!hm.containsKey(name)) return null;
-        ArrayList<String> al = hm.get(name);
-
         PTChart chart = new PTChart();
-        File sample_file = new File(f.getParent(), name+".pak");
-        chart.sample_file = sample_file;
-        chart.source = f;
-        chart.title = al.get(0);
-        chart.artist = al.get(1);
-        chart.genre = al.get(2);
-        // this is a bit hack, we know that the position in the arraylist will be:
-        // 3 for ez5 4 for ez7 etc
-        // so level(easy) 2 + keys(5) 1 will be 3 ez5 :D and so on... XD
-        // the level isn't the actual level, it's the value in the arraylist
-        level = level+keys;
-        chart.level = Integer.parseInt(al.get(level));
-        chart.keys = keys == 1 ? 5 : 7;
-
-        chart.sample_files = getSampleNames(chart);
-
+        //check if it's a pt file
         try{
             RandomAccessFile rf = new RandomAccessFile(f.getAbsolutePath(), "r");
             ByteBuffer buffer = rf.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, PTFF_BLOCK);
@@ -130,17 +75,92 @@ class PTParser
             int unk4 = buffer.getInt();
             if(ptff_signature != PTFF_SIGNATURE)
             {
-                Logger.global.log(Level.WARNING, "File [{0}] isn't a PTFF file !", f);
+                Logger.global.log(Level.WARNING, "File [{0}] isn't a PTFF file !", f.getName());
                 return null;
             }
 
             chart.bpm = bpm;
 
         }catch(java.io.FileNotFoundException e){
-            Logger.global.log(Level.WARNING, "File {0} not found !!", chart.getSource().getName());
+            Logger.global.log(Level.WARNING, "File {0} not found !!", f.getName());
         } catch (IOException e){
-            Logger.global.log(Level.WARNING, "IO exception on reading PT file {0}", chart.getSource().getName());
+            Logger.global.log(Level.WARNING, "IO exception on reading PT file {0}", f.getName());
         }
+
+        /*
+         * There is nothing in the pt files nor pak ones that indicates the title,
+         * artist, noter, etc. So we need to search in the db i made to get it.
+         * The ideal filename is:
+         * ai_normal_7k.pt or ai_hd_5key.pt
+         * Now:
+         * ai -> it's the key we will look for in the db, also it's the name of the pak file. Ex. ai.pak
+         * normal, hd -> the difficulty, can be easy(ez), normal(nm), hard(hd), mx, sc
+         * 7k, 5key -> the keys
+         */
+
+        HashMap<String, ArrayList<String>> db = new HashMap<String, ArrayList<String>>();
+        try
+        {
+            db = DJMaxDBLoader.getDB();
+        }
+        catch(IOException e)
+        {
+            Logger.global.log(Level.WARNING, "Can't open the djmax db :/ {0}", e);
+            return null;
+        }
+
+        String[] splits = f.getName().toLowerCase().split("([^(a-zA-Z0-9)])");
+        String name = f.getName();
+        int level = 6;
+        int keys = 2;
+        for(String s : splits)
+        {
+            if(db.containsKey(s))
+                name = s;
+            if(s.equals("easy") || s.equals("ez"))
+                level = 2;
+            else if(s.equals("normal") || s.equals("nm"))
+                level = 4;
+            else if(s.equals("hard") || s.equals("hd"))
+                level = 6;
+            else if(s.equals("mx"))
+                level = 8;
+            else if(s.equals("sc"))
+                level = 10;
+
+            if(s.matches("(5k.*)"))
+                keys = 1;
+        }
+
+        if(db.containsKey(name))
+        {
+            ArrayList<String> al = db.get(name);
+            
+            File sample_file = new File(f.getParent(), name+".pak");
+            chart.sample_file = sample_file;   
+            chart.title = al.get(0);
+            chart.artist = al.get(1);
+            chart.genre = al.get(2);
+            // this is a bit hack, we know that the position in the arraylist will be:
+            // 3 for ez5 4 for ez7 etc
+            // so level(easy) 2 + keys(5) 1 will be 3 ez5 :D and so on... XD
+            // the level isn't the actual level, it's the value in the arraylist
+            level = level+keys;
+            chart.level = Integer.parseInt(al.get(level));
+            chart.keys = keys == 1 ? 5 : 7;
+        }
+        else
+        {
+            chart.sample_file = null;
+            chart.title = name;
+            chart.artist = "Unknown";
+            chart.genre = "Unknown";
+            chart.level = 0;
+            chart.keys = 7;
+        }
+        
+        chart.source = f;
+        chart.sample_files = getSampleNames(chart);
 
         return chart;
     }
@@ -276,7 +296,7 @@ class PTParser
                 short unk2 = buffer.getShort();
                 if(bpm < 0) break;
                 event_list.add(new Event(channel,measure,position,bpm,Event.Flag.NONE));
-                System.out.println("BPM CHANGE @ "+measure+" : "+position+" VALUE "+bpm);
+//                System.out.println("BPM CHANGE @ "+measure+" : "+position+" VALUE "+bpm);
             }
             else
             {

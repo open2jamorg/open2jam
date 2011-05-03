@@ -30,6 +30,7 @@ public class DJMaxDBLoader {
         if(url == null)
         {
             File file = new File(db_path);
+            if(!file.exists()) return null;
             r = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
         }
         else
@@ -64,6 +65,9 @@ public class DJMaxDBLoader {
 
     public static HashMap<String, ArrayList<String>> getDB() throws IOException
     {
-        return readDB();
+        if(database == null)
+            return readDB();
+        else
+            return database;
     }
 }
