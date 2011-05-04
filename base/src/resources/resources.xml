@@ -38,7 +38,7 @@
 	</sprite>
 
 
-	<sprite id="lifebar" framespeed="22" >
+	<sprite id="lifebar" framespeed="33.3" >
 		<frame x="77"  y="1"  w="11" h="302" file="main.png" />
 		<frame x="89"  y="1"  w="11" h="302" file="main.png" />
 		<frame x="101"  y="1" w="11" h="302" file="main.png" />
@@ -429,10 +429,10 @@
 	<entity id="PILL_5" x="200" y="2"   sprite="pill" />
 
 	<!-- life bar -->
-	<entity id="LIFE_BAR" x="203" y="246" sprite="lifebar" />
+	<entity id="LIFE_BAR" x="203" y="247" sprite="lifebar" fill_direction="up_to_down"/>
 	
 	<!-- time bar / o2 combo bar (don't know what way will we go)-->
-	<entity x="226" y="515" sprite="timebar" />
+	<entity x="226" y="515" sprite="timebar" fill_direction="left_to_right"/>
     </layer>
 
     <!-- judgment area (line/glow) -->
@@ -474,7 +474,7 @@
     
     <!-- jam bar -->
     <layer id="8">
-	<entity id="JAM_BAR" x="4" y="536" sprite="jam_bar" />
+	<entity id="JAM_BAR" x="4" y="536" sprite="jam_bar" fill_direction="left_to_right"/>
     </layer>
 
     <!-- pressed keyboard keys sprites -->
@@ -500,7 +500,7 @@
 
     <!-- note hit effects -->
     <layer id="10">
-	<entity id="EFFECT_CLICK_1" sprite="effect_click_1" />
+	<entity id="EFFECT_CLICK" sprite="effect_click_1" />
 
 	<entity y="460" id="EFFECT_LONGFLARE" sprite="longflare" />
     </layer>

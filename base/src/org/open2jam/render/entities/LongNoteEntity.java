@@ -94,7 +94,9 @@ public class LongNoteEntity extends NoteEntity
         double end = getY();
         double local_y = y;
 	float sy = (float) ((local_y - end) / body_sprite.getHeight());
-        body_sprite.draw(x, end, body_sprite.getScaleX(), sy);
+        //there are sometimes that the head and the body separate, this fix it... but...
+        //TODO find a better way
+        body_sprite.draw(x, end+body_sprite.getHeight(), body_sprite.getScaleX(), sy);
         sprite.draw(x,local_y);
         sprite.draw(x,end);
     }

@@ -13,7 +13,6 @@ import org.open2jam.parser.Event;
 import org.open2jam.render.entities.AnimatedEntity;
 import org.open2jam.render.entities.ComboCounterEntity;
 import org.open2jam.render.entities.CompositeEntity;
-import org.open2jam.render.entities.EffectEntity;
 import org.open2jam.render.entities.Entity;
 import org.open2jam.render.entities.BarEntity;
 import org.open2jam.render.entities.JudgmentEntity;
@@ -36,6 +35,7 @@ public class SkinHandler extends DefaultHandler
 
     private ArrayList<Sprite> frame_buffer;
     private HashMap<String, SpriteList> sprite_buffer;
+    private HashMap<String, BarEntity.FillDirection> bar_fill_buffer;
 
     private ArrayList<String> style_list;
     private HashMap<String, ArrayList<String>> styles_map;
@@ -62,6 +62,8 @@ public class SkinHandler extends DefaultHandler
         atts_stack = new ArrayDeque<Map<String,String>>();
         frame_buffer = new ArrayList<Sprite>();
         sprite_buffer = new HashMap<String, SpriteList>();
+
+        bar_fill_buffer = new HashMap<String, BarEntity.FillDirection>();
 
         style_list = new ArrayList<String>();
         styles_map = new HashMap<String, ArrayList<String>>();
@@ -187,6 +189,27 @@ public class SkinHandler extends DefaultHandler
                 break;
             }
 
+            if(atts.containsKey("fill_direction") && id != null)
+            {
+                String fill = atts.get("fill_direction").toLowerCase().trim();
+                if(fill.trim().equals(""))
+                    Logger.global.log(Level.WARNING, "There is no fill_direction ! @ {0}", id);
+
+                BarEntity.FillDirection direction = BarEntity.FillDirection.LEFT_TO_RIGHT;
+                if      (fill.equals("left_to_right") || fill.equals("ltr"))
+                        direction = BarEntity.FillDirection.LEFT_TO_RIGHT;
+                else if (fill.equals("right_to_left") || fill.equals("rtl"))
+                        direction = BarEntity.FillDirection.RIGHT_TO_LEFT;
+                else if (fill.equals("up_to_down")    || fill.equals("utd"))
+                        direction = BarEntity.FillDirection.UP_TO_DOWN;
+                else if (fill.equals("down_to_up")    || fill.equals("dtu"))
+                        direction = BarEntity.FillDirection.DOWN_TO_UP;
+                else
+                    Logger.global.log(Level.WARNING, "The fill_direction [{0}] is unknown !", fill);
+
+
+                bar_fill_buffer.put(id, direction);
+            }
 
 
             if(id != null && (e = promoteEntity(id, atts)) != null){
@@ -275,9 +298,9 @@ public class SkinHandler extends DefaultHandler
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
             e = new AnimatedEntity(s,0,0);
         }
-        else if(id.startsWith("EFFECT_")){
+        else if(id.startsWith("EFFECT_CLICK")){
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
-            e = new EffectEntity(s,0, 0);
+            e = new AnimatedEntity(s,0, 0, false);
         }
         else if(id.startsWith("PRESSED_NOTE_")){
             SpriteList sl = sprite_buffer.get(atts.get("sprite"));
@@ -385,14 +408,24 @@ public class SkinHandler extends DefaultHandler
 	}
 	else if(id.equals("LIFE_BAR")){
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
-	    e = new BarEntity(s, 0, 0);
+	    if(bar_fill_buffer.containsKey(id))
+                e = new BarEntity(s, 0, 0, bar_fill_buffer.get(id));
+            else
+                e = new BarEntity(s, 0, 0);
 	}
 	else if(id.equals("JAM_BAR")){
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
-	    e = new BarEntity(s, 0, 0);
+	    if(bar_fill_buffer.containsKey(id))
+                e = new BarEntity(s, 0, 0, bar_fill_buffer.get(id));
+            else
+                e = new BarEntity(s, 0, 0);
 	}
 	else if(id.equals("TIME_BAR")){
-	    //TODO
+            SpriteList s = sprite_buffer.get(atts.get("sprite"));
+	    if(bar_fill_buffer.containsKey(id))
+                e = new BarEntity(s, 0, 0, bar_fill_buffer.get(id));
+            else
+                e = new BarEntity(s, 0, 0);
 	}
         else{
             Logger.global.log(Level.WARNING, "unpromoted entity [{0}]", id);

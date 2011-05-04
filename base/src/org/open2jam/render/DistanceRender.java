@@ -183,7 +183,7 @@ public class DistanceRender extends Render
 
 		if(!judge.equals(JUDGE.MISS))
                 {
-		    Entity ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
+		    Entity ee = skin.getEntityMap().get("EFFECT_CLICK").copy();
 		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
 		    getViewport()-ee.getHeight()/2);
 		    entities_matrix.add(ee);
@@ -220,7 +220,7 @@ public class DistanceRender extends Render
                     Entity to_kill = longflare.put(ne.getChannel(),ee);
                     if(to_kill != null)to_kill.setAlive(false);
 		    
-		    ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
+		    ee = skin.getEntityMap().get("EFFECT_CLICK").copy();
 		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
 		    getViewport()-ee.getHeight()/2);
 		    entities_matrix.add(ee);

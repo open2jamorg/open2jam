@@ -27,6 +27,12 @@ public class BarEntity extends AnimatedEntity
         super(list,x,y);
     }
 
+    public BarEntity(SpriteList list, double x, double y, FillDirection fill)
+    {
+        super(list,x,y);
+        direction = fill;
+    }
+
     public void setNumber(Integer i){
         if(i <= limit) number = i;
         else number = limit;
@@ -54,8 +60,6 @@ public class BarEntity extends AnimatedEntity
         float perc = ((float)number / limit);
         double px = x;
         double py = y;
-        // TODO: ideally, this should be called only when the number changes
-        // CdK: Should be? it's an animated entity now
         switch(direction)
         {
             case LEFT_TO_RIGHT:

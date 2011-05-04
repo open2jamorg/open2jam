@@ -221,7 +221,7 @@ public class LWJGLGameWindow implements GameWindow {
                     }
 
                     // update window contents
-                    Display.update(false);
+                    Display.update();
 
 
                     if(Display.isCloseRequested() || Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {

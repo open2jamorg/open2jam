@@ -365,7 +365,6 @@ public abstract class Render implements GameWindowCallback
         lifebar_entity = (BarEntity) skin.getEntityMap().get("LIFE_BAR");
         lifebar_entity.setLimit(1000);
         lifebar_entity.setNumber(1000);
-        lifebar_entity.setFillDirection(BarEntity.FillDirection.UP_TO_DOWN);
         entities_matrix.add(lifebar_entity);
 
         combo_entity = (ComboCounterEntity) skin.getEntityMap().get("COMBO_COUNTER");
