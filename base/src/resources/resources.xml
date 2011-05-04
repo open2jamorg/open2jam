@@ -90,6 +90,11 @@
 		<frame x="225" y="151" w="28" h="5" file="main.png" />
 		<frame x="225" y="159" w="28" h="5" file="main.png" />
 	</sprite>
+	<sprite framespeed="12" id="tail_note_white">
+		<frame x="225" y="143" w="28" h="5" file="main.png" />
+		<frame x="225" y="151" w="28" h="5" file="main.png" />
+		<frame x="225" y="159" w="28" h="5" file="main.png" />
+	</sprite>
 	<sprite framespeed="12" id="head_note_blue">
 		<frame x="254" y="142" w="22" h="7" file="main.png" />
 		<frame x="254" y="150" w="22" h="7" file="main.png" />
@@ -458,13 +463,13 @@
 
     <!-- notes -->
     <layer id="6">
-	<entity id="NOTE_1" x="5"    sprite="head_note_white, body_note_white" />
+	<entity id="NOTE_1" x="5"    sprite="head_note_white, body_note_white, tail_note_white" />
 	<entity id="NOTE_2" x="33"   sprite="head_note_blue, body_note_blue" />
-	<entity id="NOTE_3" x="55"   sprite="head_note_white, body_note_white" />
+	<entity id="NOTE_3" x="55"   sprite="head_note_white, body_note_white, tail_note_white" />
 	<entity id="NOTE_4" x="83"   sprite="head_note_yellow, body_note_yellow" />
-	<entity id="NOTE_5" x="115"  sprite="head_note_white, body_note_white" />
+	<entity id="NOTE_5" x="115"  sprite="head_note_white, body_note_white, tail_note_white" />
 	<entity id="NOTE_6" x="143"  sprite="head_note_blue, body_note_blue" />
-	<entity id="NOTE_7" x="165"  sprite="head_note_white, body_note_white" />
+	<entity id="NOTE_7" x="165"  sprite="head_note_white, body_note_white, tail_note_white" />
     </layer>
 
     <!-- static keyboard sprite -->

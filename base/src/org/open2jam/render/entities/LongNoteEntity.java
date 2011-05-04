@@ -8,23 +8,30 @@ public class LongNoteEntity extends NoteEntity
 {
     private final SpriteList body_frames;
     private Sprite body_sprite;
+    private final SpriteList tail_frames;
+    private Sprite tail_sprite;
 
     /** the size of the long note, this is constant once defined end_time */
     private Double end_dist = null;
     private Double end_time = null;
 
-    public LongNoteEntity(SpriteList head_frames, SpriteList body_frames, Event.Channel ch, double x, double y)
+    public LongNoteEntity(SpriteList head_frames, SpriteList body_frames, SpriteList tail_frames, Event.Channel ch, double x, double y)
     {
             super(head_frames,ch, x,y);
             this.body_frames = body_frames;
+            this.body_sprite = body_frames.get(0);
+            this.tail_frames = tail_frames;
+            this.tail_sprite = tail_frames.get(0);
             height = 0;
-            body_sprite = body_frames.get(0);
+            
     }
 
     private LongNoteEntity(LongNoteEntity org) {
         super(org);
         this.body_frames = org.body_frames;
         this.body_sprite = org.body_sprite;
+        this.tail_frames = org.tail_frames;
+        this.tail_sprite = org.tail_sprite;
         this.end_time = org.end_time;
     }
 
@@ -79,6 +86,7 @@ public class LongNoteEntity extends NoteEntity
     {
         sprite.setAlpha(alpha);
         body_sprite.setAlpha(alpha);
+        tail_sprite.setAlpha(alpha);
     }
 
     @Override
@@ -86,6 +94,7 @@ public class LongNoteEntity extends NoteEntity
     {
             super.move(delta);
             body_sprite = body_frames.get((int)sub_frame);
+            tail_sprite = tail_frames.get((int)sub_frame);
     }
 
     @Override
@@ -98,7 +107,7 @@ public class LongNoteEntity extends NoteEntity
         //TODO find a better way
         body_sprite.draw(x, end+body_sprite.getHeight(), body_sprite.getScaleX(), sy);
         sprite.draw(x,local_y);
-        sprite.draw(x,end);
+        tail_sprite.draw(x,end);
     }
 
     @Override

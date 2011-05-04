@@ -263,7 +263,7 @@ public class SkinHandler extends DefaultHandler
 
             String sprites[] = atts.get("sprite").split(",");
 
-            SpriteList head = null, body = null;
+            SpriteList head = null, body = null, tail = null;
             for(String s : sprites){
                 s = s.trim();
                 if(s.startsWith("head")){
@@ -272,11 +272,18 @@ public class SkinHandler extends DefaultHandler
                 else if(s.startsWith("body")){
                     body = sprite_buffer.get(s);
                 }
+                else if(s.startsWith("tail")){
+                    tail = sprite_buffer.get(s);
+                }
             }
+
+            if(tail == null)
+                tail = head;
+
             int x = 0;
             if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x"));
 
-            e = new LongNoteEntity(head, body, Event.Channel.valueOf(id), x, 0);
+            e = new LongNoteEntity(head, body, tail, Event.Channel.valueOf(id), x, 0);
             e.setLayer(layer);
             result.getEntityMap().put("LONG_"+id, e);
             e = new NoteEntity(head, Event.Channel.valueOf(id), x, 0);
@@ -294,11 +301,11 @@ public class SkinHandler extends DefaultHandler
             e = new JudgmentEntity(s,0, 0);
         }
         // TODO: change the name of this ???
-        else if(id.startsWith("EFFECT_LONGFLARE")){
+        else if(id.equals("EFFECT_LONGFLARE")){
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
             e = new AnimatedEntity(s,0,0);
         }
-        else if(id.startsWith("EFFECT_CLICK")){
+        else if(id.equals("EFFECT_CLICK")){
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
             e = new AnimatedEntity(s,0, 0, false);
         }
