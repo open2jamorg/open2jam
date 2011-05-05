@@ -51,6 +51,8 @@ public interface GameWindow {
 	 */
 	public boolean isKeyDown(int keyCode);
 
+        public void pollKeyboard();
+
         public void destroy();
 
         /** manually update the screen */

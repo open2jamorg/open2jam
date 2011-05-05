@@ -1,9 +1,12 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<Resources>
+<?xml version="1.0" encoding="UTF-8"?>
+<Resources  xmlns="urn:nonstandard:resources"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="urn:nonstandard:resources 
+     resources.xsd">
 <skin name="o2jam" keys="7" width="800" height="600" judgment_line="480">
-    
+
     <spriteset>
-        
+
         <sprite id="background">
                 <frame x="0" y="0" w="600" h="560" file="Playing_BG7.jpg" />
         </sprite>
@@ -32,7 +35,7 @@
         <sprite id="border3">
                 <frame x="213" y="0" w="9" h="230" scale_y="2.1" file="main.png" />
         </sprite>
-        
+
 	<sprite id="pill">
 		<frame x="0" y="52" w="28" h="28" file="main.png" />
 	</sprite>
@@ -55,31 +58,31 @@
 	<sprite id="timebar">
 		<frame x="0"  y="183"  w="226" h="72" file="font1.png" />
 	</sprite>
-	
-	
+
+
 	<sprite id="judgmentarea" framespeed="5">
 		<frame x="224" y="1"  w="192" h="64" file="main.png" />
 		<frame x="224" y="66" w="192" h="64" file="main.png" />
 	</sprite>
-	
+
 	<sprite id="pressed_note_lane_white">
 		<frame x="425" y="1" w="28" h="266" file="main.png" />
 	</sprite>
-	
+
 	<sprite id="pressed_note_lane_blue">
 		<frame x="455" y="1" w="22" h="480" file="main.png" />
 	</sprite>
-	
+
 	<sprite id="pressed_note_lane_yellow">
 		<frame x="478" y="1" w="32" h="480" file="main.png" />
 	</sprite>
-	
+
 	<sprite framespeed="5" id="measure_mark">
 		<frame x="225" y="134" w="188" h="3" file="main.png" />
 		<frame x="225" y="138" w="188" h="3" file="main.png" />
 	</sprite>
-	
-	
+
+
 	<sprite framespeed="12" id="head_note_white">
 		<frame x="225" y="142" w="28" h="7" file="main.png" />
 		<frame x="225" y="150" w="28" h="7" file="main.png" />
@@ -115,32 +118,32 @@
 		<frame x="277" y="151" w="32" h="5" file="main.png" />
 		<frame x="277" y="159" w="32" h="5" file="main.png" />
 	</sprite>
-	
+
 	<sprite id="static_keyboard">
 		<frame x="208" y="366" w="204" h="120" file="main.png" />
 	</sprite>
-	
+
 	<sprite id="jam_bar">
 		<frame x="1" y="391" w="191" h="12" file="main.png" />
 	</sprite>
-	
-	
+
+
 	<sprite id="pressed_note_keyboard_white1">
 		<frame x="1" y="315" w="31" h="46" file="main.png" />
 	</sprite>
 	<sprite id="pressed_note_keyboard_white2">
 		<frame x="1" y="362" w="10" h="5" file="main.png" />
 	</sprite>
-	
+
 	<sprite id="pressed_note_keyboard_blue">
 		<frame x="33" y="315" w="22" h="42" file="main.png" />
 	</sprite>
-	
+
 	<sprite id="pressed_note_keyboard_yellow">
 		<frame x="87" y="315" w="32" h="46" file="main.png" />
 	</sprite>
-	
-	
+
+
 	<sprite id="effect_click_1" framespeed="60">
 		<frame x="0"    y="0"   w="256" h="256" file="note_click5_3.png" />
 		<frame x="256"  y="0"   w="256" h="256" file="note_click5_3.png" />
@@ -154,7 +157,7 @@
 		<frame x="1024" y="256" w="256" h="256" file="note_click5_3.png" />
 		<frame x="0"    y="512" w="256" h="256" file="note_click5_3.png" />
 	</sprite>
-	
+
 	<sprite id="longflare" framespeed="33.3">
 		<frame x="0"    y="0"   w="128" h="128" file="longflare.png" />
 		<frame x="128"  y="0"   w="128" h="128" file="longflare.png" />
@@ -171,7 +174,7 @@
 		<frame x="256"  y="256" w="128" h="128" file="longflare.png" />
 		<frame x="384"  y="256" w="128" h="128" file="longflare.png" />
 	</sprite>
-	
+
 
 	<sprite id="combo_number_0">
 		<frame x="40" y="27" w="46" h="71" file="numbers_1.png" />
@@ -228,8 +231,8 @@
 	<sprite id="judgment_miss">
 		<frame x="0" y="0" w="128" h="128" file="note_miss_1.png" />
 	</sprite>
-	
-	
+
+
 	<sprite id="score_number_0">
 		<frame x="126" y="1" w="23" h="18" file="font1.png" />
 	</sprite>
@@ -327,8 +330,8 @@
 	<sprite id="time_number_9">
 		<frame x="229" y="81" w="27" h="21" file="font1.png" />
 	</sprite>
-	
-	
+
+
 	<sprite id="maxcombo_number_0">
 		<frame x="126" y="106" w="11" h="11" file="font1.png" />
 	</sprite>
@@ -359,7 +362,7 @@
 	<sprite id="maxcombo_number_9">
 		<frame x="225" y="106" w="11" h="11" file="font1.png" />
 	</sprite>
-	
+
 	<sprite id="counter_number_0">
 		<frame x="126" y="39" w="9" h="9" file="font1.png" />
 	</sprite>
@@ -435,7 +438,7 @@
 
 	<!-- life bar -->
 	<entity id="LIFE_BAR" x="203" y="247" sprite="lifebar" fill_direction="up_to_down"/>
-	
+
 	<!-- time bar / o2 combo bar (don't know what way will we go)-->
 	<entity x="226" y="515" sprite="timebar" fill_direction="left_to_right"/>
     </layer>
@@ -476,7 +479,7 @@
     <layer id="7">
 	<entity x="0" y="480" sprite="static_keyboard" />
     </layer>
-    
+
     <!-- jam bar -->
     <layer id="8">
 	<entity id="JAM_BAR" x="4" y="536" sprite="jam_bar" fill_direction="left_to_right"/>
@@ -486,12 +489,12 @@
     <layer id="9">
 	<entity id="PRESSED_NOTE_1" x="3"    y="487" sprite="pressed_note_keyboard_white1" />
 	<entity id="PRESSED_NOTE_1" x="34"   y="528" sprite="pressed_note_keyboard_white2" />
-	
+
 	<entity id="PRESSED_NOTE_2" x="33"   y="487" sprite="pressed_note_keyboard_blue" />
 
 	<entity id="PRESSED_NOTE_3" x="54"   y="487" sprite="pressed_note_keyboard_white1" />
 	<entity id="PRESSED_NOTE_3" x="45"   y="528" sprite="pressed_note_keyboard_white2" />
-	
+
 	<entity id="PRESSED_NOTE_4" x="83"   y="487" sprite="pressed_note_keyboard_yellow" />
 
 	<entity id="PRESSED_NOTE_5" x="114"  y="487" sprite="pressed_note_keyboard_white1" />
@@ -511,13 +514,13 @@
     </layer>
 
     <!-- counters and judgment sprites -->
-    <layer id="11">       
+    <layer id="11">
         <entity id="COMBO_COUNTER" x="99" y="250" sprite="combo_number_0,
-	combo_number_1, combo_number_2, combo_number_3, combo_number_4, combo_number_5, 
+	combo_number_1, combo_number_2, combo_number_3, combo_number_4, combo_number_5,
 	combo_number_6, combo_number_7, combo_number_8, combo_number_9, combo_title" />
 
 	<entity id="FPS_COUNTER" x="798" y="5" sprite="score_number_0, score_number_1,
-	 score_number_2, score_number_3, score_number_4, score_number_5, score_number_6, 
+	 score_number_2, score_number_3, score_number_4, score_number_5, score_number_6,
 	 score_number_7, score_number_8, score_number_9" />
 
         <entity id="EFFECT_JUDGMENT_PERFECT" x="30" y="300" sprite="judgment_perfect" />
@@ -529,25 +532,25 @@
 	<entity id="EFFECT_JUDGMENT_BAD"     x="30" y="300" sprite="judgment_bad" />
 
 	<entity id="EFFECT_JUDGMENT_MISS"    x="30" y="300" sprite="judgment_miss" />
-	 
+
 
 	<entity id="SCORE_COUNTER" x="192" y="567" sprite="score_number_0, score_number_1,
-	 score_number_2, score_number_3, score_number_4, score_number_5, score_number_6, 
+	 score_number_2, score_number_3, score_number_4, score_number_5, score_number_6,
 	 score_number_7, score_number_8, score_number_9" />
 
 	<entity id="JAM_COUNTER" x="99" y="80" sprite="jam_number_0, jam_number_1,
 	 jam_number_2, jam_number_3, jam_number_4, jam_number_5, jam_number_6,
 	 jam_number_7, jam_number_8, jam_number_9, jam_title" />
 
-	<entity id="MINUTE_COUNTER" x="346" y="569" sprite="time_number_0, time_number_1, 
-	time_number_2, time_number_3, time_number_4, time_number_5, time_number_6, 
+	<entity id="MINUTE_COUNTER" x="346" y="569" sprite="time_number_0, time_number_1,
+	time_number_2, time_number_3, time_number_4, time_number_5, time_number_6,
 	time_number_7, time_number_8, time_number_9" />
 
-        <entity id="SECOND_COUNTER" x="410" y="569" sprite="time_number_0, time_number_1, 
-	time_number_2, time_number_3, time_number_4, time_number_5, time_number_6, 
+        <entity id="SECOND_COUNTER" x="410" y="569" sprite="time_number_0, time_number_1,
+	time_number_2, time_number_3, time_number_4, time_number_5, time_number_6,
 	time_number_7, time_number_8, time_number_9" />
-	
-	
+
+
 	<entity id="MAXCOMBO_COUNTER" x="671" y="556" sprite="maxcombo_number_0, maxcombo_number_1,
 	maxcombo_number_2, maxcombo_number_3, maxcombo_number_4, maxcombo_number_5, maxcombo_number_6,
 	maxcombo_number_7, maxcombo_number_8, maxcombo_number_9" />
@@ -565,18 +568,17 @@
         <entity id="COUNTER_JUDGMENT_GOOD" x="728" y="573" sprite="counter_number_0, counter_number_1,
 	counter_number_2, counter_number_3, counter_number_4, counter_number_5, counter_number_6,
 	counter_number_7, counter_number_8, counter_number_9" />
-          
+
 
         <entity id="COUNTER_JUDGMENT_BAD" x="658" y="582" sprite="counter_number_0, counter_number_1,
 	counter_number_2, counter_number_3, counter_number_4, counter_number_5, counter_number_6,
 	counter_number_7, counter_number_8, counter_number_9" />
-            
+
 
         <entity id="COUNTER_JUDGMENT_MISS" x="728" y="582" sprite="counter_number_0, counter_number_1,
 	counter_number_2, counter_number_3, counter_number_4, counter_number_5, counter_number_6,
 	counter_number_7, counter_number_8, counter_number_9" />
-	
+
     </layer>
 </skin>
 </Resources>
-

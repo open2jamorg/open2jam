@@ -22,10 +22,6 @@ import org.open2jam.render.lwjgl.SoundManager;
 
 public class DistanceRender extends Render
 {
-    private static final double AUTOPLAY_THRESHOLD = 0.8;
-
-    private static final double COMBO_THRESHOLD = 0.5; // GOOD
-
     private enum JUDGE {
         COOL(0.8), GOOD(0.5), BAD(0.2), MISS(0);
 
@@ -38,6 +34,9 @@ public class DistanceRender extends Render
             return "JUDGMENT_" + super.toString();
         }
     }
+
+    private static final double AUTOPLAY_THRESHOLD = 0.8;
+    private static final double COMBO_THRESHOLD = JUDGE.GOOD.value;
 
     private EnumMap<JUDGE,NumberEntity> note_counter;
 
@@ -101,6 +100,7 @@ public class DistanceRender extends Render
 
         now = SystemTimer.getTime() - start_time;
 
+        window.pollKeyboard();
 	if(AUTOPLAY)do_autoplay();
         else check_keyboard();
 

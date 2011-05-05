@@ -265,7 +265,7 @@ public abstract class Render implements GameWindowCallback
 
     void updateHispeed()
     {
-        judgment_line_y1 = skin.judgment_line - JUDGMENT_SIZE;
+        judgment_line_y1 = skin.getJudgmentLine() - JUDGMENT_SIZE;
         if(hispeed > 1){
             double off = JUDGMENT_SIZE * (hispeed-1);
             judgment_line_y1 -= off;
@@ -310,14 +310,14 @@ public abstract class Render implements GameWindowCallback
         try{
             BufferedImage img = chart.getCover();
             Sprite s = ResourceFactory.get().getSprite(img);
-            s.setScale(skin.screen_scale_x, skin.screen_scale_y);
+            s.setScale(skin.getScreenScaleX(), skin.getScreenScaleY());
             s.draw(0, 0);
             window.update();
         } catch (NullPointerException e){
             Logger.global.log(Level.INFO, "No cover image on file: {0}", chart.getSource().getName());
         }
 
-        judgment_line_y2 = skin.judgment_line;
+        judgment_line_y2 = skin.getJudgmentLine();
 	updateHispeed();
 
         bpm = chart.getBPM();
@@ -356,6 +356,7 @@ public abstract class Render implements GameWindowCallback
         entities_matrix.add(score_entity);
 
         jamcombo_entity = (ComboCounterEntity) skin.getEntityMap().get("JAM_COUNTER");
+        jamcombo_entity.setThreshold(1);
         entities_matrix.add(jamcombo_entity);
 
         jambar_entity = (BarEntity) skin.getEntityMap().get("JAM_BAR");

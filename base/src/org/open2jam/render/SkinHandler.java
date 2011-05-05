@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import org.open2jam.util.Logger;
 import org.open2jam.parser.Event;
+import org.open2jam.render.ResourceFactory;
+import org.open2jam.render.Sprite;
+import org.open2jam.render.SpriteList;
 import org.open2jam.render.entities.AnimatedEntity;
 import org.open2jam.render.entities.ComboCounterEntity;
 import org.open2jam.render.entities.CompositeEntity;
@@ -35,6 +38,7 @@ public class SkinHandler extends DefaultHandler
 
     private ArrayList<Sprite> frame_buffer;
     private HashMap<String, SpriteList> sprite_buffer;
+
     private HashMap<String, BarEntity.FillDirection> bar_fill_buffer;
 
     private ArrayList<String> style_list;

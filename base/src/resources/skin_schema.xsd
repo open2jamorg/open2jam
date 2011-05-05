@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            elementFormDefault="qualified"
+            xmlns="urn:nonstandard:resources"
+            targetNamespace="urn:nonstandard:resources">
+    <xsd:element name="Resources">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="skin"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="skin">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="spriteset"/>
+                <xsd:element maxOccurs="unbounded" ref="layer"/>
+            </xsd:sequence>
+			<xsd:attribute name="name" type="xsd:string" use="required"/>
+            <xsd:attribute default="7" name="keys" type="xsd:nonNegativeInteger"/>
+            <xsd:attribute name="judgment_line" type="xsd:nonNegativeInteger" use="required"/>
+            <xsd:attribute default="800" name="width" type="xsd:nonNegativeInteger"/>
+			<xsd:attribute default="600" name="height" type="xsd:nonNegativeInteger"/>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="spriteset">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" ref="sprite"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="sprite">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" ref="frame"/>
+            </xsd:sequence>
+            <xsd:attribute name="id" type="xsd:string" use="required"/>
+			<xsd:attribute name="framespeed" type="xsd:decimal"/>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="frame">
+        <xsd:complexType>
+            <xsd:attribute name="file" type="xsd:string" use="required"/>
+            <xsd:attribute name="x" type="xsd:nonNegativeInteger"/>
+			<xsd:attribute name="y" type="xsd:nonNegativeInteger"/>
+			<xsd:attribute name="w" type="xsd:nonNegativeInteger"/>
+			<xsd:attribute name="h" type="xsd:nonNegativeInteger"/>
+            <xsd:attribute name="scale_x" type="xsd:decimal"/>
+            <xsd:attribute name="scale_y" type="xsd:decimal"/>
+            <xsd:attribute name="scale" type="xsd:decimal"/>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="layer">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="entity"/>
+                <xsd:element maxOccurs="unbounded" minOccurs="0" ref="styles"/>
+            </xsd:sequence>
+            <xsd:attribute name="id" type="xsd:nonNegativeInteger" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="styles">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="style" maxOccurs="unbounded"/>
+            </xsd:sequence>
+            <xsd:attribute name="id" type="xsd:string" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="style">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" ref="entity"/>
+            </xsd:sequence>
+            <xsd:attribute name="id" type="xsd:string" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="entity">
+        <xsd:complexType>
+            <xsd:attribute name="id" type="entityID"/>
+			<xsd:attribute name="x" type="xsd:nonNegativeInteger"/>
+            <xsd:attribute name="y" type="xsd:nonNegativeInteger"/>
+            <xsd:attribute name="animation" type="xsd:string"/>
+            <xsd:attribute name="fill_direction" type="xsd:string"/>
+			<xsd:attribute name="sprite" type="xsd:string" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:simpleType name="entityID">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="NOTE_1"/><xsd:enumeration value="NOTE_2"/><xsd:enumeration value="NOTE_3"/><xsd:enumeration value="NOTE_4"/>
+            <xsd:enumeration value="NOTE_5"/><xsd:enumeration value="NOTE_6"/><xsd:enumeration value="NOTE_7"/><xsd:enumeration value="NOTE_SC"/>
+            <xsd:enumeration value="MEASURE_MARK"/>
+            <xsd:enumeration value="JUDGMENT_LINE"/>
+            <xsd:enumeration value="EFFECT_JUDGMENT_PERFECT"/><xsd:enumeration value="EFFECT_JUDGMENT_COOL"/>
+            <xsd:enumeration value="EFFECT_JUDGMENT_GOOD"/><xsd:enumeration value="EFFECT_JUDGMENT_BAD"/><xsd:enumeration value="EFFECT_JUDGMENT_MISS"/>
+            <xsd:enumeration value="EFFECT_LONGFLARE"/>
+            <xsd:enumeration value="EFFECT_CLICK"/>
+            <xsd:enumeration value="PRESSED_NOTE_1"/><xsd:enumeration value="PRESSED_NOTE_2"/><xsd:enumeration value="PRESSED_NOTE_3"/><xsd:enumeration value="PRESSED_NOTE_4"/>
+            <xsd:enumeration value="PRESSED_NOTE_5"/><xsd:enumeration value="PRESSED_NOTE_6"/><xsd:enumeration value="PRESSED_NOTE_7"/><xsd:enumeration value="PRESSED_NOTE_SC"/>
+            <xsd:enumeration value="FPS_COUNTER"/>
+            <xsd:enumeration value="COUNTER_JUDGMENT_PERFECT"/><xsd:enumeration value="COUNTER_JUDGMENT_COOL"/>
+            <xsd:enumeration value="COUNTER_JUDGMENT_GOOD"/><xsd:enumeration value="COUNTER_JUDGMENT_BAD"/><xsd:enumeration value="COUNTER_JUDGMENT_MISS"/>
+            <xsd:enumeration value="MAXCOMBO_COUNTER"/>
+            <xsd:enumeration value="SCORE_COUNTER"/>
+            <xsd:enumeration value="JAM_COUNTER"/>
+            <xsd:enumeration value="COMBO_COUNTER"/>
+            <xsd:enumeration value="MINUTE_COUNTER"/>
+            <xsd:enumeration value="SECOND_COUNTER"/>
+            <xsd:enumeration value="COMBO_TITLE"/>
+            <xsd:enumeration value="JAM_TITLE"/>
+            <xsd:enumeration value="PILL_1"/><xsd:enumeration value="PILL_2"/><xsd:enumeration value="PILL_3"/><xsd:enumeration value="PILL_4"/><xsd:enumeration value="PILL_5"/>
+            <xsd:enumeration value="LIFE_BAR"/>
+            <xsd:enumeration value="JAM_BAR"/>
+            <xsd:enumeration value="TIME_BAR"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>

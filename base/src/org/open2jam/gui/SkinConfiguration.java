@@ -1,13 +1,11 @@
 package org.open2jam.gui;
+import java.io.IOException;
 import java.net.URL;
-import java.util.Iterator;
-
 import java.util.logging.Level;
-import org.open2jam.util.Logger;
-import javax.swing.DefaultComboBoxModel;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 import org.open2jam.render.SkinChecker;
+import org.open2jam.util.Logger;
+import org.xml.sax.SAXException;
+
 
 /**
  *
@@ -18,7 +16,7 @@ class SkinConfiguration extends javax.swing.JFrame {
     /** the config xml */
     private static final URL resources_xml = SkinConfiguration.class.getResource("/resources/resources.xml");
 
-    SkinChecker checker;
+    SkinChecker checker = new SkinChecker();
 
     private static int skinW = 800;
     private static int skinH = 600;
@@ -176,35 +174,17 @@ class SkinConfiguration extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_cancelActionPerformed
 
     private void combo_logActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_logActionPerformed
-        txt_logger.setText(createLog((String)combo_log.getSelectedItem()));
-        txt_logger.setCaretPosition(0); //we want it from the start
+
     }//GEN-LAST:event_combo_logActionPerformed
 
     private void initLogic()
     {
-        // skin load & check
         try {
-            checker = new SkinChecker();
-            SAXParserFactory.newInstance().newSAXParser().parse(resources_xml.openStream(), checker);
-
-            skinH = checker.getBaseH();
-            skinW = checker.getBaseW();
-            
-            System.out.println(skinW+" "+skinH);
-        } catch (ParserConfigurationException ex) {
-            Logger.global.log(Level.SEVERE, "Skin load error {0}", ex);
-        } catch (org.xml.sax.SAXException ex) {
-            Logger.global.log(Level.SEVERE, "Skin load error {0}", ex);
-        } catch (java.io.IOException ex) {
-            Logger.global.log(Level.SEVERE, "Skin load error {0}", ex);
+            boolean isValid = checker.check("/resources/resources.xml");
+        } catch (SAXException ex) {
+        } catch (IOException ex) {
+            Logger.global.log(Level.SEVERE, "There is no xml file!");
         }
-
-        DefaultComboBoxModel theModel = (DefaultComboBoxModel)combo_log.getModel();
-        theModel.removeAllElements();
-        
-        for(SkinChecker.Log l : SkinChecker.Log.values())
-            combo_log.addItem(l.toString());
-        combo_log.addItem("ALL");
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -219,22 +199,4 @@ class SkinConfiguration extends javax.swing.JFrame {
     private static javax.swing.JTextPane txt_logger;
     // End of variables declaration//GEN-END:variables
 
-
-    private String createLog (String value) {
-        String s = "<html>";
-
-        Iterator err = checker.getLog(SkinChecker.Log.ERROR).iterator();
-        Iterator war = checker.getLog(SkinChecker.Log.WARNING).iterator();
-        Iterator inf = checker.getLog(SkinChecker.Log.INFO).iterator();
-
-        if(value.equals("ALL") || value.equals("ERROR")) {
-            while(err.hasNext())  s += "<font color=rgb(255,0,0)>[ERROR] "+err.next()+"</font><br />"; }
-        if(value.equals("ALL") || value.equals("WARNING")) {
-        while(war.hasNext())  s += "<font color=rgb(150,130,0)>[WARNING] "+war.next()+"</font><br />"; }
-        if(value.equals("ALL") || value.equals("INFO")) {
-        while(inf.hasNext())  s += "<font color=rgb(0,0,255)>[INFO] "+inf.next()+"</font><br />"; }
-
-        s += "</html>";
-        return s;
-    }
 }

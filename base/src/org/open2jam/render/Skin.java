@@ -45,4 +45,19 @@ public class Skin
 
         return al;
     }
+
+    public float getScreenScaleX()
+    {
+        return screen_scale_x;
+    }
+
+    public float getScreenScaleY()
+    {
+        return screen_scale_y;
+    }
+
+    public int getJudgmentLine()
+    {
+        return judgment_line;
+    }
 }

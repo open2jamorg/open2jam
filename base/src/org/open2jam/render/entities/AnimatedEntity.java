@@ -10,7 +10,7 @@ public class AnimatedEntity extends Entity
 {
     double sub_frame;
     double last_frame;
-    boolean repeat = true;
+    boolean loop = true;
 
     public AnimatedEntity(SpriteList sl)
     {
@@ -26,14 +26,14 @@ public class AnimatedEntity extends Entity
     {
             super(frames, x, y);
             sub_frame = 0;
-            this.repeat = repeat;
+            this.loop = repeat;
     }
 
     AnimatedEntity(AnimatedEntity org) {
         super(org);
         this.frames = org.frames;
         this.sub_frame = org.sub_frame;
-        this.repeat = org.repeat;
+        this.loop = org.loop;
     }
 
     /** move the entity and change frame if necessary **/
@@ -43,7 +43,7 @@ public class AnimatedEntity extends Entity
             super.move(delta);
             sub_frame += delta * frames.getFrameSpeed();
             sub_frame %= frames.size(); // loops over
-            if(!repeat && sub_frame < last_frame)
+            if(!loop && sub_frame < last_frame)
                 alive = false;
             else
                 last_frame = sub_frame;

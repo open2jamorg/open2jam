@@ -179,11 +179,13 @@ public class LWJGLGameWindow implements GameWindow {
 	 */
 	public boolean isKeyDown(int keyCode)
         {
-            Display.processMessages();
-            Mouse.poll();
-            Keyboard.poll();
             return Keyboard.isKeyDown(keyCode);
 	}
+
+        public void pollKeyboard()
+        {
+            Display.processMessages();
+        }
 
         public void initScales(double w, double h){
             scale_x = (float) (width/w);
@@ -221,7 +223,7 @@ public class LWJGLGameWindow implements GameWindow {
                     }
 
                     // update window contents
-                    Display.update();
+                    Display.update(false);
 
 
                     if(Display.isCloseRequested() || Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {

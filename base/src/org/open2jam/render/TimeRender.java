@@ -22,8 +22,6 @@ import org.open2jam.render.lwjgl.SoundManager;
 
 public class TimeRender extends Render
 {
-    private static final double AUTOPLAY_THRESHOLD = 40;
-
     private enum JUDGE {
         PERFECT(20), COOL(41), GOOD(125), BAD(173), MISS(-1);
         
@@ -36,7 +34,7 @@ public class TimeRender extends Render
             return "JUDGMENT_" + super.toString();
         }
     }
-
+    private static final double AUTOPLAY_THRESHOLD = 40;
     private static final int COMBO_THRESHOLD = JUDGE.GOOD.value;
 
     private EnumMap<JUDGE,NumberEntity> note_counter;
@@ -99,6 +97,7 @@ public class TimeRender extends Render
 
         now = SystemTimer.getTime() - start_time;
 
+        window.pollKeyboard();
 	if(AUTOPLAY)do_autoplay(now);
         else check_keyboard(now);
 
