@@ -1,6 +1,5 @@
 package org.open2jam.render.entities;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -33,14 +32,12 @@ public class ComboCounterEntity extends NumberEntity
 
     private Entity title_sprite = null;
 
-    public ComboCounterEntity(Collection<Entity> list, double x, double y)
+    public ComboCounterEntity(Collection<Entity> list, Entity title, double x, double y)
     {
         super(list,x,y);
         base_y = y;
         base_x = x;
-        ArrayList<Entity> al = new ArrayList<Entity>();
-        al.addAll(list);
-        if(list.size()>10)title_sprite = al.get(10);
+        title_sprite = title;
     }
 
     @Override
@@ -49,7 +46,7 @@ public class ComboCounterEntity extends NumberEntity
         base_x = x;
         base_y = y;
         if(title_sprite == null)return;
-        System.out.println(title_sprite.getX()+", "+ title_sprite.getY());
+        //System.out.println(title_sprite.getX()+", "+ title_sprite.getY());
         title_sprite.setPos(x, y);
     }
 
@@ -85,7 +82,7 @@ public class ComboCounterEntity extends NumberEntity
     @Override
     public void draw()
     {
-        if(to_show < 0 || number < count_threshold)return;
+        if(to_show <= 0 || number < count_threshold)return;
 	/* In O2Jam, a combo is simply the number of consecutive cools or goods hit by the player
 	 * For example, for the first note, there is no combo, for the second, there is 1 combo, and so on.
 	 * http://o2jam.wikia.com/wiki/Combo

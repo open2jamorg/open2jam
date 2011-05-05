@@ -42,7 +42,7 @@ public class SampleEntity extends Entity implements TimeEntity
     public void judgment()
     {
          render.queueSample(value);
-         alive = false;
+         dead = true;
     }
 
     
@@ -54,10 +54,12 @@ public class SampleEntity extends Entity implements TimeEntity
         return new SampleEntity(this);
     }
 
+    @Override
     public void setTime(double t) {
         this.time_to_hit = t;
     }
 
+    @Override
     public double getTime() {
         return time_to_hit;
     }

@@ -353,7 +353,9 @@ public class SkinHandler extends DefaultHandler
                 s = s.trim();
                 list.add( new AnimatedEntity(sprite_buffer.get(s),0,0));
             }
-	    e = new ComboCounterEntity(list, 0, 0);
+            Entity title = null;
+            if(list.size()>10)title = list.remove(10);
+	    e = new ComboCounterEntity(list, title, 0, 0);
 	}
         else if(id.equals("COMBO_COUNTER")){
             ArrayList<Entity> list = new ArrayList<Entity>();
@@ -361,7 +363,9 @@ public class SkinHandler extends DefaultHandler
                 s = s.trim();
                 list.add( new AnimatedEntity(sprite_buffer.get(s),0,0));
             }
-	    e = new ComboCounterEntity(list, 0, 0);
+            Entity title = null;
+            if(list.size()>10)title = list.remove(10);
+	    e = new ComboCounterEntity(list, title, 0, 0);
         }
         else if(id.equals("MINUTE_COUNTER")){
             ArrayList<Entity> list = new ArrayList<Entity>();

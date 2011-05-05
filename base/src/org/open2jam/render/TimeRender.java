@@ -66,6 +66,7 @@ public class TimeRender extends Render
     * Notification that a frame is being rendered. Responsible for
     * running game logic and rendering the scene.
     */
+    @Override
     public void frameRendering()
     {
         // work out how long its been since the last update, this
@@ -128,7 +129,7 @@ public class TimeRender extends Render
                     }
                 }
 
-                if(!e.isAlive())j.remove();
+                if(e.isDead())j.remove();
                 else e.draw();
             }
         }
@@ -156,7 +157,7 @@ public class TimeRender extends Render
                 if((ne instanceof LongNoteEntity && ne.getStartY() >= judgmentArea()) //needed by the ln head
                         || (ne.getY() >= judgmentArea())) // TODO: compare the time, not the position
                 {
-                    if(judgment_entity != null)judgment_entity.setAlive(false);
+                    if(judgment_entity != null)judgment_entity.setDead(true);
                     judgment_entity = skin.getEntityMap().get("EFFECT_"+JUDGE.MISS.toString()).copy();
                     entities_matrix.add(judgment_entity);
 
@@ -169,11 +170,11 @@ public class TimeRender extends Render
                  }
             break;
             case JUDGE: //LN & normal ones: has finished with good result
-                judge = ratePrecision((long) ne.getHit());
+                judge = ratePrecision(ne.getHit());
 
                 judge = update_screen_info(judge,ne.getHit());
 
-                if(judgment_entity != null)judgment_entity.setAlive(false);
+                if(judgment_entity != null)judgment_entity.setDead(true);
                 judgment_entity = skin.getEntityMap().get("EFFECT_"+judge).copy();
                 entities_matrix.add(judgment_entity);
 
@@ -193,17 +194,17 @@ public class TimeRender extends Render
                         else combo_entity.resetNumber();
                     }
                     if(ne instanceof LongNoteEntity)ne.setState(NoteEntity.State.TO_KILL);
-                    else ne.setAlive(false);
+                    else ne.setDead(true);
                 } else {
                     combo_entity.resetNumber();
                     ne.setState(NoteEntity.State.TO_KILL);
                 }
             break;
             case LN_HEAD_JUDGE: //LN: Head has been played
-                judge = ratePrecision((long)ne.getHit());
+                judge = ratePrecision(ne.getHit());
                 judge = update_screen_info(judge,ne.getHit());
 
-                if(judgment_entity != null)judgment_entity.setAlive(false);
+                if(judgment_entity != null)judgment_entity.setDead(true);
                 judgment_entity = skin.getEntityMap().get("EFFECT_"+judge).copy();
                 entities_matrix.add(judgment_entity);
 
@@ -215,7 +216,7 @@ public class TimeRender extends Render
 		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,ee.getY());
 		    entities_matrix.add(ee);
                     Entity to_kill = longflare.put(ne.getChannel(),ee);
-                    if(to_kill != null)to_kill.setAlive(false);
+                    if(to_kill != null)to_kill.setDead(true);
 		    
 		    ee = skin.getEntityMap().get("EFFECT_CLICK_1").copy();
 		    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
@@ -234,7 +235,7 @@ public class TimeRender extends Render
             case LN_HOLD:    // You keept too much time the note held that it misses
                 if(ne.getY() >= judgmentArea()) // TODO: use the time
                 {
-                    if(judgment_entity != null)judgment_entity.setAlive(false);
+                    if(judgment_entity != null)judgment_entity.setDead(true);
                     judgment_entity = skin.getEntityMap().get("EFFECT_"+JUDGE.MISS.toString()).copy();
                     entities_matrix.add(judgment_entity);
 
@@ -250,7 +251,7 @@ public class TimeRender extends Render
                 if(ne.getY() > judgmentArea())
                 {
                     // kill it
-                    ne.setAlive(false);
+                    ne.setDead(true);
                 }
             break;
         }
@@ -289,7 +290,7 @@ public class TimeRender extends Render
                 {
                     judge = JUDGE.GOOD;
                     jambar_entity.addNumber(1);
-                    pills_draw.removeLast().setAlive(false);
+                    pills_draw.removeLast().setDead(true);
 
                     score_value = 100; // TODO: not sure
                 }
@@ -338,7 +339,7 @@ public class TimeRender extends Render
             maxcombo_entity.incNumber();
         }
 
-        hit_sum += hit;
+        hit_sum += (hit > JUDGE.BAD.value ? 0 : (JUDGE.BAD.value - hit)/JUDGE.BAD.value);
         if(!judge.equals(JUDGE.MISS))hit_count++;
         total_notes++;
         
@@ -366,13 +367,13 @@ public class TimeRender extends Render
                     Entity ee = skin.getEntityMap().get("PRESSED_"+ne.getChannel()).copy();
                     entities_matrix.add(ee);
                     Entity to_kill = key_pressed_entity.put(ne.getChannel(), ee);
-                    if(to_kill != null)to_kill.setAlive(false);
+                    if(to_kill != null)to_kill.setDead(true);
                 }
                 else if(ne.getState() == NoteEntity.State.LN_HOLD)
                 {
                     ne.setState(NoteEntity.State.JUDGE);
-                    longflare.get(ne.getChannel()).setAlive(false); //let's kill the longflare effect
-                    key_pressed_entity.get(ne.getChannel()).setAlive(false);
+                    longflare.get(ne.getChannel()).setDead(true); //let's kill the longflare effect
+                    key_pressed_entity.get(ne.getChannel()).setDead(true);
                 }
             }
             else
@@ -396,7 +397,7 @@ public class TimeRender extends Render
                     Entity ee = skin.getEntityMap().get("PRESSED_"+c).copy();
                     entities_matrix.add(ee);
                     Entity to_kill = key_pressed_entity.put(c, ee);
-                    if(to_kill != null)to_kill.setAlive(false);
+                    if(to_kill != null)to_kill.setDead(true);
 
                     NoteEntity e = nextNoteKey(c);
                     if(e == null){
@@ -407,9 +408,8 @@ public class TimeRender extends Render
 
                     queueSample(e.getSample());
                    
-                    JUDGE judge;
                     double hit = e.testTimeHit(now);
-                    judge = ratePrecision(hit);
+                    JUDGE judge = ratePrecision(hit);
                     e.setHit(hit);
 
                     /* we compare the judgment with a MISS, misses should be ignored here,
@@ -431,12 +431,12 @@ public class TimeRender extends Render
             if(keyboard_key_pressed.get(c)) { // key released now
 
                 keyboard_key_pressed.put(c, false);
-                key_pressed_entity.get(c).setAlive(false);
+                key_pressed_entity.get(c).setDead(true);
 
                 LongNoteEntity e = longnote_holded.remove(c);
 
                 Entity lf = longflare.remove(c);
-                if(lf !=null)lf.setAlive(false);
+                if(lf !=null)lf.setDead(true);
 
                 if(e == null || e.getState() != NoteEntity.State.LN_HOLD)continue;
 
@@ -447,7 +447,6 @@ public class TimeRender extends Render
             }
         }
     }
-
 
     private JUDGE ratePrecision(double hit)
     {

@@ -22,7 +22,7 @@ public class Entity implements Copyable<Entity>
 
 
     /** when a entity die the render removes it */
-    boolean alive = true;
+    boolean dead = false;
 
     private int layer = 0;
 
@@ -50,7 +50,7 @@ public class Entity implements Copyable<Entity>
     }
 
     protected Entity(Entity org) {
-        this.alive = org.alive;
+        this.dead = org.dead;
         this.sprite = org.sprite;
         this.frames = org.frames;
         this.dx = org.dx;
@@ -62,10 +62,10 @@ public class Entity implements Copyable<Entity>
         this.layer = org.layer;
     }
 
-    public boolean isAlive() { return alive; }
+    public boolean isDead() { return dead; }
 
-    public void setAlive(boolean state){
-        alive = state;
+    public void setDead(boolean state){
+        dead = state;
     }
 
     /**
@@ -122,6 +122,7 @@ public class Entity implements Copyable<Entity>
         return frames;
     }
 
+    @Override
     public Entity copy() {
         return new Entity(this);
     }

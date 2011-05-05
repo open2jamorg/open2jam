@@ -69,9 +69,11 @@ public class NoteEntity extends AnimatedEntity implements TimeEntity
         return p;
     }
 
+    @Override
     public void setTime(double time){
         this.time_to_hit = time;
     }
+    @Override
     public double getTime() {
         return time_to_hit;
     }

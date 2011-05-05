@@ -17,7 +17,6 @@ public class NumberEntity extends Entity
     {
         entity_list = new ArrayList<Entity>();
         entity_list.addAll(list);
-        if(entity_list.size()>10) entity_list.remove(10);
         this.x = x;
         this.y = y;
         sprite = entity_list.get(0).sprite;
@@ -28,6 +27,7 @@ public class NumberEntity extends Entity
         entity_list = new ArrayList<Entity>();
         for(Entity e : org.entity_list)entity_list.add(e.copy());
         this.number = org.number;
+        this.show_digits = org.show_digits;
     }
 
     public void setNumber(Integer i){
@@ -70,16 +70,11 @@ public class NumberEntity extends Entity
             for(int i = 1; i<show_digits;i++) zeros += "0";
             numberString = zeros+numberString;
         }
-	String invNumberString = "";
         double tx = x;
-	for(int j = numberString.length()-1; j >= 0; j--)
-	{
-	    invNumberString = invNumberString + numberString.charAt(j);
-	}
-	char[] chars = invNumberString.toCharArray();
-        for(char c : chars)
+        char[] chars = numberString.toCharArray();
+        for(int j=chars.length-1;j>=0;j--)
         {
-            int i = Integer.parseInt(c+"");
+            int i = Integer.parseInt(chars[j]+"");
             tx -= entity_list.get(i).getWidth();
 	    entity_list.get(i).setPos(tx,y);
             entity_list.get(i).draw();

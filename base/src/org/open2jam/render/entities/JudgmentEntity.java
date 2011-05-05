@@ -29,7 +29,7 @@ public class JudgmentEntity extends AnimatedEntity
     {
         super.move(delta);
         show_time -= delta;
-        if(show_time < 0)alive = false;
+        if(show_time < 0)dead = true;
     }
 
     @Override
