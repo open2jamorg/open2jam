@@ -10,9 +10,6 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import org.open2jam.util.Logger;
 import org.open2jam.parser.Event;
-import org.open2jam.render.ResourceFactory;
-import org.open2jam.render.Sprite;
-import org.open2jam.render.SpriteList;
 import org.open2jam.render.entities.AnimatedEntity;
 import org.open2jam.render.entities.ComboCounterEntity;
 import org.open2jam.render.entities.CompositeEntity;
@@ -200,13 +197,13 @@ public class SkinHandler extends DefaultHandler
                     Logger.global.log(Level.WARNING, "There is no fill_direction ! @ {0}", id);
 
                 BarEntity.FillDirection direction = BarEntity.FillDirection.LEFT_TO_RIGHT;
-                if      (fill.equals("left_to_right") || fill.equals("ltr"))
+                if      (fill.equals("left_to_right"))
                         direction = BarEntity.FillDirection.LEFT_TO_RIGHT;
-                else if (fill.equals("right_to_left") || fill.equals("rtl"))
+                else if (fill.equals("right_to_left"))
                         direction = BarEntity.FillDirection.RIGHT_TO_LEFT;
-                else if (fill.equals("up_to_down")    || fill.equals("utd"))
+                else if (fill.equals("up_to_down"))
                         direction = BarEntity.FillDirection.UP_TO_DOWN;
-                else if (fill.equals("down_to_up")    || fill.equals("dtu"))
+                else if (fill.equals("down_to_up"))
                         direction = BarEntity.FillDirection.DOWN_TO_UP;
                 else
                     Logger.global.log(Level.WARNING, "The fill_direction [{0}] is unknown !", fill);

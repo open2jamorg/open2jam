@@ -16,11 +16,11 @@
                 <xsd:element ref="spriteset"/>
                 <xsd:element maxOccurs="unbounded" ref="layer"/>
             </xsd:sequence>
-			<xsd:attribute name="name" type="xsd:string" use="required"/>
+            <xsd:attribute name="name" type="xsd:NCName" use="required"/>
             <xsd:attribute default="7" name="keys" type="xsd:nonNegativeInteger"/>
             <xsd:attribute name="judgment_line" type="xsd:nonNegativeInteger" use="required"/>
             <xsd:attribute default="800" name="width" type="xsd:nonNegativeInteger"/>
-			<xsd:attribute default="600" name="height" type="xsd:nonNegativeInteger"/>
+            <xsd:attribute default="600" name="height" type="xsd:nonNegativeInteger"/>
         </xsd:complexType>
     </xsd:element>
     <xsd:element name="spriteset">
@@ -35,13 +35,13 @@
             <xsd:sequence>
                 <xsd:element maxOccurs="unbounded" ref="frame"/>
             </xsd:sequence>
-            <xsd:attribute name="id" type="xsd:string" use="required"/>
+            <xsd:attribute name="id" type="xsd:NCName" use="required"/>
 			<xsd:attribute name="framespeed" type="xsd:decimal"/>
         </xsd:complexType>
     </xsd:element>
     <xsd:element name="frame">
         <xsd:complexType>
-            <xsd:attribute name="file" type="xsd:string" use="required"/>
+            <xsd:attribute name="file" type="filePattern" use="required"/>
             <xsd:attribute name="x" type="xsd:nonNegativeInteger"/>
 			<xsd:attribute name="y" type="xsd:nonNegativeInteger"/>
 			<xsd:attribute name="w" type="xsd:nonNegativeInteger"/>
@@ -53,10 +53,10 @@
     </xsd:element>
     <xsd:element name="layer">
         <xsd:complexType>
-            <xsd:sequence>
+            <xsd:choice>
                 <xsd:element maxOccurs="unbounded" minOccurs="0" ref="entity"/>
                 <xsd:element maxOccurs="unbounded" minOccurs="0" ref="styles"/>
-            </xsd:sequence>
+            </xsd:choice>
             <xsd:attribute name="id" type="xsd:nonNegativeInteger" use="required"/>
         </xsd:complexType>
     </xsd:element>
@@ -65,7 +65,7 @@
             <xsd:sequence>
                 <xsd:element ref="style" maxOccurs="unbounded"/>
             </xsd:sequence>
-            <xsd:attribute name="id" type="xsd:string" use="required"/>
+            <xsd:attribute name="id" type="xsd:NCName" use="required"/>
         </xsd:complexType>
     </xsd:element>
     <xsd:element name="style">
@@ -73,19 +73,41 @@
             <xsd:sequence>
                 <xsd:element maxOccurs="unbounded" ref="entity"/>
             </xsd:sequence>
-            <xsd:attribute name="id" type="xsd:string" use="required"/>
+            <xsd:attribute name="id" type="xsd:NCName" use="required"/>
         </xsd:complexType>
     </xsd:element>
     <xsd:element name="entity">
         <xsd:complexType>
             <xsd:attribute name="id" type="entityID"/>
-			<xsd:attribute name="x" type="xsd:nonNegativeInteger"/>
+	    <xsd:attribute name="x" type="xsd:nonNegativeInteger"/>
             <xsd:attribute name="y" type="xsd:nonNegativeInteger"/>
-            <xsd:attribute name="animation" type="xsd:string"/>
-            <xsd:attribute name="fill_direction" type="xsd:string"/>
-			<xsd:attribute name="sprite" type="xsd:string" use="required"/>
+            <xsd:attribute name="z-index" type="xsd:nonNegativeInteger"/>
+            <xsd:attribute name="animation" type="xsd:NCName"/> <!-- TODO -->
+            <xsd:attribute name="fill_direction" type="fillsValues"/>
+            <xsd:attribute name="sprite" type="entitySprites" use="required" />
         </xsd:complexType>
     </xsd:element>
+
+    <xsd:simpleType name="filePattern">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value=".+\.(([jJ][pP][eE]?[gG])|([pP][nN][gG]))" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="entitySprites">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="(.+(, ?)?)*" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="fillsValues">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="left_to_right" />
+            <xsd:enumeration value="right_to_left" />
+            <xsd:enumeration value="up_to_down" />
+            <xsd:enumeration value="down_to_up" />
+        </xsd:restriction>
+    </xsd:simpleType>
 
     <xsd:simpleType name="entityID">
         <xsd:restriction base="xsd:string">

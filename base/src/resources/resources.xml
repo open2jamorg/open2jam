@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Resources  xmlns="urn:nonstandard:resources"
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:schemaLocation="urn:nonstandard:resources 
-     resources.xsd">
+     xsi:schemaLocation="urn:nonstandard:resources skin_schema.xsd">
 <skin name="o2jam" keys="7" width="800" height="600" judgment_line="480">
 
     <spriteset>

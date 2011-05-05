@@ -180,7 +180,11 @@ class SkinConfiguration extends javax.swing.JFrame {
     private void initLogic()
     {
         try {
-            boolean isValid = checker.check("/resources/resources.xml");
+            boolean isValid = checker.validate("/resources/resources.xml");
+            if(isValid)
+                System.out.println("It's valid");
+            else
+                System.out.println("FML");
         } catch (SAXException ex) {
         } catch (IOException ex) {
             Logger.global.log(Level.SEVERE, "There is no xml file!");

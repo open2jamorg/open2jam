@@ -7,14 +7,29 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.*;
 import org.open2jam.util.Logger;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 
 public class SkinChecker {
 
     String schemaLocation = "/resources/skin_schema.xsd";
 
-    public boolean check(String xmlFile) throws SAXException, IOException {
+    class SimpleErrorHandler implements ErrorHandler {
+        public void warning(SAXParseException exception) throws SAXException {
+            Logger.global.log(Level.WARNING, "Warning [line:{2} column:{1}] : {0}", new Object[]{exception.getMessage(), exception.getColumnNumber(), exception.getLineNumber()});
+        }
+        public void error(SAXParseException exception) throws SAXException {
+            Logger.global.log(Level.SEVERE, "Error [line:{2} column:{1}] : {0}", new Object[]{exception.getMessage(), exception.getColumnNumber(), exception.getLineNumber()});
+        }
+        public void fatalError(SAXParseException exception) throws SAXException {
+            Logger.global.log(Level.SEVERE, "FatalError [line:{2} column:{1}] : {0}", new Object[]{exception.getMessage(), exception.getColumnNumber(), exception.getLineNumber()});
+            throw exception;
+        }
+    }
+
+    public boolean validate(String xmlFile) throws SAXException, IOException {
 
         InputStream input_stream = null;
         URL url = SkinChecker.class.getResource(xmlFile);
@@ -45,14 +60,14 @@ public class SkinChecker {
 
         Source source = new StreamSource(input_stream);
 
+        ErrorHandler error_handler = new SimpleErrorHandler();
+        validator.setErrorHandler(error_handler);
+
         try {
             validator.validate(source);
-            System.out.println(xmlFile + " is valid! ");
             return true; //it's valid.
         }
         catch (SAXException ex) {
-            System.out.println(xmlFile + " is not valid because ");
-            System.out.println(ex.getMessage());
             return false;
         }
     }
