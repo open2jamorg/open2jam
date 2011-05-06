@@ -465,13 +465,13 @@
 
     <!-- notes -->
     <layer id="6">
-	<entity id="NOTE_1" x="5"    sprite="head_note_white, body_note_white, tail_note_white" />
-	<entity id="NOTE_2" x="33"   sprite="head_note_blue, body_note_blue" />
-	<entity id="NOTE_3" x="55"   sprite="head_note_white, body_note_white, tail_note_white" />
-	<entity id="NOTE_4" x="83"   sprite="head_note_yellow, body_note_yellow" />
-	<entity id="NOTE_5" x="115"  sprite="head_note_white, body_note_white, tail_note_white" />
-	<entity id="NOTE_6" x="143"  sprite="head_note_blue, body_note_blue" />
-	<entity id="NOTE_7" x="165"  sprite="head_note_white, body_note_white, tail_note_white" />
+	<entity id="NOTE_1" x="5"    sprite="head_note_white" body="body_note_white" tail="tail_note_white" />
+	<entity id="NOTE_2" x="33"   sprite="head_note_blue" body="body_note_blue" />
+	<entity id="NOTE_3" x="55"   sprite="head_note_white" body="body_note_white" tail="tail_note_white" />
+	<entity id="NOTE_4" x="83"   sprite="head_note_yellow" body="body_note_yellow" />
+	<entity id="NOTE_5" x="115"  sprite="head_note_white" body="body_note_white" tail="tail_note_white" />
+	<entity id="NOTE_6" x="143"  sprite="head_note_blue" body="body_note_blue" />
+	<entity id="NOTE_7" x="165"  sprite="head_note_white" body="body_note_white" tail="tail_note_white" />
     </layer>
 
     <!-- static keyboard sprite -->
@@ -516,7 +516,7 @@
     <layer id="11">
         <entity id="COMBO_COUNTER" x="99" y="250" sprite="combo_number_0,
 	combo_number_1, combo_number_2, combo_number_3, combo_number_4, combo_number_5,
-	combo_number_6, combo_number_7, combo_number_8, combo_number_9, combo_title" />
+	combo_number_6, combo_number_7, combo_number_8, combo_number_9" title="combo_title" />
 
 	<entity id="FPS_COUNTER" x="798" y="5" sprite="score_number_0, score_number_1,
 	 score_number_2, score_number_3, score_number_4, score_number_5, score_number_6,
@@ -539,7 +539,7 @@
 
 	<entity id="JAM_COUNTER" x="99" y="80" sprite="jam_number_0, jam_number_1,
 	 jam_number_2, jam_number_3, jam_number_4, jam_number_5, jam_number_6,
-	 jam_number_7, jam_number_8, jam_number_9, jam_title" />
+	 jam_number_7, jam_number_8, jam_number_9"  title="jam_title"/>
 
 	<entity id="MINUTE_COUNTER" x="346" y="569" sprite="time_number_0, time_number_1,
 	time_number_2, time_number_3, time_number_4, time_number_5, time_number_6,

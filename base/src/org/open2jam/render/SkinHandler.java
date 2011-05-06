@@ -36,7 +36,6 @@ public class SkinHandler extends DefaultHandler
     private ArrayList<Sprite> frame_buffer;
     private HashMap<String, SpriteList> sprite_buffer;
 
-    private HashMap<String, BarEntity.FillDirection> bar_fill_buffer;
 
     private ArrayList<String> style_list;
     private HashMap<String, ArrayList<String>> styles_map;
@@ -63,8 +62,6 @@ public class SkinHandler extends DefaultHandler
         atts_stack = new ArrayDeque<Map<String,String>>();
         frame_buffer = new ArrayList<Sprite>();
         sprite_buffer = new HashMap<String, SpriteList>();
-
-        bar_fill_buffer = new HashMap<String, BarEntity.FillDirection>();
 
         style_list = new ArrayList<String>();
         styles_map = new HashMap<String, ArrayList<String>>();
@@ -190,29 +187,6 @@ public class SkinHandler extends DefaultHandler
                 break;
             }
 
-            if(atts.containsKey("fill_direction") && id != null)
-            {
-                String fill = atts.get("fill_direction").toLowerCase().trim();
-                if(fill.trim().equals(""))
-                    Logger.global.log(Level.WARNING, "There is no fill_direction ! @ {0}", id);
-
-                BarEntity.FillDirection direction = BarEntity.FillDirection.LEFT_TO_RIGHT;
-                if      (fill.equals("left_to_right"))
-                        direction = BarEntity.FillDirection.LEFT_TO_RIGHT;
-                else if (fill.equals("right_to_left"))
-                        direction = BarEntity.FillDirection.RIGHT_TO_LEFT;
-                else if (fill.equals("up_to_down"))
-                        direction = BarEntity.FillDirection.UP_TO_DOWN;
-                else if (fill.equals("down_to_up"))
-                        direction = BarEntity.FillDirection.DOWN_TO_UP;
-                else
-                    Logger.global.log(Level.WARNING, "The fill_direction [{0}] is unknown !", fill);
-
-
-                bar_fill_buffer.put(id, direction);
-            }
-
-
             if(id != null && (e = promoteEntity(id, atts)) != null){
                     // ok
             }
@@ -262,23 +236,18 @@ public class SkinHandler extends DefaultHandler
         Entity e = null;
         if(id.startsWith("NOTE_")){
 
-            String sprites[] = atts.get("sprite").split(",");
-
             SpriteList head = null, body = null, tail = null;
-            for(String s : sprites){
-                s = s.trim();
-                if(s.startsWith("head")){
-                    head = sprite_buffer.get(s);
-                }
-                else if(s.startsWith("body")){
-                    body = sprite_buffer.get(s);
-                }
-                else if(s.startsWith("tail")){
-                    tail = sprite_buffer.get(s);
-                }
-            }
 
-            if(tail == null)
+            head = sprite_buffer.get(atts.get("sprite"));
+
+            if(atts.containsKey("body"))
+                body = sprite_buffer.get(atts.get("body"));
+            else
+                body = head;
+
+            if(atts.containsKey("tail"))
+                tail = sprite_buffer.get(atts.get("tail"));
+            else
                 tail = head;
 
             int x = 0;
@@ -384,7 +353,11 @@ public class SkinHandler extends DefaultHandler
                 s = s.trim();
                 list.add( new AnimatedEntity(sprite_buffer.get(s),0,0));
             }
-	    e = new ComboCounterEntity(list, 0, 0);
+            Entity title = null;
+            if(atts.containsKey("title"))
+               title = new AnimatedEntity(sprite_buffer.get(atts.get("title")),0,0);
+
+	    e = new ComboCounterEntity(list, title, 0, 0);
 	}
         else if(id.equals("COMBO_COUNTER")){
             ArrayList<Entity> list = new ArrayList<Entity>();
@@ -392,7 +365,11 @@ public class SkinHandler extends DefaultHandler
                 s = s.trim();
                 list.add( new AnimatedEntity(sprite_buffer.get(s),0,0));
             }
-	    e = new ComboCounterEntity(list, 0, 0);
+            Entity title = null;
+            if(atts.containsKey("title"))
+               title = new AnimatedEntity(sprite_buffer.get(atts.get("title")),0,0);
+
+	    e = new ComboCounterEntity(list, title, 0, 0);
         }
         else if(id.equals("MINUTE_COUNTER")){
             ArrayList<Entity> list = new ArrayList<Entity>();
@@ -416,22 +393,22 @@ public class SkinHandler extends DefaultHandler
 	}
 	else if(id.equals("LIFE_BAR")){
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
-	    if(bar_fill_buffer.containsKey(id))
-                e = new BarEntity(s, 0, 0, bar_fill_buffer.get(id));
+	    if(atts.containsKey("fill_direction"))
+                e = new BarEntity(s, 0, 0, getFill(atts.get("fill_direction")));
             else
                 e = new BarEntity(s, 0, 0);
 	}
 	else if(id.equals("JAM_BAR")){
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
-	    if(bar_fill_buffer.containsKey(id))
-                e = new BarEntity(s, 0, 0, bar_fill_buffer.get(id));
+	    if(atts.containsKey("fill_direction"))
+                e = new BarEntity(s, 0, 0, getFill(atts.get("fill_direction")));
             else
                 e = new BarEntity(s, 0, 0);
 	}
 	else if(id.equals("TIME_BAR")){
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
-	    if(bar_fill_buffer.containsKey(id))
-                e = new BarEntity(s, 0, 0, bar_fill_buffer.get(id));
+	    if(atts.containsKey("fill_direction"))
+                e = new BarEntity(s, 0, 0, getFill(atts.get("fill_direction")));
             else
                 e = new BarEntity(s, 0, 0);
 	}
@@ -446,6 +423,25 @@ public class SkinHandler extends DefaultHandler
         return result;
     }
 
+    private BarEntity.FillDirection getFill(String fill)
+    {
+        BarEntity.FillDirection direction = BarEntity.FillDirection.LEFT_TO_RIGHT;
+        fill = fill.toLowerCase().trim();
+
+        if      (fill.equals("left_to_right"))
+                direction = BarEntity.FillDirection.LEFT_TO_RIGHT;
+        else if (fill.equals("right_to_left"))
+                direction = BarEntity.FillDirection.RIGHT_TO_LEFT;
+        else if (fill.equals("up_to_down"))
+                direction = BarEntity.FillDirection.UP_TO_DOWN;
+        else if (fill.equals("down_to_up"))
+                direction = BarEntity.FillDirection.DOWN_TO_UP;
+        else
+            Logger.global.log(Level.WARNING, "The fill_direction [{0}] is unknown !", fill);
+
+        return direction;
+    }
+    
     private Keyword getKeyword(String s)
     {
         try{

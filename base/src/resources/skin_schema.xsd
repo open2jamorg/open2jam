@@ -86,7 +86,7 @@ A frame of the sprite.
                     </xsd:annotation>
                 </xsd:element>
             </xsd:sequence>
-            <xsd:attribute name="id" type="xsd:NCName" use="required">
+            <xsd:attribute name="id" type="spriteIDPattern" use="required">
                 <xsd:annotation>
                     <xsd:documentation>
 The ID of the sprite. To be used in the entity sprite attribute.
@@ -265,6 +265,27 @@ sprite1, sprite2, ...
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:attribute>
+            <xsd:attribute name="body" type="entitySprites">
+                <xsd:annotation>
+                    <xsd:documentation>
+Only used in NOTE_x . The body of the longnote sprite.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="tail" type="entitySprites">
+                <xsd:annotation>
+                    <xsd:documentation>
+Only used in NOTE_x . The tail of the longnote sprite. If null the "sprite" attribute sprite will be used.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="title" type="entitySprites">
+                <xsd:annotation>
+                    <xsd:documentation>
+Only used in JAM_COUNTER and COMBO_COUNTER . The title of the counter. It will be centered over the numbers.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
         </xsd:complexType>
     </xsd:element>
 
@@ -274,9 +295,16 @@ sprite1, sprite2, ...
         </xsd:restriction>
     </xsd:simpleType>
 
+    <xsd:simpleType name="spriteIDPattern">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="(([a-zA-Z_0-9]+){1})" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
     <xsd:simpleType name="entitySprites">
         <xsd:restriction base="xsd:string">
-            <xsd:pattern value="(.+(, ?)?)*"/>
+            <xsd:pattern value="((([a-zA-Z_]+_[0-9]\s{0,},{1}\s{0,}){9}([a-zA-Z_]+_[0-9]){1}){1})"/>    <!-- counters numbers (10 sprites: name_n) or -->
+            <xsd:pattern value="(([a-zA-Z_0-9]+){1})" />                                                <!-- a single sprite -->
         </xsd:restriction>
     </xsd:simpleType>
 

@@ -33,14 +33,14 @@ public class ComboCounterEntity extends NumberEntity
 
     private Entity title_sprite = null;
 
-    public ComboCounterEntity(Collection<Entity> list, double x, double y)
+    public ComboCounterEntity(Collection<Entity> list, Entity title, double x, double y)
     {
         super(list,x,y);
         base_y = y;
         base_x = x;
         ArrayList<Entity> al = new ArrayList<Entity>();
         al.addAll(list);
-        if(list.size()>10)title_sprite = al.get(10);
+        title_sprite = title;
     }
 
     @Override
@@ -49,7 +49,6 @@ public class ComboCounterEntity extends NumberEntity
         base_x = x;
         base_y = y;
         if(title_sprite == null)return;
-        System.out.println(title_sprite.getX()+", "+ title_sprite.getY());
         title_sprite.setPos(x, y);
     }
 
