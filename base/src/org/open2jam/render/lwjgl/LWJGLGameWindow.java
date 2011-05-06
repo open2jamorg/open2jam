@@ -3,6 +3,7 @@ package org.open2jam.render.lwjgl;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
+import java.util.HashMap;
 import java.util.logging.Level;
 import org.open2jam.util.Logger;
 
@@ -118,6 +119,7 @@ public class LWJGLGameWindow implements GameWindow {
                 return;
             }
 
+
             Display.setTitle(title);
             
             // center the display on the screen
@@ -179,12 +181,14 @@ public class LWJGLGameWindow implements GameWindow {
 	 */
 	public boolean isKeyDown(int keyCode)
         {
+            Keyboard.poll();
             return Keyboard.isKeyDown(keyCode);
 	}
 
-        public void pollKeyboard()
+        HashMap<Integer, Long> key_milli = new HashMap<Integer, Long>();
+        public long getKeyMilli(int keyCode)
         {
-            Display.processMessages();
+            return key_milli.get(keyCode);
         }
 
         public void initScales(double w, double h){
@@ -223,7 +227,26 @@ public class LWJGLGameWindow implements GameWindow {
                     }
 
                     // update window contents
-                    Display.update(false);
+                    Display.update();
+
+                    Keyboard.poll();
+                    while(Keyboard.next())
+                    {
+                        int keyCode = Keyboard.getEventKey();
+                        long ev = Keyboard.getEventNanoseconds()/1000000;
+                        System.out.print(ev+"   "+Keyboard.getKeyName(keyCode)+"   ");
+                        if(Keyboard.isKeyDown(keyCode))
+                        {
+                            key_milli.put(keyCode, ev);
+                            System.out.println("true");
+                        }
+                        else
+                        {
+                            long ms = ev - key_milli.get(keyCode);
+                            System.out.println("false ms pressed:"+ms);
+                        }
+                            
+                    }
 
 
                     if(Display.isCloseRequested() || Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {

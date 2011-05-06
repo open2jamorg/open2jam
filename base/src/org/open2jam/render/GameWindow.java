@@ -51,7 +51,7 @@ public interface GameWindow {
 	 */
 	public boolean isKeyDown(int keyCode);
 
-        public void pollKeyboard();
+        public long getKeyMilli(int keyCode);
 
         public void destroy();
 

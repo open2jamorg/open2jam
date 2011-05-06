@@ -97,7 +97,6 @@ public class TimeRender extends Render
 
         now = SystemTimer.getTime() - start_time;
 
-        window.pollKeyboard();
 	if(AUTOPLAY)do_autoplay(now);
         else check_keyboard(now);
 
@@ -389,6 +388,7 @@ public class TimeRender extends Render
             Event.Channel c = entry.getKey();
             if(window.isKeyDown(entry.getValue())) // this key is being pressed
             {
+                System.out.println(window.getKeyMilli(entry.getValue()));
                 if(!keyboard_key_pressed.get(c)){ // started holding now
                     keyboard_key_pressed.put(c, true);
 

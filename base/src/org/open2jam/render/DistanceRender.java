@@ -100,7 +100,6 @@ public class DistanceRender extends Render
 
         now = SystemTimer.getTime() - start_time;
 
-        window.pollKeyboard();
 	if(AUTOPLAY)do_autoplay();
         else check_keyboard();
 
