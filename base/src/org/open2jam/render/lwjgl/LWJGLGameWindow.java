@@ -234,16 +234,16 @@ public class LWJGLGameWindow implements GameWindow {
                     {
                         int keyCode = Keyboard.getEventKey();
                         long ev = Keyboard.getEventNanoseconds()/1000000;
-                        System.out.print(ev+"   "+Keyboard.getKeyName(keyCode)+"   ");
+                        System.out.print(ev+" KEY "+keyCode+"        ");
                         if(Keyboard.isKeyDown(keyCode))
                         {
                             key_milli.put(keyCode, ev);
-                            System.out.println("true");
+                            System.out.println("TRUE");
                         }
                         else
                         {
                             long ms = ev - key_milli.get(keyCode);
-                            System.out.println("false ms pressed:"+ms);
+                            System.out.println("FALSE ms pressed:"+ms);
                         }
                             
                     }

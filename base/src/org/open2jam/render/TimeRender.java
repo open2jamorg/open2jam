@@ -388,9 +388,9 @@ public class TimeRender extends Render
             Event.Channel c = entry.getKey();
             if(window.isKeyDown(entry.getValue())) // this key is being pressed
             {
-                System.out.println(window.getKeyMilli(entry.getValue()));
                 if(!keyboard_key_pressed.get(c)){ // started holding now
                     keyboard_key_pressed.put(c, true);
+                    System.out.println(window.getKeyMilli(entry.getValue())+" KEY "+entry.getValue()+" CHECKED");
 
                     Entity ee = skin.getEntityMap().get("PRESSED_"+c).copy();
                     entities_matrix.add(ee);
