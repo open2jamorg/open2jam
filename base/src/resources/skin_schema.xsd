@@ -3,32 +3,32 @@
     <xsd:element name="Resources">
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element ref="skin"/>
+                <xsd:element ref="spriteset">
+                    <xsd:annotation>
+                        <xsd:documentation>
+A set of sprites.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element ref="skin" maxOccurs="unbounded"/>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
     <xsd:element name="skin">
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element ref="spriteset">
-                    <xsd:annotation>
-                        <xsd:documentation>
-The sprite set.
-                        </xsd:documentation>
-                    </xsd:annotation>
-                </xsd:element>
                 <xsd:element maxOccurs="unbounded" ref="layer">
                     <xsd:annotation>
                         <xsd:documentation>
-The layers.
+Main layers. From back to front.
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:element>
             </xsd:sequence>
-            <xsd:attribute name="name" type="xsd:NCName" use="required">
+            <xsd:attribute name="name" type="xsd:string" use="required">
                 <xsd:annotation>
                     <xsd:documentation>
-The name of the skin.
+The name of the skin, it will be used in the skin configuration window.
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:attribute>
@@ -39,10 +39,18 @@ The number of keys.
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:attribute>
+            <xsd:attribute default="false" name="scratch" type="xsd:boolean">
+                <xsd:annotation>
+                    <xsd:documentation>
+Use the scratch.
+Boolean type {true|false}.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
             <xsd:attribute name="judgment_line" type="xsd:nonNegativeInteger" use="required">
                 <xsd:annotation>
                     <xsd:documentation>
-The judgment line.
+The judgment line position. It has nothing to do with the sprite.
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:attribute>
@@ -162,13 +170,6 @@ A set of styles.
                     </xsd:annotation>
                 </xsd:element>
             </xsd:choice>
-            <xsd:attribute name="id" type="xsd:nonNegativeInteger" use="required">
-                <xsd:annotation>
-                    <xsd:documentation>
-The ID of the layer.
-                    </xsd:documentation>
-                </xsd:annotation>
-            </xsd:attribute>
         </xsd:complexType>
     </xsd:element>
     <xsd:element name="styles">
@@ -182,7 +183,7 @@ A style.
                     </xsd:annotation>
                 </xsd:element>
             </xsd:sequence>
-            <xsd:attribute name="id" type="xsd:NCName" use="required">
+            <xsd:attribute name="id" type="xsd:string" use="required">
                 <xsd:annotation>
                     <xsd:documentation>
 The ID of the styles. It will be shown in the Skin configuration window.
@@ -203,7 +204,7 @@ Style one.
                     </xsd:annotation>
                 </xsd:element>
             </xsd:sequence>
-            <xsd:attribute name="id" type="xsd:NCName" use="required">
+            <xsd:attribute name="id" type="xsd:string" use="required">
                 <xsd:annotation>
                     <xsd:documentation>
 The ID of the style. It will be shown in the Skin configuration window.
@@ -259,7 +260,7 @@ Direction of the fill. Only used by  BAR entities.
             <xsd:attribute name="sprite" type="entitySprites" use="required">
                 <xsd:annotation>
                     <xsd:documentation>
-A sprite or a set of sprites. Use , to separate them.
+A sprite or a set of sprites. Use ,(comma) to separate them.
 Ex:
 sprite1, sprite2, ...
                     </xsd:documentation>

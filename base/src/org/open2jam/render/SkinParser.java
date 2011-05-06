@@ -23,7 +23,7 @@ import org.open2jam.render.entities.NumberEntity;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.Attributes;
 
-public class SkinHandler extends DefaultHandler
+public class SkinParser extends DefaultHandler
 {
 
     private enum Keyword {
@@ -44,8 +44,7 @@ public class SkinHandler extends DefaultHandler
 
     private int layer = -1;
 
-    private String target_skin;
-    private boolean on_skin = false;
+    private String skin_name;
 
     private double baseW = 800;
     private double baseH = 600;
@@ -53,9 +52,8 @@ public class SkinHandler extends DefaultHandler
     private final double targetH;
 
 
-    public SkinHandler(String skin, double width, double height)
+    public SkinParser(double width, double height)
     {
-        this.target_skin = skin;
 	this.targetW = width;
 	this.targetH = height;
         call_stack = new ArrayDeque<Keyword>();
@@ -83,7 +81,8 @@ public class SkinHandler extends DefaultHandler
         switch(k)
         {
             case skin:{
-                if(atts_map.get("name").equals(target_skin))on_skin = true;
+                this.skin_name = atts_map.get("name");
+                result.addSkin(skin_name);
 		if(atts_map.containsKey("width"))this.baseW = Double.parseDouble(atts_map.get("width"));
 		if(atts_map.containsKey("height"))this.baseH = Double.parseDouble(atts_map.get("height"));
                 result.judgment_line = Integer.parseInt(atts_map.get("judgment_line"));
@@ -94,8 +93,8 @@ public class SkinHandler extends DefaultHandler
             }break;
 
             case layer:{
-                this.layer = Integer.parseInt(atts_map.get("id"));
-                if(this.layer > result.max_layer)result.max_layer = this.layer;
+                this.layer++;
+                result.max_layer = this.layer;
             }break;
         }
     }
@@ -105,9 +104,6 @@ public class SkinHandler extends DefaultHandler
     {
         Keyword k = call_stack.pop();
         Map<String,String> atts = atts_stack.pop();
-
-        if(!on_skin)return;
-        else if(k == Keyword.skin)on_skin = false;
 
         switch(k)
         {
@@ -125,7 +121,7 @@ public class SkinHandler extends DefaultHandler
                 Rectangle slice = new Rectangle(x,y,w,h);
 
                 String FILE_PATH_PREFIX = "/resources/";
-                URL url = SkinHandler.class.getResource(FILE_PATH_PREFIX +atts.get("file"));
+                URL url = SkinParser.class.getResource(FILE_PATH_PREFIX +atts.get("file"));
                 if(url == null)throw new RuntimeException("Cannot find resource: "+ FILE_PATH_PREFIX +atts.get("file"));
 
                 Sprite s;
@@ -138,7 +134,6 @@ public class SkinHandler extends DefaultHandler
                 s.setScale(sx, sy);
                 frame_buffer.add(s);
             }break;
-
             case sprite:{
                 double framespeed = 0;
                 if(atts.containsKey("framespeed"))framespeed = Double.parseDouble(atts.get("framespeed"));
@@ -147,7 +142,7 @@ public class SkinHandler extends DefaultHandler
                 String id;
                 if(atts.containsKey("id"))id = atts.get("id");
                 else {
-                    Logger.global.severe("bad resource file ! sprite must have an ID !");
+                    Logger.global.log(Level.SEVERE,"bad resource file ! sprite must have an ID ! ATTS: {0}",atts);
                     break;
                 }
 

@@ -40,7 +40,7 @@ import org.open2jam.util.SystemTimer;
 public abstract class Render implements GameWindowCallback
 {
     /** the config xml */
-    private static final URL resources_xml = TimeRender.class.getResource("/resources/resources.xml");
+    private static final URL resources_xml = Render.class.getResource("/resources/resources.xml");
 
     private static final int JUDGMENT_SIZE = 64;
 
@@ -295,9 +295,11 @@ public abstract class Render implements GameWindowCallback
 
         // skin load
         try {
-            SkinHandler sb = new SkinHandler("o2jam", window.getResolutionWidth(), window.getResolutionHeight());
+            SkinParser sb = new SkinParser(window.getResolutionWidth(), window.getResolutionHeight());
             SAXParserFactory.newInstance().newSAXParser().parse(resources_xml.openStream(), sb);
             skin = sb.getResult();
+        if(!skin.setSkin("o2jam"))
+            Logger.global.log(Level.SEVERE, "Skin load error");
         } catch (ParserConfigurationException ex) {
             Logger.global.log(Level.SEVERE, "Skin load error {0}", ex);
         } catch (org.xml.sax.SAXException ex) {
