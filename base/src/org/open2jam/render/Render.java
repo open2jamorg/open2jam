@@ -297,9 +297,9 @@ public abstract class Render implements GameWindowCallback
         try {
             SkinParser sb = new SkinParser(window.getResolutionWidth(), window.getResolutionHeight());
             SAXParserFactory.newInstance().newSAXParser().parse(resources_xml.openStream(), sb);
-            skin = sb.getResult();
-        if(!skin.setSkin("o2jam"))
-            Logger.global.log(Level.SEVERE, "Skin load error");
+            if((skin = sb.getResult("o2jam")) == null){
+                Logger.global.log(Level.SEVERE, "Skin load error There is no o2jam skin");
+            }
         } catch (ParserConfigurationException ex) {
             Logger.global.log(Level.SEVERE, "Skin load error {0}", ex);
         } catch (org.xml.sax.SAXException ex) {

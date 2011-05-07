@@ -40,7 +40,7 @@ public class SkinParser extends DefaultHandler
     private ArrayList<String> style_list;
     private HashMap<String, ArrayList<String>> styles_map;
 
-    private Skin result;
+    private HashMap<String, Skin> result;
 
     private int layer = -1;
 
@@ -64,7 +64,7 @@ public class SkinParser extends DefaultHandler
         style_list = new ArrayList<String>();
         styles_map = new HashMap<String, ArrayList<String>>();
         
-        result = new Skin();
+        result = new HashMap<String, Skin>();
     }
 
     @Override
@@ -82,19 +82,29 @@ public class SkinParser extends DefaultHandler
         {
             case skin:{
                 this.skin_name = atts_map.get("name");
-                result.addSkin(skin_name);
+                result.put(skin_name, new Skin());
 		if(atts_map.containsKey("width"))this.baseW = Double.parseDouble(atts_map.get("width"));
 		if(atts_map.containsKey("height"))this.baseH = Double.parseDouble(atts_map.get("height"));
-                result.judgment_line = Integer.parseInt(atts_map.get("judgment_line"));
+                result.get(skin_name).judgment_line = Integer.parseInt(atts_map.get("judgment_line"));
 
-		result.screen_scale_x = (float) (this.targetW/this.baseW);
-		result.screen_scale_y = (float) (this.targetH/this.baseH);
+		result.get(skin_name).screen_scale_x = (float) (this.targetW/this.baseW);
+		result.get(skin_name).screen_scale_y = (float) (this.targetH/this.baseH);
                 ResourceFactory.get().getGameWindow().initScales(this.baseW, this.baseH);
             }break;
 
             case layer:{
                 this.layer++;
-                result.max_layer = this.layer;
+                result.get(skin_name).max_layer = this.layer;
+            }break;
+
+            case style:{
+                style_list.add(atts_map.get("id"));
+            }break;
+            case styles:{
+                ArrayList<String> al = new ArrayList<String>();
+                al.addAll(style_list);
+                styles_map.put(atts_map.get("id"), al);
+                style_list.clear();
             }break;
         }
     }
@@ -153,16 +163,6 @@ public class SkinParser extends DefaultHandler
 
                 frame_buffer.clear();
             }break;
-           
-            case style:{
-                style_list.add(atts.get("id"));
-            }break;
-            case styles:{
-                ArrayList<String> al = new ArrayList<String>();
-                al.addAll(style_list);
-                styles_map.put(atts.get("id"), al);
-                style_list.clear();
-            }break;
             
             case entity:{
             Entity e;
@@ -209,18 +209,18 @@ public class SkinParser extends DefaultHandler
             e.setPos(x, y);
             
             if(id != null){
-                if(!result.getEntityMap().containsKey(id))result.getEntityMap().put(id, e);
+                if(!result.get(skin_name).getEntityMap().containsKey(id))result.get(skin_name).getEntityMap().put(id, e);
                 else{
-                    Entity prime = result.getEntityMap().get(id);
+                    Entity prime = result.get(skin_name).getEntityMap().get(id);
                     if(prime instanceof CompositeEntity){
                         ((CompositeEntity)prime).getEntityList().add(e);
                     }else{
                         CompositeEntity ce = new CompositeEntity(prime, e);
-                        result.getEntityMap().put(id, ce);
+                        result.get(skin_name).getEntityMap().put(id, ce);
                     }
                 }
             }
-            else result.getEntityList().add(e);
+            else result.get(skin_name).getEntityList().add(e);
             
             }break;
         }
@@ -250,7 +250,7 @@ public class SkinParser extends DefaultHandler
 
             e = new LongNoteEntity(head, body, tail, Event.Channel.valueOf(id), x, 0);
             e.setLayer(layer);
-            result.getEntityMap().put("LONG_"+id, e);
+            result.get(skin_name).getEntityMap().put("LONG_"+id, e);
             e = new NoteEntity(head, Event.Channel.valueOf(id), x, 0);
         }
         else if(id.equals("MEASURE_MARK")){
@@ -413,9 +413,12 @@ public class SkinParser extends DefaultHandler
         return e;
     }
 
-    public Skin getResult()
+    public Skin getResult(String skin)
     {
-        return result;
+        if(result.containsKey(skin))
+            return result.get(skin);
+        else
+            return null;
     }
 
     private BarEntity.FillDirection getFill(String fill)

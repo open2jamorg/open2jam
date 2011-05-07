@@ -13,9 +13,8 @@ import org.open2jam.render.entities.Entity;
  */
 public class Skin
 {
-    private final HashMap<String, HashMap<String,Entity>> named_entities;
-    private final HashMap<String, ArrayList<Entity>> other_entities;
-    private String selected_skin;
+    private final HashMap<String,Entity> named_entities;
+    private final ArrayList<Entity> other_entities;
 
     int max_layer = 0;
     
@@ -27,37 +26,23 @@ public class Skin
 
     public Skin()
     {
-        named_entities = new HashMap<String, HashMap<String,Entity>>();
-        other_entities = new HashMap<String, ArrayList<Entity>>();
-    }
-
-    public boolean setSkin(String skin)
-    {
-        this.selected_skin = skin;
-        
-        return (named_entities.containsKey(skin) && other_entities.containsKey(skin));
-    }
-
-    public void addSkin(String skin)
-    {
-        named_entities.put(skin, new HashMap<String,Entity>());
-        other_entities.put(skin, new ArrayList<Entity>());
-        this.selected_skin = skin;
+        named_entities = new HashMap<String,Entity>();
+        other_entities = new ArrayList<Entity>();
     }
 
     public HashMap<String,Entity> getEntityMap(){
-        return named_entities.get(selected_skin);
+        return named_entities;
     }
 
     public ArrayList<Entity> getEntityList(){
-        return other_entities.get((selected_skin));
+        return other_entities;
     }
 
     public ArrayList<Entity> getAllEntities(){
         ArrayList<Entity> al = new ArrayList<Entity>();
 
-        al.addAll(named_entities.get(selected_skin).values());
-        al.addAll(other_entities.get(selected_skin));
+        al.addAll(named_entities.values());
+        al.addAll(other_entities);
 
         return al;
     }

@@ -451,9 +451,8 @@ public class Interface extends javax.swing.JFrame
             }
         });
 
-        btn_skin.setFont(new java.awt.Font("Tahoma", 0, 10));
+        btn_skin.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_skin.setText("Skin Selection");
-        btn_skin.setEnabled(false);
         btn_skin.setMaximumSize(new java.awt.Dimension(20, 20));
         btn_skin.setMinimumSize(new java.awt.Dimension(20, 20));
         btn_skin.setPreferredSize(new java.awt.Dimension(20, 20));

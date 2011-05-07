@@ -390,7 +390,7 @@ public class TimeRender extends Render
             {
                 if(!keyboard_key_pressed.get(c)){ // started holding now
                     keyboard_key_pressed.put(c, true);
-                    System.out.println(window.getKeyMilli(entry.getValue())+" KEY "+entry.getValue()+" CHECKED");
+                    System.out.println((long)System.nanoTime()+" KEY "+entry.getValue()+" CHECKED     "+((long)System.nanoTime()-window.getKeyMilli(entry.getValue())));
 
                     Entity ee = skin.getEntityMap().get("PRESSED_"+c).copy();
                     entities_matrix.add(ee);
