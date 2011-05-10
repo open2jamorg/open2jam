@@ -17,6 +17,7 @@ import java.beans.PropertyChangeListener;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
@@ -75,9 +76,12 @@ public class Interface extends javax.swing.JFrame
         table_sorter = new TableRowSorter<ChartListTableModel>(model_songlist);
         table_songlist.setRowSorter(table_sorter);
         txt_filter.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
             public void insertUpdate(DocumentEvent e) {updateFilter();}
+            @Override
             public void removeUpdate(DocumentEvent e) {updateFilter();}
-            public void changedUpdate(DocumentEvent e) {updateFilter();}
+            @Override
+            public void changedUpdate(DocumentEvent e) {}
         });
 
         loadDirlist();
@@ -99,6 +103,7 @@ public class Interface extends javax.swing.JFrame
         col.setPreferredWidth(80);
 
         table_chartlist.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
             public void valueChanged(ListSelectionEvent e)
             {
                 if (e.getValueIsAdjusting()) return;
@@ -106,6 +111,7 @@ public class Interface extends javax.swing.JFrame
                 if(lsm.isSelectionEmpty()) return;
                 int selectedRow = lsm.getMinSelectionIndex();
                 if(selectedRow < 0) return;
+                if(selected_chart.get(selectedRow) == selected_header)return;
                 selected_header = selected_chart.get(selectedRow);
                 if(selectedRow != rank)
                 {
@@ -917,6 +923,7 @@ public class Interface extends javax.swing.JFrame
             List<DisplayMode> list = Arrays.asList(Display.getAvailableDisplayModes());
 
             Collections.sort(list, new Comparator<DisplayMode>() {
+                @Override
                 public int compare(DisplayMode dm1, DisplayMode dm2) {
 
                     if(dm1.getBitsPerPixel() == dm2.getBitsPerPixel())
@@ -1012,6 +1019,7 @@ public class Interface extends javax.swing.JFrame
         }
     }
     
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if("progress".equals(evt.getPropertyName()))
         {
@@ -1037,6 +1045,7 @@ public class Interface extends javax.swing.JFrame
         }
     }
 
+    @Override
     public void valueChanged(ListSelectionEvent e) {
         int i = table_songlist.getSelectedRow();
         if(i < 0 && last_model_idx >= 0){
@@ -1047,6 +1056,7 @@ public class Interface extends javax.swing.JFrame
         }else{
             i = table_songlist.convertRowIndexToModel(i);
         }
+        if(model_songlist.getRow(i) == selected_chart)return;
         selected_chart = model_songlist.getRow(i);
         if(selected_chart.size() > rank)selected_header = selected_chart.get(rank);
         if(selected_chart != model_chartlist.getChartList()){
@@ -1057,9 +1067,11 @@ public class Interface extends javax.swing.JFrame
             table_chartlist.getSelectionModel().setSelectionInterval(0, 0);
         else
             table_chartlist.getSelectionModel().setSelectionInterval(0, rank);
+        
         updateInfo();
     }
 
+    private DecimalFormat bpm_format = new DecimalFormat(".##");
     private void updateInfo()
     {
         if(selected_header == null)return;
@@ -1069,11 +1081,10 @@ public class Interface extends javax.swing.JFrame
         lbl_filename.setText(resizeString(selected_header.getSource().getName(), 30));
         lbl_genre.setText(resizeString(selected_header.getGenre(), 30));
         lbl_level.setText(selected_header.getLevel()+"");
-        lbl_bpm.setText(Float.toString((float)selected_header.getBPM()*100/100));
+        lbl_bpm.setText(bpm_format.format(selected_header.getBPM()));
         lbl_notes.setText(selected_header.getNoteCount()+"");
 	lbl_keys.setText(selected_header.getKeys()+"");
-        int d = selected_header.getDuration();
-        lbl_time.setText((d/60)+":"+(d%60 < 10 ? "0"+(d%60) : (d%60)));
+        lbl_time.setText(time2Text(selected_header.getDuration()));
 
         BufferedImage i = selected_header.getCover();
 
@@ -1085,6 +1096,12 @@ public class Interface extends javax.swing.JFrame
                 )));
         else
             lbl_cover.setIcon(null);
+    }
+    
+    private String time2Text(int secs) {
+        int h = secs / 60;
+        int m = secs % 60;
+        return m < 10 ? h+":0"+m : h+":"+m;
     }
 
     private String resizeString(String string, int size)
