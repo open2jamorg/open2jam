@@ -79,17 +79,15 @@
             <frame x="225" y="138" w="188" h="3" file="main.png" />
         </sprite>
 
-        <sprite id="sprite_note_white">
-            <frame x="0" y="13" w="28" h="7" file="note_w.png" />
+        <sprite framespeed="12" id="head_note_white">
+            <frame x="225" y="142" w="28" h="7" file="main.png" />
+            <frame x="225" y="150" w="28" h="7" file="main.png" />
+            <frame x="225" y="158" w="28" h="7" file="main.png" />
         </sprite>
-        <sprite id="tail_note_white">
-            <frame x="0" y="17" w="28" h="3" file="note_w.png" />
-        </sprite>
-        <sprite id="body_note_white">
-            <frame x="0" y="1" w="28" h="5" file="note_w.png" />
-        </sprite>
-        <sprite id="head_note_white">
-            <frame x="0" y="13" w="28" h="3" file="note_w.png" />
+        <sprite framespeed="12" id="body_note_white">
+            <frame x="225" y="143" w="28" h="5" file="main.png" />
+            <frame x="225" y="151" w="28" h="5" file="main.png" />
+            <frame x="225" y="159" w="28" h="5" file="main.png" />
         </sprite>
         <sprite framespeed="12" id="head_note_blue">
             <frame x="254" y="142" w="22" h="7" file="main.png" />
@@ -460,13 +458,13 @@
 
     <!-- notes -->
         <layer>
-            <entity id="NOTE_1" x="5"    sprite="sprite_note_white" head="head_note_white" body="body_note_white" tail="tail_note_white"/>
+            <entity id="NOTE_1" x="5"    sprite="head_note_white" body="body_note_white"/>
             <entity id="NOTE_2" x="33"   sprite="head_note_blue" body="body_note_blue" />
-            <entity id="NOTE_3" x="55"   sprite="sprite_note_white" head="head_note_white" body="body_note_white" tail="tail_note_white"/>
+            <entity id="NOTE_3" x="55"   sprite="head_note_white" body="body_note_white"/>
             <entity id="NOTE_4" x="83"   sprite="head_note_yellow" body="body_note_yellow" />
-            <entity id="NOTE_5" x="115"  sprite="sprite_note_white" head="head_note_white" body="body_note_white" tail="tail_note_white"/>
+            <entity id="NOTE_5" x="115"  sprite="head_note_white" body="body_note_white"/>
             <entity id="NOTE_6" x="143"  sprite="head_note_blue" body="body_note_blue" />
-            <entity id="NOTE_7" x="165"  sprite="sprite_note_white" head="head_note_white" body="body_note_white" tail="tail_note_white"/>
+            <entity id="NOTE_7" x="165"  sprite="head_note_white" body="body_note_white"/>
         </layer>
 
     <!-- static keyboard sprite -->
@@ -509,7 +507,7 @@
 
     <!-- counters and judgment sprites -->
         <layer>
-            <entity id="COMBO_COUNTER" x="99" y="250" sprite="combo_number_0,
+            <entity id="COMBO_COUNTER" x="99" y="210" sprite="combo_number_0,
 	combo_number_1, combo_number_2, combo_number_3, combo_number_4, combo_number_5,
 	combo_number_6, combo_number_7, combo_number_8, combo_number_9" title="combo_title" />
 
@@ -517,15 +515,15 @@
 	 score_number_2, score_number_3, score_number_4, score_number_5, score_number_6,
 	 score_number_7, score_number_8, score_number_9" />
 
-            <entity id="EFFECT_JUDGMENT_PERFECT" x="30" y="300" sprite="judgment_perfect" />
+            <entity id="EFFECT_JUDGMENT_PERFECT" x="30" y="280" sprite="judgment_perfect" />
 
-            <entity id="EFFECT_JUDGMENT_COOL"    x="30" y="300" sprite="judgment_cool" />
+            <entity id="EFFECT_JUDGMENT_COOL"    x="30" y="280" sprite="judgment_cool" />
 
-            <entity id="EFFECT_JUDGMENT_GOOD"    x="30" y="300" sprite="judgment_good" />
+            <entity id="EFFECT_JUDGMENT_GOOD"    x="30" y="280" sprite="judgment_good" />
 
-            <entity id="EFFECT_JUDGMENT_BAD"     x="30" y="300" sprite="judgment_bad" />
+            <entity id="EFFECT_JUDGMENT_BAD"     x="30" y="280" sprite="judgment_bad" />
 
-            <entity id="EFFECT_JUDGMENT_MISS"    x="30" y="300" sprite="judgment_miss" />
+            <entity id="EFFECT_JUDGMENT_MISS"    x="30" y="280" sprite="judgment_miss" />
 
 
             <entity id="SCORE_COUNTER" x="192" y="567" sprite="score_number_0, score_number_1,

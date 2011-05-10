@@ -17,12 +17,15 @@ public class SkinChecker {
     String schemaLocation = "/resources/skin_schema.xsd";
 
     class SimpleErrorHandler implements ErrorHandler {
+        @Override
         public void warning(SAXParseException exception) throws SAXException {
             Logger.global.log(Level.WARNING, "Warning [line:{2} column:{1}] : {0}", new Object[]{exception.getMessage(), exception.getColumnNumber(), exception.getLineNumber()});
         }
+        @Override
         public void error(SAXParseException exception) throws SAXException {
             Logger.global.log(Level.SEVERE, "Error [line:{2} column:{1}] : {0}", new Object[]{exception.getMessage(), exception.getColumnNumber(), exception.getLineNumber()});
         }
+        @Override
         public void fatalError(SAXParseException exception) throws SAXException {
             Logger.global.log(Level.SEVERE, "FatalError [line:{2} column:{1}] : {0}", new Object[]{exception.getMessage(), exception.getColumnNumber(), exception.getLineNumber()});
             throw exception;

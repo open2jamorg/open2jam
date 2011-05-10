@@ -814,7 +814,7 @@ public abstract class Render implements GameWindowCallback
         }
 
 //        skin.getEntityMap().get("MEASURE_MARK").setLayer(layer);
-        if(value != 1)skin.getEntityMap().get("JUDGMENT_LINE").setLayer(layer);
+        if(value != 2)skin.getEntityMap().get("JUDGMENT_LINE").setLayer(layer);
 
         entities_matrix.add(visibility_entity);
         return;
