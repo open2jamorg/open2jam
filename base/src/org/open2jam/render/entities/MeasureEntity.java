@@ -20,7 +20,7 @@ public class MeasureEntity extends AnimatedEntity implements TimeEntity
     @Override
     public void judgment()
     {
-        alive = false;
+        dead = true;
     }
 
     @Override
@@ -28,10 +28,12 @@ public class MeasureEntity extends AnimatedEntity implements TimeEntity
         return new MeasureEntity(this);
     }
 
+    @Override
     public void setTime(double t) {
         time_to_hit = t;
     }
 
+    @Override
     public double getTime() {
         return time_to_hit;
     }

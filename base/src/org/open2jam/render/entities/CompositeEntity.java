@@ -75,11 +75,11 @@ public class CompositeEntity extends Entity
      * @return
      */
     @Override
-    public boolean isAlive(){
+    public boolean isDead(){
         Iterator<Entity> i = entity_list.iterator();
         while(i.hasNext()){
             Entity e = i.next();
-            if(!e.isAlive()) return false;
+            if(e.isDead()) return false;
         }
         return true;
 
@@ -87,8 +87,8 @@ public class CompositeEntity extends Entity
 
 
     @Override
-    public void setAlive(boolean state){
-        for(Entity e : entity_list)e.setAlive(state);
+    public void setDead(boolean state){
+        for(Entity e : entity_list)e.setDead(state);
     }
 
     @Override

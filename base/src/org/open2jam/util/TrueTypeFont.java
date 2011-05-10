@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.awt.GraphicsEnvironment;
 import java.util.logging.Level;
-import org.open2jam.util.Logger;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;

@@ -60,7 +60,7 @@ public class LongNoteEntity extends NoteEntity
     public double getY()
     {
         if(end_time != null)
-            return y - end_dist;//render.velocity_integral(time_to_hit,end_time);
+            return y - end_dist;
         else
             return -10;
     }

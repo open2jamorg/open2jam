@@ -6,7 +6,7 @@ package org.open2jam.util;
  * http://thekevindolan.com/2010/02/interval-tree/index.html
  * @param <V> The V of data being stored
  */
-public class Interval<K extends Comparable<K>,V> implements Comparable<Interval<K,V>> {
+public class Interval<K extends Comparable<K>,V> implements Comparable<Interval<K,?>> {
 
 	private K start;
 	private K end;
@@ -66,7 +66,8 @@ public class Interval<K extends Comparable<K>,V> implements Comparable<Interval<
 	 * @param other
 	 * @return 1 or -1
 	 */
-	public int compareTo(Interval<K,V> other) {
+        @Override
+	public int compareTo(Interval<K,?> other) {
 
             int i = start.compareTo(other.getStart());
             int j = end.compareTo(other.getStart());

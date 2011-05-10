@@ -44,7 +44,7 @@ public class AnimatedEntity extends Entity
             sub_frame += delta * frames.getFrameSpeed();
             sub_frame %= frames.size(); // loops over
             if(!loop && sub_frame < last_frame)
-                alive = false;
+                dead = true;
             else
                 last_frame = sub_frame;
             sprite = frames.get((int)sub_frame);

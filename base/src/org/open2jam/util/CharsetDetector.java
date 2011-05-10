@@ -40,6 +40,7 @@ public class CharsetDetector implements nsICharsetDetectionObserver
         return charset;
     }
 
+    @Override
     public void Notify(String string) {
         charset = string;
     }

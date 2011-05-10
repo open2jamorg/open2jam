@@ -44,6 +44,9 @@ public abstract class Render implements GameWindowCallback
 
     private static final int JUDGMENT_SIZE = 64;
 
+    /** 4 beats per minute, 4 * 60 beats per second, 4*60*1000 per millisecond */
+    private static final int BEATS_PER_MSEC = 4 * 60 * 1000;
+
     /** is autoplaying ? */
     final boolean AUTOPLAY;
 
@@ -262,8 +265,8 @@ public abstract class Render implements GameWindowCallback
         SoundManager.play(source, buffer);
     }
 
-
-    void updateHispeed()
+    /** XXX: inline ? */
+    private void updateHispeed()
     {
         judgment_line_y1 = skin.getJudgmentLine() - JUDGMENT_SIZE;
         if(hispeed > 1){
@@ -289,6 +292,7 @@ public abstract class Render implements GameWindowCallback
     * initialize the common elements for the game.
     * this is called by the window render
     */
+    @Override
     public void initialise()
     {
         lastLoopTime = SystemTimer.getTime();
@@ -489,7 +493,7 @@ public abstract class Render implements GameWindowCallback
             Event e = buffer_iterator.next();
             while(e.getMeasure() > buffer_measure) // this is the start of a new measure
             {
-                buffer_timer += (240000 * (fractional_measure-buffer_measure_pointer)) / buffer_bpm;
+                buffer_timer += (BEATS_PER_MSEC * (fractional_measure-buffer_measure_pointer)) / buffer_bpm;
                 MeasureEntity m = (MeasureEntity) skin.getEntityMap().get("MEASURE_MARK").copy();
                 m.setTime(buffer_timer);
                 entities_matrix.add(m);
@@ -498,7 +502,7 @@ public abstract class Render implements GameWindowCallback
                 buffer_measure_pointer = 0;
             }
 
-            buffer_timer += (240000 * (e.getPosition()-buffer_measure_pointer)) / buffer_bpm;
+            buffer_timer += (BEATS_PER_MSEC * (e.getPosition()-buffer_measure_pointer)) / buffer_bpm;
             buffer_measure_pointer = e.getPosition();
 
             switch(e.getChannel())
@@ -568,10 +572,10 @@ public abstract class Render implements GameWindowCallback
      */
     double velocity_integral(double t0, double t1)
     {
-        int sign = 1;
+        boolean negative = false;
         if(t0 > t1){
             double tmp = t1;t1 = t0;t0 = tmp; // swap
-            sign = -1;
+            negative = true;
         }
         List<Interval<Double,Double>> list = velocity_tree.getIntervals(t0, t1);
         double integral = 0;
@@ -591,7 +595,7 @@ public abstract class Render implements GameWindowCallback
                     integral += i.getData() * (i.getEnd() - i.getStart());
             }
         }
-        return sign * integral;
+        return negative ? -integral : integral;
     }
 
     private void construct_velocity_tree(Iterator<Event> it)
@@ -601,18 +605,18 @@ public abstract class Render implements GameWindowCallback
         double my_bpm = this.bpm;
         double frac_measure = 1;
         double measure_pointer = 0;
-        double my_note_speed = (my_bpm * measure_size) / 240000;
+        double my_note_speed = (my_bpm * measure_size) / BEATS_PER_MSEC;
         while(it.hasNext())
         {
             Event e = it.next();
             while(e.getMeasure() > measure)
             {
-                timer += (240000 * (frac_measure-measure_pointer)) / my_bpm;
+                timer += (BEATS_PER_MSEC * (frac_measure-measure_pointer)) / my_bpm;
                 measure++;
                 frac_measure = 1;
                 measure_pointer = 0;
             }
-            timer += (240000 * (e.getPosition()-measure_pointer)) / my_bpm;
+            timer += (BEATS_PER_MSEC * (e.getPosition()-measure_pointer)) / my_bpm;
             measure_pointer = e.getPosition();
 
             switch(e.getChannel())
@@ -620,7 +624,7 @@ public abstract class Render implements GameWindowCallback
                 case BPM_CHANGE:
                     velocity_tree.addInterval(last_bpm_change, timer, my_note_speed);
                     my_bpm = e.getValue();
-                    my_note_speed = (my_bpm * measure_size) / 240000;
+                    my_note_speed = (my_bpm * measure_size) / BEATS_PER_MSEC;
                     last_bpm_change = timer;
                 break;
                 case TIME_SIGNATURE:
@@ -819,6 +823,7 @@ public abstract class Render implements GameWindowCallback
     /**
      * Notification that the game window has been closed
      */
+    @Override
     public void windowClosed() {
         SoundManager.killData();
     }
