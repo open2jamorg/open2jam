@@ -266,10 +266,17 @@ sprite1, sprite2, ...
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:attribute>
+            <xsd:attribute name="head" type="entitySprites">
+                <xsd:annotation>
+                    <xsd:documentation>
+Only used in NOTE_x . The head of the longnote sprite. If null the "sprite" attribute sprite will be used.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
             <xsd:attribute name="body" type="entitySprites">
                 <xsd:annotation>
                     <xsd:documentation>
-Only used in NOTE_x . The body of the longnote sprite.
+Only used in NOTE_x . The body of the longnote sprite. If null the "sprite" attribute sprite will be used.
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:attribute>

@@ -56,7 +56,7 @@ public class TimeRender extends Render
             note_counter.put(s, e);
 	    entities_matrix.add(note_counter.get(s));
         }
-        note_counter.put(JUDGE.PERFECT, note_counter.get(JUDGE.COOL));
+        note_counter.put(JUDGE.PERFECT, note_counter.get(JUDGE.COOL));       
         start_time = lastLoopTime = SystemTimer.getTime();
     }
 
@@ -91,7 +91,7 @@ public class TimeRender extends Render
             else
                 second_entity.incNumber();
         }
-
+        
         now = SystemTimer.getTime() - start_time;
         update_note_buffer(now);
 
@@ -390,8 +390,6 @@ public class TimeRender extends Render
             {
                 if(!keyboard_key_pressed.get(c)){ // started holding now
                     keyboard_key_pressed.put(c, true);
-                    System.out.println((long)System.nanoTime()+" KEY "+entry.getValue()+" CHECKED     "+((long)System.nanoTime()-window.getKeyMilli(entry.getValue())));
-
                     Entity ee = skin.getEntityMap().get("PRESSED_"+c).copy();
                     entities_matrix.add(ee);
                     Entity to_kill = key_pressed_entity.put(c, ee);

@@ -16,7 +16,6 @@ import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.open2jam.render.GameWindow;
 import org.open2jam.render.GameWindowCallback;
-import org.open2jam.util.SystemTimer;
 
 /**
  * An implementation of GameWindow that will use OPENGL (JOGL) to 
@@ -120,7 +119,6 @@ public class LWJGLGameWindow implements GameWindow {
                 return;
             }
 
-
             Display.setTitle(title);
             
             // center the display on the screen
@@ -182,17 +180,9 @@ public class LWJGLGameWindow implements GameWindow {
 	 */
 	public boolean isKeyDown(int keyCode)
         {
-            Keyboard.poll();
             return Keyboard.isKeyDown(keyCode);
 	}
-
-        HashMap<Integer, Long> key_milli = new HashMap<Integer, Long>();
-        public long getKeyMilli(int keyCode)
-        {
-            if(!key_milli.containsKey(keyCode)) return 0;
-            return key_milli.get(keyCode);
-        }
-
+        
         public void initScales(double w, double h){
             scale_x = (float) (width/w);
             scale_y = (float) (height/h);
@@ -208,31 +198,7 @@ public class LWJGLGameWindow implements GameWindow {
 	private void gameLoop()
         {
             gameRunning = true;
-                                long nano = 0;
             while (gameRunning) {
-                    boolean show_nano = false;
-
-                    while(Keyboard.next())
-                    {
-                        int keyCode = Keyboard.getEventKey();
-                        long ev = Keyboard.getEventNanoseconds()/1000000;
-                        System.out.print((long)System.nanoTime()+" KEY "+keyCode+"        ");
-                        if(Keyboard.isKeyDown(keyCode))
-                        {
-                            key_milli.put(keyCode, System.nanoTime());
-                            System.out.println("TRUE");
-                            show_nano = true;
-                            nano = System.nanoTime();
-                        }
-                        else
-                        {
-                            long ms = (long)System.nanoTime() - key_milli.get(keyCode);
-                            System.out.println("FALSE ms pressed:"+ms);
-                            show_nano = true;
-                        }
-
-                    }
-
                     // clear screen
                     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
                     GL11.glLoadIdentity();
@@ -252,15 +218,8 @@ public class LWJGLGameWindow implements GameWindow {
                         callback.frameRendering();
                     }
 
-                    // update window contents
                     Display.update();
-
-                    if(show_nano)
-                    {
-                        System.out.println(System.nanoTime()+" DIF "+(System.nanoTime()-nano));
-                        show_nano = false;
-                    }
-
+                    
                     if(Display.isCloseRequested() || Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
                             destroy();
                     }

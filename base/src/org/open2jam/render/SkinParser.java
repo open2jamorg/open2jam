@@ -231,27 +231,32 @@ public class SkinParser extends DefaultHandler
         Entity e = null;
         if(id.startsWith("NOTE_")){
 
-            SpriteList head = null, body = null, tail = null;
+            SpriteList sprite = null, head = null, body = null, tail = null;
 
-            head = sprite_buffer.get(atts.get("sprite"));
+            sprite = sprite_buffer.get(atts.get("sprite"));
+
+            if(atts.containsKey("head"))
+                head = sprite_buffer.get(atts.get("head"));
+            else
+                head = sprite;
 
             if(atts.containsKey("body"))
                 body = sprite_buffer.get(atts.get("body"));
             else
-                body = head;
+                body = sprite;
 
             if(atts.containsKey("tail"))
                 tail = sprite_buffer.get(atts.get("tail"));
             else
-                tail = head;
+                tail = sprite;
 
             int x = 0;
             if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x"));
 
-            e = new LongNoteEntity(head, body, tail, Event.Channel.valueOf(id), x, 0);
+            e = new LongNoteEntity(head, body, tail, sprite, Event.Channel.valueOf(id), x, 0);
             e.setLayer(layer);
             result.get(skin_name).getEntityMap().put("LONG_"+id, e);
-            e = new NoteEntity(head, Event.Channel.valueOf(id), x, 0);
+            e = new NoteEntity(sprite, Event.Channel.valueOf(id), x, 0);
         }
         else if(id.equals("MEASURE_MARK")){
             SpriteList s = sprite_buffer.get(atts.get("sprite"));

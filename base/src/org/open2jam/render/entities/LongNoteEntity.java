@@ -10,18 +10,22 @@ public class LongNoteEntity extends NoteEntity
     private Sprite body_sprite;
     private final SpriteList tail_frames;
     private Sprite tail_sprite;
+    private final SpriteList normal_frames;
+    private Sprite normal_sprite;
 
     /** the size of the long note, this is constant once defined end_time */
     private Double end_dist = null;
     private Double end_time = null;
 
-    public LongNoteEntity(SpriteList head_frames, SpriteList body_frames, SpriteList tail_frames, Event.Channel ch, double x, double y)
+    public LongNoteEntity(SpriteList head_frames, SpriteList body_frames, SpriteList tail_frames, SpriteList normal_frames, Event.Channel ch, double x, double y)
     {
             super(head_frames,ch, x,y);
             this.body_frames = body_frames;
             this.body_sprite = body_frames.get(0);
             this.tail_frames = tail_frames;
             this.tail_sprite = tail_frames.get(0);
+            this.normal_frames = normal_frames;
+            this.normal_sprite = normal_frames.get(0);
             height = 0;
             
     }
@@ -32,6 +36,8 @@ public class LongNoteEntity extends NoteEntity
         this.body_sprite = org.body_sprite;
         this.tail_frames = org.tail_frames;
         this.tail_sprite = org.tail_sprite;
+        this.normal_frames = org.normal_frames;
+        this.normal_sprite = org.normal_sprite;
         this.end_time = org.end_time;
     }
 
@@ -102,12 +108,11 @@ public class LongNoteEntity extends NoteEntity
     {
         double end = getY();
         double local_y = y;
-	float sy = (float) ((local_y - end) / body_sprite.getHeight());
-        //there are sometimes that the head and the body separate, this fix it... but...
-        //TODO find a better way
-        body_sprite.draw(x, end+body_sprite.getHeight(), body_sprite.getScaleX(), sy);
-        sprite.draw(x,local_y);
-        tail_sprite.draw(x,end);
+	float sy = (float) ((local_y + normal_sprite.getHeight() - end) / body_sprite.getHeight());
+        body_sprite.draw(x, end, body_sprite.getScaleX(), sy);                      //the middle
+        tail_sprite.draw(x,local_y+(normal_sprite.getHeight()-sprite.getHeight())); // the bottom
+        sprite.draw(x,end);                                                         // the top
+        
     }
 
     @Override

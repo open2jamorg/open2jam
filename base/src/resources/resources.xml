@@ -79,21 +79,17 @@
             <frame x="225" y="138" w="188" h="3" file="main.png" />
         </sprite>
 
-
-        <sprite framespeed="12" id="head_note_white">
-            <frame x="225" y="142" w="28" h="7" file="main.png" />
-            <frame x="225" y="150" w="28" h="7" file="main.png" />
-            <frame x="225" y="158" w="28" h="7" file="main.png" />
+        <sprite id="sprite_note_white">
+            <frame x="0" y="13" w="28" h="7" file="note_w.png" />
         </sprite>
-        <sprite framespeed="12" id="body_note_white">
-            <frame x="225" y="143" w="28" h="5" file="main.png" />
-            <frame x="225" y="151" w="28" h="5" file="main.png" />
-            <frame x="225" y="159" w="28" h="5" file="main.png" />
+        <sprite id="tail_note_white">
+            <frame x="0" y="17" w="28" h="3" file="note_w.png" />
         </sprite>
-        <sprite framespeed="12" id="tail_note_white">
-            <frame x="225" y="143" w="28" h="5" file="main.png" />
-            <frame x="225" y="151" w="28" h="5" file="main.png" />
-            <frame x="225" y="159" w="28" h="5" file="main.png" />
+        <sprite id="body_note_white">
+            <frame x="0" y="1" w="28" h="5" file="note_w.png" />
+        </sprite>
+        <sprite id="head_note_white">
+            <frame x="0" y="13" w="28" h="3" file="note_w.png" />
         </sprite>
         <sprite framespeed="12" id="head_note_blue">
             <frame x="254" y="142" w="22" h="7" file="main.png" />
@@ -464,197 +460,13 @@
 
     <!-- notes -->
         <layer>
-            <entity id="NOTE_1" x="5"    sprite="head_note_white" body="body_note_white" tail="tail_note_white" />
+            <entity id="NOTE_1" x="5"    sprite="sprite_note_white" head="head_note_white" body="body_note_white" tail="tail_note_white"/>
             <entity id="NOTE_2" x="33"   sprite="head_note_blue" body="body_note_blue" />
-            <entity id="NOTE_3" x="55"   sprite="head_note_white" body="body_note_white" tail="tail_note_white" />
+            <entity id="NOTE_3" x="55"   sprite="sprite_note_white" head="head_note_white" body="body_note_white" tail="tail_note_white"/>
             <entity id="NOTE_4" x="83"   sprite="head_note_yellow" body="body_note_yellow" />
-            <entity id="NOTE_5" x="115"  sprite="head_note_white" body="body_note_white" tail="tail_note_white" />
+            <entity id="NOTE_5" x="115"  sprite="sprite_note_white" head="head_note_white" body="body_note_white" tail="tail_note_white"/>
             <entity id="NOTE_6" x="143"  sprite="head_note_blue" body="body_note_blue" />
-            <entity id="NOTE_7" x="165"  sprite="head_note_white" body="body_note_white" tail="tail_note_white" />
-        </layer>
-
-    <!-- static keyboard sprite -->
-        <layer>
-            <entity x="0" y="480" sprite="static_keyboard" />
-        </layer>
-
-    <!-- jam bar -->
-        <layer>
-            <entity id="JAM_BAR" x="4" y="536" sprite="jam_bar" fill_direction="left_to_right"/>
-        </layer>
-
-    <!-- pressed keyboard keys sprites -->
-        <layer>
-            <entity id="PRESSED_NOTE_1" x="3"    y="487" sprite="pressed_note_keyboard_white1" />
-            <entity id="PRESSED_NOTE_1" x="34"   y="528" sprite="pressed_note_keyboard_white2" />
-
-            <entity id="PRESSED_NOTE_2" x="33"   y="487" sprite="pressed_note_keyboard_blue" />
-
-            <entity id="PRESSED_NOTE_3" x="54"   y="487" sprite="pressed_note_keyboard_white1" />
-            <entity id="PRESSED_NOTE_3" x="45"   y="528" sprite="pressed_note_keyboard_white2" />
-
-            <entity id="PRESSED_NOTE_4" x="83"   y="487" sprite="pressed_note_keyboard_yellow" />
-
-            <entity id="PRESSED_NOTE_5" x="114"  y="487" sprite="pressed_note_keyboard_white1" />
-            <entity id="PRESSED_NOTE_5" x="144"  y="528" sprite="pressed_note_keyboard_white2" />
-
-            <entity id="PRESSED_NOTE_6" x="143"  y="487" sprite="pressed_note_keyboard_blue" />
-
-            <entity id="PRESSED_NOTE_7" x="164"  y="487" sprite="pressed_note_keyboard_white1" />
-            <entity id="PRESSED_NOTE_7" x="154"  y="528" sprite="pressed_note_keyboard_white2" />
-        </layer>
-
-    <!-- note hit effects -->
-        <layer>
-            <entity id="EFFECT_CLICK" sprite="effect_click_1" />
-
-            <entity y="460" id="EFFECT_LONGFLARE" sprite="longflare" />
-        </layer>
-
-    <!-- counters and judgment sprites -->
-        <layer>
-            <entity id="COMBO_COUNTER" x="99" y="250" sprite="combo_number_0,
-	combo_number_1, combo_number_2, combo_number_3, combo_number_4, combo_number_5,
-	combo_number_6, combo_number_7, combo_number_8, combo_number_9" title="combo_title" />
-
-            <entity id="FPS_COUNTER" x="798" y="5" sprite="score_number_0, score_number_1,
-	 score_number_2, score_number_3, score_number_4, score_number_5, score_number_6,
-	 score_number_7, score_number_8, score_number_9" />
-
-            <entity id="EFFECT_JUDGMENT_PERFECT" x="30" y="300" sprite="judgment_perfect" />
-
-            <entity id="EFFECT_JUDGMENT_COOL"    x="30" y="300" sprite="judgment_cool" />
-
-            <entity id="EFFECT_JUDGMENT_GOOD"    x="30" y="300" sprite="judgment_good" />
-
-            <entity id="EFFECT_JUDGMENT_BAD"     x="30" y="300" sprite="judgment_bad" />
-
-            <entity id="EFFECT_JUDGMENT_MISS"    x="30" y="300" sprite="judgment_miss" />
-
-
-            <entity id="SCORE_COUNTER" x="192" y="567" sprite="score_number_0, score_number_1,
-	 score_number_2, score_number_3, score_number_4, score_number_5, score_number_6,
-	 score_number_7, score_number_8, score_number_9" />
-
-            <entity id="JAM_COUNTER" x="99" y="80" sprite="jam_number_0, jam_number_1,
-	 jam_number_2, jam_number_3, jam_number_4, jam_number_5, jam_number_6,
-	 jam_number_7, jam_number_8, jam_number_9"  title="jam_title"/>
-
-            <entity id="MINUTE_COUNTER" x="346" y="569" sprite="time_number_0, time_number_1,
-	time_number_2, time_number_3, time_number_4, time_number_5, time_number_6,
-	time_number_7, time_number_8, time_number_9" />
-
-            <entity id="SECOND_COUNTER" x="410" y="569" sprite="time_number_0, time_number_1,
-	time_number_2, time_number_3, time_number_4, time_number_5, time_number_6,
-	time_number_7, time_number_8, time_number_9" />
-
-
-            <entity id="MAXCOMBO_COUNTER" x="671" y="556" sprite="maxcombo_number_0, maxcombo_number_1,
-	maxcombo_number_2, maxcombo_number_3, maxcombo_number_4, maxcombo_number_5, maxcombo_number_6,
-	maxcombo_number_7, maxcombo_number_8, maxcombo_number_9" />
-
-
-            <entity id="COUNTER_JUDGMENT_PERFECT" x="658" y="500" sprite="counter_number_0, counter_number_1,
-	counter_number_2, counter_number_3, counter_number_4, counter_number_5, counter_number_6,
-	counter_number_7, counter_number_8, counter_number_9" />
-
-            <entity id="COUNTER_JUDGMENT_COOL" x="658" y="573" sprite="counter_number_0, counter_number_1,
-	counter_number_2, counter_number_3, counter_number_4, counter_number_5, counter_number_6,
-	counter_number_7, counter_number_8, counter_number_9" />
-
-
-            <entity id="COUNTER_JUDGMENT_GOOD" x="728" y="573" sprite="counter_number_0, counter_number_1,
-	counter_number_2, counter_number_3, counter_number_4, counter_number_5, counter_number_6,
-	counter_number_7, counter_number_8, counter_number_9" />
-
-
-            <entity id="COUNTER_JUDGMENT_BAD" x="658" y="582" sprite="counter_number_0, counter_number_1,
-	counter_number_2, counter_number_3, counter_number_4, counter_number_5, counter_number_6,
-	counter_number_7, counter_number_8, counter_number_9" />
-
-
-            <entity id="COUNTER_JUDGMENT_MISS" x="728" y="582" sprite="counter_number_0, counter_number_1,
-	counter_number_2, counter_number_3, counter_number_4, counter_number_5, counter_number_6,
-	counter_number_7, counter_number_8, counter_number_9" />
-
-        </layer>
-    </skin>
-    <skin name="o2jam 2" keys="7" scratch="false" width="800" height="600" judgment_line="480">
-    <!-- background -->
-        <layer>
-            <styles id="BACKGROUND">
-                <style id="Default">
-
-                    <entity x="488" y="509" sprite="background3" />
-                </style>
-<!--        <style id="bg2"> commented because it was causing a blank line on the screen
-                <entity x="204" y="0"   sprite="bg" />
-            </style>-->
-            </styles>
-        </layer>
-
-    <!-- borders for the note area -->
-        <layer>
-            <styles id="BODERS">
-                <style id="DEFAULT">
-                    <entity x="0"   y="0" sprite="border1" />
-                    <entity x="195" y="0" sprite="border3" />
-                    <entity x="195" y="0" sprite="border2" />
-                </style>
-                <style id="Another">
-                    <entity x="0"   y="0" sprite="border1" />
-                    <entity x="195" y="0" sprite="border3" />
-                    <entity x="195" y="0" sprite="border2" />
-                </style>
-            </styles>
-        </layer>
-
-    <!-- pills, life bar & time bar -->
-        <layer>
-        <!-- pills -->
-            <entity id="PILL_1" x="200" y="127" sprite="pill" />
-            <entity id="PILL_2" x="200" y="95"  sprite="pill" />
-            <entity id="PILL_3" x="200" y="64"  sprite="pill" />
-            <entity id="PILL_4" x="200" y="33"  sprite="pill" />
-            <entity id="PILL_5" x="200" y="2"   sprite="pill" />
-
-	<!-- life bar -->
-            <entity id="LIFE_BAR" x="203" y="247" sprite="lifebar" fill_direction="up_to_down"/>
-
-	<!-- time bar / o2 combo bar (don't know what way will we go)-->
-            <entity x="226" y="515" sprite="timebar" fill_direction="left_to_right"/>
-        </layer>
-
-    <!-- judgment area (line/glow) -->
-        <layer>
-            <entity id="JUDGMENT_LINE" x="3" y="416" sprite="judgmentarea" />
-        </layer>
-
-    <!-- note press lane effects -->
-        <layer>
-            <entity x="5"   y="215" id="PRESSED_NOTE_1" sprite="pressed_note_lane_white" />
-            <entity x="33"  y="1"   id="PRESSED_NOTE_2" sprite="pressed_note_lane_blue" />
-            <entity x="55"  y="215" id="PRESSED_NOTE_3" sprite="pressed_note_lane_white" />
-            <entity x="83"  y="1"   id="PRESSED_NOTE_4" sprite="pressed_note_lane_yellow" />
-            <entity x="115" y="215" id="PRESSED_NOTE_5" sprite="pressed_note_lane_white" />
-            <entity x="143" y="1"   id="PRESSED_NOTE_6" sprite="pressed_note_lane_blue" />
-            <entity x="165" y="215" id="PRESSED_NOTE_7" sprite="pressed_note_lane_white" />
-        </layer>
-
-    <!-- measure mark -->
-        <layer>
-            <entity x="4" id="MEASURE_MARK" sprite="measure_mark" />
-        </layer>
-
-    <!-- notes -->
-        <layer>
-            <entity id="NOTE_1" x="5"    sprite="head_note_white" body="body_note_white" tail="tail_note_white" />
-            <entity id="NOTE_2" x="33"   sprite="head_note_blue" body="body_note_blue" />
-            <entity id="NOTE_3" x="55"   sprite="head_note_white" body="body_note_white" tail="tail_note_white" />
-            <entity id="NOTE_4" x="83"   sprite="head_note_yellow" body="body_note_yellow" />
-            <entity id="NOTE_5" x="115"  sprite="head_note_white" body="body_note_white" tail="tail_note_white" />
-            <entity id="NOTE_6" x="143"  sprite="head_note_blue" body="body_note_blue" />
-            <entity id="NOTE_7" x="165"  sprite="head_note_white" body="body_note_white" tail="tail_note_white" />
+            <entity id="NOTE_7" x="165"  sprite="sprite_note_white" head="head_note_white" body="body_note_white" tail="tail_note_white"/>
         </layer>
 
     <!-- static keyboard sprite -->

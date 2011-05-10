@@ -51,8 +51,6 @@ public interface GameWindow {
 	 */
 	public boolean isKeyDown(int keyCode);
 
-        public long getKeyMilli(int keyCode);
-
         public void destroy();
 
         /** manually update the screen */
