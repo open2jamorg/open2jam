@@ -1,6 +1,5 @@
-
-`open2jam`
-==========
+open2jam
+========
 open source emulator of [O2Jam](http://o2jam.wikia.com/wiki/O2Jam).
 
 It is written in a combination of java,OpenGL and OpenAL, with the objective of being able to play in whatever platform you are.
