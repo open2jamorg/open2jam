@@ -3,41 +3,64 @@ use warnings;
 use Data::Dumper;
 
 my $filename = shift;
+my $xnefile = substr ($filename, 0, length($filename)-4).".xne";
+my $volumes = "volumes.txt";
 
-open DATA, $filename or die $!;
-binmode DATA;
+open XNT, $filename or die $!;
+binmode XNT;
 
-my $header;
-read DATA, $header, 11 or die $!;
+open XNE, $xnefile or die $!;
 
+readXNE();
+readXNT();
 
-my $h = unpack2hash(join(' ',qw/
-Z4:$signature
-s:$unk
-i:$segments
-c:$unk2
-/), $header);
-
-print Dumper $h;
-
-if($h->{'segments'} == 3)
+sub readXNE
 {
-	readBpmChange();
-}
-else
-{
-	readNote(1); #keysounds
-	readNote(0); #bgm
+	while(<XNE>)
+	{
+		if($_ =~ /.+Tempo=\"(.+)\"/)
+		{
+			my $tempo = $1;
+			print "Initial BPM = $tempo\n";
+		}
+	}
+	close XNE;
 }
 
-readSamples();
+sub readXNT
+{
+	my $header;
+	read XNT, $header, 11 or die $!;
+
+
+	my $h = unpack2hash(join(' ',qw/
+	Z4:$signature
+	s:$unk
+	i:$segments
+	c:$unk2
+	/), $header);
+
+	print Dumper $h;
+
+	if($h->{'segments'} == 3)
+	{
+		readBpmChange();
+	}
+	else
+	{
+		readNote(1); #keysounds
+		readNote(0); #bgm
+	}
+
+	readSamples();
+}
 
 sub readNote
 {
 	my ($isKeysound) = @_;
-	
-	read DATA, $header, 16 or die $!;
-	$h = unpack2hash(join(' ',qw/
+	my $header;
+	read XNT, $header, 16 or die $!;
+	my $h = unpack2hash(join(' ',qw/
 	c12:$garbage
 	i:$count
 	/), $header);
@@ -45,7 +68,7 @@ sub readNote
 	my $note;
 	for(my $i = 0; $i < $h->{'count'}; $i++)
 	{
-		read DATA, $note, 14 or die $!;
+		read XNT, $note, 14 or die $!;
 		
 		my $n = unpack2hash(join(' ',qw/
 		c:$zero
@@ -70,8 +93,9 @@ sub readNote
 
 sub readBpmChange 
 {
-	read DATA, $header, 16 or die $!;
-	$h = unpack2hash(join(' ',qw/
+	my $header;
+	read XNT, $header, 16 or die $!;
+	my $h = unpack2hash(join(' ',qw/
 	c12:$garbage
 	i:$count
 	/), $header);
@@ -79,7 +103,7 @@ sub readBpmChange
 	my $note;
 	for(my $i = 0; $i < $h->{'count'}; $i++)
 	{
-		read DATA, $note, 14 or die $!;
+		read XNT, $note, 14 or die $!;
 		
 		my $n = unpack2hash(join(' ',qw/
 		c:$zero
@@ -95,15 +119,16 @@ sub readBpmChange
 
 sub readSamples
 {
-	read DATA, $header, 4 or die $!;
-	$h = unpack2hash(join(' ',qw/
+	my $header;
+	read XNT, $header, 4 or die $!;
+	my $h = unpack2hash(join(' ',qw/
 	i:$count
 	/), $header);
 	
 	my $note;
 	for(my $i = 0; $i < $h->{'count'}; $i++)
 	{
-		read DATA, $note, 8 or die $!;
+		read XNT, $note, 8 or die $!;
 		
 		my $n = unpack2hash(join(' ',qw/
 		S:$id
@@ -113,7 +138,7 @@ sub readSamples
 		
 		print "---SAMPLE[$n->{'id'}]--- ";
 		
-		read DATA, $note, $n->{'name_len'} or die $!;
+		read XNT, $note, $n->{'name_len'} or die $!;
 		
 		$n = unpack2hash(join(' ',qw/
 		Z*:$name
