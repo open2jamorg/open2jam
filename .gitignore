@@ -1,6 +1,6 @@
 *.class
 *~
-base/dist
-base/build
-base/nbproject
+dist
+build
+nbproject
 
