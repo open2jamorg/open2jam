@@ -8,8 +8,6 @@ package org.open2jam.gui;
  */
 
 import java.awt.event.ItemEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.beans.PropertyChangeEvent;
@@ -20,7 +18,6 @@ import java.io.ObjectInputStream;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.logging.Level;
@@ -53,22 +50,56 @@ public class Interface extends javax.swing.JFrame
 
     private ChartListTableModel model_songlist;
     private ChartTableModel model_chartlist;
-    private File cwd;
-    private ArrayList<File> dir_list;
+    //private File cwd;
     private DisplayMode[] display_modes;
     private int rank = 0;
     private ChartList selected_chart;
     private Chart selected_header;
     private int last_model_idx;
     private final TableRowSorter<ChartListTableModel> table_sorter;
+    
+    private boolean btn_sd_save = true;
 
     private Configuration cfg_window = new Configuration(this);
     private SkinConfiguration skin_window = new SkinConfiguration();
+    
+    private class FileItem {
+        File file;
+        
+        public FileItem(File f) {
+            this.file = f;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 59 * hash + (this.file != null ? this.file.hashCode() : 0);
+            return hash;
+        }
+        
+        @Override
+        public boolean equals(Object o) {
+            return (o instanceof FileItem) && 
+                    ((FileItem)o).file.equals(file);
+        }
+        
+        @Override
+        public String toString() {
+            return file.getName();
+        }
+    }
 
     /** Creates new form Interface */
     public Interface() {
         initLogic();
         initComponents();
+        
+        File cwd = Config.getCwd();
+        
+        List<File> list = Config.getDirsList();
+        for(File f : list)combo_dirs.addItem(new FileItem(f));
+        Config.setDirsList(list);
+        
         loadDir(cwd);
         
         this.setLocationRelativeTo(null);
@@ -82,16 +113,6 @@ public class Interface extends javax.swing.JFrame
             public void removeUpdate(DocumentEvent e) {updateFilter();}
             @Override
             public void changedUpdate(DocumentEvent e) {}
-        });
-
-        loadDirlist();
-
-        cfg_window.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent arg0) {
-                dir_list = Config.get().getDirsList();
-                loadDirlist();
-            }
         });
 
         javax.swing.table.TableColumn col;
@@ -184,6 +205,8 @@ public class Interface extends javax.swing.JFrame
         combo_dirs = new javax.swing.JComboBox();
         btn_reload = new javax.swing.JButton();
         jc_bilinear = new javax.swing.JCheckBox();
+        btn_save_delete = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
         table_scroll = new javax.swing.JScrollPane();
         table_songlist = new javax.swing.JTable();
         txt_filter = new javax.swing.JTextField();
@@ -194,6 +217,7 @@ public class Interface extends javax.swing.JFrame
         lbl_main_vol = new javax.swing.JLabel();
         lbl_key_vol = new javax.swing.JLabel();
         lbl_bgm_vol = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         mitem_exit = new javax.swing.JMenuItem();
@@ -205,11 +229,11 @@ public class Interface extends javax.swing.JFrame
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Open2Jam");
 
-        lbl_title.setFont(new java.awt.Font("Tahoma", 0, 18));
+        lbl_title.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         lbl_title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbl_title.setText("Title");
 
-        lbl_artist.setFont(new java.awt.Font("Tahoma", 2, 11));
+        lbl_artist.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         lbl_artist.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbl_artist.setText("Artist");
 
@@ -272,7 +296,6 @@ public class Interface extends javax.swing.JFrame
         table_chartlist.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         table_scroll2.setViewportView(table_chartlist);
 
-        jc_timed_judgment.setSelected(true);
         jc_timed_judgment.setText("Use timed judment");
         jc_timed_judgment.setToolTipText("Like Bemani games");
 
@@ -282,8 +305,7 @@ public class Interface extends javax.swing.JFrame
             panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_infoLayout.createSequentialGroup()
                 .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(table_scroll2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
-                    .addComponent(lbl_title, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
+                    .addComponent(lbl_title, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 445, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panel_infoLayout.createSequentialGroup()
                         .addComponent(lbl_cover, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -305,7 +327,7 @@ public class Interface extends javax.swing.JFrame
                                     .addComponent(lbl_genre, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
                                     .addComponent(lbl_bpm, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)))
                             .addComponent(lbl_filename)))
-                    .addComponent(lbl_artist, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
+                    .addComponent(lbl_artist, javax.swing.GroupLayout.DEFAULT_SIZE, 445, Short.MAX_VALUE)
                     .addGroup(panel_infoLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -322,7 +344,8 @@ public class Interface extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(bt_play)
-                            .addComponent(combo_visibilityModifier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(combo_visibilityModifier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 445, Short.MAX_VALUE))
                 .addContainerGap())
         );
         panel_infoLayout.setVerticalGroup(
@@ -361,7 +384,7 @@ public class Interface extends javax.swing.JFrame
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbl_artist)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE)
+                .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbl_visibilityModifier)
@@ -446,7 +469,7 @@ public class Interface extends javax.swing.JFrame
 
         js_hispeed.setModel(new javax.swing.SpinnerNumberModel(1.0d, 0.5d, 10.0d, 0.5d));
 
-        btn_configuration.setFont(new java.awt.Font("Tahoma", 0, 10));
+        btn_configuration.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         btn_configuration.setText("Folders and Keys");
         btn_configuration.setMaximumSize(new java.awt.Dimension(20, 20));
         btn_configuration.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -469,6 +492,7 @@ public class Interface extends javax.swing.JFrame
             }
         });
 
+        combo_dirs.setMaximumSize(new java.awt.Dimension(34, 35));
         combo_dirs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 combo_dirsActionPerformed(evt);
@@ -485,6 +509,15 @@ public class Interface extends javax.swing.JFrame
         jc_bilinear.setSelected(true);
         jc_bilinear.setText("Bilinear filter");
 
+        btn_save_delete.setText("Save cache");
+        btn_save_delete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_save_deleteActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Saved dirs:");
+
         javax.swing.GroupLayout panel_settingLayout = new javax.swing.GroupLayout(panel_setting);
         panel_setting.setLayout(panel_settingLayout);
         panel_settingLayout.setHorizontalGroup(
@@ -493,54 +526,74 @@ public class Interface extends javax.swing.JFrame
                 .addContainerGap()
                 .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panel_settingLayout.createSequentialGroup()
-                        .addComponent(jr_rank_easy)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jr_rank_normal)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jr_rank_hard))
-                    .addComponent(lbl_rank)
+                        .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panel_settingLayout.createSequentialGroup()
+                                .addComponent(jr_rank_easy)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jr_rank_normal)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jr_rank_hard))
+                            .addGroup(panel_settingLayout.createSequentialGroup()
+                                .addComponent(lbl_hispeed)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(js_hispeed, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
+                                .addGap(24, 24, 24))
+                            .addComponent(lbl_display)
+                            .addComponent(combo_displays, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(panel_settingLayout.createSequentialGroup()
+                                .addComponent(jc_custom_size, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txt_res_width, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lbl_res_x)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txt_res_height, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(panel_settingLayout.createSequentialGroup()
+                                .addComponent(jc_vsync)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jc_full_screen))
+                            .addGroup(panel_settingLayout.createSequentialGroup()
+                                .addComponent(btn_configuration, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(btn_skin, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jc_bilinear))
+                        .addGap(82, 82, 82))
                     .addGroup(panel_settingLayout.createSequentialGroup()
-                        .addComponent(lbl_hispeed)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(js_hispeed, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
-                        .addGap(72, 72, 72))
-                    .addComponent(lbl_display)
-                    .addComponent(combo_displays, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lbl_rank)
+                        .addContainerGap(199, Short.MAX_VALUE))
                     .addGroup(panel_settingLayout.createSequentialGroup()
                         .addComponent(bt_choose_dir)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(load_progress, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(load_progress, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
                     .addGroup(panel_settingLayout.createSequentialGroup()
-                        .addComponent(jc_custom_size, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txt_res_width, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lbl_res_x)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txt_res_height, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panel_settingLayout.createSequentialGroup()
-                        .addComponent(jc_vsync)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jc_full_screen))
-                    .addGroup(panel_settingLayout.createSequentialGroup()
-                        .addComponent(combo_dirs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_reload))
-                    .addGroup(panel_settingLayout.createSequentialGroup()
-                        .addComponent(btn_configuration, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE))
-                    .addComponent(btn_skin, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jc_bilinear))
-                .addContainerGap())
+                        .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panel_settingLayout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(combo_dirs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(panel_settingLayout.createSequentialGroup()
+                                .addComponent(btn_reload, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btn_save_delete)))
+                        .addGap(83, 83, 83))))
         );
         panel_settingLayout.setVerticalGroup(
             panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel_settingLayout.createSequentialGroup()
-                .addContainerGap(18, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bt_choose_dir)
                     .addComponent(load_progress, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(combo_dirs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_reload)
+                    .addComponent(btn_save_delete))
+                .addGap(26, 26, 26)
                 .addComponent(lbl_rank)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -571,10 +624,6 @@ public class Interface extends javax.swing.JFrame
                 .addComponent(btn_configuration, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_skin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(34, 34, 34)
-                .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(combo_dirs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_reload))
                 .addContainerGap())
         );
 
@@ -603,6 +652,8 @@ public class Interface extends javax.swing.JFrame
         lbl_key_vol.setText("Key Volume:");
 
         lbl_bgm_vol.setText("BGM Volume:");
+
+        jLabel3.setText("Search:");
 
         jMenu1.setText("File");
 
@@ -644,11 +695,10 @@ public class Interface extends javax.swing.JFrame
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addContainerGap()
-                            .addComponent(jLabel1))
-                        .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel1)
+                        .addGap(187, 187, 187))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -659,13 +709,19 @@ public class Interface extends javax.swing.JFrame
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(slider_bgm_vol, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
                             .addComponent(slider_key_vol, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
-                            .addComponent(slider_main_vol, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(slider_main_vol, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(panel_info, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE)
-                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE)))
+                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -674,9 +730,11 @@ public class Interface extends javax.swing.JFrame
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panel_info, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 505, Short.MAX_VALUE)
+                        .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 518, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txt_filter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txt_filter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -691,7 +749,7 @@ public class Interface extends javax.swing.JFrame
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                             .addComponent(lbl_bgm_vol)
                             .addComponent(slider_bgm_vol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
                         .addComponent(jLabel1)))
                 .addContainerGap())
         );
@@ -717,20 +775,22 @@ public class Interface extends javax.swing.JFrame
     private void bt_choose_dirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_choose_dirActionPerformed
 
         JFileChooser jfc = new JFileChooser();
-        jfc.setCurrentDirectory(cwd);
+        jfc.setCurrentDirectory(Config.getCwd());
         jfc.setDialogTitle("Choose a directory");
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         jfc.setAcceptAllFileFilterUsed(false);
         if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            cwd = jfc.getSelectedFile();
-            loadDir(cwd);
+            loadDir(jfc.getSelectedFile());
         }
     }//GEN-LAST:event_bt_choose_dirActionPerformed
 
     private void lbl_coverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_coverMouseClicked
-        if(selected_header.getCover() == null) return;
+        
+        if(selected_header == null)return;
+        BufferedImage i = selected_header.getCover();
+        if(i == null) return;
         JOptionPane.showMessageDialog(this, null, "Cover",
-                JOptionPane.INFORMATION_MESSAGE, new ImageIcon(selected_header.getCover()));
+                JOptionPane.INFORMATION_MESSAGE, new ImageIcon(i));
     }//GEN-LAST:event_lbl_coverMouseClicked
 
     private void jr_rank_normalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jr_rank_normalActionPerformed
@@ -833,15 +893,33 @@ public class Interface extends javax.swing.JFrame
     }//GEN-LAST:event_btn_skinActionPerformed
 
     private void combo_dirsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_dirsActionPerformed
-        if(dir_list.isEmpty()) return;
-        if(combo_dirs.getSelectedIndex()<0)return;
-        File s = dir_list.get(combo_dirs.getSelectedIndex());
-        loadDir(s);
+        
+        loadDir(((FileItem)combo_dirs.getSelectedItem()).file);
     }//GEN-LAST:event_combo_dirsActionPerformed
 
     private void btn_reloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_reloadActionPerformed
-        updateSelection();
+        updateSelection(Config.getCwd());
     }//GEN-LAST:event_btn_reloadActionPerformed
+
+    private void btn_save_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_save_deleteActionPerformed
+        
+        List<File> dir_list = Config.getDirsList();
+        if(btn_sd_save) {
+            File f = Config.getCwd();
+            if(dir_list.contains(f))return;
+            dir_list.add(Config.getCwd());
+            combo_dirs.addItem(new FileItem(f));
+            //updateDirlist();
+            loadDir(f);
+        }else{
+            File rem = Config.getCwd();
+            dir_list.remove(rem);
+            combo_dirs.removeItem(new FileItem(rem));
+            File f = dir_list.get(0);
+            loadDir(f);
+        }
+        Config.setDirsList(dir_list);
+    }//GEN-LAST:event_btn_save_deleteActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -849,12 +927,15 @@ public class Interface extends javax.swing.JFrame
     private javax.swing.JButton bt_play;
     private javax.swing.JButton btn_configuration;
     private javax.swing.JButton btn_reload;
+    private javax.swing.JButton btn_save_delete;
     private javax.swing.JButton btn_skin;
     private javax.swing.JComboBox combo_channelModifier;
     private javax.swing.JComboBox combo_dirs;
     private javax.swing.JComboBox combo_displays;
     private javax.swing.JComboBox combo_visibilityModifier;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
@@ -915,10 +996,6 @@ public class Interface extends javax.swing.JFrame
 
     private void initLogic() {
 
-        dir_list = Config.get().getDirsList();
-        if(dir_list.isEmpty()) cwd = new File(System.getProperty("user.dir"));
-        else                   cwd = dir_list.get(0);
-
         try {
             List<DisplayMode> list = Arrays.asList(Display.getAvailableDisplayModes());
 
@@ -971,31 +1048,36 @@ public class Interface extends javax.swing.JFrame
 
     private void loadDir(File dir)
     {
-        cwd = dir;
-        this.setTitle("Open2Jam - "+cwd);
+        Config.setCwd(dir);
+        
+        this.setTitle("Open2Jam - "+dir);
         File cache = getCacheFile(dir);
-        if(cache.exists()){
-            try {
-                GZIPInputStream gzip = new GZIPInputStream(new FileInputStream(cache));
-                ObjectInputStream obj = new ObjectInputStream(gzip);
-                @SuppressWarnings("unchecked") // yes, I'm sure its a list of chartlist
-                List<ChartList> l = (List<ChartList>) obj.readObject();
-                model_songlist.setRawList(l);
-                obj.close();
-            } catch (IOException ex) {
-                Logger.global.log(Level.SEVERE, "{0}", ex);
-                updateSelection();
-            } catch (ClassNotFoundException ex) {
-                Logger.global.log(Level.SEVERE, "{0}", ex);
-                updateSelection();
-            }
+        
+        List<File> dir_list = Config.getDirsList();
+        
+        if(dir_list.contains(dir)){
+            btn_sd_save = false;
+            btn_save_delete.setText("Remove dir");
+        } else {
+            btn_save_delete.setText("Save dir");
+            btn_sd_save = true;
         }
-        else {
-            updateSelection();
+        
+        // update combo box dir list
+        System.out.println("set "+dir);
+        combo_dirs.setSelectedItem(new FileItem(dir));
+        
+        @SuppressWarnings("unchecked") // yes, I'm sure its a list of chartlist
+        List<ChartList> l = (List<ChartList>) Config.get("cache:"+dir.getAbsolutePath());
+        
+        if(l == null) {
+            updateSelection(dir);
+        } else {
+            model_songlist.setRawList(l);
         }
     }
 
-    private void updateSelection() {
+    private void updateSelection(File f) {
         bt_choose_dir.setEnabled(false);
         btn_reload.setEnabled(false);
         combo_dirs.setEnabled(false);
@@ -1003,21 +1085,19 @@ public class Interface extends javax.swing.JFrame
         table_songlist.setEnabled(false);
         load_progress.setValue(0);
         load_progress.setVisible(true);
-        ChartModelLoader task = new ChartModelLoader(model_songlist, cwd);
+        ChartModelLoader task = new ChartModelLoader(model_songlist, f);
         task.addPropertyChangeListener(this);
         task.execute();
     }
 
-    private void loadDirlist()
-    {
-        DefaultComboBoxModel theModel = (DefaultComboBoxModel)combo_dirs.getModel();
-        theModel.removeAllElements();
-        if(dir_list.isEmpty()) return;
-        for(File f : dir_list)
-        {
-            combo_dirs.addItem(f.getName());
-        }
-    }
+//    private void updateDirlist()
+//    {
+//        List<File> list = Config.get().getDirsList();
+//        combo_dirs.removeAllItems();
+//        for (File i : list) {
+//            combo_dirs.addItem(i.getName());
+//        }
+//    }
     
     @Override
     public void propertyChange(PropertyChangeEvent evt) {

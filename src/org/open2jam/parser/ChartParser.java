@@ -6,11 +6,8 @@ import java.io.File;
 *** it has methods to find out the type of file
 *** and delegate the job to the right parser
 **/
-public class ChartParser
+public abstract class ChartParser
 {
-	/** this is a static class */
-	private ChartParser() {}
-
 	/** parse and returns a ChartHeader object */
 	public static ChartList parseFile(File file)
 	{

@@ -11,6 +11,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import org.open2jam.util.Logger;
@@ -23,13 +24,13 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.open2jam.Config;
 import org.open2jam.parser.Event;
-import org.open2jam.util.TrueTypeFont;
+import org.open2jam.render.lwjgl.TrueTypeFont;
 
 
 class Configuration extends javax.swing.JDialog {
 
     private EnumMap<Event.Channel,Integer> kb_map;
-    private ArrayList<File> dir_list;
+    private List<File> dir_list;
     private final ArrayList<File> deleted_dirs;
 
     private HashMap<Integer, Event.Channel> table_map = new HashMap<Integer,Event.Channel>();
@@ -50,7 +51,7 @@ class Configuration extends javax.swing.JDialog {
 
     private void loadTableDirs()
     {
-        if(dir_list.isEmpty())dir_list = Config.get().getDirsList();
+        if(dir_list.isEmpty())dir_list = Config.getDirsList();
         DefaultTableModel dm = (DefaultTableModel)tDirs.getModel();
         dm.setRowCount(dir_list.size());
         
@@ -60,7 +61,7 @@ class Configuration extends javax.swing.JDialog {
 
     private void loadTableKeys(Config.KeyboardType kt)
     {
-        kb_map = Config.get().getKeyboardMap(kt).clone();
+        kb_map = Config.getKeyboardMap(kt).clone();
         DefaultTableModel dm = (DefaultTableModel)tKeys.getModel();
         dm.setRowCount(kb_map.size());
 
@@ -280,7 +281,7 @@ class Configuration extends javax.swing.JDialog {
                 Logger.global.log(Level.WARNING, "Could NOT delete {0}", cache.getAbsolutePath());
         }
 
-        Config.get().setDirsList(dir_list);
+        Config.setDirsList(dir_list);
 
         Config.KeyboardType kt;
         switch(combo_keyboardConfig.getSelectedIndex())
@@ -292,8 +293,7 @@ class Configuration extends javax.swing.JDialog {
             case 4:kt = Config.KeyboardType.K8;break;
             default: return;
         }
-        Config.get().setKeyboardMap(kb_map, kt);
-        Config.get().save();
+        Config.setKeyboardMap(kb_map, kt);
 	this.dispose();
     }//GEN-LAST:event_bSaveActionPerformed
 

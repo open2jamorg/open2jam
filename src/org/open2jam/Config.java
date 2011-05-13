@@ -1,148 +1,200 @@
 package org.open2jam;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
-import org.open2jam.util.Logger;
 import org.lwjgl.input.Keyboard;
 import org.open2jam.parser.Event;
+import org.open2jam.parser.Event.Channel;
+import org.tmatesoft.sqljet.core.SqlJetException;
+import org.tmatesoft.sqljet.core.SqlJetTransactionMode;
+import org.tmatesoft.sqljet.core.schema.SqlJetConflictAction;
+import org.tmatesoft.sqljet.core.table.ISqlJetCursor;
+import org.tmatesoft.sqljet.core.table.ISqlJetTable;
+import org.tmatesoft.sqljet.core.table.SqlJetDb;
 
 /**
  *
  * @author fox
  */
-public class Config implements Serializable
+public abstract class Config
 {
-    private static final long serialVersionUID = 1L;
-    //  EnumMap<Event.Channel,Integer> keyboard_map_9K; // Pop'n'Music // TODO Not sure if we want a 9k map :/
+    private static final File CONFIG_DBFILE = new File("config.db");
     
-    private final EnumMap<KeyboardType, EnumMap<Event.Channel,Integer>> keyboard_map;
+    private static SqlJetDb db;
+    private static ISqlJetTable table;
 
-    private ArrayList<File> dir_list;
+    private static final String KEY_INDEX = "key_index";
+    private static final String DATA_TABLE = "data";
+    private static final String VALUE_FIELD = "value";
+    private static String create_table = 
+            "CREATE TABLE "+DATA_TABLE+" (key TEXT PRIMARY KEY, "+VALUE_FIELD+" BLOB )";
+    private static String create_index = 
+            "CREATE INDEX "+KEY_INDEX+" ON "+DATA_TABLE+"(key)";
 
-    private static final File CONFIG_FILE = new File("config.obj");
-
-    Level log_level = Level.INFO;
-    FileHandler log_handle = null;
-
-    /** singleton object */
-    private static Config config = null;
-
-    public enum KeyboardType{K4, K5, K6, K7, K8, /*K9*/}
-
-    private Config()
-    {
-        dir_list = new ArrayList<File>();
-        dir_list.add(new File(System.getProperty("user.dir")));
-
-        // TODO Needs the 2nd player keys, if we are going to add 2p support ofc xD
-        EnumMap<Event.Channel, Integer> keyboard_map_4K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
-        keyboard_map_4K.put(Event.Channel.NOTE_1, Keyboard.KEY_D);
-        keyboard_map_4K.put(Event.Channel.NOTE_2, Keyboard.KEY_F);
-        keyboard_map_4K.put(Event.Channel.NOTE_3, Keyboard.KEY_J);
-        keyboard_map_4K.put(Event.Channel.NOTE_4, Keyboard.KEY_K);
-        keyboard_map_4K.put(Event.Channel.NOTE_SC, Keyboard.KEY_LSHIFT);
-
-        EnumMap<Event.Channel, Integer> keyboard_map_5K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
-        keyboard_map_5K.put(Event.Channel.NOTE_1, Keyboard.KEY_D);
-        keyboard_map_5K.put(Event.Channel.NOTE_2, Keyboard.KEY_F);
-        keyboard_map_5K.put(Event.Channel.NOTE_3, Keyboard.KEY_SPACE);
-        keyboard_map_5K.put(Event.Channel.NOTE_4, Keyboard.KEY_J);
-        keyboard_map_5K.put(Event.Channel.NOTE_5, Keyboard.KEY_K);
-        keyboard_map_5K.put(Event.Channel.NOTE_SC, Keyboard.KEY_LSHIFT);
-
-        EnumMap<Event.Channel, Integer> keyboard_map_6K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
-        keyboard_map_6K.put(Event.Channel.NOTE_1, Keyboard.KEY_S);
-        keyboard_map_6K.put(Event.Channel.NOTE_2, Keyboard.KEY_D);
-        keyboard_map_6K.put(Event.Channel.NOTE_3, Keyboard.KEY_F);
-        keyboard_map_6K.put(Event.Channel.NOTE_4, Keyboard.KEY_J);
-        keyboard_map_6K.put(Event.Channel.NOTE_5, Keyboard.KEY_K);
-        keyboard_map_6K.put(Event.Channel.NOTE_6, Keyboard.KEY_L);
-        keyboard_map_6K.put(Event.Channel.NOTE_SC, Keyboard.KEY_LSHIFT);
-
-        EnumMap<Event.Channel, Integer> keyboard_map_7K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
-        keyboard_map_7K.put(Event.Channel.NOTE_1, Keyboard.KEY_S);
-        keyboard_map_7K.put(Event.Channel.NOTE_2, Keyboard.KEY_D);
-        keyboard_map_7K.put(Event.Channel.NOTE_3, Keyboard.KEY_F);
-        keyboard_map_7K.put(Event.Channel.NOTE_4, Keyboard.KEY_SPACE);
-        keyboard_map_7K.put(Event.Channel.NOTE_5, Keyboard.KEY_J);
-        keyboard_map_7K.put(Event.Channel.NOTE_6, Keyboard.KEY_K);
-        keyboard_map_7K.put(Event.Channel.NOTE_7, Keyboard.KEY_L);
-        keyboard_map_7K.put(Event.Channel.NOTE_SC, Keyboard.KEY_LSHIFT);
-
-        EnumMap<Event.Channel, Integer> keyboard_map_8K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
-        keyboard_map_8K.put(Event.Channel.NOTE_1, Keyboard.KEY_A);
-        keyboard_map_8K.put(Event.Channel.NOTE_2, Keyboard.KEY_S);
-        keyboard_map_8K.put(Event.Channel.NOTE_3, Keyboard.KEY_D);
-        keyboard_map_8K.put(Event.Channel.NOTE_4, Keyboard.KEY_F);
-        keyboard_map_8K.put(Event.Channel.NOTE_5, Keyboard.KEY_H);
-        keyboard_map_8K.put(Event.Channel.NOTE_6, Keyboard.KEY_J);
-        keyboard_map_8K.put(Event.Channel.NOTE_7, Keyboard.KEY_K);
-        keyboard_map_8K.put(Event.Channel.NOTE_SC, Keyboard.KEY_L);
-
-        keyboard_map = new EnumMap<KeyboardType, EnumMap<Event.Channel,Integer>>(KeyboardType.class);
-        keyboard_map.put(KeyboardType.K4, keyboard_map_4K);
-        keyboard_map.put(KeyboardType.K5, keyboard_map_5K);
-        keyboard_map.put(KeyboardType.K6, keyboard_map_6K);
-        keyboard_map.put(KeyboardType.K7, keyboard_map_7K);
-        keyboard_map.put(KeyboardType.K8, keyboard_map_8K);
-    }
-
-    public EnumMap<Event.Channel,Integer> getKeyboardMap(KeyboardType kt){
-        return keyboard_map.get(kt);
-    }
-
-    public void setKeyboardMap(EnumMap<Event.Channel,Integer> kb_map, KeyboardType kt){
-        keyboard_map.get(kt).putAll(kb_map);
-    }
-
-    public ArrayList<File> getDirsList (){
-        return dir_list;
-    }
-
-    public void setDirsList(ArrayList<File> dl)
-    {
-        this.dir_list = dl;
-    }
-
-    public void save()
-    {
-        try {
-            ObjectOutputStream obj = new ObjectOutputStream(new FileOutputStream(CONFIG_FILE));
-            obj.writeObject(this);
-            obj.close();
-        } catch (FileNotFoundException ex) {
-            Logger.global.severe("Could not find file to write config !");
-        } catch (IOException ioe) {
-            Logger.global.log(Level.SEVERE, "IO Error on writing config file ! :{0}", ioe.getMessage());
-        }
-    }
-
-    public static Config get()
-    {
-        if(config == null){
+    public enum KeyboardType {K4, K5, K6, K7, K8, /*K9*/}
+    
+    public static void openDB() {
+        
+        if(!CONFIG_DBFILE.exists()) { // create now
+        
             try {
-                ObjectInputStream obj = new ObjectInputStream(new FileInputStream(CONFIG_FILE));
-                config = (Config) obj.readObject();
-                obj.close();
-            } catch (ClassNotFoundException ex) {
-                Logger.global.severe("There's no Config class !! impossibru !");
-            } catch (FileNotFoundException ex) {
-                config = new Config();
-                config.save();
-            } catch (IOException ioe) {
-                Logger.global.log(Level.SEVERE, "IO Error on reading config file ! :{0}", ioe.getMessage());
+                db = SqlJetDb.open(CONFIG_DBFILE, true);
+                db.createTable(create_table);
+                db.createIndex(create_index);
+                
+                table = db.getTable(DATA_TABLE);
+
+            } catch(SqlJetException e) {
+                //TODO: freak out
+                e.printStackTrace();
+            }
+            
+            setCwd(new File(System.getProperty("user.dir")));
+            
+            setDirsList(new ArrayList<File>());
+
+            // TODO Needs the 2nd player keys, if we are going to add 2p support ofc xD
+            EnumMap<Event.Channel, Integer> keyboard_map_4K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
+            keyboard_map_4K.put(Event.Channel.NOTE_1, Keyboard.KEY_D);
+            keyboard_map_4K.put(Event.Channel.NOTE_2, Keyboard.KEY_F);
+            keyboard_map_4K.put(Event.Channel.NOTE_3, Keyboard.KEY_J);
+            keyboard_map_4K.put(Event.Channel.NOTE_4, Keyboard.KEY_K);
+            keyboard_map_4K.put(Event.Channel.NOTE_SC, Keyboard.KEY_LSHIFT);
+            put("keyboard_map"+KeyboardType.K4.toString(), keyboard_map_4K);
+
+            EnumMap<Event.Channel, Integer> keyboard_map_5K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
+            keyboard_map_5K.put(Event.Channel.NOTE_1, Keyboard.KEY_D);
+            keyboard_map_5K.put(Event.Channel.NOTE_2, Keyboard.KEY_F);
+            keyboard_map_5K.put(Event.Channel.NOTE_3, Keyboard.KEY_SPACE);
+            keyboard_map_5K.put(Event.Channel.NOTE_4, Keyboard.KEY_J);
+            keyboard_map_5K.put(Event.Channel.NOTE_5, Keyboard.KEY_K);
+            keyboard_map_5K.put(Event.Channel.NOTE_SC, Keyboard.KEY_LSHIFT);
+            put("keyboard_map"+KeyboardType.K5.toString(), keyboard_map_5K);
+
+            EnumMap<Event.Channel, Integer> keyboard_map_6K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
+            keyboard_map_6K.put(Event.Channel.NOTE_1, Keyboard.KEY_S);
+            keyboard_map_6K.put(Event.Channel.NOTE_2, Keyboard.KEY_D);
+            keyboard_map_6K.put(Event.Channel.NOTE_3, Keyboard.KEY_F);
+            keyboard_map_6K.put(Event.Channel.NOTE_4, Keyboard.KEY_J);
+            keyboard_map_6K.put(Event.Channel.NOTE_5, Keyboard.KEY_K);
+            keyboard_map_6K.put(Event.Channel.NOTE_6, Keyboard.KEY_L);
+            keyboard_map_6K.put(Event.Channel.NOTE_SC, Keyboard.KEY_LSHIFT);
+            put("keyboard_map"+KeyboardType.K6.toString(), keyboard_map_6K);
+
+            EnumMap<Event.Channel, Integer> keyboard_map_7K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
+            keyboard_map_7K.put(Event.Channel.NOTE_1, Keyboard.KEY_S);
+            keyboard_map_7K.put(Event.Channel.NOTE_2, Keyboard.KEY_D);
+            keyboard_map_7K.put(Event.Channel.NOTE_3, Keyboard.KEY_F);
+            keyboard_map_7K.put(Event.Channel.NOTE_4, Keyboard.KEY_SPACE);
+            keyboard_map_7K.put(Event.Channel.NOTE_5, Keyboard.KEY_J);
+            keyboard_map_7K.put(Event.Channel.NOTE_6, Keyboard.KEY_K);
+            keyboard_map_7K.put(Event.Channel.NOTE_7, Keyboard.KEY_L);
+            keyboard_map_7K.put(Event.Channel.NOTE_SC, Keyboard.KEY_LSHIFT);
+            put("keyboard_map"+KeyboardType.K7.toString(), keyboard_map_7K);
+
+            EnumMap<Event.Channel, Integer> keyboard_map_8K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
+            keyboard_map_8K.put(Event.Channel.NOTE_1, Keyboard.KEY_A);
+            keyboard_map_8K.put(Event.Channel.NOTE_2, Keyboard.KEY_S);
+            keyboard_map_8K.put(Event.Channel.NOTE_3, Keyboard.KEY_D);
+            keyboard_map_8K.put(Event.Channel.NOTE_4, Keyboard.KEY_F);
+            keyboard_map_8K.put(Event.Channel.NOTE_5, Keyboard.KEY_H);
+            keyboard_map_8K.put(Event.Channel.NOTE_6, Keyboard.KEY_J);
+            keyboard_map_8K.put(Event.Channel.NOTE_7, Keyboard.KEY_K);
+            keyboard_map_8K.put(Event.Channel.NOTE_SC, Keyboard.KEY_L);
+            put("keyboard_map"+KeyboardType.K8.toString(), keyboard_map_8K);
+
+        } else {
+            try {
+                db = SqlJetDb.open(CONFIG_DBFILE, true);
+                table = db.getTable(DATA_TABLE);
+            } catch(SqlJetException e) {
+                //TODO: freak out
+                e.printStackTrace();
             }
         }
-        return config;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static EnumMap<Event.Channel,Integer> getKeyboardMap(KeyboardType kt){
+        return (EnumMap<Channel, Integer>) get("keyboard_map"+kt.toString());
+    }
+
+    public static void setKeyboardMap(EnumMap<Event.Channel,Integer> kb_map, KeyboardType kt){
+        put("keyboard_map"+kt.toString(), kb_map);
+    }
+
+    public static File getCwd() {
+        return (File) get("cwd");
+    }
+    public static void setCwd(File new_file) { 
+        put("cwd",new_file);
+    }
+
+    public static void setDirsList(List<File> dl) {
+        put("dir_list",dl);
+    }
+    @SuppressWarnings("unchecked")
+    public static List<File> getDirsList() {
+        return (List<File>) get("dir_list");
+    }
+    
+    public static Object get(String key) {
+        try {
+            db.beginTransaction(SqlJetTransactionMode.READ_ONLY);
+            try {
+                ISqlJetCursor cursor = table.lookup(KEY_INDEX,key);
+                if(cursor.eof())return null;
+                return blob2object(cursor.getBlobAsStream(VALUE_FIELD));
+                
+            } finally {
+                db.commit();
+            }
+        } catch(SqlJetException e) {
+            //TODO: freak out
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    public static void put(String key, Object value) {
+        try {
+            table.insertOr(SqlJetConflictAction.REPLACE, key, object2blob(value));
+        } catch(SqlJetException e) {
+            //TODO: freak out
+            e.printStackTrace();
+        }
+    }
+
+    private static byte[] object2blob(Object o) {
+        ByteArrayOutputStream bao = new ByteArrayOutputStream();
+        try {
+            new ObjectOutputStream(bao).writeObject(o);
+        } catch (IOException ex) {
+            //TODO: explain to java this is impossible
+            ex.printStackTrace();
+        }
+        return bao.toByteArray();
+    }
+    private static Object blob2object(InputStream blob) {
+        try {
+            return new ObjectInputStream(blob).readObject();
+        } catch(IOException e) {
+            //TODO: explain to java this is impossible
+            e.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            //TODO: explain to java this is impossible
+            ex.printStackTrace();
+        }
+        return null;
     }
 }

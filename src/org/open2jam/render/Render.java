@@ -193,7 +193,7 @@ public abstract class Render implements GameWindowCallback
 
     Render(Chart chart, double hispeed, boolean autoplay, int channelModifier, int visibilityModifier, int mainVol, int keyVol, int bgmVol)
     {
-        keyboard_map = Config.get().getKeyboardMap(Config.KeyboardType.K7);
+        keyboard_map = Config.getKeyboardMap(Config.KeyboardType.K7);
         window = ResourceFactory.get().getGameWindow();
         entities_matrix = new EntityMatrix();
         this.chart = chart;

@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.zip.GZIPOutputStream;
 import javax.swing.SwingWorker;
+import org.open2jam.Config;
 import org.open2jam.parser.ChartList;
 import org.open2jam.parser.ChartParser;
 
@@ -58,15 +59,8 @@ class ChartModelLoader extends SwingWorker<ChartListTableModel,ChartList>
     protected void done() {
 
         File f = Interface.getCacheFile(dir);
-
-        try {
-            GZIPOutputStream gzip = new GZIPOutputStream(new FileOutputStream(f));
-            ObjectOutputStream obj = new ObjectOutputStream(gzip);
-            obj.writeObject(table_model.getRawList());
-            obj.close();
-        } catch (IOException ex) {
-            Logger.global.log(Level.SEVERE, "{0}", ex);
-        }
+        
+        Config.put("cache:"+dir.getAbsolutePath(), table_model.getRawList());
     }
 
     @Override
