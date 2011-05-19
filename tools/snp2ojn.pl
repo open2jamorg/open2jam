@@ -265,11 +265,12 @@ sub print_header
 	print OJN pack 'f', 2.9; # encode_version
 	print OJN pack 'i', $info->{'genre'};
 	print OJN pack 'f', $info->{'bpm'};
-	print OJN pack 's4', map { $info->{$_}{'level'} }@extract_levels;
-	print OJN pack 's4', map { $info->{$_}{'event_count'} }@extract_levels;
-	print OJN pack 's4', map { $info->{$_}{'note_count'} }@extract_levels;
-	print OJN pack 's4', map { $info->{$_}{'measure_count'} }@extract_levels;
-	print OJN pack 's4', map { $info->{$_}{'package_count'} }@extract_levels;
+	print OJN pack 's3', map { $info->{$_}{'level'} }@extract_levels;
+	print OJN pack 's', 0;
+	print OJN pack 'i3', map { $info->{$_}{'event_count'} }@extract_levels;
+	print OJN pack 'i3', map { $info->{$_}{'note_count'} }@extract_levels;
+	print OJN pack 'i3', map { $info->{$_}{'measure_count'} }@extract_levels;
+	print OJN pack 'i3', map { $info->{$_}{'package_count'} }@extract_levels;
 	print OJN pack 's', 0; # old_encode_version
 	print OJN pack 's', 0; # old_songid
 	print OJN pack 'a20', "";  # old_genre
