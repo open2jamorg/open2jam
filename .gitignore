@@ -1,5 +1,6 @@
 *.class
 *~
+*.obj
 dist
 build
 nbproject
