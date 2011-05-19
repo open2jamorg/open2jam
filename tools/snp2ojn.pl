@@ -59,7 +59,7 @@ exit(0);
 sub dump_snp
 {
 	my ($snp_file) = @_;
-	$snp_file =~ /C(\d+)\.snp/;
+	$snp_file =~ /C(\d+)\.snp/i;
 	my $code = $1;
 	
 	my $metadata = read_musicfile($code);
@@ -70,6 +70,7 @@ sub dump_snp
 	}
 	
 	open my $SNP_FILE, $snp_file or die $!;
+	binmode $SNP_FILE;
 	my $snp_index = snp_build_index($SNP_FILE);
 	
 	my $ojn_file = $metadata->{'title'}.".ojn";
@@ -228,6 +229,12 @@ sub normalize_notes { # break long notes to ojn style
 	my @notes = @_;
 	my @extra_notes;
 	for my $n(@notes) {
+		next if($n->{'channel'} < 2);
+		$n->{'value'}++; # o2jam ignore 0 so push everyone 1 up
+		if($n->{'channel'} > 8) {
+			$n->{'note_type'} = 0;
+			next;
+		}
 		if($n->{'length'} > 0) # long note
 		{
 			my %ne = %{$n};
