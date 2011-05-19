@@ -13,8 +13,6 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import org.open2jam.util.Logger;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import org.lwjgl.LWJGLException;
@@ -273,13 +271,6 @@ class Configuration extends javax.swing.JDialog {
 
     private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
         //delete the cache files that are useless(deleted folders ones)
-        for(File s : deleted_dirs)
-        {
-            File cache = Interface.getCacheFile(s);
-            if(!cache.exists()) continue;
-            if(!cache.delete())
-                Logger.global.log(Level.WARNING, "Could NOT delete {0}", cache.getAbsolutePath());
-        }
 
         Config.setDirsList(dir_list);
 

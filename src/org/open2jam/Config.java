@@ -6,15 +6,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
-import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import org.lwjgl.input.Keyboard;
+import org.open2jam.parser.ChartList;
 import org.open2jam.parser.Event;
 import org.open2jam.parser.Event.Channel;
+import org.open2jam.util.Logger;
 import org.tmatesoft.sqljet.core.SqlJetException;
 import org.tmatesoft.sqljet.core.SqlJetTransactionMode;
 import org.tmatesoft.sqljet.core.schema.SqlJetConflictAction;
@@ -55,8 +55,9 @@ public abstract class Config
                 table = db.getTable(DATA_TABLE);
 
             } catch(SqlJetException e) {
-                //TODO: freak out
-                e.printStackTrace();
+                Logger.global.severe("Unable to create config db !");
+                db = null;
+                return;
             }
             
             setCwd(new File(System.getProperty("user.dir")));
@@ -118,8 +119,8 @@ public abstract class Config
                 db = SqlJetDb.open(CONFIG_DBFILE, true);
                 table = db.getTable(DATA_TABLE);
             } catch(SqlJetException e) {
-                //TODO: freak out
-                e.printStackTrace();
+                Logger.global.severe("Unable to open the config db !");
+                db = null;
             }
         }
     }
@@ -136,7 +137,7 @@ public abstract class Config
     public static File getCwd() {
         return (File) get("cwd");
     }
-    public static void setCwd(File new_file) { 
+    public static void setCwd(File new_file) {
         put("cwd",new_file);
     }
 
@@ -148,7 +149,17 @@ public abstract class Config
         return (List<File>) get("dir_list");
     }
     
-    public static Object get(String key) {
+    @SuppressWarnings("unchecked")
+    public static List<ChartList> getCache(File dir) {
+        return (List<ChartList>) get("cache:"+dir.getAbsolutePath());
+    }
+    public static void setCache(File dir, List<ChartList> data) {
+        put("cache:"+dir.getAbsolutePath(),data);
+    }
+    
+    private static Object get(String key) {
+        if(db == null)return null;
+        
         try {
             db.beginTransaction(SqlJetTransactionMode.READ_ONLY);
             try {
@@ -160,18 +171,18 @@ public abstract class Config
                 db.commit();
             }
         } catch(SqlJetException e) {
-            //TODO: freak out
-            e.printStackTrace();
+            Logger.global.log(Level.SEVERE, "Error during db get: {0}", e.getMessage());
         }
         return null;
     }
     
-    public static void put(String key, Object value) {
+    private static void put(String key, Object value) {
+        if(db == null)return;
+        
         try {
             table.insertOr(SqlJetConflictAction.REPLACE, key, object2blob(value));
         } catch(SqlJetException e) {
-            //TODO: freak out
-            e.printStackTrace();
+            Logger.global.log(Level.SEVERE, "Error during db put: {0}", e.getMessage());
         }
     }
 
@@ -179,9 +190,9 @@ public abstract class Config
         ByteArrayOutputStream bao = new ByteArrayOutputStream();
         try {
             new ObjectOutputStream(bao).writeObject(o);
-        } catch (IOException ex) {
-            //TODO: explain to java this is impossible
-            ex.printStackTrace();
+        } catch (IOException ignored) {
+            Logger.global.severe("We are in an alternate reality were ByteArrayOutputStream throws exceptions !");
+            return null;
         }
         return bao.toByteArray();
     }
@@ -189,11 +200,9 @@ public abstract class Config
         try {
             return new ObjectInputStream(blob).readObject();
         } catch(IOException e) {
-            //TODO: explain to java this is impossible
-            e.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            //TODO: explain to java this is impossible
-            ex.printStackTrace();
+            Logger.global.log(Level.SEVERE, "Config db read error : {0}", e.getMessage());
+        } catch (ClassNotFoundException ignored) {
+            Logger.global.severe("Oh no ! I got a unknown object ! gonna throw it away for ya..");
         }
         return null;
     }

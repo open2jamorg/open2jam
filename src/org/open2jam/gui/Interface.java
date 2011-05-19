@@ -12,9 +12,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
@@ -22,8 +19,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.logging.Level;
 import org.open2jam.util.Logger;
-import java.util.zip.CRC32;
-import java.util.zip.GZIPInputStream;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -1034,24 +1029,11 @@ public class Interface extends javax.swing.JFrame
         model_chartlist = new ChartTableModel();
     }
 
-    public static File getCacheFile(File s)
-    {
-         //let's make a crc32 hash for the cache name
-        CRC32 cs = new CRC32();
-        cs.reset();
-
-        byte[] d = s.getAbsolutePath().getBytes();
-        cs.update(d, 0, d.length);
-
-        return new File("cache_"+Long.toHexString(cs.getValue()).toUpperCase()+".obj");
-    }
-
     private void loadDir(File dir)
     {
         Config.setCwd(dir);
         
         this.setTitle("Open2Jam - "+dir);
-        File cache = getCacheFile(dir);
         
         List<File> dir_list = Config.getDirsList();
         
@@ -1067,8 +1049,8 @@ public class Interface extends javax.swing.JFrame
         System.out.println("set "+dir);
         combo_dirs.setSelectedItem(new FileItem(dir));
         
-        @SuppressWarnings("unchecked") // yes, I'm sure its a list of chartlist
-        List<ChartList> l = (List<ChartList>) Config.get("cache:"+dir.getAbsolutePath());
+        
+        List<ChartList> l = Config.getCache(dir);
         
         if(l == null) {
             updateSelection(dir);
