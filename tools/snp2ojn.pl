@@ -19,6 +19,9 @@ Run as "perl snp2ojn.pl <mah_file.snp>"
 
 The script will generate <title>.ojn and <title>.ojm
 
+WARN: input SNP file must have to original name e.g: C0001.SNP
+WARN2: don't forget to remove the comments from MusicInfo.xml
+
 =cut
 
 # 1/1024 is the smaller possible note,
@@ -28,7 +31,7 @@ my $MAX_SM = 1024;
 
 # there's also "krazyhard", but o2jam only support 3 sections
 # we could make SHD versions with normal, hard, krazyhard later..
-my @extract_levels = ('easy', 'normal', 'hard'); 
+my @extract_levels = ('easy', 'normal', 'hard');
 
 my $header_template = {
 	'artist' => 'artist',
@@ -59,7 +62,7 @@ exit(0);
 sub dump_snp
 {
 	my ($snp_file) = @_;
-	$snp_file =~ /C(\d+)\.snp/i;
+	$snp_file =~ /C(\d+)\.SNP/i;
 	my $code = $1;
 	
 	my $metadata = read_musicfile($code);
@@ -76,8 +79,8 @@ sub dump_snp
 	my $ojn_file = $metadata->{'title'}.".ojn";
 	my $ojm_file = $metadata->{'title'}.".ojm";
 	
-	open OJN, ">$ojn_file" or die $!;
-	binmode OJN;
+	open my $OJN, ">$ojn_file" or die $!;
+	binmode $OJN;
 
 	my $header = dclone($header_template);
 	$header->{'title'} = $metadata->{'title'};
@@ -91,55 +94,59 @@ sub dump_snp
 		$header->{$k}{'time'} = $1 * 60 + $2;
 	}
 	
-	print_header($header);
-	my $samples = print_notes($SNP_FILE, $snp_index, $input_files, $header);
-	print_header($header); ## update the header
-	close OJN;
+	print_header($OJN, $header);
+	my $samples = print_notes($OJN, $SNP_FILE, $snp_index, $input_files, $header);
+	print_header($OJN, $header); ## update the header
+	close $OJN;
 
-	open OJM, ">$ojm_file" or die $!;
-	binmode OJM;
-	dump_ojm($SNP_FILE, $snp_index, $samples);
-	close OJM;
+	open my $OJM, ">$ojm_file" or die $!;
+	binmode $OJM;
+	dump_ojm($OJM, $SNP_FILE, $snp_index, $samples);
+	close $OJM;
 }
 
 sub dump_ojm # M30 - plain OGG
 {
-	my ($snp_fh, $snp_index, $samples) = @_;
+	my ($OJM, $snp_fh, $snp_index, $samples) = @_;
 
-	print OJM pack 'Z4', "M30\0";
-	print OJM pack 'i', 0; # TODO: file_format_version 
-	print OJM pack 'i', 0; # encryption_flag, I hope 0 means plain for everyone
-	print OJM pack 'i', scalar keys %$samples;
-	print OJM pack 'i', 28; # samples offset
-	print OJM pack 'i', 0; # payload size, NEED UPDATE
-	print OJM pack 'i', 0; # padding
+	print $OJM pack 'Z4', "M30\0";
+	print $OJM pack 'i', 196608; # file_format_version 
+	print $OJM pack 'i', 0; # encryption_flag, I hope 0 means none for everyone
+	print $OJM pack 'i', scalar keys %$samples;
+	print $OJM pack 'i', 28; # samples offset
+	print $OJM pack 'i', 0; # payload size, NEED UPDATE
+	print $OJM pack 'i', 0; # padding
 
 	for my $id(keys %$samples)
 	{
 		my $s_name = $samples->{$id}{'name'};
+		unless(defined $snp_index->{$s_name}) {
+			warn "sample [$id][$s_name] not found on SNP, skipping..\n";
+			next;
+		}
 		my $data_fh = snp_get_file($snp_fh, $snp_index->{$s_name});
 	
-		print OJM pack 'Z32', $s_name;
-		print OJM pack 'i', $snp_index->{$s_name}{'info'}{'sizeOriginal'};
-		print OJM pack 's', 5; # TODO: 0:BGM, 5:note key
-		print OJM pack 's', 0; # unk_fixed, TODO: match the same value on normal OJM's
-		print OJM pack 'i', 0; # unk_music_flag, TODO: idem above
-		print OJM pack 's', $id; # ref
-		print OJM pack 's', 0; # unk_zero
-		print OJM pack 'i', 0; # pcm_samples, TODO: see if anyone is gonna cry if I leave this zero
+		print $OJM pack 'Z32', $s_name;
+		print $OJM pack 'i', $snp_index->{$s_name}{'sizeOriginal'};
+		print $OJM pack 's', 5; # 5: note key
+		print $OJM pack 's', 2; # unk_fixed
+		print $OJM pack 'i', 1; # unk_music_flag
+		print $OJM pack 's', $id; # ref
+		print $OJM pack 's', 0; # unk_zero
+		print $OJM pack 'i', 0; # pcm_samples, TODO: see if anyone is gonna cry if I leave this zero
 
 		my $data;
-		read $data_fh, $data, $snp_index->{$s_name}{'info'}{'sizeOriginal'};
-		print OJM $data;
+		read $data_fh, $data, $snp_index->{$s_name}{'sizeOriginal'};
+		print $OJM $data;
 	}
-	my $payload_size = tell(OJM) - 28;
-	seek OJM, 20, 0;
-	print OJM pack 'i', $payload_size;
+	my $payload_size = tell($OJM) - 28;
+	seek $OJM, 20, 0;
+	print $OJM pack 'i', $payload_size;
 }
 
 sub print_notes
 {
-	my ($snp_fh, $index, $files, $header) = @_;
+	my ($OJN, $snp_fh, $index, $files, $header) = @_;
 
 	my $sample_files = {};
 	for my $k(@extract_levels)
@@ -161,12 +168,9 @@ sub print_notes
 		} @notes;
 
 		$header->{$k}{'note_count'} = scalar @notes;
-		$header->{$k}{'offset'} = tell OJN;
-	
-		my $measure = -1;
-		my $channel = -1;
-		my $event_count = 0;
-		my $package_count = 0;
+		$header->{$k}{'offset'} = tell $OJN;
+
+		my ($measure, $channel, $event_count, $package_count) = (-1,-1,0,0);	
 		my @ev_bag = ();
 		for my $e(@notes)
 		{
@@ -174,7 +178,7 @@ sub print_notes
 			   $channel != $e->{'channel'}) { # new measure/channel
 				$event_count += scalar @ev_bag;
 				$package_count++;
-				print_package(\@ev_bag);
+				print_package($OJN, \@ev_bag);
 				@ev_bag = ();
 				$measure = $e->{'measure'};
 				$channel = $e->{'channel'};
@@ -186,17 +190,16 @@ sub print_notes
 		$header->{$k}{'event_count'} = $event_count;
 		$header->{$k}{'measure_count'} = $measure;
 		$header->{$k}{'package_count'} = $package_count;
-		print_package(\@ev_bag); # last package
+		print_package($OJN, \@ev_bag); # last package
 	}
-	$header->{'end_offset'} = tell OJN;
+	$header->{'end_offset'} = tell $OJN;
 	return $sample_files;
 }
 
 sub print_package {
-	my ($ee) = @_;
+	my ($OJN, $ee) = @_;
 	my @notes = sort { $a->{'position'} <=> $b->{'position'} }@$ee;
-	my $note_number = scalar @notes;
-	return unless $note_number > 0;
+	return unless scalar @notes > 0;
 
 	# we need to find the number of events based on 
 	# how the notes are distributed on the measure
@@ -207,20 +210,19 @@ sub print_package {
 		die "WTF man, take your impossible song with you and get out of here";
 	}
 
-	print OJN pack 'i', $notes[0]->{'measure'};
-	print OJN pack 's', $notes[0]->{'channel'}; 
-	print OJN pack 's', $total_events;
+	print $OJN pack 'i', $notes[0]->{'measure'};
+	print $OJN pack 's', $notes[0]->{'channel'}; 
+	print $OJN pack 's', $total_events;
 
 	my @events;
-	my $bag_i = 0;
-	for(my $i=0;$i<$total_events;$i++) {
+	for(my($i, $bag_i) = (0,0); $i<$total_events; $i++) {
 		if($bag_i <= $#notes && $notes[$bag_i]->{'position'} * $total_events == $i) {
 			
-			print_event($notes[$bag_i]);
+			print_event($OJN, $notes[$bag_i]);
 
 			$bag_i++;
 		} else { # empty space
-			print_event({'value'=>0,'note_type'=>0});
+			print_event($OJN, {'value'=>0,'note_type'=>0});
 		}
 	}
 }
@@ -237,19 +239,19 @@ sub normalize_notes { # break long notes to ojn style
 		}
 		if($n->{'length'} > 0) # long note
 		{
-			my %ne = %{$n};
+			my $e = dclone($n);
 			$n->{'note_type'} = 2; # longnote start
-			$ne{'note_type'} = 3; # longnote end
+			$e->{'note_type'} = 3; # longnote end
 
-			$ne{'position'} += $ne{'length'};
-			my $em = int $ne{'position'}; # extra measures
-			$ne{'position'} -= $em;
-			$ne{'measure'} += $em;
+			$e->{'position'} += $e->{'length'};
+			my $em = int $e->{'position'}; # extra measures
+			$e->{'position'} -= $em;
+			$e->{'measure'} += $em;
 
-			push @extra_notes, \%ne;
+			push @extra_notes, $e;
 		}
-		else {
-			$n->{'note_type'} = 0; # normal note
+		else { # normal note
+			$n->{'note_type'} = 0; 
 		}
 	}
 	push @notes, @extra_notes;
@@ -257,49 +259,47 @@ sub normalize_notes { # break long notes to ojn style
 }
 
 sub print_event {
-	my ($n) = @_;
-	print OJN pack 's', $n->{'value'};
-	print OJN pack 'c', 0;
-	print OJN pack 'c', $n->{'note_type'};
+	my ($OJN, $n) = @_;
+	print $OJN pack 's', $n->{'value'};
+	print $OJN pack 'c', 0; # vol & pan
+	print $OJN pack 'c', $n->{'note_type'};
 }
 
 sub print_header
 {
-	my ($info) = @_;
-	seek OJN, 0, 0; # header always at the start
-	print OJN pack 'i', 0; # songid
-	print OJN pack 'a4', "ojn\0";
-	print OJN pack 'f', 2.9; # encode_version
-	print OJN pack 'i', $info->{'genre'};
-	print OJN pack 'f', $info->{'bpm'};
-	print OJN pack 's3', map { $info->{$_}{'level'} }@extract_levels;
-	print OJN pack 's', 0;
-	print OJN pack 'i3', map { $info->{$_}{'event_count'} }@extract_levels;
-	print OJN pack 'i3', map { $info->{$_}{'note_count'} }@extract_levels;
-	print OJN pack 'i3', map { $info->{$_}{'measure_count'} }@extract_levels;
-	print OJN pack 'i3', map { $info->{$_}{'package_count'} }@extract_levels;
-	print OJN pack 's', 0; # old_encode_version
-	print OJN pack 's', 0; # old_songid
-	print OJN pack 'a20', "";  # old_genre
-	print OJN pack 'i', 0; # bmp_size
-	print OJN pack 'i', 0;  # old_file_version
-	print OJN pack 'Z64', $info->{'title'};
-	print OJN pack 'Z32', $info->{'artist'}; 
-	print OJN pack 'a32', $info->{'noter'};
-	print OJN pack 'Z32', $info->{'ojm_file'};
-	print OJN pack 'i', 0; # cover_size
-	print OJN pack 'i3', map { $info->{$_}{'time'} }@extract_levels;
-	print OJN pack 'i3', map { $info->{$_}{'offset'} }@extract_levels;
-	print OJN pack 'i', $info->{'end_offset'};
+	my ($OJN, $info) = @_;
+	seek $OJN, 0, 0; # header always at the start
+	print $OJN pack 'i', 0; # songid
+	print $OJN pack 'a4', "ojn\0";
+	print $OJN pack 'f', 2.9; # encode_version
+	print $OJN pack 'i', $info->{'genre'};
+	print $OJN pack 'f', $info->{'bpm'};
+	print $OJN pack 's3', map { $info->{$_}{'level'} }@extract_levels;
+	print $OJN pack 's', 0;
+	print $OJN pack 'i3', map { $info->{$_}{'event_count'} }@extract_levels;
+	print $OJN pack 'i3', map { $info->{$_}{'note_count'} }@extract_levels;
+	print $OJN pack 'i3', map { $info->{$_}{'measure_count'} }@extract_levels;
+	print $OJN pack 'i3', map { $info->{$_}{'package_count'} }@extract_levels;
+	print $OJN pack 's', 0; # old_encode_version
+	print $OJN pack 's', 0; # old_songid
+	print $OJN pack 'a20', "";  # old_genre
+	print $OJN pack 'i', 0; # bmp_size
+	print $OJN pack 'i', 0;  # old_file_version
+	print $OJN pack 'Z64', $info->{'title'};
+	print $OJN pack 'Z32', $info->{'artist'}; 
+	print $OJN pack 'a32', $info->{'noter'};
+	print $OJN pack 'Z32', $info->{'ojm_file'};
+	print $OJN pack 'i', 0; # cover_size
+	print $OJN pack 'i3', map { $info->{$_}{'time'} }@extract_levels;
+	print $OJN pack 'i3', map { $info->{$_}{'offset'} }@extract_levels;
+	print $OJN pack 'i', $info->{'end_offset'};
 }
 
 sub readXNT
 {
 	my ($fh) = @_;
-	my @items;
-	my $header;
+	my ($header, @items);
 	read $fh, $header, 11 or die $!;
-
 	my $h = unpack2hash(join(' ',qw/
 	Z4:$signature
 	s:$unk
@@ -320,20 +320,16 @@ sub readXNT
 sub readNote
 {
 	my ($fh, $isKeysound) = @_;
-	my $header;
+	my ($header, @items);
 	read $fh, $header, 16 or die $!;
 	my $h = unpack2hash(join(' ',qw/
 	c12:@garbage
 	i:$count
 	/), $header);
 
-	my @items;
-	
-	my $note;
 	for(my $i = 0; $i < $h->{'count'}; $i++)
 	{
-		read $fh, $note, 14 or die $!;
-		
+		read $fh, $header, 14 or die $!;
 		my $n = unpack2hash(join(' ',qw/
 		c:$zero
 		S:$measure
@@ -341,7 +337,7 @@ sub readNote
 		C:$channel
 		S:$sample_id
 		f:$holdLength
-		/), $note);
+		/), $header);
 
 		if($isKeysound) { $n->{'channel'} += 1 }# adjust for o2jam(1~7 -> 2~8)
 		else { $n->{'channel'} += 10; } # separate notes from bgm
@@ -355,27 +351,23 @@ sub readNote
 sub readBpmChange 
 {
 	my ($fh) = @_;
-	my $header;
+	my ($header, @items);
 	read $fh, $header, 16 or die $!;
 	my $h = unpack2hash(join(' ',qw/
 	c12:$garbage
 	i:$count
 	/), $header);
 
-	my @items;
-	
-	my $note;
 	for(my $i = 0; $i < $h->{'count'}; $i++)
 	{
-		read $fh, $note, 14 or die $!;
-		
+		read $fh, $header, 14 or die $!;
 		my $n = unpack2hash(join(' ',qw/
 		c:$zero
 		S:$measure
 		f:$position
 		c3:$skip
 		f:$bpm
-		/), $note);
+		/), $header);
 		
 		push @items, { 'measure' => $n->{'measure'}, 'channel' => 1, 'position' => $n->{'position'},
 				'value' => $n->{'bpm'}, 'length' => 0 };
@@ -386,34 +378,25 @@ sub readBpmChange
 sub readSamples
 {
 	my ($fh) = @_;
-	my $header;
+	my ($header, @items);
 	read $fh, $header, 4 or die $!;
 	my $h = unpack2hash(join(' ',qw/
 	i:$count
 	/), $header);
 	
-	my @items;
-	
-	my $note;
 	for(my $i = 0; $i < $h->{'count'}; $i++)
 	{
-		read $fh, $note, 8 or die $!;
-		
+		read $fh, $header, 8 or die $!;
 		my $n = unpack2hash(join(' ',qw/
 		S:$id
 		s:$skip
 		i:$name_len
-		/), $note);
+		/), $header);
 		
-		#print "---SAMPLE[$n->{'id'}]--- ";
-		
-		read $fh, $note, $n->{'name_len'} or die $!;
-		
+		read $fh, $header, $n->{'name_len'} or die $!;
 		my $n2 = unpack2hash(join(' ',qw/
 		Z*:$name
-		/), $note);
-		
-		#print "name: $n->{'name'} \n";
+		/), $header);
 
 		push @items, { 'id' => $n->{'id'}, 'name' => $n2->{'name'} };
 	}
@@ -423,9 +406,8 @@ sub readSamples
 sub snp_build_index
 {
 	my ($fh) = @_;
-	my $index = {};
+	my ($index, $data);
 	seek $fh, 0, 0;
-	my $data;
 	read $fh, $data, 24 or die $!;
 	my $main_header = unpack2hash(join(' ',qw/
 	Z8:$signature                   
@@ -436,7 +418,6 @@ sub snp_build_index
 	/), $data);
 	while(!eof $fh)
 	{
-		my $data;
 		read $fh, $data, 145 or die $!;
 		my $header = unpack2hash(join(' ',qw/
 		c:$isDir
@@ -448,8 +429,8 @@ sub snp_build_index
 		/), $data);
 
 		if($header->{'sizePacked'} > 0) {
-			$index->{$header->{'name'}} = {
-			'offset' => tell $fh, 'info' => $header };
+			$header->{'offset'} = tell $fh;
+			$index->{$header->{'name'}} = $header;
 		}
 		seek $fh, $header->{'sizePacked'}, 1;
 	}
@@ -461,7 +442,7 @@ sub snp_get_file
 	my ($snp_fh, $inf) = @_;
 	my $data;
 	seek $snp_fh, $inf->{'offset'}, 0;
-	read $snp_fh, $data, $inf->{'info'}{'sizePacked'};
+	read $snp_fh, $data, $inf->{'sizePacked'};
 	$data = uncompress($data);
 	my $fh = tempfile(DIR => $TEMP_DIR);
 	print $fh $data;
@@ -475,6 +456,7 @@ sub read_musicfile
 	my $xml = XMLin('MusicInfo.xml', keyattr => 0) or die $!;
 	$xml = $xml->{'Music'};
 	($xml) = grep { $_->{'id'} == $code }@$xml;
+	die "could not find the song metadata. dying." unless defined $xml;
 	return $xml;
 }
 
@@ -509,9 +491,5 @@ sub multigcf {
   $x = gcf($x, shift) while @_;
   return $x;
 }
-
-
-
-
 
 
