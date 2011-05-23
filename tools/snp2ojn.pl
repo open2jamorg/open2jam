@@ -27,7 +27,10 @@ WARN2: don't forget to remove the comments from MusicInfo.xml
 # 1/1024 is the smaller possible note,
 # well, not really, but the note is impossible way before 1/1024
 # so I don't think we will ever get to this limit
-my $MAX_SM = 1024;
+my $MAX_SM = 2**10;
+
+# error tolerance
+my $epsilon = 0.001;
 
 # there's also "krazyhard", but o2jam only support 3 sections
 # we could make SHD versions with normal, hard, krazyhard later..
@@ -70,6 +73,12 @@ sub dump_snp
 	my $input_files = {};
 	for my $f(@files) {
 		$input_files->{$f->{'difficult'}} = $f;
+	}
+
+	for(@extract_levels) {
+		unless(defined $input_files->{$_}) {
+			die "DEAD: there's no metadata for level [$_]";
+		}
 	}
 	
 	open my $SNP_FILE, $snp_file or die $!;
@@ -121,7 +130,7 @@ sub dump_ojm # M30 - plain OGG
 	{
 		my $s_name = $samples->{$id}{'name'};
 		unless(defined $snp_index->{$s_name}) {
-			warn "sample [$id][$s_name] not found on SNP, skipping..\n";
+			warn "WARNING: sample [$id][$s_name] not found on SNP, skipping";
 			next;
 		}
 		my $data_fh = snp_get_file($snp_fh, $snp_index->{$s_name});
@@ -167,7 +176,7 @@ sub print_notes
 			return $a->{'position'} <=> $b->{'position'};
 		} @notes;
 
-		$header->{$k}{'note_count'} = scalar @notes;
+		$header->{$k}{'note_count'} = scalar grep{$_->{'channel'} > 1 && $_->{'channel'} < 9 } @notes;
 		$header->{$k}{'offset'} = tell $OJN;
 
 		my ($measure, $channel, $event_count, $package_count) = (-1,-1,0,0);	
@@ -203,11 +212,11 @@ sub print_package {
 
 	# we need to find the number of events based on 
 	# how the notes are distributed on the measure
-	my $total_events = $MAX_SM / multigcf($MAX_SM,map{$_->{'position'}*$MAX_SM}@notes);
+	my $total_events = $MAX_SM / multigcf($MAX_SM,map{int($_->{'position'}*$MAX_SM)}@notes);
 
 	if($total_events != int($total_events)) {
 		# this means that there are notes smaller than 1/$MAX_SM in this measure
-		die "WTF man, take your impossible song with you and get out of here";
+		die "DEAD: WTF man, take your impossible song with you and get out of here";
 	}
 
 	print $OJN pack 'i', $notes[0]->{'measure'};
@@ -215,15 +224,25 @@ sub print_package {
 	print $OJN pack 's', $total_events;
 
 	my @events;
-	for(my($i, $bag_i) = (0,0); $i<$total_events; $i++) {
-		if($bag_i <= $#notes && $notes[$bag_i]->{'position'} * $total_events == $i) {
-			
-			print_event($OJN, $notes[$bag_i]);
+	my $bag_i = 0;
+	for(my $i = 0; $i<$total_events; $i++) {
 
-			$bag_i++;
-		} else { # empty space
-			print_event($OJN, {'value'=>0,'note_type'=>0});
+		if($bag_i <= $#notes) {
+			my $apx = $notes[$bag_i]->{'position'} * $total_events;
+		
+			if(int($apx) - $i <= $epsilon) {
+				#if($apx != int($apx)) {
+				#	warn "WARNING: approximating uneven position [$apx]";
+				#}
+				print_event($OJN, $notes[$bag_i]);
+				$bag_i++;
+				next;
+			}
 		}
+		print_event($OJN, {'value'=>0,'note_type'=>0});
+	}
+	if($bag_i < $#notes) {
+		die "DEAD: couldn't fit all notes of channel[".$notes[0]->{'measure'}."] measure[".$notes[0]->{'channel'}."]"; 
 	}
 }
 
@@ -231,7 +250,9 @@ sub normalize_notes { # break long notes to ojn style
 	my @notes = @_;
 	my @extra_notes;
 	for my $n(@notes) {
-		next if($n->{'channel'} < 2);
+		if($n->{'channel'} < 2) {
+			next;
+		}
 		$n->{'value'}++; # o2jam ignore 0 so push everyone 1 up
 		if($n->{'channel'} > 8) {
 			$n->{'note_type'} = 0;
@@ -247,7 +268,7 @@ sub normalize_notes { # break long notes to ojn style
 			my $em = int $e->{'position'}; # extra measures
 			$e->{'position'} -= $em;
 			$e->{'measure'} += $em;
-
+			
 			push @extra_notes, $e;
 		}
 		else { # normal note
@@ -260,9 +281,14 @@ sub normalize_notes { # break long notes to ojn style
 
 sub print_event {
 	my ($OJN, $n) = @_;
-	print $OJN pack 's', $n->{'value'};
-	print $OJN pack 'c', 0; # vol & pan
-	print $OJN pack 'c', $n->{'note_type'};
+	if(defined $n->{'channel'} && $n->{'channel'} == 1) { # bpm change
+		print $OJN pack 'f', $n->{'value'};
+	} 
+	else { # normal note
+		print $OJN pack 's', $n->{'value'};
+		print $OJN pack 'c', 0; # vol & pan
+		print $OJN pack 'c', $n->{'note_type'};
+	}
 }
 
 sub print_header
@@ -308,12 +334,12 @@ sub readXNT
 	/), $header);
 
 	if($h->{'segments'} == 3) {
-		push @items, readBpmChange();
+		push @items, readBpmChange($fh);
 	}
-	else {
+	#else {
 		push @items, readNote($fh, 1); #keysounds
 		push @items, readNote($fh, 0); #bgm
-	}
+	#}
 	return @items;
 }
 
@@ -370,7 +396,7 @@ sub readBpmChange
 		/), $header);
 		
 		push @items, { 'measure' => $n->{'measure'}, 'channel' => 1, 'position' => $n->{'position'},
-				'value' => $n->{'bpm'}, 'length' => 0 };
+				'value' => $n->{'bpm'}, 'length' => 0, 'note_type' => 0 };
 	}
 	return @items;
 }
@@ -456,7 +482,7 @@ sub read_musicfile
 	my $xml = XMLin('MusicInfo.xml', keyattr => 0) or die $!;
 	$xml = $xml->{'Music'};
 	($xml) = grep { $_->{'id'} == $code }@$xml;
-	die "could not find the song metadata. dying." unless defined $xml;
+	die "DEAD: could not find the song metadata" unless defined $xml;
 	return $xml;
 }
 
