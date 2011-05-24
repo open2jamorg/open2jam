@@ -1,11 +1,9 @@
-- create a config screen to the interface
-	- add support to choose different key number
+
+- unify the "choose dir" and cache folders thingy
 
 - ranking system
 
 - fix the long note flare animation
-
-- branch implement JOGL - see if it's worth the trouble
 
 - make a ChartWriter
 

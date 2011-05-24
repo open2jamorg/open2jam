@@ -193,7 +193,7 @@ public abstract class Render implements GameWindowCallback
 
     Render(Chart chart, double hispeed, boolean autoplay, int channelModifier, int visibilityModifier, int mainVol, int keyVol, int bgmVol)
     {
-        keyboard_map = Config.get().getKeyboardMap(Config.KeyboardType.K7);
+        keyboard_map = Config.getKeyboardMap(Config.KeyboardType.K7);
         window = ResourceFactory.get().getGameWindow();
         entities_matrix = new EntityMatrix();
         this.chart = chart;
@@ -393,7 +393,7 @@ public abstract class Render implements GameWindowCallback
         visibility_entity = new CompositeEntity();
         if(visibilityModifier != 0) visibility(visibilityModifier);
 
-        judgment_line = (Entity) skin.getEntityMap().get("JUDGMENT_LINE");
+        judgment_line = skin.getEntityMap().get("JUDGMENT_LINE");
         entities_matrix.add(judgment_line);
 
         for(Event.Channel c : keyboard_map.keySet())

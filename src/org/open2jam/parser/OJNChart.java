@@ -64,7 +64,6 @@ public class OJNChart extends Chart
         try{
             RandomAccessFile f = new RandomAccessFile(source, "r");
             ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, cover_offset, cover_size);
-            buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
             ByteBufferInputStream bis = new ByteBufferInputStream(buffer);
             f.close();
             return ImageIO.read(bis);
