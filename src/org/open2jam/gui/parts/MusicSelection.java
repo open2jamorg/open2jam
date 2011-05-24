@@ -1,5 +1,4 @@
-package org.open2jam.gui;
-
+package org.open2jam.gui.parts;
 
 import java.awt.event.ItemEvent;
 import java.awt.image.BufferedImage;
@@ -27,16 +26,15 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.Config;
+import org.open2jam.gui.ChartListTableModel;
+import org.open2jam.gui.ChartTableModel;
+import org.open2jam.gui.ChartModelLoader;
 import org.open2jam.parser.ChartList;
 import org.open2jam.render.DistanceRender;
 import org.open2jam.render.Render;
 
-/**
- *
- * @author CdK
- */
-public class NewInterface extends javax.swing.JFrame
-        implements PropertyChangeListener, ListSelectionListener {
+public class MusicSelection extends javax.swing.JPanel
+    implements PropertyChangeListener, ListSelectionListener {
 
     private ChartListTableModel model_songlist;
     private ChartTableModel model_chartlist;
@@ -49,9 +47,6 @@ public class NewInterface extends javax.swing.JFrame
     private final TableRowSorter<ChartListTableModel> table_sorter;
     
     private boolean btn_sd_save = true;
-
-    private Configuration cfg_window = new Configuration(this);
-    private SkinConfiguration skin_window = new SkinConfiguration();
     
     private class FileItem {
         File file;
@@ -80,7 +75,7 @@ public class NewInterface extends javax.swing.JFrame
     }
 
     /** Creates new form Interface */
-    public NewInterface() {
+    public MusicSelection() {
         initLogic();
         initComponents();
         
@@ -92,7 +87,6 @@ public class NewInterface extends javax.swing.JFrame
         
         loadDir(cwd);
         
-        this.setLocationRelativeTo(null);
         load_progress.setVisible(false);
         table_sorter = new TableRowSorter<ChartListTableModel>(model_songlist);
         table_songlist.setRowSorter(table_sorter);
@@ -140,9 +134,6 @@ public class NewInterface extends javax.swing.JFrame
     private void initComponents() {
 
         rank_group = new javax.swing.ButtonGroup();
-        jPanel1 = new javax.swing.JPanel();
-        Tabs = new javax.swing.JTabbedPane();
-        music = new javax.swing.JPanel();
         panel_list = new javax.swing.JPanel();
         table_scroll = new javax.swing.JScrollPane();
         table_songlist = new javax.swing.JTable();
@@ -204,22 +195,6 @@ public class NewInterface extends javax.swing.JFrame
         jc_full_screen = new javax.swing.JCheckBox();
         jc_bilinear = new javax.swing.JCheckBox();
         bt_play = new javax.swing.JButton();
-        options = new javax.swing.JPanel();
-        skin = new javax.swing.JPanel();
-        about = new javax.swing.JPanel();
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         panel_list.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Selection List", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP));
 
@@ -282,13 +257,13 @@ public class NewInterface extends javax.swing.JFrame
                         .addComponent(btn_reload, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_save_delete))
-                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE))
+                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE))
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.CENTER, panel_listLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addComponent(lbl_search)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 432, Short.MAX_VALUE)
+                .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE)
                 .addGap(10, 10, 10))
         );
         panel_listLayout.setVerticalGroup(
@@ -303,7 +278,7 @@ public class NewInterface extends javax.swing.JFrame
                     .addComponent(btn_save_delete)
                     .addComponent(load_progress, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 541, Short.MAX_VALUE)
+                .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 441, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_listLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txt_filter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -485,16 +460,16 @@ public class NewInterface extends javax.swing.JFrame
 
         lbl_genre1.setText("Genre:");
 
-        lbl_filename.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        lbl_filename.setFont(new java.awt.Font("Tahoma", 0, 10));
         lbl_filename.setText("filename");
 
         lbl_genre.setText("content");
 
-        lbl_artist.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        lbl_artist.setFont(new java.awt.Font("Tahoma", 2, 11));
         lbl_artist.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbl_artist.setText("Artist");
 
-        lbl_title.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        lbl_title.setFont(new java.awt.Font("Tahoma", 0, 18));
         lbl_title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbl_title.setText("Title");
 
@@ -561,7 +536,7 @@ public class NewInterface extends javax.swing.JFrame
         );
         panel_infoLayout.setVerticalGroup(
             panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 371, Short.MAX_VALUE)
+            .addGap(0, 271, Short.MAX_VALUE)
             .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(panel_infoLayout.createSequentialGroup()
                     .addContainerGap()
@@ -598,7 +573,7 @@ public class NewInterface extends javax.swing.JFrame
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(lbl_artist)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
+                    .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -634,7 +609,7 @@ public class NewInterface extends javax.swing.JFrame
 
         lbl_display.setText("Display:");
 
-        jc_custom_size.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jc_custom_size.setFont(new java.awt.Font("Tahoma", 0, 10));
         jc_custom_size.setText("Custom size:");
         jc_custom_size.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -693,7 +668,7 @@ public class NewInterface extends javax.swing.JFrame
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        bt_play.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        bt_play.setFont(new java.awt.Font("Tahoma", 1, 24));
         bt_play.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/open2jam_icon.png"))); // NOI18N
         bt_play.setText("HIT ME TO PLAY !!! I'M SRLY !!!1!!!11!");
         bt_play.addActionListener(new java.awt.event.ActionListener() {
@@ -702,25 +677,27 @@ public class NewInterface extends javax.swing.JFrame
             }
         });
 
-        javax.swing.GroupLayout musicLayout = new javax.swing.GroupLayout(music);
-        music.setLayout(musicLayout);
-        musicLayout.setHorizontalGroup(
-            musicLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(musicLayout.createSequentialGroup()
-                .addGroup(musicLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 890, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(musicLayout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(panel_song, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(panel_list, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(bt_play, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 923, Short.MAX_VALUE)
+            .addComponent(bt_play, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 890, Short.MAX_VALUE)
         );
-        musicLayout.setVerticalGroup(
-            musicLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(musicLayout.createSequentialGroup()
-                .addGroup(musicLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(musicLayout.createSequentialGroup()
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 602, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(panel_song, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -729,62 +706,6 @@ public class NewInterface extends javax.swing.JFrame
                 .addComponent(bt_play)
                 .addContainerGap())
         );
-
-        Tabs.addTab("Music Selection", music);
-
-        javax.swing.GroupLayout optionsLayout = new javax.swing.GroupLayout(options);
-        options.setLayout(optionsLayout);
-        optionsLayout.setHorizontalGroup(
-            optionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 923, Short.MAX_VALUE)
-        );
-        optionsLayout.setVerticalGroup(
-            optionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 702, Short.MAX_VALUE)
-        );
-
-        Tabs.addTab("Options", options);
-
-        javax.swing.GroupLayout skinLayout = new javax.swing.GroupLayout(skin);
-        skin.setLayout(skinLayout);
-        skinLayout.setHorizontalGroup(
-            skinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 923, Short.MAX_VALUE)
-        );
-        skinLayout.setVerticalGroup(
-            skinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 702, Short.MAX_VALUE)
-        );
-
-        Tabs.addTab("Skin selection", skin);
-
-        javax.swing.GroupLayout aboutLayout = new javax.swing.GroupLayout(about);
-        about.setLayout(aboutLayout);
-        aboutLayout.setHorizontalGroup(
-            aboutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 923, Short.MAX_VALUE)
-        );
-        aboutLayout.setVerticalGroup(
-            aboutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 702, Short.MAX_VALUE)
-        );
-
-        Tabs.addTab("About...", about);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(Tabs, javax.swing.GroupLayout.DEFAULT_SIZE, 928, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(Tabs, javax.swing.GroupLayout.DEFAULT_SIZE, 730, Short.MAX_VALUE)
-        );
-
-        Tabs.getAccessibleContext().setAccessibleName("");
-
-        pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void bt_choose_dirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_choose_dirActionPerformed
@@ -795,15 +716,15 @@ public class NewInterface extends javax.swing.JFrame
         jfc.setAcceptAllFileFilterUsed(false);
         if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             loadDir(jfc.getSelectedFile());
-        }        
+        }
 }//GEN-LAST:event_bt_choose_dirActionPerformed
 
     private void combo_dirsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_dirsActionPerformed
-        loadDir(((FileItem)combo_dirs.getSelectedItem()).file);        
+        loadDir(((FileItem)combo_dirs.getSelectedItem()).file);
 }//GEN-LAST:event_combo_dirsActionPerformed
 
     private void btn_reloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_reloadActionPerformed
-        updateSelection(Config.getCwd());        
+        updateSelection(Config.getCwd());
 }//GEN-LAST:event_btn_reloadActionPerformed
 
     private void btn_save_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_save_deleteActionPerformed
@@ -822,28 +743,28 @@ public class NewInterface extends javax.swing.JFrame
             File f = dir_list.get(0);
             loadDir(f);
         }
-        Config.setDirsList(dir_list);        
+        Config.setDirsList(dir_list);
 }//GEN-LAST:event_btn_save_deleteActionPerformed
 
     private void jr_rank_easyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jr_rank_easyActionPerformed
         rank = 0;
         int sel_row = table_songlist.getSelectedRow();
         if(sel_row >= 0)last_model_idx = table_songlist.convertRowIndexToModel(sel_row);
-        model_songlist.setRank(rank);        
+        model_songlist.setRank(rank);
 }//GEN-LAST:event_jr_rank_easyActionPerformed
 
     private void jr_rank_normalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jr_rank_normalActionPerformed
         rank = 1;
         int sel_row = table_songlist.getSelectedRow();
         if(sel_row >= 0)last_model_idx = table_songlist.convertRowIndexToModel(sel_row);
-        model_songlist.setRank(rank);        
+        model_songlist.setRank(rank);
 }//GEN-LAST:event_jr_rank_normalActionPerformed
 
     private void jr_rank_hardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jr_rank_hardActionPerformed
         rank = 2;
         int sel_row = table_songlist.getSelectedRow();
         if(sel_row >= 0)last_model_idx = table_songlist.convertRowIndexToModel(sel_row);
-        model_songlist.setRank(rank);        
+        model_songlist.setRank(rank);
 }//GEN-LAST:event_jr_rank_hardActionPerformed
 
     private void lbl_coverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_coverMouseClicked
@@ -851,7 +772,7 @@ public class NewInterface extends javax.swing.JFrame
         BufferedImage i = selected_header.getCover();
         if(i == null) return;
         JOptionPane.showMessageDialog(this, null, "Cover",
-                JOptionPane.INFORMATION_MESSAGE, new ImageIcon(i));        
+                JOptionPane.INFORMATION_MESSAGE, new ImageIcon(i));
 }//GEN-LAST:event_lbl_coverMouseClicked
 
     private void jc_custom_sizecustom_size_clicked(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jc_custom_sizecustom_size_clicked
@@ -869,42 +790,40 @@ public class NewInterface extends javax.swing.JFrame
 }//GEN-LAST:event_jc_custom_sizecustom_size_clicked
 
     private void bt_playActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_playActionPerformed
-        if(selected_header != null)
-	{
-	    final double hispeed = (Double) js_hispeed.getValue();
-
-	    final DisplayMode dm;
-	    if(jc_custom_size.isSelected()){ // custom size selected
-		int w,h;
-		try{
-		    w = Integer.parseInt(txt_res_width.getText());
-		    h = Integer.parseInt(txt_res_height.getText());
-		}catch(Exception e){
-		    JOptionPane.showMessageDialog(this, "Invalid value on custom size", "Error", JOptionPane.WARNING_MESSAGE);
-		    return;
-		}
-		dm = new DisplayMode(w,h);
-	    }else{
-		dm = (DisplayMode) combo_displays.getSelectedItem();
-	    }
-	    final boolean vsync = jc_vsync.isSelected();
-	    boolean fs = jc_full_screen.isSelected();
-
-	    final boolean autoplay = jc_autoplay.isSelected();
-
+        if(selected_header != null) {
+            final double hispeed = (Double) js_hispeed.getValue();
+            
+            final DisplayMode dm;
+            if(jc_custom_size.isSelected()){ // custom size selected
+                int w,h;
+                try{
+                    w = Integer.parseInt(txt_res_width.getText());
+                    h = Integer.parseInt(txt_res_height.getText());
+                }catch(Exception e){
+                    JOptionPane.showMessageDialog(this, "Invalid value on custom size", "Error", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                dm = new DisplayMode(w,h);
+            }else{
+                dm = (DisplayMode) combo_displays.getSelectedItem();
+            }
+            final boolean vsync = jc_vsync.isSelected();
+            boolean fs = jc_full_screen.isSelected();
+            
+            final boolean autoplay = jc_autoplay.isSelected();
+            
             final boolean judgment = jc_timed_judgment.isSelected();
-
-	    final int channelModifier = combo_channelModifier.getSelectedIndex();
+            
+            final int channelModifier = combo_channelModifier.getSelectedIndex();
             final int visibilityModifier = combo_visibilityModifier.getSelectedIndex();
-
+            
             final int mainVol = slider_main_vol.getValue();
             final int keyVol = slider_key_vol.getValue();
             final int bgmVol = slider_bgm_vol.getValue();
-
+            
             final boolean bilinear = jc_bilinear.isSelected();
-
-            if(!dm.isFullscreenCapable() && fs)
-            {
+            
+            if(!dm.isFullscreenCapable() && fs) {
                 String str = "This monitor can't support the selected resolution.\n"
                         + "Do you want to play it in windowed mode?";
                 if(JOptionPane.showConfirmDialog(this, str, "Warning",
@@ -912,7 +831,7 @@ public class NewInterface extends javax.swing.JFrame
                         == JOptionPane.YES_OPTION)
                     fs = false;
             }
-
+            
             Render r;
             if(judgment)
                 r = new TimeRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
@@ -920,12 +839,10 @@ public class NewInterface extends javax.swing.JFrame
                 r = new DistanceRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
             r.setDisplay(dm, vsync, fs, bilinear);
             r.startRendering();
-	}        
+        }
 }//GEN-LAST:event_bt_playActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTabbedPane Tabs;
-    private javax.swing.JPanel about;
     private javax.swing.JButton bt_choose_dir;
     private javax.swing.JButton bt_play;
     private javax.swing.JButton btn_reload;
@@ -935,7 +852,6 @@ public class NewInterface extends javax.swing.JFrame
     private javax.swing.JComboBox combo_displays;
     private javax.swing.JComboBox combo_visibilityModifier;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JCheckBox jc_autoplay;
     private javax.swing.JCheckBox jc_bilinear;
     private javax.swing.JCheckBox jc_custom_size;
@@ -973,15 +889,12 @@ public class NewInterface extends javax.swing.JFrame
     private javax.swing.JLabel lbl_title;
     private javax.swing.JLabel lbl_visibilityModifier;
     private javax.swing.JProgressBar load_progress;
-    private javax.swing.JPanel music;
-    private javax.swing.JPanel options;
     private javax.swing.JPanel panel_info;
     private javax.swing.JPanel panel_list;
     private javax.swing.JPanel panel_modifiers;
     private javax.swing.JPanel panel_setting;
     private javax.swing.JPanel panel_song;
     private javax.swing.ButtonGroup rank_group;
-    private javax.swing.JPanel skin;
     private javax.swing.JSlider slider_bgm_vol;
     private javax.swing.JSlider slider_key_vol;
     private javax.swing.JSlider slider_main_vol;
@@ -993,7 +906,6 @@ public class NewInterface extends javax.swing.JFrame
     private javax.swing.JTextField txt_res_height;
     private javax.swing.JTextField txt_res_width;
     // End of variables declaration//GEN-END:variables
-
     private void initLogic() {
 
         try {
@@ -1037,8 +949,6 @@ public class NewInterface extends javax.swing.JFrame
     private void loadDir(File dir)
     {
         Config.setCwd(dir);
-        
-        this.setTitle("Open2Jam - "+dir);
         
         List<File> dir_list = Config.getDirsList();
         

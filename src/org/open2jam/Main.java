@@ -7,7 +7,6 @@ import java.util.logging.Level;
 import org.open2jam.util.Logger;
 import javax.swing.UIManager;
 import org.open2jam.gui.Interface;
-import org.open2jam.gui.NewInterface;
 
 public class Main implements Runnable
 {
@@ -32,7 +31,7 @@ public class Main implements Runnable
     
     @Override
     public void run() {
-        new NewInterface().setVisible(true);
+        new Interface().setVisible(true);
     }
 
     private static void setupLogging()

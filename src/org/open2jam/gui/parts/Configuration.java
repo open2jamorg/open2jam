@@ -1,10 +1,4 @@
-package org.open2jam.gui;
-
-/*
- * configuration.java
- *
- * Created on Dec 14, 2010, 1:54:48 PM
- */
+package org.open2jam.gui.parts;
 
 import java.awt.Font;
 import java.io.File;
@@ -24,53 +18,27 @@ import org.open2jam.Config;
 import org.open2jam.parser.Event;
 import org.open2jam.render.lwjgl.TrueTypeFont;
 
-
-class Configuration extends javax.swing.JDialog {
+/**
+ *
+ * @author CdK
+ */
+public class Configuration extends javax.swing.JPanel {
 
     private EnumMap<Event.Channel,Integer> kb_map;
     private List<File> dir_list;
     private final ArrayList<File> deleted_dirs;
 
     private HashMap<Integer, Event.Channel> table_map = new HashMap<Integer,Event.Channel>();
-
-    /** Creates new form configuration  */
-    public Configuration(JFrame parent) {
-        super(parent, true);
+    
+    /** Creates new form Configuration */
+    public Configuration() {
         initComponents();
-
+        
         loadTableKeys(Config.KeyboardType.K7);
 
         dir_list = new ArrayList<File>();
         deleted_dirs = new ArrayList<File>();
         loadTableDirs();
-        
-	this.setLocationRelativeTo(null);
-    }
-
-    private void loadTableDirs()
-    {
-        if(dir_list.isEmpty())dir_list = Config.getDirsList();
-        DefaultTableModel dm = (DefaultTableModel)tDirs.getModel();
-        dm.setRowCount(dir_list.size());
-        
-        for(int i=0; i<dir_list.size(); i++)
-            tDirs.setValueAt(dir_list.get(i), i, 0);
-    }
-
-    private void loadTableKeys(Config.KeyboardType kt)
-    {
-        kb_map = Config.getKeyboardMap(kt).clone();
-        DefaultTableModel dm = (DefaultTableModel)tKeys.getModel();
-        dm.setRowCount(kb_map.size());
-
-        int i = 0;
-        for(Map.Entry<Event.Channel,Integer> entry : kb_map.entrySet())
-        {
-            tKeys.setValueAt(entry.getKey().toString(), i, 0);
-            tKeys.setValueAt(Keyboard.getKeyName(entry.getValue()), i, 1);
-            table_map.put(i, entry.getKey());
-            i++;
-        }
     }
 
     /** This method is called from within the constructor to
@@ -82,21 +50,18 @@ class Configuration extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        JPanel panel_folders = new JPanel();
-        JButton bAddFolder = new JButton();
-        JScrollPane jScrollPane1 = new JScrollPane();
+        panel_folders = new javax.swing.JPanel();
+        bAddFolder = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
         tDirs = new javax.swing.JTable();
-        JButton bDelFolder = new JButton();
-        JButton bSave = new JButton();
-        JButton bCancel = new JButton();
-        JSeparator jSeparator1 = new JSeparator();
-        JScrollPane tKeys_scroll = new JScrollPane();
-        tKeys = new javax.swing.JTable();
-        JLabel jLabel1 = new JLabel();
+        bDelFolder = new javax.swing.JButton();
+        bSave = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JSeparator();
+        panel_keys = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
         combo_keyboardConfig = new javax.swing.JComboBox();
-
-        setTitle("Configuration");
-        setResizable(false);
+        tKeys_scroll = new javax.swing.JScrollPane();
+        tKeys = new javax.swing.JTable();
 
         bAddFolder.setText("Add Folder");
         bAddFolder.addActionListener(new java.awt.event.ActionListener() {
@@ -129,7 +94,6 @@ class Configuration extends javax.swing.JDialog {
             }
         });
         jScrollPane1.setViewportView(tDirs);
-        tDirs.getColumnModel().getColumn(0).setResizable(false);
 
         bDelFolder.setText("Delete Folder");
         bDelFolder.addActionListener(new java.awt.event.ActionListener() {
@@ -145,7 +109,7 @@ class Configuration extends javax.swing.JDialog {
             .addGroup(panel_foldersLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panel_foldersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 633, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 477, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_foldersLayout.createSequentialGroup()
                         .addComponent(bAddFolder)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -164,7 +128,7 @@ class Configuration extends javax.swing.JDialog {
                 .addGap(7, 7, 7))
         );
 
-        bSave.setFont(new java.awt.Font("Tahoma", 1, 11));
+        bSave.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         bSave.setText("Save");
         bSave.setMaximumSize(new java.awt.Dimension(65, 23));
         bSave.setMinimumSize(new java.awt.Dimension(65, 23));
@@ -174,10 +138,12 @@ class Configuration extends javax.swing.JDialog {
             }
         });
 
-        bCancel.setText("Cancel");
-        bCancel.addActionListener(new java.awt.event.ActionListener() {
+        jLabel1.setText("Select the keyboard configuration you want to edit:");
+
+        combo_keyboardConfig.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "7 Keys", "5 Keys", "6 Keys", "4 Keys", "8 Keys" }));
+        combo_keyboardConfig.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bCancelActionPerformed(evt);
+                combo_keyboardConfigActionPerformed(evt);
             }
         });
 
@@ -212,35 +178,49 @@ class Configuration extends javax.swing.JDialog {
             }
         });
         tKeys_scroll.setViewportView(tKeys);
-        tKeys.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 
-        jLabel1.setText("Select the keyboard configuration you want to edit:");
+        javax.swing.GroupLayout panel_keysLayout = new javax.swing.GroupLayout(panel_keys);
+        panel_keys.setLayout(panel_keysLayout);
+        panel_keysLayout.setHorizontalGroup(
+            panel_keysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_keysLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(combo_keyboardConfig, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(168, Short.MAX_VALUE))
+            .addGroup(panel_keysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panel_keysLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(tKeys_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+        panel_keysLayout.setVerticalGroup(
+            panel_keysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_keysLayout.createSequentialGroup()
+                .addContainerGap(201, Short.MAX_VALUE)
+                .addGroup(panel_keysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(combo_keyboardConfig, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addContainerGap())
+            .addGroup(panel_keysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panel_keysLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(tKeys_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                    .addGap(42, 42, 42)))
+        );
 
-        combo_keyboardConfig.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "7 Keys", "5 Keys", "6 Keys", "4 Keys", "8 Keys" }));
-        combo_keyboardConfig.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                combo_keyboardConfigActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panel_keys, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panel_folders, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(combo_keyboardConfig, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 202, Short.MAX_VALUE)
-                        .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bCancel))
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 643, Short.MAX_VALUE)
-                    .addComponent(tKeys_scroll, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 643, Short.MAX_VALUE))
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 487, Short.MAX_VALUE)
+                    .addComponent(bSave, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -250,76 +230,13 @@ class Configuration extends javax.swing.JDialog {
                 .addComponent(panel_folders, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tKeys_scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(22, 22, 22)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bCancel)
-                    .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1)
-                    .addComponent(combo_keyboardConfig, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(panel_keys, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(7, 7, 7)
+                .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-
-        pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void bCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCancelActionPerformed
-        loadTableKeys(Config.KeyboardType.K7);
-        this.dispose();
-    }//GEN-LAST:event_bCancelActionPerformed
-
-    private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
-        //delete the cache files that are useless(deleted folders ones)
-
-        Config.setDirsList(dir_list);
-
-        Config.KeyboardType kt;
-        switch(combo_keyboardConfig.getSelectedIndex())
-        {
-            case 0:kt = Config.KeyboardType.K7;break;
-            case 1:kt = Config.KeyboardType.K5;break;
-            case 2:kt = Config.KeyboardType.K6;break;
-            case 3:kt = Config.KeyboardType.K4;break;
-            case 4:kt = Config.KeyboardType.K8;break;
-            default: return;
-        }
-        Config.setKeyboardMap(kb_map, kt);
-	this.dispose();
-    }//GEN-LAST:event_bSaveActionPerformed
-
-
-    private void tKeysMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tKeysMouseClicked
-        int row = tKeys.getSelectedRow();
-        if(tKeys.getValueAt(row, 0) == null) return;
-
-        int code;
-        int lastkey = Keyboard.getKeyIndex(tKeys.getValueAt(row, 1).toString());
-        try {
-            code = read_keyboard_key(lastkey);
-        } catch(LWJGLException e) {
-            // FML
-            return;
-        }
-        if(kb_map.containsValue(code)) return; //check for duplicates, TODO something informing about the duplicate
-        Event.Channel c = table_map.get(row);
-        kb_map.put(c, code);
-        tKeys.setValueAt(Keyboard.getKeyName(code), row, 1);
-    }//GEN-LAST:event_tKeysMouseClicked
-
-    private void combo_keyboardConfigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_keyboardConfigActionPerformed
-        // TODO get a message asking if you change, the changes will not be saved
-        // Also, it would be a good idea to get the keys of the skin and only show those
-        // or maybe put the names of the combo like "8 Keys (not supported)" when the keys don't match
-        switch(combo_keyboardConfig.getSelectedIndex())
-        {
-            case 0:loadTableKeys(Config.KeyboardType.K7);break;
-            case 1:loadTableKeys(Config.KeyboardType.K5);break;
-            case 2:loadTableKeys(Config.KeyboardType.K6);break;
-            case 3:loadTableKeys(Config.KeyboardType.K4);break;
-            case 4:loadTableKeys(Config.KeyboardType.K8);break;
-        }
-    }//GEN-LAST:event_combo_keyboardConfigActionPerformed
 
     private void bAddFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAddFolderActionPerformed
         JFileChooser jfc = new JFileChooser();
@@ -337,7 +254,7 @@ class Configuration extends javax.swing.JDialog {
             if(deleted_dirs.contains(s))  deleted_dirs.remove(s); //it's not deleted, just the user fucking it up
             loadTableDirs();
         }
-    }//GEN-LAST:event_bAddFolderActionPerformed
+}//GEN-LAST:event_bAddFolderActionPerformed
 
     private void bDelFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDelFolderActionPerformed
         if(tDirs.getSelectedRow()<0)return;
@@ -345,8 +262,97 @@ class Configuration extends javax.swing.JDialog {
         if(dir_list.contains(s)) dir_list.remove(s);
         deleted_dirs.add(s);
         loadTableDirs();
-    }//GEN-LAST:event_bDelFolderActionPerformed
+}//GEN-LAST:event_bDelFolderActionPerformed
 
+    private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
+        //delete the cache files that are useless(deleted folders ones)
+        
+        Config.setDirsList(dir_list);
+        
+        Config.KeyboardType kt;
+        switch(combo_keyboardConfig.getSelectedIndex()) {
+            case 0:kt = Config.KeyboardType.K7;break;
+            case 1:kt = Config.KeyboardType.K5;break;
+            case 2:kt = Config.KeyboardType.K6;break;
+            case 3:kt = Config.KeyboardType.K4;break;
+            case 4:kt = Config.KeyboardType.K8;break;
+            default: return;
+        }
+        Config.setKeyboardMap(kb_map, kt);
+}//GEN-LAST:event_bSaveActionPerformed
+
+    private void tKeysMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tKeysMouseClicked
+        int row = tKeys.getSelectedRow();
+        if(tKeys.getValueAt(row, 0) == null) return;
+        
+        int code;
+        int lastkey = Keyboard.getKeyIndex(tKeys.getValueAt(row, 1).toString());
+        try {
+            code = read_keyboard_key(lastkey);
+        } catch(LWJGLException e) {
+            // FML
+            return;
+        }
+        if(kb_map.containsValue(code)) return; //check for duplicates, TODO something informing about the duplicate
+        Event.Channel c = table_map.get(row);
+        kb_map.put(c, code);
+        tKeys.setValueAt(Keyboard.getKeyName(code), row, 1);
+}//GEN-LAST:event_tKeysMouseClicked
+
+    private void combo_keyboardConfigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_keyboardConfigActionPerformed
+        // TODO get a message asking if you change, the changes will not be saved
+        // Also, it would be a good idea to get the keys of the skin and only show those
+        // or maybe put the names of the combo like "8 Keys (not supported)" when the keys don't match
+        switch(combo_keyboardConfig.getSelectedIndex()) {
+            case 0:loadTableKeys(Config.KeyboardType.K7);break;
+            case 1:loadTableKeys(Config.KeyboardType.K5);break;
+            case 2:loadTableKeys(Config.KeyboardType.K6);break;
+            case 3:loadTableKeys(Config.KeyboardType.K4);break;
+            case 4:loadTableKeys(Config.KeyboardType.K8);break;
+        }
+}//GEN-LAST:event_combo_keyboardConfigActionPerformed
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton bAddFolder;
+    private javax.swing.JButton bDelFolder;
+    private javax.swing.JButton bSave;
+    private javax.swing.JComboBox combo_keyboardConfig;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JPanel panel_folders;
+    private javax.swing.JPanel panel_keys;
+    private javax.swing.JTable tDirs;
+    private javax.swing.JTable tKeys;
+    private javax.swing.JScrollPane tKeys_scroll;
+    // End of variables declaration//GEN-END:variables
+    
+    private void loadTableDirs()
+    {
+        if(dir_list.isEmpty())dir_list = Config.getDirsList();
+        DefaultTableModel dm = (DefaultTableModel)tDirs.getModel();
+        dm.setRowCount(dir_list.size());
+        
+        for(int i=0; i<dir_list.size(); i++)
+            tDirs.setValueAt(dir_list.get(i), i, 0);
+    }
+
+    private void loadTableKeys(Config.KeyboardType kt)
+    {
+        kb_map = Config.getKeyboardMap(kt).clone();
+        DefaultTableModel dm = (DefaultTableModel)tKeys.getModel();
+        dm.setRowCount(kb_map.size());
+
+        int i = 0;
+        for(Map.Entry<Event.Channel,Integer> entry : kb_map.entrySet())
+        {
+            tKeys.setValueAt(entry.getKey().toString(), i, 0);
+            tKeys.setValueAt(Keyboard.getKeyName(entry.getValue()), i, 1);
+            table_map.put(i, entry.getKey());
+            i++;
+        }
+    }
+    
     private static Font font = new Font("Tahoma", Font.BOLD, 14);
 
     private int read_keyboard_key(int lastkey) throws LWJGLException
@@ -399,11 +405,4 @@ class Configuration extends javax.swing.JDialog {
         Display.destroy();
         return code;
     }
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private static javax.swing.JComboBox combo_keyboardConfig;
-    private static javax.swing.JTable tDirs;
-    private static javax.swing.JTable tKeys;
-    // End of variables declaration//GEN-END:variables
-
 }

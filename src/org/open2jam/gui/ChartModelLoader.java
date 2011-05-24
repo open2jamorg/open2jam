@@ -15,7 +15,7 @@ import org.open2jam.parser.ChartParser;
  *
  * @author fox
  */
-class ChartModelLoader extends SwingWorker<ChartListTableModel,ChartList>
+public class ChartModelLoader extends SwingWorker<ChartListTableModel,ChartList>
 {
 
     private final ChartListTableModel table_model;
