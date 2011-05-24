@@ -19,62 +19,11 @@
         </DimensionLayout>
       </Layout>
     </Container>
-    <Menu class="javax.swing.JMenuBar" name="jMenuBar1">
-      <SubComponents>
-        <Menu class="javax.swing.JMenu" name="jMenu1">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="File"/>
-          </Properties>
-          <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="mitem_exit">
-              <Properties>
-                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Alt+F4"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="Exit"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mitem_exitActionPerformed"/>
-              </Events>
-            </MenuItem>
-          </SubComponents>
-        </Menu>
-        <Menu class="javax.swing.JMenu" name="jMenu3">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Tools"/>
-          </Properties>
-          <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem1">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="OJM Dumper"/>
-              </Properties>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem2">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="OJN &lt;-&gt; BMS"/>
-              </Properties>
-            </MenuItem>
-          </SubComponents>
-        </Menu>
-        <Menu class="javax.swing.JMenu" name="menu_about">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="About"/>
-            <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-              <Color id="Cursor predeterminado"/>
-            </Property>
-          </Properties>
-          <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="menu_aboutMouseClicked"/>
-          </Events>
-        </Menu>
-      </SubComponents>
-    </Menu>
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
   </Properties>
   <SyntheticProperties>
-    <SyntheticProperty name="menuBar" type="java.lang.String" value="jMenuBar1"/>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
   </SyntheticProperties>
   <AuxValues>
@@ -92,17 +41,20 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jTabbedPane1" alignment="0" pref="928" max="32767" attributes="0"/>
+          <Component id="Tabs" alignment="0" pref="928" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jTabbedPane1" alignment="0" pref="730" max="32767" attributes="0"/>
+          <Component id="Tabs" alignment="0" pref="730" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Container class="javax.swing.JTabbedPane" name="jTabbedPane1">
+    <Container class="javax.swing.JTabbedPane" name="Tabs">
+      <AccessibilityProperties>
+        <Property name="AccessibleContext.accessibleName" type="java.lang.String" value=""/>
+      </AccessibilityProperties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
       <SubComponents>
@@ -118,10 +70,10 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="panel_setting" min="-2" max="-2" attributes="1"/>
-                          <Group type="102" attributes="0">
+                          <Component id="panel_setting" alignment="0" min="-2" max="-2" attributes="1"/>
+                          <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="10" pref="10" max="10" attributes="0"/>
                               <Component id="panel_song" min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -129,132 +81,177 @@
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="panel_list" max="32767" attributes="0"/>
                   </Group>
+                  <Component id="bt_play" alignment="1" pref="923" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="1" attributes="0">
-                      <Component id="panel_setting" min="-2" max="-2" attributes="1"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="panel_song" max="32767" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="panel_setting" min="-2" max="-2" attributes="1"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Component id="panel_song" max="32767" attributes="0"/>
+                          </Group>
+                          <Component id="panel_list" alignment="0" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Component id="bt_play" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="panel_list" alignment="1" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Container class="javax.swing.JPanel" name="panel_setting">
+            <Container class="javax.swing.JPanel" name="panel_list">
+              <Properties>
+                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                  <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+                    <TitledBorder position="2" title="Selection List">
+                      <Border PropertyName="innerBorder" info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
+                        <EtchetBorder/>
+                      </Border>
+                    </TitledBorder>
+                  </Border>
+                </Property>
+              </Properties>
 
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="jc_vsync" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="2" attributes="0">
+                              <Group type="102" alignment="2" attributes="0">
+                                  <Component id="bt_choose_dir" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jc_full_screen" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jc_bilinear" min="-2" max="-2" attributes="0"/>
+                                  <Component id="combo_dirs" min="-2" max="-2" attributes="1"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="load_progress" min="-2" pref="91" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="btn_reload" min="-2" pref="71" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="btn_save_delete" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="lbl_display" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="combo_displays" min="-2" max="-2" attributes="1"/>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="jc_custom_size" min="-2" pref="85" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="txt_res_width" min="-2" pref="40" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="lbl_res_x" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="txt_res_height" min="-2" pref="39" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="table_scroll" alignment="2" pref="473" max="32767" attributes="1"/>
                           </Group>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="2" attributes="0">
+                          <EmptySpace min="10" pref="10" max="10" attributes="0"/>
+                          <Component id="lbl_search" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="txt_filter" pref="432" max="32767" attributes="1"/>
+                          <EmptySpace min="10" pref="10" max="10" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <Group type="103" groupAlignment="2" attributes="0">
-                              <Component id="txt_res_height" alignment="2" min="-2" max="-2" attributes="0"/>
-                              <Component id="lbl_res_x" alignment="2" min="-2" max="-2" attributes="0"/>
-                              <Component id="txt_res_width" alignment="2" min="-2" max="-2" attributes="0"/>
-                              <Component id="jc_custom_size" alignment="2" min="-2" max="-2" attributes="0"/>
-                              <Component id="combo_displays" alignment="2" min="-2" max="-2" attributes="0"/>
-                              <Component id="lbl_display" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="bt_choose_dir" alignment="3" min="-2" max="-2" attributes="1"/>
+                              <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="combo_dirs" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btn_reload" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btn_save_delete" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="load_progress" alignment="3" min="-2" pref="27" max="-2" attributes="1"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="2" attributes="0">
-                              <Component id="jc_vsync" alignment="2" min="-2" max="-2" attributes="0"/>
-                              <Component id="jc_full_screen" alignment="2" min="-2" max="-2" attributes="0"/>
-                              <Component id="jc_bilinear" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="table_scroll" pref="541" max="32767" attributes="1"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="txt_filter" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="lbl_search" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JComboBox" name="combo_displays">
+                <Container class="javax.swing.JScrollPane" name="table_scroll">
+                  <AuxValues>
+                    <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                  </AuxValues>
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                  <SubComponents>
+                    <Component class="javax.swing.JTable" name="table_songlist">
+                      <Properties>
+                        <Property name="autoCreateRowSorter" type="boolean" value="true"/>
+                        <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                          <Connection code="model_songlist" type="code"/>
+                        </Property>
+                        <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
+                          <JTableSelectionModel selectionMode="0"/>
+                        </Property>
+                        <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                          <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
+                        </Property>
+                      </Properties>
+                      <AuxValues>
+                        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="table_songlist.getSelectionModel().addListSelectionListener(this);"/>
+                      </AuxValues>
+                    </Component>
+                  </SubComponents>
+                </Container>
+                <Component class="javax.swing.JTextField" name="txt_filter">
+                </Component>
+                <Component class="javax.swing.JLabel" name="lbl_search">
                   <Properties>
-                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="new javax.swing.DefaultComboBoxModel(display_modes)" type="code"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="Search:"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JTextField" name="txt_res_height">
+                <Component class="javax.swing.JButton" name="bt_choose_dir">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="600"/>
-                    <Property name="enabled" type="boolean" value="false"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JTextField" name="txt_res_width">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="800"/>
-                    <Property name="enabled" type="boolean" value="false"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JCheckBox" name="jc_vsync">
-                  <Properties>
-                    <Property name="selected" type="boolean" value="true"/>
-                    <Property name="text" type="java.lang.String" value="Use VSync"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="lbl_display">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Display:"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JCheckBox" name="jc_custom_size">
-                  <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="10" style="0"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="Custom size:"/>
+                    <Property name="text" type="java.lang.String" value="Choose dir"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="jc_custom_sizecustom_size_clicked"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bt_choose_dirActionPerformed"/>
                   </Events>
                 </Component>
-                <Component class="javax.swing.JLabel" name="lbl_res_x">
+                <Component class="javax.swing.JProgressBar" name="load_progress">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="x"/>
+                    <Property name="stringPainted" type="boolean" value="true"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JCheckBox" name="jc_full_screen">
+                <Component class="javax.swing.JLabel" name="jLabel2">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Full screen"/>
+                    <Property name="text" type="java.lang.String" value="Saved dirs:"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JCheckBox" name="jc_bilinear">
+                <Component class="javax.swing.JComboBox" name="combo_dirs">
                   <Properties>
-                    <Property name="selected" type="boolean" value="true"/>
-                    <Property name="text" type="java.lang.String" value="Bilinear filter"/>
+                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                      <StringArray count="0"/>
+                    </Property>
+                    <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[34, 35]"/>
+                    </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="combo_dirsActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="btn_reload">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Reload"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_reloadActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="btn_save_delete">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Save cache"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_save_deleteActionPerformed"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>
@@ -271,7 +268,6 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="panel_info" alignment="1" max="32767" attributes="0"/>
                               <Component id="panel_modifiers" alignment="1" max="32767" attributes="1"/>
-                              <Component id="bt_play" alignment="1" pref="372" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -283,24 +279,11 @@
                           <Component id="panel_info" max="32767" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Component id="panel_modifiers" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="bt_play" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JButton" name="bt_play">
-                  <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="24" style="1"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="Play !"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bt_playActionPerformed"/>
-                  </Events>
-                </Component>
                 <Container class="javax.swing.JPanel" name="panel_modifiers">
                   <Properties>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -332,7 +315,7 @@
                                           <Component id="lbl_channelModifier" min="-2" max="-2" attributes="1"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="combo_channelModifier" min="-2" max="-2" attributes="1"/>
-                                          <EmptySpace pref="41" max="32767" attributes="0"/>
+                                          <EmptySpace pref="47" max="32767" attributes="0"/>
                                           <Component id="lbl_visibilityModifier" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="combo_visibilityModifier" min="-2" max="-2" attributes="0"/>
@@ -341,15 +324,15 @@
                                           <Group type="103" groupAlignment="0" attributes="0">
                                               <Component id="lbl_bgm_vol" alignment="0" min="-2" max="-2" attributes="0"/>
                                               <Component id="lbl_key_vol" alignment="0" min="-2" max="-2" attributes="0"/>
-                                              <Component id="lbl_main_vol" min="-2" max="-2" attributes="0"/>
+                                              <Component id="lbl_main_vol" alignment="0" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="slider_main_vol" alignment="1" pref="109" max="32767" attributes="1"/>
+                                              <Component id="slider_main_vol" alignment="1" pref="112" max="32767" attributes="1"/>
                                               <Component id="slider_key_vol" alignment="1" min="0" pref="0" max="32767" attributes="0"/>
                                               <Component id="slider_bgm_vol" alignment="1" min="0" pref="0" max="32767" attributes="0"/>
                                           </Group>
-                                          <EmptySpace pref="16" max="32767" attributes="0"/>
+                                          <EmptySpace pref="19" max="32767" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
                                               <Group type="102" alignment="1" attributes="0">
                                                   <Component id="lbl_hispeed" min="-2" max="-2" attributes="0"/>
@@ -563,7 +546,7 @@
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="jc_timed_judgment">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Use timed judment"/>
+                        <Property name="text" type="java.lang.String" value="Use timed judgment"/>
                         <Property name="toolTipText" type="java.lang.String" value="Like Bemani games"/>
                       </Properties>
                     </Component>
@@ -590,13 +573,13 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="360" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="366" max="32767" attributes="0"/>
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="table_scroll2" alignment="1" pref="340" max="32767" attributes="0"/>
-                                      <Component id="lbl_title" alignment="0" pref="340" max="32767" attributes="0"/>
+                                      <Component id="table_scroll2" alignment="1" pref="346" max="32767" attributes="0"/>
+                                      <Component id="lbl_title" alignment="0" pref="346" max="32767" attributes="0"/>
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="lbl_cover" min="-2" pref="146" max="-2" attributes="0"/>
                                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -613,17 +596,17 @@
                                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                                   <Group type="103" groupAlignment="0" attributes="0">
                                                       <Component id="lbl_keys" alignment="0" min="-2" max="-2" attributes="0"/>
-                                                      <Component id="lbl_level" alignment="0" pref="133" max="32767" attributes="0"/>
-                                                      <Component id="lbl_notes" alignment="0" pref="133" max="32767" attributes="0"/>
-                                                      <Component id="lbl_time" alignment="0" pref="133" max="32767" attributes="0"/>
-                                                      <Component id="lbl_genre" alignment="0" pref="133" max="32767" attributes="0"/>
-                                                      <Component id="lbl_bpm" alignment="0" pref="133" max="32767" attributes="0"/>
+                                                      <Component id="lbl_level" alignment="0" pref="139" max="32767" attributes="0"/>
+                                                      <Component id="lbl_notes" alignment="0" pref="139" max="32767" attributes="0"/>
+                                                      <Component id="lbl_time" alignment="0" pref="139" max="32767" attributes="0"/>
+                                                      <Component id="lbl_genre" alignment="0" pref="139" max="32767" attributes="0"/>
+                                                      <Component id="lbl_bpm" alignment="0" pref="139" max="32767" attributes="0"/>
                                                   </Group>
                                               </Group>
                                               <Component id="lbl_filename" alignment="1" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
-                                      <Component id="lbl_artist" alignment="1" pref="340" max="32767" attributes="0"/>
+                                      <Component id="lbl_artist" alignment="1" pref="346" max="32767" attributes="0"/>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -632,7 +615,7 @@
                     </DimensionLayout>
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="271" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="371" max="32767" attributes="0"/>
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
@@ -677,7 +660,7 @@
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
                                   <Component id="lbl_artist" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                                  <Component id="table_scroll2" pref="27" max="32767" attributes="0"/>
+                                  <Component id="table_scroll2" pref="127" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -812,159 +795,157 @@
                 </Container>
               </SubComponents>
             </Container>
-            <Container class="javax.swing.JPanel" name="panel_list">
-              <Properties>
-                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                  <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                    <TitledBorder position="2" title="Selection List">
-                      <Border PropertyName="innerBorder" info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
-                        <EtchetBorder/>
-                      </Border>
-                    </TitledBorder>
-                  </Border>
-                </Property>
-              </Properties>
+            <Container class="javax.swing.JPanel" name="panel_setting">
 
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="2" attributes="0">
-                              <Group type="102" alignment="2" attributes="0">
-                                  <Component id="bt_choose_dir" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="jc_vsync" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jc_full_screen" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="combo_dirs" min="-2" max="-2" attributes="1"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="load_progress" min="-2" pref="91" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="btn_reload" min="-2" pref="71" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="btn_save_delete" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jc_bilinear" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <Component id="table_scroll" alignment="2" pref="479" max="32767" attributes="1"/>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="lbl_display" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="combo_displays" min="-2" max="-2" attributes="1"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="jc_custom_size" min="-2" pref="85" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="txt_res_width" min="-2" pref="40" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="lbl_res_x" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="txt_res_height" min="-2" pref="39" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="2" attributes="0">
-                          <EmptySpace min="10" pref="10" max="10" attributes="0"/>
-                          <Component id="lbl_search" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="txt_filter" pref="438" max="32767" attributes="1"/>
-                          <EmptySpace min="10" pref="10" max="10" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="bt_choose_dir" alignment="3" min="-2" max="-2" attributes="1"/>
-                              <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="combo_dirs" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btn_reload" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btn_save_delete" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="load_progress" alignment="3" min="-2" pref="27" max="-2" attributes="1"/>
+                          <Group type="103" groupAlignment="2" attributes="0">
+                              <Component id="txt_res_height" alignment="2" min="-2" max="-2" attributes="0"/>
+                              <Component id="lbl_res_x" alignment="2" min="-2" max="-2" attributes="0"/>
+                              <Component id="txt_res_width" alignment="2" min="-2" max="-2" attributes="0"/>
+                              <Component id="jc_custom_size" alignment="2" min="-2" max="-2" attributes="0"/>
+                              <Component id="combo_displays" alignment="2" min="-2" max="-2" attributes="0"/>
+                              <Component id="lbl_display" alignment="2" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="table_scroll" pref="595" max="32767" attributes="1"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="txt_filter" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="lbl_search" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="2" attributes="0">
+                              <Component id="jc_vsync" alignment="2" min="-2" max="-2" attributes="0"/>
+                              <Component id="jc_full_screen" alignment="2" min="-2" max="-2" attributes="0"/>
+                              <Component id="jc_bilinear" alignment="2" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Container class="javax.swing.JScrollPane" name="table_scroll">
-                  <AuxValues>
-                    <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-                  </AuxValues>
-
-                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-                  <SubComponents>
-                    <Component class="javax.swing.JTable" name="table_songlist">
-                      <Properties>
-                        <Property name="autoCreateRowSorter" type="boolean" value="true"/>
-                        <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                          <Connection code="model_songlist" type="code"/>
-                        </Property>
-                        <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
-                          <JTableSelectionModel selectionMode="0"/>
-                        </Property>
-                        <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
-                          <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
-                        </Property>
-                      </Properties>
-                      <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="table_songlist.getSelectionModel().addListSelectionListener(this);"/>
-                      </AuxValues>
-                    </Component>
-                  </SubComponents>
-                </Container>
-                <Component class="javax.swing.JTextField" name="txt_filter">
-                </Component>
-                <Component class="javax.swing.JLabel" name="lbl_search">
+                <Component class="javax.swing.JComboBox" name="combo_displays">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Search:"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JButton" name="bt_choose_dir">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Choose dir"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bt_choose_dirActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JProgressBar" name="load_progress">
-                  <Properties>
-                    <Property name="stringPainted" type="boolean" value="true"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="jLabel2">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Saved dirs:"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JComboBox" name="combo_dirs">
-                  <Properties>
-                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                      <StringArray count="0"/>
-                    </Property>
-                    <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[34, 35]"/>
+                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="new javax.swing.DefaultComboBoxModel(display_modes)" type="code"/>
                     </Property>
                   </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="combo_dirsActionPerformed"/>
-                  </Events>
                 </Component>
-                <Component class="javax.swing.JButton" name="btn_reload">
+                <Component class="javax.swing.JTextField" name="txt_res_height">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Reload"/>
+                    <Property name="text" type="java.lang.String" value="600"/>
+                    <Property name="enabled" type="boolean" value="false"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="txt_res_width">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="800"/>
+                    <Property name="enabled" type="boolean" value="false"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="jc_vsync">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" value="Use VSync"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="lbl_display">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Display:"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="jc_custom_size">
+                  <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Tahoma" size="10" style="0"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Custom size:"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_reloadActionPerformed"/>
+                    <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="jc_custom_sizecustom_size_clicked"/>
                   </Events>
                 </Component>
-                <Component class="javax.swing.JButton" name="btn_save_delete">
+                <Component class="javax.swing.JLabel" name="lbl_res_x">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Save cache"/>
+                    <Property name="text" type="java.lang.String" value="x"/>
                   </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_save_deleteActionPerformed"/>
-                  </Events>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="jc_full_screen">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Full screen"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="jc_bilinear">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" value="Bilinear filter"/>
+                  </Properties>
                 </Component>
               </SubComponents>
             </Container>
+            <Component class="javax.swing.JButton" name="bt_play">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Tahoma" size="24" style="1"/>
+                </Property>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/resources/open2jam_icon.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="HIT ME TO PLAY !!! I&apos;M SRLY !!!1!!!11!"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bt_playActionPerformed"/>
+              </Events>
+            </Component>
           </SubComponents>
+        </Container>
+        <Container class="javax.swing.JPanel" name="options">
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+              <JTabbedPaneConstraints tabName="Options">
+                <Property name="tabTitle" type="java.lang.String" value="Options"/>
+              </JTabbedPaneConstraints>
+            </Constraint>
+          </Constraints>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <EmptySpace min="0" pref="923" max="32767" attributes="0"/>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <EmptySpace min="0" pref="702" max="32767" attributes="0"/>
+              </Group>
+            </DimensionLayout>
+          </Layout>
         </Container>
         <Container class="javax.swing.JPanel" name="skin">
           <Constraints>
@@ -988,11 +969,11 @@
             </DimensionLayout>
           </Layout>
         </Container>
-        <Container class="javax.swing.JPanel" name="options">
+        <Container class="javax.swing.JPanel" name="about">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Options">
-                <Property name="tabTitle" type="java.lang.String" value="Options"/>
+              <JTabbedPaneConstraints tabName="About...">
+                <Property name="tabTitle" type="java.lang.String" value="About..."/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>

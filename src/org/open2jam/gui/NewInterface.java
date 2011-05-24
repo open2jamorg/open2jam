@@ -141,20 +141,20 @@ public class NewInterface extends javax.swing.JFrame
 
         rank_group = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        Tabs = new javax.swing.JTabbedPane();
         music = new javax.swing.JPanel();
-        panel_setting = new javax.swing.JPanel();
-        combo_displays = new javax.swing.JComboBox();
-        txt_res_height = new javax.swing.JTextField();
-        txt_res_width = new javax.swing.JTextField();
-        jc_vsync = new javax.swing.JCheckBox();
-        lbl_display = new javax.swing.JLabel();
-        jc_custom_size = new javax.swing.JCheckBox();
-        lbl_res_x = new javax.swing.JLabel();
-        jc_full_screen = new javax.swing.JCheckBox();
-        jc_bilinear = new javax.swing.JCheckBox();
+        panel_list = new javax.swing.JPanel();
+        table_scroll = new javax.swing.JScrollPane();
+        table_songlist = new javax.swing.JTable();
+        txt_filter = new javax.swing.JTextField();
+        lbl_search = new javax.swing.JLabel();
+        bt_choose_dir = new javax.swing.JButton();
+        load_progress = new javax.swing.JProgressBar();
+        jLabel2 = new javax.swing.JLabel();
+        combo_dirs = new javax.swing.JComboBox();
+        btn_reload = new javax.swing.JButton();
+        btn_save_delete = new javax.swing.JButton();
         panel_song = new javax.swing.JPanel();
-        bt_play = new javax.swing.JButton();
         panel_modifiers = new javax.swing.JPanel();
         lbl_main_vol = new javax.swing.JLabel();
         slider_main_vol = new javax.swing.JSlider();
@@ -193,26 +193,20 @@ public class NewInterface extends javax.swing.JFrame
         lbl_cover = new javax.swing.JLabel();
         table_scroll2 = new javax.swing.JScrollPane();
         table_chartlist = new javax.swing.JTable();
-        panel_list = new javax.swing.JPanel();
-        table_scroll = new javax.swing.JScrollPane();
-        table_songlist = new javax.swing.JTable();
-        txt_filter = new javax.swing.JTextField();
-        lbl_search = new javax.swing.JLabel();
-        bt_choose_dir = new javax.swing.JButton();
-        load_progress = new javax.swing.JProgressBar();
-        jLabel2 = new javax.swing.JLabel();
-        combo_dirs = new javax.swing.JComboBox();
-        btn_reload = new javax.swing.JButton();
-        btn_save_delete = new javax.swing.JButton();
-        skin = new javax.swing.JPanel();
+        panel_setting = new javax.swing.JPanel();
+        combo_displays = new javax.swing.JComboBox();
+        txt_res_height = new javax.swing.JTextField();
+        txt_res_width = new javax.swing.JTextField();
+        jc_vsync = new javax.swing.JCheckBox();
+        lbl_display = new javax.swing.JLabel();
+        jc_custom_size = new javax.swing.JCheckBox();
+        lbl_res_x = new javax.swing.JLabel();
+        jc_full_screen = new javax.swing.JCheckBox();
+        jc_bilinear = new javax.swing.JCheckBox();
+        bt_play = new javax.swing.JButton();
         options = new javax.swing.JPanel();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        mitem_exit = new javax.swing.JMenuItem();
-        jMenu3 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        menu_about = new javax.swing.JMenu();
+        skin = new javax.swing.JPanel();
+        about = new javax.swing.JPanel();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -227,87 +221,97 @@ public class NewInterface extends javax.swing.JFrame
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        combo_displays.setModel(new javax.swing.DefaultComboBoxModel(display_modes));
+        panel_list.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Selection List", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP));
 
-        txt_res_height.setText("600");
-        txt_res_height.setEnabled(false);
+        table_songlist.setAutoCreateRowSorter(true);
+        table_songlist.setModel(model_songlist);
+        table_songlist.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        table_songlist.getSelectionModel().addListSelectionListener(this);
+        table_scroll.setViewportView(table_songlist);
 
-        txt_res_width.setText("800");
-        txt_res_width.setEnabled(false);
+        lbl_search.setText("Search:");
 
-        jc_vsync.setSelected(true);
-        jc_vsync.setText("Use VSync");
-
-        lbl_display.setText("Display:");
-
-        jc_custom_size.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        jc_custom_size.setText("Custom size:");
-        jc_custom_size.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                jc_custom_sizecustom_size_clicked(evt);
+        bt_choose_dir.setText("Choose dir");
+        bt_choose_dir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bt_choose_dirActionPerformed(evt);
             }
         });
 
-        lbl_res_x.setText("x");
+        load_progress.setStringPainted(true);
 
-        jc_full_screen.setText("Full screen");
+        jLabel2.setText("Saved dirs:");
 
-        jc_bilinear.setSelected(true);
-        jc_bilinear.setText("Bilinear filter");
+        combo_dirs.setMaximumSize(new java.awt.Dimension(34, 35));
+        combo_dirs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                combo_dirsActionPerformed(evt);
+            }
+        });
 
-        javax.swing.GroupLayout panel_settingLayout = new javax.swing.GroupLayout(panel_setting);
-        panel_setting.setLayout(panel_settingLayout);
-        panel_settingLayout.setHorizontalGroup(
-            panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panel_settingLayout.createSequentialGroup()
-                .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panel_settingLayout.createSequentialGroup()
-                        .addComponent(jc_vsync)
+        btn_reload.setText("Reload");
+        btn_reload.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_reloadActionPerformed(evt);
+            }
+        });
+
+        btn_save_delete.setText("Save cache");
+        btn_save_delete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_save_deleteActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panel_listLayout = new javax.swing.GroupLayout(panel_list);
+        panel_list.setLayout(panel_listLayout);
+        panel_listLayout.setHorizontalGroup(
+            panel_listLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_listLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panel_listLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addGroup(panel_listLayout.createSequentialGroup()
+                        .addComponent(bt_choose_dir)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jc_full_screen)
+                        .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jc_bilinear))
-                    .addGroup(panel_settingLayout.createSequentialGroup()
-                        .addComponent(lbl_display)
+                        .addComponent(combo_dirs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(combo_displays, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jc_custom_size, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(load_progress, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txt_res_width, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_reload, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lbl_res_x)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txt_res_height, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        panel_settingLayout.setVerticalGroup(
-            panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panel_settingLayout.createSequentialGroup()
-                .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(txt_res_height, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbl_res_x)
-                    .addComponent(txt_res_width, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jc_custom_size)
-                    .addComponent(combo_displays, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbl_display))
+                        .addComponent(btn_save_delete))
+                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE))
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.CENTER, panel_listLayout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(lbl_search)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jc_vsync)
-                    .addComponent(jc_full_screen)
-                    .addComponent(jc_bilinear))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 432, Short.MAX_VALUE)
+                .addGap(10, 10, 10))
+        );
+        panel_listLayout.setVerticalGroup(
+            panel_listLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_listLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panel_listLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bt_choose_dir)
+                    .addComponent(jLabel2)
+                    .addComponent(combo_dirs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_reload)
+                    .addComponent(btn_save_delete)
+                    .addComponent(load_progress, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 541, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_listLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_filter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbl_search))
+                .addContainerGap())
         );
 
         panel_song.setName(""); // NOI18N
-
-        bt_play.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        bt_play.setText("Play !");
-        bt_play.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bt_playActionPerformed(evt);
-            }
-        });
 
         panel_modifiers.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Modifiers", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP));
 
@@ -375,7 +379,7 @@ public class NewInterface extends javax.swing.JFrame
             }
         });
 
-        jc_timed_judgment.setText("Use timed judment");
+        jc_timed_judgment.setText("Use timed judgment");
         jc_timed_judgment.setToolTipText("Like Bemani games");
 
         jc_autoplay.setText("Autoplay");
@@ -398,7 +402,7 @@ public class NewInterface extends javax.swing.JFrame
                             .addComponent(lbl_channelModifier)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addComponent(combo_channelModifier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
                             .addComponent(lbl_visibilityModifier)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addComponent(combo_visibilityModifier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -409,10 +413,10 @@ public class NewInterface extends javax.swing.JFrame
                                 .addComponent(lbl_main_vol))
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(panel_modifiersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(slider_main_vol, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE)
+                                .addComponent(slider_main_vol, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE)
                                 .addComponent(slider_key_vol, javax.swing.GroupLayout.Alignment.TRAILING, 0, 0, Short.MAX_VALUE)
                                 .addComponent(slider_bgm_vol, javax.swing.GroupLayout.Alignment.TRAILING, 0, 0, Short.MAX_VALUE))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
                             .addGroup(panel_modifiersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_modifiersLayout.createSequentialGroup()
                                     .addComponent(lbl_hispeed)
@@ -524,13 +528,13 @@ public class NewInterface extends javax.swing.JFrame
         panel_info.setLayout(panel_infoLayout);
         panel_infoLayout.setHorizontalGroup(
             panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 360, Short.MAX_VALUE)
+            .addGap(0, 366, Short.MAX_VALUE)
             .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(panel_infoLayout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(table_scroll2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)
-                        .addComponent(lbl_title, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)
+                        .addComponent(table_scroll2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE)
+                        .addComponent(lbl_title, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE)
                         .addGroup(panel_infoLayout.createSequentialGroup()
                             .addComponent(lbl_cover, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -546,18 +550,18 @@ public class NewInterface extends javax.swing.JFrame
                                     .addGap(18, 18, 18)
                                     .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(lbl_keys)
-                                        .addComponent(lbl_level, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
-                                        .addComponent(lbl_notes, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
-                                        .addComponent(lbl_time, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
-                                        .addComponent(lbl_genre, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
-                                        .addComponent(lbl_bpm, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)))
+                                        .addComponent(lbl_level, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
+                                        .addComponent(lbl_notes, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
+                                        .addComponent(lbl_time, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
+                                        .addComponent(lbl_genre, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
+                                        .addComponent(lbl_bpm, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)))
                                 .addComponent(lbl_filename)))
-                        .addComponent(lbl_artist, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE))
+                        .addComponent(lbl_artist, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE))
                     .addContainerGap()))
         );
         panel_infoLayout.setVerticalGroup(
             panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 271, Short.MAX_VALUE)
+            .addGap(0, 371, Short.MAX_VALUE)
             .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(panel_infoLayout.createSequentialGroup()
                     .addContainerGap()
@@ -594,7 +598,7 @@ public class NewInterface extends javax.swing.JFrame
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(lbl_artist)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE)
+                    .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -606,8 +610,7 @@ public class NewInterface extends javax.swing.JFrame
                 .addContainerGap()
                 .addGroup(panel_songLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panel_info, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panel_modifiers, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(bt_play, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE))
+                    .addComponent(panel_modifiers, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         panel_songLayout.setVerticalGroup(
@@ -615,100 +618,89 @@ public class NewInterface extends javax.swing.JFrame
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_songLayout.createSequentialGroup()
                 .addComponent(panel_info, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panel_modifiers, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(bt_play))
+                .addComponent(panel_modifiers, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        panel_list.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Selection List", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP));
+        combo_displays.setModel(new javax.swing.DefaultComboBoxModel(display_modes));
 
-        table_songlist.setAutoCreateRowSorter(true);
-        table_songlist.setModel(model_songlist);
-        table_songlist.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        table_songlist.getSelectionModel().addListSelectionListener(this);
-        table_scroll.setViewportView(table_songlist);
+        txt_res_height.setText("600");
+        txt_res_height.setEnabled(false);
 
-        lbl_search.setText("Search:");
+        txt_res_width.setText("800");
+        txt_res_width.setEnabled(false);
 
-        bt_choose_dir.setText("Choose dir");
-        bt_choose_dir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bt_choose_dirActionPerformed(evt);
+        jc_vsync.setSelected(true);
+        jc_vsync.setText("Use VSync");
+
+        lbl_display.setText("Display:");
+
+        jc_custom_size.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jc_custom_size.setText("Custom size:");
+        jc_custom_size.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jc_custom_sizecustom_size_clicked(evt);
             }
         });
 
-        load_progress.setStringPainted(true);
+        lbl_res_x.setText("x");
 
-        jLabel2.setText("Saved dirs:");
+        jc_full_screen.setText("Full screen");
 
-        combo_dirs.setMaximumSize(new java.awt.Dimension(34, 35));
-        combo_dirs.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                combo_dirsActionPerformed(evt);
-            }
-        });
+        jc_bilinear.setSelected(true);
+        jc_bilinear.setText("Bilinear filter");
 
-        btn_reload.setText("Reload");
-        btn_reload.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_reloadActionPerformed(evt);
-            }
-        });
-
-        btn_save_delete.setText("Save cache");
-        btn_save_delete.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_save_deleteActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout panel_listLayout = new javax.swing.GroupLayout(panel_list);
-        panel_list.setLayout(panel_listLayout);
-        panel_listLayout.setHorizontalGroup(
-            panel_listLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panel_listLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panel_listLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addGroup(panel_listLayout.createSequentialGroup()
-                        .addComponent(bt_choose_dir)
+        javax.swing.GroupLayout panel_settingLayout = new javax.swing.GroupLayout(panel_setting);
+        panel_setting.setLayout(panel_settingLayout);
+        panel_settingLayout.setHorizontalGroup(
+            panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_settingLayout.createSequentialGroup()
+                .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panel_settingLayout.createSequentialGroup()
+                        .addComponent(jc_vsync)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel2)
+                        .addComponent(jc_full_screen)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(combo_dirs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jc_bilinear))
+                    .addGroup(panel_settingLayout.createSequentialGroup()
+                        .addComponent(lbl_display)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(load_progress, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(combo_displays, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jc_custom_size, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_reload, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txt_res_width, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_save_delete))
-                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE))
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.CENTER, panel_listLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(lbl_search)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE)
-                .addGap(10, 10, 10))
+                        .addComponent(lbl_res_x)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txt_res_height, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        panel_listLayout.setVerticalGroup(
-            panel_listLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panel_listLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panel_listLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bt_choose_dir)
-                    .addComponent(jLabel2)
-                    .addComponent(combo_dirs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_reload)
-                    .addComponent(btn_save_delete)
-                    .addComponent(load_progress, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+        panel_settingLayout.setVerticalGroup(
+            panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_settingLayout.createSequentialGroup()
+                .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(txt_res_height, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbl_res_x)
+                    .addComponent(txt_res_width, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jc_custom_size)
+                    .addComponent(combo_displays, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbl_display))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 595, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panel_listLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txt_filter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbl_search))
-                .addContainerGap())
+                .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(jc_vsync)
+                    .addComponent(jc_full_screen)
+                    .addComponent(jc_bilinear))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        bt_play.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        bt_play.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/open2jam_icon.png"))); // NOI18N
+        bt_play.setText("HIT ME TO PLAY !!! I'M SRLY !!!1!!!11!");
+        bt_play.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bt_playActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout musicLayout = new javax.swing.GroupLayout(music);
         music.setLayout(musicLayout);
@@ -722,31 +714,23 @@ public class NewInterface extends javax.swing.JFrame
                         .addComponent(panel_song, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(panel_list, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(bt_play, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 923, Short.MAX_VALUE)
         );
         musicLayout.setVerticalGroup(
             musicLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, musicLayout.createSequentialGroup()
-                .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(musicLayout.createSequentialGroup()
+                .addGroup(musicLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(musicLayout.createSequentialGroup()
+                        .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(panel_song, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(panel_list, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panel_song, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(bt_play)
                 .addContainerGap())
-            .addComponent(panel_list, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        jTabbedPane1.addTab("Music Selection", music);
-
-        javax.swing.GroupLayout skinLayout = new javax.swing.GroupLayout(skin);
-        skin.setLayout(skinLayout);
-        skinLayout.setHorizontalGroup(
-            skinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 923, Short.MAX_VALUE)
-        );
-        skinLayout.setVerticalGroup(
-            skinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 702, Short.MAX_VALUE)
-        );
-
-        jTabbedPane1.addTab("Skin selection", skin);
+        Tabs.addTab("Music Selection", music);
 
         javax.swing.GroupLayout optionsLayout = new javax.swing.GroupLayout(options);
         options.setLayout(optionsLayout);
@@ -759,171 +743,51 @@ public class NewInterface extends javax.swing.JFrame
             .addGap(0, 702, Short.MAX_VALUE)
         );
 
-        jTabbedPane1.addTab("Options", options);
+        Tabs.addTab("Options", options);
 
-        jMenu1.setText("File");
+        javax.swing.GroupLayout skinLayout = new javax.swing.GroupLayout(skin);
+        skin.setLayout(skinLayout);
+        skinLayout.setHorizontalGroup(
+            skinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 923, Short.MAX_VALUE)
+        );
+        skinLayout.setVerticalGroup(
+            skinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 702, Short.MAX_VALUE)
+        );
 
-        mitem_exit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
-        mitem_exit.setText("Exit");
-        mitem_exit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mitem_exitActionPerformed(evt);
-            }
-        });
-        jMenu1.add(mitem_exit);
+        Tabs.addTab("Skin selection", skin);
 
-        jMenuBar1.add(jMenu1);
+        javax.swing.GroupLayout aboutLayout = new javax.swing.GroupLayout(about);
+        about.setLayout(aboutLayout);
+        aboutLayout.setHorizontalGroup(
+            aboutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 923, Short.MAX_VALUE)
+        );
+        aboutLayout.setVerticalGroup(
+            aboutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 702, Short.MAX_VALUE)
+        );
 
-        jMenu3.setText("Tools");
-
-        jMenuItem1.setText("OJM Dumper");
-        jMenu3.add(jMenuItem1);
-
-        jMenuItem2.setText("OJN <-> BMS");
-        jMenu3.add(jMenuItem2);
-
-        jMenuBar1.add(jMenu3);
-
-        menu_about.setText("About");
-        menu_about.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        menu_about.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                menu_aboutMouseClicked(evt);
-            }
-        });
-        jMenuBar1.add(menu_about);
-
-        setJMenuBar(jMenuBar1);
+        Tabs.addTab("About...", about);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 928, Short.MAX_VALUE)
+            .addComponent(Tabs, javax.swing.GroupLayout.DEFAULT_SIZE, 928, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 730, Short.MAX_VALUE)
+            .addComponent(Tabs, javax.swing.GroupLayout.DEFAULT_SIZE, 730, Short.MAX_VALUE)
         );
+
+        Tabs.getAccessibleContext().setAccessibleName("");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void bt_playActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_playActionPerformed
-        
-        if(selected_header != null) {
-            final double hispeed = (Double) js_hispeed.getValue();
-            
-            final DisplayMode dm;
-            if(jc_custom_size.isSelected()){ // custom size selected
-                int w,h;
-                try{
-                    w = Integer.parseInt(txt_res_width.getText());
-                    h = Integer.parseInt(txt_res_height.getText());
-                }catch(Exception e){
-                    JOptionPane.showMessageDialog(this, "Invalid value on custom size", "Error", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-                dm = new DisplayMode(w,h);
-            }else{
-                dm = (DisplayMode) combo_displays.getSelectedItem();
-            }
-            final boolean vsync = jc_vsync.isSelected();
-            boolean fs = jc_full_screen.isSelected();
-            
-            final boolean autoplay = jc_autoplay.isSelected();
-            
-            final boolean judgment = jc_timed_judgment.isSelected();
-            
-            final int channelModifier = combo_channelModifier.getSelectedIndex();
-            final int visibilityModifier = combo_visibilityModifier.getSelectedIndex();
-            
-            final int mainVol = slider_main_vol.getValue();
-            final int keyVol = slider_key_vol.getValue();
-            final int bgmVol = slider_bgm_vol.getValue();
-            
-            final boolean bilinear = jc_bilinear.isSelected();
-            
-            if(!dm.isFullscreenCapable() && fs) {
-                String str = "This monitor can't support the selected resolution.\n"
-                        + "Do you want to play it in windowed mode?";
-                if(JOptionPane.showConfirmDialog(this, str, "Warning",
-                        JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE)
-                        == JOptionPane.YES_OPTION)
-                    fs = false;
-            }
-            
-            Render r;
-            if(judgment)
-                r = new TimeRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
-            else
-                r = new DistanceRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
-            r.setDisplay(dm, vsync, fs, bilinear);
-            r.startRendering();
-        }
-}//GEN-LAST:event_bt_playActionPerformed
-
-    private void lbl_coverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_coverMouseClicked
-        
-        if(selected_header == null)return;
-        BufferedImage i = selected_header.getCover();
-        if(i == null) return;
-        JOptionPane.showMessageDialog(this, null, "Cover",
-                JOptionPane.INFORMATION_MESSAGE, new ImageIcon(i));
-}//GEN-LAST:event_lbl_coverMouseClicked
-
-    private void mitem_exitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mitem_exitActionPerformed
-        System.exit(0); //TODO Not a good idea XD
-}//GEN-LAST:event_mitem_exitActionPerformed
-
-    private void menu_aboutMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menu_aboutMouseClicked
-        String about = "Open2Jam\n"
-                + "Main programmer: ChaosFox\n"
-                + "Main code destroyer: CdK"    ;
-        JOptionPane.showMessageDialog(this, about, "About", JOptionPane.ERROR_MESSAGE, null);
-}//GEN-LAST:event_menu_aboutMouseClicked
-
-    private void jr_rank_hardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jr_rank_hardActionPerformed
-        
-        rank = 2;
-        int sel_row = table_songlist.getSelectedRow();
-        if(sel_row >= 0)last_model_idx = table_songlist.convertRowIndexToModel(sel_row);
-        model_songlist.setRank(rank);
-}//GEN-LAST:event_jr_rank_hardActionPerformed
-
-    private void jc_custom_sizecustom_size_clicked(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jc_custom_sizecustom_size_clicked
-        
-        if (evt.getStateChange() == ItemEvent.SELECTED){
-            combo_displays.setEnabled(false);
-            txt_res_width.setEnabled(true);
-            lbl_res_x.setEnabled(true);
-            txt_res_height.setEnabled(true);
-        }else{
-            txt_res_width.setEnabled(false);
-            lbl_res_x.setEnabled(false);
-            txt_res_height.setEnabled(false);
-            combo_displays.setEnabled(true);
-        }
-}//GEN-LAST:event_jc_custom_sizecustom_size_clicked
-
-    private void jr_rank_easyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jr_rank_easyActionPerformed
-        
-        rank = 0;
-        int sel_row = table_songlist.getSelectedRow();
-        if(sel_row >= 0)last_model_idx = table_songlist.convertRowIndexToModel(sel_row);
-        model_songlist.setRank(rank);
-}//GEN-LAST:event_jr_rank_easyActionPerformed
-
-    private void jr_rank_normalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jr_rank_normalActionPerformed
-        
-        rank = 1;
-        int sel_row = table_songlist.getSelectedRow();
-        if(sel_row >= 0)last_model_idx = table_songlist.convertRowIndexToModel(sel_row);
-        model_songlist.setRank(rank);
-}//GEN-LAST:event_jr_rank_normalActionPerformed
-
     private void bt_choose_dirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_choose_dirActionPerformed
-        
         JFileChooser jfc = new JFileChooser();
         jfc.setCurrentDirectory(Config.getCwd());
         jfc.setDialogTitle("Choose a directory");
@@ -931,20 +795,18 @@ public class NewInterface extends javax.swing.JFrame
         jfc.setAcceptAllFileFilterUsed(false);
         if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             loadDir(jfc.getSelectedFile());
-        }
+        }        
 }//GEN-LAST:event_bt_choose_dirActionPerformed
 
     private void combo_dirsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_dirsActionPerformed
-        
-        loadDir(((FileItem)combo_dirs.getSelectedItem()).file);
+        loadDir(((FileItem)combo_dirs.getSelectedItem()).file);        
 }//GEN-LAST:event_combo_dirsActionPerformed
 
     private void btn_reloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_reloadActionPerformed
-        updateSelection(Config.getCwd());
+        updateSelection(Config.getCwd());        
 }//GEN-LAST:event_btn_reloadActionPerformed
 
     private void btn_save_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_save_deleteActionPerformed
-        
         List<File> dir_list = Config.getDirsList();
         if(btn_sd_save) {
             File f = Config.getCwd();
@@ -960,10 +822,110 @@ public class NewInterface extends javax.swing.JFrame
             File f = dir_list.get(0);
             loadDir(f);
         }
-        Config.setDirsList(dir_list);
+        Config.setDirsList(dir_list);        
 }//GEN-LAST:event_btn_save_deleteActionPerformed
 
+    private void jr_rank_easyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jr_rank_easyActionPerformed
+        rank = 0;
+        int sel_row = table_songlist.getSelectedRow();
+        if(sel_row >= 0)last_model_idx = table_songlist.convertRowIndexToModel(sel_row);
+        model_songlist.setRank(rank);        
+}//GEN-LAST:event_jr_rank_easyActionPerformed
+
+    private void jr_rank_normalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jr_rank_normalActionPerformed
+        rank = 1;
+        int sel_row = table_songlist.getSelectedRow();
+        if(sel_row >= 0)last_model_idx = table_songlist.convertRowIndexToModel(sel_row);
+        model_songlist.setRank(rank);        
+}//GEN-LAST:event_jr_rank_normalActionPerformed
+
+    private void jr_rank_hardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jr_rank_hardActionPerformed
+        rank = 2;
+        int sel_row = table_songlist.getSelectedRow();
+        if(sel_row >= 0)last_model_idx = table_songlist.convertRowIndexToModel(sel_row);
+        model_songlist.setRank(rank);        
+}//GEN-LAST:event_jr_rank_hardActionPerformed
+
+    private void lbl_coverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbl_coverMouseClicked
+        if(selected_header == null)return;
+        BufferedImage i = selected_header.getCover();
+        if(i == null) return;
+        JOptionPane.showMessageDialog(this, null, "Cover",
+                JOptionPane.INFORMATION_MESSAGE, new ImageIcon(i));        
+}//GEN-LAST:event_lbl_coverMouseClicked
+
+    private void jc_custom_sizecustom_size_clicked(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jc_custom_sizecustom_size_clicked
+        if (evt.getStateChange() == ItemEvent.SELECTED){
+            combo_displays.setEnabled(false);
+            txt_res_width.setEnabled(true);
+            lbl_res_x.setEnabled(true);
+            txt_res_height.setEnabled(true);
+        }else{
+            txt_res_width.setEnabled(false);
+            lbl_res_x.setEnabled(false);
+            txt_res_height.setEnabled(false);
+            combo_displays.setEnabled(true);
+        }
+}//GEN-LAST:event_jc_custom_sizecustom_size_clicked
+
+    private void bt_playActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_playActionPerformed
+        if(selected_header != null)
+	{
+	    final double hispeed = (Double) js_hispeed.getValue();
+
+	    final DisplayMode dm;
+	    if(jc_custom_size.isSelected()){ // custom size selected
+		int w,h;
+		try{
+		    w = Integer.parseInt(txt_res_width.getText());
+		    h = Integer.parseInt(txt_res_height.getText());
+		}catch(Exception e){
+		    JOptionPane.showMessageDialog(this, "Invalid value on custom size", "Error", JOptionPane.WARNING_MESSAGE);
+		    return;
+		}
+		dm = new DisplayMode(w,h);
+	    }else{
+		dm = (DisplayMode) combo_displays.getSelectedItem();
+	    }
+	    final boolean vsync = jc_vsync.isSelected();
+	    boolean fs = jc_full_screen.isSelected();
+
+	    final boolean autoplay = jc_autoplay.isSelected();
+
+            final boolean judgment = jc_timed_judgment.isSelected();
+
+	    final int channelModifier = combo_channelModifier.getSelectedIndex();
+            final int visibilityModifier = combo_visibilityModifier.getSelectedIndex();
+
+            final int mainVol = slider_main_vol.getValue();
+            final int keyVol = slider_key_vol.getValue();
+            final int bgmVol = slider_bgm_vol.getValue();
+
+            final boolean bilinear = jc_bilinear.isSelected();
+
+            if(!dm.isFullscreenCapable() && fs)
+            {
+                String str = "This monitor can't support the selected resolution.\n"
+                        + "Do you want to play it in windowed mode?";
+                if(JOptionPane.showConfirmDialog(this, str, "Warning",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE)
+                        == JOptionPane.YES_OPTION)
+                    fs = false;
+            }
+
+            Render r;
+            if(judgment)
+                r = new TimeRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
+            else
+                r = new DistanceRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
+            r.setDisplay(dm, vsync, fs, bilinear);
+            r.startRendering();
+	}        
+}//GEN-LAST:event_bt_playActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTabbedPane Tabs;
+    private javax.swing.JPanel about;
     private javax.swing.JButton bt_choose_dir;
     private javax.swing.JButton bt_play;
     private javax.swing.JButton btn_reload;
@@ -973,13 +935,7 @@ public class NewInterface extends javax.swing.JFrame
     private javax.swing.JComboBox combo_displays;
     private javax.swing.JComboBox combo_visibilityModifier;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JCheckBox jc_autoplay;
     private javax.swing.JCheckBox jc_bilinear;
     private javax.swing.JCheckBox jc_custom_size;
@@ -1017,8 +973,6 @@ public class NewInterface extends javax.swing.JFrame
     private javax.swing.JLabel lbl_title;
     private javax.swing.JLabel lbl_visibilityModifier;
     private javax.swing.JProgressBar load_progress;
-    private javax.swing.JMenu menu_about;
-    private javax.swing.JMenuItem mitem_exit;
     private javax.swing.JPanel music;
     private javax.swing.JPanel options;
     private javax.swing.JPanel panel_info;
