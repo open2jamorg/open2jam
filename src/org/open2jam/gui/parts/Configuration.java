@@ -25,8 +25,6 @@ import org.open2jam.render.lwjgl.TrueTypeFont;
 public class Configuration extends javax.swing.JPanel {
 
     private EnumMap<Event.Channel,Integer> kb_map;
-    private List<File> dir_list;
-    private final ArrayList<File> deleted_dirs;
 
     private HashMap<Integer, Event.Channel> table_map = new HashMap<Integer,Event.Channel>();
     
@@ -35,10 +33,6 @@ public class Configuration extends javax.swing.JPanel {
         initComponents();
         
         loadTableKeys(Config.KeyboardType.K7);
-
-        dir_list = new ArrayList<File>();
-        deleted_dirs = new ArrayList<File>();
-        loadTableDirs();
     }
 
     /** This method is called from within the constructor to
@@ -50,83 +44,12 @@ public class Configuration extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        panel_folders = new javax.swing.JPanel();
-        bAddFolder = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tDirs = new javax.swing.JTable();
-        bDelFolder = new javax.swing.JButton();
         bSave = new javax.swing.JButton();
-        jSeparator1 = new javax.swing.JSeparator();
         panel_keys = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         combo_keyboardConfig = new javax.swing.JComboBox();
         tKeys_scroll = new javax.swing.JScrollPane();
         tKeys = new javax.swing.JTable();
-
-        bAddFolder.setText("Add Folder");
-        bAddFolder.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bAddFolderActionPerformed(evt);
-            }
-        });
-
-        tDirs.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Folders"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane1.setViewportView(tDirs);
-
-        bDelFolder.setText("Delete Folder");
-        bDelFolder.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bDelFolderActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout panel_foldersLayout = new javax.swing.GroupLayout(panel_folders);
-        panel_folders.setLayout(panel_foldersLayout);
-        panel_foldersLayout.setHorizontalGroup(
-            panel_foldersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panel_foldersLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panel_foldersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 477, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_foldersLayout.createSequentialGroup()
-                        .addComponent(bAddFolder)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bDelFolder)
-                        .addGap(6, 6, 6))))
-        );
-        panel_foldersLayout.setVerticalGroup(
-            panel_foldersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_foldersLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panel_foldersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bAddFolder)
-                    .addComponent(bDelFolder))
-                .addGap(7, 7, 7))
-        );
 
         bSave.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         bSave.setText("Save");
@@ -197,17 +120,17 @@ public class Configuration extends javax.swing.JPanel {
         );
         panel_keysLayout.setVerticalGroup(
             panel_keysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_keysLayout.createSequentialGroup()
-                .addContainerGap(201, Short.MAX_VALUE)
+            .addGroup(panel_keysLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(panel_keysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(combo_keyboardConfig, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addContainerGap())
+                    .addComponent(jLabel1)
+                    .addComponent(combo_keyboardConfig, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(306, Short.MAX_VALUE))
             .addGroup(panel_keysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(panel_keysLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(tKeys_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
-                    .addGap(42, 42, 42)))
+                    .addGap(48, 48, 48)
+                    .addComponent(tKeys_scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -216,59 +139,23 @@ public class Configuration extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panel_keys, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panel_folders, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 487, Short.MAX_VALUE)
-                    .addComponent(bSave, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(panel_keys, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(panel_folders, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
                 .addComponent(panel_keys, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(7, 7, 7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(152, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void bAddFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAddFolderActionPerformed
-        JFileChooser jfc = new JFileChooser();
-        File cwd = null;
-        if(tDirs.getRowCount()>0) cwd = (File) tDirs.getValueAt(0, 0);
-        if(cwd == null || !cwd.exists()) cwd = new File(System.getProperty("user.dir"));
-        jfc.setCurrentDirectory(cwd);
-        jfc.setDialogTitle("Choose a directory");
-        jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        jfc.setAcceptAllFileFilterUsed(false);
-        if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            File s = jfc.getSelectedFile();
-            if(dir_list.contains(s)) return; //check for duplicates, TODO something informing about the duplicate
-            dir_list.add(s);
-            if(deleted_dirs.contains(s))  deleted_dirs.remove(s); //it's not deleted, just the user fucking it up
-            loadTableDirs();
-        }
-}//GEN-LAST:event_bAddFolderActionPerformed
-
-    private void bDelFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDelFolderActionPerformed
-        if(tDirs.getSelectedRow()<0)return;
-        File s = (File) tDirs.getValueAt(tDirs.getSelectedRow(), 0);
-        if(dir_list.contains(s)) dir_list.remove(s);
-        deleted_dirs.add(s);
-        loadTableDirs();
-}//GEN-LAST:event_bDelFolderActionPerformed
-
     private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
-        //delete the cache files that are useless(deleted folders ones)
-        
-        Config.setDirsList(dir_list);
-        
         Config.KeyboardType kt;
         switch(combo_keyboardConfig.getSelectedIndex()) {
             case 0:kt = Config.KeyboardType.K7;break;
@@ -313,29 +200,13 @@ public class Configuration extends javax.swing.JPanel {
 }//GEN-LAST:event_combo_keyboardConfigActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton bAddFolder;
-    private javax.swing.JButton bDelFolder;
     private javax.swing.JButton bSave;
     private javax.swing.JComboBox combo_keyboardConfig;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JPanel panel_folders;
     private javax.swing.JPanel panel_keys;
-    private javax.swing.JTable tDirs;
     private javax.swing.JTable tKeys;
     private javax.swing.JScrollPane tKeys_scroll;
     // End of variables declaration//GEN-END:variables
-    
-    private void loadTableDirs()
-    {
-        if(dir_list.isEmpty())dir_list = Config.getDirsList();
-        DefaultTableModel dm = (DefaultTableModel)tDirs.getModel();
-        dm.setRowCount(dir_list.size());
-        
-        for(int i=0; i<dir_list.size(); i++)
-            tDirs.setValueAt(dir_list.get(i), i, 0);
-    }
 
     private void loadTableKeys(Config.KeyboardType kt)
     {

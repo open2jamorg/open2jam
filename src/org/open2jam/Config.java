@@ -60,7 +60,7 @@ public abstract class Config
                 return;
             }
             
-            setCwd(new File(System.getProperty("user.dir")));
+            setCwd(null);
             
             setDirsList(new ArrayList<File>());
 

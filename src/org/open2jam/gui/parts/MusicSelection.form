@@ -20,7 +20,6 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <EmptySpace min="0" pref="890" max="32767" attributes="0"/>
           <Group type="102" alignment="0" attributes="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="panel_setting" alignment="0" min="-2" max="-2" attributes="1"/>
@@ -37,7 +36,6 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <EmptySpace min="0" pref="602" max="32767" attributes="0"/>
           <Group type="102" alignment="0" attributes="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
@@ -85,7 +83,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="btn_reload" min="-2" pref="71" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="btn_save_delete" min="-2" max="-2" attributes="0"/>
+                          <Component id="btn_delete" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Component id="table_scroll" alignment="2" pref="440" max="32767" attributes="1"/>
                   </Group>
@@ -109,7 +107,7 @@
                       <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="combo_dirs" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="btn_reload" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="btn_save_delete" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btn_delete" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="load_progress" alignment="3" min="-2" pref="27" max="-2" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -197,12 +195,12 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_reloadActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="btn_save_delete">
+        <Component class="javax.swing.JButton" name="btn_delete">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Save cache"/>
+            <Property name="text" type="java.lang.String" value="Remove Dir"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_save_deleteActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_deleteActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
@@ -840,7 +838,7 @@
             <Property name="text" type="java.lang.String" value="Custom size:"/>
           </Properties>
           <Events>
-            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="jc_custom_sizecustom_size_clicked"/>
+            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="jc_custom_size_clicked"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="lbl_res_x">

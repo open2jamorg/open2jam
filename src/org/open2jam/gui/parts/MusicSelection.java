@@ -46,8 +46,6 @@ public class MusicSelection extends javax.swing.JPanel
     private int last_model_idx;
     private final TableRowSorter<ChartListTableModel> table_sorter;
     
-    private boolean btn_sd_save = true;
-    
     private class FileItem {
         File file;
         
@@ -79,13 +77,14 @@ public class MusicSelection extends javax.swing.JPanel
         initLogic();
         initComponents();
         
-        File cwd = Config.getCwd();
-        
         List<File> list = Config.getDirsList();
         for(File f : list)combo_dirs.addItem(new FileItem(f));
-        Config.setDirsList(list);
         
-        loadDir(cwd);
+        File cwd = Config.getCwd();
+        if(cwd == null)
+            openFileChooser();
+        else
+            loadDir(cwd);
         
         load_progress.setVisible(false);
         table_sorter = new TableRowSorter<ChartListTableModel>(model_songlist);
@@ -144,7 +143,7 @@ public class MusicSelection extends javax.swing.JPanel
         jLabel2 = new javax.swing.JLabel();
         combo_dirs = new javax.swing.JComboBox();
         btn_reload = new javax.swing.JButton();
-        btn_save_delete = new javax.swing.JButton();
+        btn_delete = new javax.swing.JButton();
         panel_song = new javax.swing.JPanel();
         panel_modifiers = new javax.swing.JPanel();
         lbl_main_vol = new javax.swing.JLabel();
@@ -231,10 +230,10 @@ public class MusicSelection extends javax.swing.JPanel
             }
         });
 
-        btn_save_delete.setText("Save cache");
-        btn_save_delete.addActionListener(new java.awt.event.ActionListener() {
+        btn_delete.setText("Remove Dir");
+        btn_delete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_save_deleteActionPerformed(evt);
+                btn_deleteActionPerformed(evt);
             }
         });
 
@@ -256,7 +255,7 @@ public class MusicSelection extends javax.swing.JPanel
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_reload, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_save_delete))
+                        .addComponent(btn_delete))
                     .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE))
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.CENTER, panel_listLayout.createSequentialGroup()
@@ -275,7 +274,7 @@ public class MusicSelection extends javax.swing.JPanel
                     .addComponent(jLabel2)
                     .addComponent(combo_dirs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_reload)
-                    .addComponent(btn_save_delete)
+                    .addComponent(btn_delete)
                     .addComponent(load_progress, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 441, Short.MAX_VALUE)
@@ -609,11 +608,11 @@ public class MusicSelection extends javax.swing.JPanel
 
         lbl_display.setText("Display:");
 
-        jc_custom_size.setFont(new java.awt.Font("Tahoma", 0, 10));
+        jc_custom_size.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jc_custom_size.setText("Custom size:");
         jc_custom_size.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                jc_custom_sizecustom_size_clicked(evt);
+                jc_custom_size_clicked(evt);
             }
         });
 
@@ -681,7 +680,6 @@ public class MusicSelection extends javax.swing.JPanel
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 890, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -694,7 +692,6 @@ public class MusicSelection extends javax.swing.JPanel
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 602, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -709,42 +706,39 @@ public class MusicSelection extends javax.swing.JPanel
     }// </editor-fold>//GEN-END:initComponents
 
     private void bt_choose_dirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_choose_dirActionPerformed
-        JFileChooser jfc = new JFileChooser();
-        jfc.setCurrentDirectory(Config.getCwd());
-        jfc.setDialogTitle("Choose a directory");
-        jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        jfc.setAcceptAllFileFilterUsed(false);
-        if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            loadDir(jfc.getSelectedFile());
-        }
+       openFileChooser();
 }//GEN-LAST:event_bt_choose_dirActionPerformed
 
     private void combo_dirsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_dirsActionPerformed
-        loadDir(((FileItem)combo_dirs.getSelectedItem()).file);
+        if(combo_dirs.getSelectedIndex() == -1) return;
+        File dir = ((FileItem)combo_dirs.getSelectedItem()).file;
+        if(dir.equals(Config.getCwd())) return;
+        loadDir(dir);
 }//GEN-LAST:event_combo_dirsActionPerformed
 
     private void btn_reloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_reloadActionPerformed
         updateSelection(Config.getCwd());
 }//GEN-LAST:event_btn_reloadActionPerformed
 
-    private void btn_save_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_save_deleteActionPerformed
+    private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
         List<File> dir_list = Config.getDirsList();
-        if(btn_sd_save) {
-            File f = Config.getCwd();
-            if(dir_list.contains(f))return;
-            dir_list.add(Config.getCwd());
-            combo_dirs.addItem(new FileItem(f));
-            //updateDirlist();
-            loadDir(f);
-        }else{
-            File rem = Config.getCwd();
+
+        File rem = Config.getCwd();
+        if(dir_list.contains(rem))
+        {
             dir_list.remove(rem);
             combo_dirs.removeItem(new FileItem(rem));
+            Config.setDirsList(dir_list);
+        }
+        
+        if(dir_list.isEmpty())
+            openFileChooser();   
+        else
+        {
             File f = dir_list.get(0);
             loadDir(f);
         }
-        Config.setDirsList(dir_list);
-}//GEN-LAST:event_btn_save_deleteActionPerformed
+}//GEN-LAST:event_btn_deleteActionPerformed
 
     private void jr_rank_easyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jr_rank_easyActionPerformed
         rank = 0;
@@ -775,7 +769,7 @@ public class MusicSelection extends javax.swing.JPanel
                 JOptionPane.INFORMATION_MESSAGE, new ImageIcon(i));
 }//GEN-LAST:event_lbl_coverMouseClicked
 
-    private void jc_custom_sizecustom_size_clicked(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jc_custom_sizecustom_size_clicked
+    private void jc_custom_size_clicked(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jc_custom_size_clicked
         if (evt.getStateChange() == ItemEvent.SELECTED){
             combo_displays.setEnabled(false);
             txt_res_width.setEnabled(true);
@@ -787,7 +781,7 @@ public class MusicSelection extends javax.swing.JPanel
             txt_res_height.setEnabled(false);
             combo_displays.setEnabled(true);
         }
-}//GEN-LAST:event_jc_custom_sizecustom_size_clicked
+}//GEN-LAST:event_jc_custom_size_clicked
 
     private void bt_playActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_playActionPerformed
         if(selected_header != null) {
@@ -845,8 +839,8 @@ public class MusicSelection extends javax.swing.JPanel
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bt_choose_dir;
     private javax.swing.JButton bt_play;
+    private javax.swing.JButton btn_delete;
     private javax.swing.JButton btn_reload;
-    private javax.swing.JButton btn_save_delete;
     private javax.swing.JComboBox combo_channelModifier;
     private javax.swing.JComboBox combo_dirs;
     private javax.swing.JComboBox combo_displays;
@@ -949,21 +943,7 @@ public class MusicSelection extends javax.swing.JPanel
     private void loadDir(File dir)
     {
         Config.setCwd(dir);
-        
-        List<File> dir_list = Config.getDirsList();
-        
-        if(dir_list.contains(dir)){
-            btn_sd_save = false;
-            btn_save_delete.setText("Remove dir");
-        } else {
-            btn_save_delete.setText("Save dir");
-            btn_sd_save = true;
-        }
-        
-        // update combo box dir list
-        System.out.println("set "+dir);
-        combo_dirs.setSelectedItem(new FileItem(dir));
-        
+        if(dir == null) return;
         
         List<ChartList> l = Config.getCache(dir);
         
@@ -972,12 +952,40 @@ public class MusicSelection extends javax.swing.JPanel
         } else {
             model_songlist.setRawList(l);
         }
+        
+        List<File> dir_list = Config.getDirsList();      
+        if(!dir_list.contains(dir))
+        {
+            dir_list.add(dir);
+            combo_dirs.addItem(new FileItem(dir));
+            Config.setDirsList(dir_list);
+        }   
+        // update combo box dir list
+        System.out.println("set "+dir);
+        combo_dirs.setSelectedItem(new FileItem(dir));
+    }
+    
+    private void openFileChooser()
+    {
+        JFileChooser jfc = new JFileChooser();
+        jfc.setCurrentDirectory(Config.getCwd());
+        jfc.setDialogTitle("Choose a directory");
+        jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        jfc.setAcceptAllFileFilterUsed(false);
+        if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            loadDir(jfc.getSelectedFile());
+        }
+        else
+        {
+//            JOptionPane.showMessageDialog(this, "You haven't selected any directory. Byebye...", "You failed to humanity :(", JOptionPane.ERROR_MESSAGE);
+//            System.exit(1);
+        }
     }
 
     private void updateSelection(File f) {
         bt_choose_dir.setEnabled(false);
         btn_reload.setVisible(false);
-        btn_save_delete.setVisible(false);
+        btn_delete.setVisible(false);
         combo_dirs.setEnabled(false);
         txt_filter.setEnabled(false);
         table_songlist.setEnabled(false);
@@ -987,15 +995,6 @@ public class MusicSelection extends javax.swing.JPanel
         task.addPropertyChangeListener(this);
         task.execute();
     }
-
-//    private void updateDirlist()
-//    {
-//        List<File> list = Config.get().getDirsList();
-//        combo_dirs.removeAllItems();
-//        for (File i : list) {
-//            combo_dirs.addItem(i.getName());
-//        }
-//    }
     
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
@@ -1006,7 +1005,7 @@ public class MusicSelection extends javax.swing.JPanel
             if(i == 100)
             {
                 bt_choose_dir.setEnabled(true);
-                btn_save_delete.setVisible(true);
+                btn_delete.setVisible(true);
                 combo_dirs.setEnabled(true);
                 btn_reload.setVisible(true);
                 load_progress.setVisible(false);
