@@ -82,7 +82,17 @@ public class MusicSelection extends javax.swing.JPanel
         
         File cwd = Config.getCwd();
         if(cwd == null)
-            openFileChooser();
+        {
+            //just in case, should not go inside this if
+            if(!Config.getDirsList().isEmpty())
+            {
+                cwd =Config.getDirsList().get(0);
+                Config.setCwd(cwd);
+                loadDir(cwd);
+            }
+            else
+                openFileChooser();
+        }
         else
             loadDir(cwd);
         
@@ -967,6 +977,9 @@ public class MusicSelection extends javax.swing.JPanel
     
     private void openFileChooser()
     {
+        if(Config.getDirsList().isEmpty())
+            Config.setCwd(null);
+        
         JFileChooser jfc = new JFileChooser();
         jfc.setCurrentDirectory(Config.getCwd());
         jfc.setDialogTitle("Choose a directory");
