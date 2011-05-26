@@ -18,7 +18,7 @@ public class ComboCounterEntity extends NumberEntity
 
     /** the time in milliseconds in which the entity
      * will be displayed when the count is updated */
-    private static final int show_time = 4000;
+    private static final int show_time = 850;
 
     /** the base position of the entity */
     private double base_y;
