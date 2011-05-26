@@ -5,6 +5,7 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.logging.Level;
+import org.open2jam.Config;
 
 import org.open2jam.util.Logger;
 import org.open2jam.util.SystemTimer;
@@ -116,17 +117,39 @@ public class TimeRender extends Render
                 if(e instanceof TimeEntity)
                 {
                     TimeEntity te = (TimeEntity) e;
-                    double y = getViewport() - velocity_integral(now,te.getTime());
+                    
+                    double y = getViewport() - 
+                            velocity_integral(now, te.getTime());
+                   
                     if(te.getTime() - now <= 0)
                     {
                         te.judgment();
                     }
-                    if(e instanceof MeasureEntity) y += e.getHeight()*2;
-                    e.setPos(e.getX(), y);
-
-                    if(e instanceof NoteEntity){
-                        check_judgment((NoteEntity)e);
+                    
+                    // Only measures and notes should be affected by the 
+                    // y_offset fix for display lag
+                    if (e instanceof MeasureEntity) 
+                    {
+                        double y_offset = velocity_integral(now, now +
+                            Config.get().getDisplayLag());
+                        
+                        y += e.getHeight() * 2;
+                        
+                        e.setPos(e.getX(), y + y_offset);
                     }
+                            
+                    else if (e instanceof NoteEntity)
+                    {
+                        double y_offset = velocity_integral(now, now +
+                            Config.get().getDisplayLag());
+                        
+                        check_judgment((NoteEntity)e);
+                        
+                        e.setPos(e.getX(), y + y_offset);
+                    }
+                            
+                    else e.setPos(e.getX(), y);
+
                 }
 
                 if(e.isDead())j.remove();

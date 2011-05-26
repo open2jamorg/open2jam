@@ -113,6 +113,7 @@ public class DistanceRender extends Render
             while(j.hasNext()) // loop over entities
             {
                 Entity e = j.next();
+
                 e.move(delta); // move the entity
 
                 if(e instanceof TimeEntity)

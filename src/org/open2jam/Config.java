@@ -36,6 +36,12 @@ public class Config implements Serializable
 
     /** singleton object */
     private static Config config = null;
+    
+    /** 
+     * Stores input delay data, in milliseconds. 
+     * Decimals are allowed (but unnecessary imo).
+     */
+    private double displayLag;
 
     public enum KeyboardType{K4, K5, K6, K7, K8, /*K9*/}
 
@@ -95,6 +101,18 @@ public class Config implements Serializable
         keyboard_map.put(KeyboardType.K6, keyboard_map_6K);
         keyboard_map.put(KeyboardType.K7, keyboard_map_7K);
         keyboard_map.put(KeyboardType.K8, keyboard_map_8K);
+        
+        displayLag = 1000d;
+    }
+    
+    public double getDisplayLag()
+    {
+        return displayLag;
+    }
+    
+    public void setDisplayLag(double displayLag)
+    {
+        this.displayLag = displayLag;
     }
 
     public EnumMap<Event.Channel,Integer> getKeyboardMap(KeyboardType kt){
@@ -134,6 +152,8 @@ public class Config implements Serializable
                 ObjectInputStream obj = new ObjectInputStream(new FileInputStream(CONFIG_FILE));
                 config = (Config) obj.readObject();
                 obj.close();
+                // Hard coded right now
+                config.displayLag = 15d;
             } catch (ClassNotFoundException ex) {
                 Logger.global.severe("There's no Config class !! impossibru !");
             } catch (FileNotFoundException ex) {
