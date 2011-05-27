@@ -17,6 +17,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.Config;
+import org.open2jam.Config.MiscEvent;
 import org.open2jam.parser.Event;
 import org.open2jam.parser.Chart;
 import org.open2jam.render.entities.BarEntity;
@@ -62,6 +63,9 @@ public abstract class Render implements GameWindowCallback
     
     /** the mapping of note channels to KeyEvent keys  */
     final EnumMap<Event.Channel, Integer> keyboard_map;
+
+    /** the mapping of note channels to KeyEvent keys  */
+    final EnumMap<MiscEvent, Integer> keyboard_misc;
     
     /** The window that is being used to render the game */
     final GameWindow window;
@@ -73,7 +77,7 @@ public abstract class Render implements GameWindowCallback
     int fps;
 
     /** the hispeed */
-    private final double hispeed;
+    double hispeed;
     
     /** the size of a measure */
     private double measure_size;
@@ -178,14 +182,16 @@ public abstract class Render implements GameWindowCallback
     double total_notes = 0;
 
     /** the channelMirror, random select */
-    private int channelModifier = 0;
+    private final int channelModifier;
+    
+    /** the visibility modifier */
+    private final int visibilityModifier;
 
     protected CompositeEntity visibility_entity;
     /** The volume */
-    private final float mainVolume;
-    private final float keyVolume;
-    private final float bgmVolume;
-    private final int visibilityModifier;
+    private float mainVolume;
+    private float keyVolume;
+    private float bgmVolume;
 
     static {
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
@@ -194,6 +200,7 @@ public abstract class Render implements GameWindowCallback
     Render(Chart chart, double hispeed, boolean autoplay, int channelModifier, int visibilityModifier, int mainVol, int keyVol, int bgmVol)
     {
         keyboard_map = Config.getKeyboardMap(Config.KeyboardType.K7);
+        keyboard_misc =Config.getKeyboardMisc();
         window = ResourceFactory.get().getGameWindow();
         entities_matrix = new EntityMatrix();
         this.chart = chart;
@@ -266,15 +273,28 @@ public abstract class Render implements GameWindowCallback
     }
 
     /** XXX: inline ? */
-    private void updateHispeed()
+    private void updateHispeed(MiscEvent type)
     {
-        judgment_line_y1 = skin.getJudgmentLine() - JUDGMENT_SIZE;
-        if(hispeed > 1){
-            double off = JUDGMENT_SIZE * (hispeed-1);
-            judgment_line_y1 -= off;
+        {
+            switch(type)
+            {
+                case SPEED_DOWN:
+                    if(hispeed > 0.5d) hispeed -= 0.5d;                   
+                break;
+                case SPEED_UP:
+                    if(hispeed < 10d) hispeed += 0.5d;
+                break;
+            }
         }
+        
+        judgment_line_y1 = skin.getJudgmentLine() - JUDGMENT_SIZE;
+        
 
-        measure_size = 0.8 * hispeed * getViewport();
+        double off = JUDGMENT_SIZE * (hispeed-1);
+        judgment_line_y1 -= off;
+
+        
+        System.out.println(hispeed+"  "+judgment_line_y1);
     }
 
     double getViewport() { return judgment_line_y2; }
@@ -324,7 +344,10 @@ public abstract class Render implements GameWindowCallback
         }
 
         judgment_line_y2 = skin.getJudgmentLine();
-	updateHispeed();
+        
+	updateHispeed(MiscEvent.NONE);
+        
+        measure_size = 0.8 * getViewport();
 
         bpm = chart.getBPM();
         buffer_bpm = chart.getBPM();
@@ -558,7 +581,28 @@ public abstract class Render implements GameWindowCallback
             }
         }
     }
-
+    
+    private List<Integer> misc_keys = new LinkedList<Integer>();
+    
+    void check_misc_keyboard()
+    {
+	for(Map.Entry<MiscEvent,Integer> entry : keyboard_misc.entrySet())
+        {
+            MiscEvent event  = entry.getKey();
+            
+            if(window.isKeyDown(entry.getValue()) && !misc_keys.contains(entry.getValue())) // this key is being pressed
+            {
+                misc_keys.add(entry.getValue());
+                updateHispeed(event);
+            }
+            else if(!window.isKeyDown(entry.getValue()) && misc_keys.contains(entry.getValue()))
+            {
+                misc_keys.remove(entry.getValue());
+            }
+        }        
+    }
+    
+    
     private final IntervalTree<Double,Double> velocity_tree;
     /**
      * given a time segment, returns the distance, in pixels,
@@ -595,7 +639,7 @@ public abstract class Render implements GameWindowCallback
                     integral += i.getData() * (i.getEnd() - i.getStart());
             }
         }
-        return negative ? -integral : integral;
+        return (negative ? -integral : integral) * hispeed;
     }
 
     private void construct_velocity_tree(Iterator<Event> it)

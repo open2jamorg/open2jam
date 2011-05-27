@@ -43,6 +43,15 @@ public abstract class Config
 
     public enum KeyboardType {K4, K5, K6, K7, K8, /*K9*/}
     
+    public enum MiscEvent {  
+        NONE,                       //None
+        SPEED_UP, SPEED_DOWN,       //speed changes
+        MAIN_VOL_UP, MAIN_VOL_DOWN, //main volume changes
+        KEY_VOL_UP, KEY_VOL_DOWN,   //key volume changes
+        BGM_VOL_UP, BGM_VOL_DOWN,   //bgm volume changes
+        //CHAT_TOGGLE,                //chat toggle... if we are going to add one
+    }
+    
     public static void openDB() {
         
         if(!CONFIG_DBFILE.exists()) { // create now
@@ -64,6 +73,13 @@ public abstract class Config
             
             setDirsList(new ArrayList<File>());
 
+            EnumMap<MiscEvent, Integer> keyboard_misc = new EnumMap<MiscEvent, Integer>(MiscEvent.class);
+            keyboard_misc.put(MiscEvent.SPEED_DOWN, Keyboard.KEY_DOWN);
+            keyboard_misc.put(MiscEvent.SPEED_UP, Keyboard.KEY_UP);
+            keyboard_misc.put(MiscEvent.MAIN_VOL_UP, Keyboard.KEY_1);
+            keyboard_misc.put(MiscEvent.MAIN_VOL_DOWN, Keyboard.KEY_2);
+            put("keyboard_misc", keyboard_misc);
+            
             // TODO Needs the 2nd player keys, if we are going to add 2p support ofc xD
             EnumMap<Event.Channel, Integer> keyboard_map_4K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
             keyboard_map_4K.put(Event.Channel.NOTE_1, Keyboard.KEY_D);
@@ -128,6 +144,11 @@ public abstract class Config
     @SuppressWarnings("unchecked")
     public static EnumMap<Event.Channel,Integer> getKeyboardMap(KeyboardType kt){
         return (EnumMap<Channel, Integer>) get("keyboard_map"+kt.toString());
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static EnumMap<MiscEvent,Integer> getKeyboardMisc(){
+        return (EnumMap<MiscEvent, Integer>) get("keyboard_misc");
     }
 
     public static void setKeyboardMap(EnumMap<Event.Channel,Integer> kb_map, KeyboardType kt){

@@ -93,6 +93,8 @@ public class TimeRender extends Render
                 second_entity.incNumber();
         }
         
+        check_misc_keyboard();
+        
         now = SystemTimer.getTime() - start_time;
         update_note_buffer(now);
 

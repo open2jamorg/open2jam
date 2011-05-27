@@ -1,13 +1,9 @@
 package org.open2jam.gui.parts;
 
 import java.awt.Font;
-import java.io.File;
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -230,7 +226,6 @@ public class Configuration extends javax.swing.JPanel {
     {
         String place = tKeys.getValueAt(tKeys.getSelectedRow(), 0).toString();
         if(Display.isCreated())throw new LWJGLException();
-        
         Display.setDisplayMode(new DisplayMode(220,50));
         Display.setTitle(place);
         Display.setVSyncEnabled(true);
