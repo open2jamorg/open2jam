@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.logging.Level;
 import org.open2jam.util.Logger;
 import javax.swing.JOptionPane;
@@ -29,6 +30,7 @@ import org.open2jam.render.entities.MeasureEntity;
 import org.open2jam.render.entities.NoteEntity;
 import org.open2jam.render.entities.NumberEntity;
 import org.open2jam.render.entities.SampleEntity;
+import org.open2jam.render.entities.TimeEntity;
 import org.open2jam.render.lwjgl.SoundManager;
 import org.open2jam.util.Interval;
 import org.open2jam.util.IntervalTree;
@@ -53,20 +55,20 @@ public abstract class Render implements GameWindowCallback
 
     /** skin info and entities */
     Skin skin;
-    
+
     /** defines the judgment space */
     double judgment_line_y1;
     double judgment_line_y2;
 
     /** store the sound sources being played */
     private static final int MAX_SOURCES = 64;
-    
+
     /** the mapping of note channels to KeyEvent keys  */
     final EnumMap<Event.Channel, Integer> keyboard_map;
 
     /** the mapping of note channels to KeyEvent keys  */
     final EnumMap<MiscEvent, Integer> keyboard_misc;
-    
+
     /** The window that is being used to render the game */
     final GameWindow window;
 
@@ -78,7 +80,16 @@ public abstract class Render implements GameWindowCallback
 
     /** the hispeed */
     double hispeed;
-    
+
+    double last_speed;
+    double speed;
+    double next_speed;
+
+    boolean speed_xR = false;
+    private List<Double> speed_xR_values = new LinkedList<Double>();;
+
+    static final double SPEED_FACTOR = 0.1d;
+
     /** the size of a measure */
     private double measure_size;
 
@@ -183,21 +194,23 @@ public abstract class Render implements GameWindowCallback
 
     /** the channelMirror, random select */
     private final int channelModifier;
-    
+
     /** the visibility modifier */
     private final int visibilityModifier;
 
     protected CompositeEntity visibility_entity;
     /** The volume */
-    private float mainVolume;
-    private float keyVolume;
-    private float bgmVolume;
+    private float mainVolume = 0.5f;
+    private float keyVolume = 1.0f;
+    private float bgmVolume = 1.0f;
+
+    private final static float VOLUME_FACTOR = 0.05f;
 
     static {
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
     }
 
-    Render(Chart chart, double hispeed, boolean autoplay, int channelModifier, int visibilityModifier, int mainVol, int keyVol, int bgmVol)
+    Render(Chart chart, double hispeed, boolean speed_xr, boolean autoplay, int channelModifier, int visibilityModifier)
     {
         keyboard_map = Config.getKeyboardMap(Config.KeyboardType.K7);
         keyboard_misc =Config.getKeyboardMisc();
@@ -205,13 +218,13 @@ public abstract class Render implements GameWindowCallback
         entities_matrix = new EntityMatrix();
         this.chart = chart;
         this.hispeed = hispeed;
+        this.speed_xR = speed_xr;
         velocity_tree = new IntervalTree<Double,Double>();
         this.AUTOPLAY = autoplay;
         this.channelModifier = channelModifier;
         this.visibilityModifier = visibilityModifier;
-        this.mainVolume = (mainVol/100f);
-        this.keyVolume = (keyVol/100f);
-        this.bgmVolume = (bgmVol/100f);
+
+        this.speed = this.next_speed = this.last_speed = hispeed;
     }
 
     /** set the screen dimensions */
@@ -219,103 +232,12 @@ public abstract class Render implements GameWindowCallback
         window.setDisplay(dm,vsync,fs,bilinear);
     }
 
-    /* make the rendering start */
-    public void startRendering()
+
+    public void setVolumes(int mainVol, int keyVol, int bgmVol)
     {
-        window.setGameWindowCallback(this);
-        window.setTitle(chart.getArtist()+" - "+chart.getTitle());
-
-        try{
-            window.startRendering();
-        }catch(OutOfMemoryError e) {
-            System.gc();
-            Logger.global.log(Level.SEVERE, "System out of memory ! baillin out !!{0}", e.getMessage());
-            JOptionPane.showMessageDialog(null, "Fatal Error", "System out of memory ! baillin out !!",JOptionPane.ERROR_MESSAGE);
-            System.exit(1);
-        }
-        // at this point the game window has gone away
-
-        double precision = (hit_count / total_notes) * 100;
-        double accuracy = (hit_sum / total_notes) * 100;
-        Logger.global.log(Level.INFO,String.format("Precision : %.3f, Accuracy : %.3f", precision, accuracy));
-    }
-
-    /** play a sample */
-    public void queueSample(Event.SoundSample sample)
-    {
-        Integer buffer = samples.get(sample.sample_id);
-        if(buffer == null)return;
-
-        if(!source_queue_iterator.hasNext())
-            source_queue_iterator = source_queue.iterator();
-        Integer head = source_queue_iterator.next();
-
-        Integer source = head;
-
-        while(SoundManager.isPlaying(source)){
-            if(!source_queue_iterator.hasNext())
-                source_queue_iterator = source_queue.iterator();
-            source = source_queue_iterator.next();
-
-            if(source.equals(head)){
-                Logger.global.warning("Source queue exausted !");
-                return;
-            }
-        }
-        float vol = keyVolume;
-        if(sample.isBGM()) vol = bgmVolume;
-        vol = sample.volume*vol;
-        if(vol < 0f) vol = 0f;
-        if(vol > 1f) vol = 1f;
-        SoundManager.setGain(source, vol);
-        SoundManager.setPan(source, sample.pan);
-        SoundManager.play(source, buffer);
-    }
-
-    private void updateHispeed(MiscEvent type)
-    {
-        switch(type)
-        {
-            case SPEED_DOWN:
-                if(hispeed > 0.5d) hispeed -= 0.5d;                   
-            break;
-            case SPEED_UP:
-                if(hispeed < 10d) hispeed += 0.5d;
-            break;
-        }
-
-        judgment_line_y1 = skin.getJudgmentLine() - JUDGMENT_SIZE;
-        
-        double off = JUDGMENT_SIZE * (hispeed-1);
-        judgment_line_y1 -= off;
-
-        //update the longnotes
-        Iterator<LinkedList<Entity>> i = entities_matrix.iterator();
-        while(i.hasNext()) // loop over layers
-        {
-            // get entity iterator from layer
-            Iterator<Entity> j = i.next().iterator();
-            while(j.hasNext()) // loop over entities
-            {
-                Entity e = j.next();
-                if(e instanceof LongNoteEntity)
-                {
-                    LongNoteEntity le = (LongNoteEntity) e;
-                    le.changeEndTime(velocity_integral(le.getTime(),le.getEndTime()));
-                }
-            }
-        }
-    }
-
-    double getViewport() { return judgment_line_y2; }
-
-    double judgmentArea()
-    {
-        // y2-y1 is the the upper half of the judgment area
-        // 2*(y2-y1) is the total area
-        // y1 + 2*(y2-y1) is the end line of the area
-        // simplifying: y1 + 2*y2 - 2*y1 == 2*y2 - y1
-        return 2 * judgment_line_y2 - judgment_line_y1;
+        this.mainVolume = (mainVol/100f);
+        this.keyVolume = (keyVol/100f);
+        this.bgmVolume = (bgmVol/100f);
     }
 
     /**
@@ -354,10 +276,17 @@ public abstract class Render implements GameWindowCallback
         }
 
         judgment_line_y2 = skin.getJudgmentLine();
-        
-	updateHispeed(MiscEvent.NONE);
-        
+
+	changeSpeed(0);
+
         measure_size = 0.8 * getViewport();
+
+        Random rnd = new Random();
+
+        for(int i = 0;i<chart.getKeys(); i++)
+        {
+            speed_xR_values.add(i, rnd.nextDouble());
+        }
 
         bpm = chart.getBPM();
         buffer_bpm = chart.getBPM();
@@ -486,6 +415,201 @@ public abstract class Render implements GameWindowCallback
         start_time = lastLoopTime = SystemTimer.getTime();
     }
 
+    /* make the rendering start */
+    public void startRendering()
+    {
+        window.setGameWindowCallback(this);
+        window.setTitle(chart.getArtist()+" - "+chart.getTitle());
+
+        try{
+            window.startRendering();
+        }catch(OutOfMemoryError e) {
+            System.gc();
+            Logger.global.log(Level.SEVERE, "System out of memory ! baillin out !!{0}", e.getMessage());
+            JOptionPane.showMessageDialog(null, "Fatal Error", "System out of memory ! baillin out !!",JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        }
+        // at this point the game window has gone away
+
+        double precision = (hit_count / total_notes) * 100;
+        double accuracy = (hit_sum / total_notes) * 100;
+        Logger.global.log(Level.INFO,String.format("Precision : %.3f, Accuracy : %.3f", precision, accuracy));
+    }
+
+
+    /**
+    * Notification that a frame is being rendered. Responsible for
+    * running game logic and rendering the scene.
+    */
+    @Override
+    public void frameRendering()
+    {
+        // work out how long its been since the last update, this
+        // will be used to calculate how far the entities should
+        // move this loop
+        double now = SystemTimer.getTime();
+        double delta = now - lastLoopTime;
+        lastLoopTime = now;
+        lastFpsTime += delta;
+        fps++;
+
+        update_fps_counter();
+
+        check_misc_keyboard();
+
+        //updateSpeed();
+
+        now = SystemTimer.getTime() - start_time;
+        update_note_buffer(now);
+
+        now = SystemTimer.getTime() - start_time;
+
+	if(AUTOPLAY)do_autoplay(now);
+        else check_keyboard(now);
+
+        Iterator<LinkedList<Entity>> i = entities_matrix.iterator();
+        while(i.hasNext()) // loop over layers
+        {
+            // get entity iterator from layer
+            Iterator<Entity> j = i.next().iterator();
+            while(j.hasNext()) // loop over entities
+            {
+                Entity e = j.next();
+                e.move(delta); // move the entity
+
+                if(e instanceof TimeEntity)
+                {
+                    TimeEntity te = (TimeEntity) e;
+                    Event.Channel channel = Event.Channel.NONE;
+                    if(e instanceof NoteEntity) channel = ((NoteEntity)e).getChannel();
+                    double y = getViewport() - velocity_integral(now,te.getTime(), channel);
+                    if(te.getTime() - now <= 0)
+                    {
+                        te.judgment();
+                    }
+                    if(e instanceof MeasureEntity) y += e.getHeight()*2;
+                    e.setPos(e.getX(), y);
+
+                    if(e instanceof NoteEntity){
+                        check_judgment((NoteEntity)e);
+                    }
+                }
+
+                if(e.isDead())j.remove();
+                else e.draw();
+            }
+        }
+
+        if(!buffer_iterator.hasNext() && entities_matrix.isEmpty(note_layer)){
+            for(Integer source : source_queue)
+            {
+                // this source is still playing, remove the sounds from the player
+                if(SoundManager.isPlaying(source)){
+                    last_sound.clear();
+                    return;
+                }
+            }
+            // all sources have finished playing
+            window.destroy();
+        }
+    }
+
+    private void update_fps_counter()
+    {
+        // update our FPS counter if a second has passed
+        if (lastFpsTime >= 1000) {
+            Logger.global.log(Level.FINEST, "FPS: {0}", fps);
+            fps_entity.setNumber(fps);
+            lastFpsTime = lastFpsTime-1000;
+            fps = 0;
+
+            //the timer counter
+            if(second_entity.getNumber() >= 59)
+            {
+                second_entity.setNumber(0);
+                minute_entity.incNumber();
+            }
+            else
+                second_entity.incNumber();
+        }
+    }
+
+    void do_autoplay(double now) {}
+
+    void check_keyboard(double now) {}
+
+    void check_judgment(NoteEntity noteEntity) {}
+
+    /** play a sample */
+    public void queueSample(Event.SoundSample sample)
+    {
+        Integer buffer = samples.get(sample.sample_id);
+        if(buffer == null)return;
+
+        if(!source_queue_iterator.hasNext())
+            source_queue_iterator = source_queue.iterator();
+        Integer head = source_queue_iterator.next();
+
+        Integer source = head;
+
+        while(SoundManager.isPlaying(source)){
+            if(!source_queue_iterator.hasNext())
+                source_queue_iterator = source_queue.iterator();
+            source = source_queue_iterator.next();
+
+            if(source.equals(head)){
+                Logger.global.warning("Source queue exausted !");
+                return;
+            }
+        }
+        float vol = keyVolume;
+        if(sample.isBGM()) vol = bgmVolume;
+        vol = sample.volume*vol;
+        if(vol < 0f) vol = 0f;
+        if(vol > 1f) vol = 1f;
+        SoundManager.setGain(source, vol);
+        SoundManager.setPan(source, sample.pan);
+        SoundManager.play(source, buffer);
+    }
+
+    void changeSpeed(double delta)
+    {
+        speed = next_speed;
+
+        judgment_line_y1 = skin.getJudgmentLine() - JUDGMENT_SIZE;
+
+        double off = JUDGMENT_SIZE * (speed-1);
+        judgment_line_y1 -= off;
+
+        //update the longnotes end time
+        Iterator<LinkedList<Entity>> i = entities_matrix.iterator();
+        while(i.hasNext()) // loop over layers
+        {
+            // get entity iterator from layer
+            Iterator<Entity> j = i.next().iterator();
+            while(j.hasNext()) // loop over entities
+            {
+                Entity e = j.next();
+                if(e instanceof LongNoteEntity)
+                {
+                    LongNoteEntity le = (LongNoteEntity) e;
+                    le.changeEndTime(velocity_integral(le.getTime(),le.getEndTime(),le.getChannel()));
+                }
+            }
+        }
+    }
+
+    double getViewport() { return judgment_line_y2; }
+
+    double judgmentArea()
+    {
+        // y2-y1 is the the upper half of the judgment area
+        // 2*(y2-y1) is the total area
+        // y1 + 2*(y2-y1) is the end line of the area
+        // simplifying: y1 + 2*y2 - 2*y1 == 2*y2 - y1
+        return 2 * judgment_line_y2 - judgment_line_y1;
+    }
+
     /** this returns the next note that needs to be played
      ** of the defined channel or NULL if there's
      ** no such note in the moment **/
@@ -503,8 +627,8 @@ public abstract class Render implements GameWindowCallback
         last_sound.put(c, ne.getSample());
         return ne;
     }
-    
-    
+
+
     private int buffer_measure = 0;
 
     private double fractional_measure = 1;
@@ -571,7 +695,7 @@ public abstract class Render implements GameWindowCallback
                     if(lne == null){
                         Logger.global.log(Level.WARNING, "Attempted to RELEASE note {0}", e.getChannel());
                     }else{
-                        lne.setEndTime(buffer_timer,velocity_integral(lne.getTime(),buffer_timer));
+                        lne.setEndTime(buffer_timer,velocity_integral(lne.getTime(),buffer_timer, lne.getChannel()));
                     }
                 }
                 break;
@@ -591,66 +715,67 @@ public abstract class Render implements GameWindowCallback
             }
         }
     }
-    
+
     private List<Integer> misc_keys = new LinkedList<Integer>();
-    
+
     void check_misc_keyboard()
     {
 	for(Map.Entry<MiscEvent,Integer> entry : keyboard_misc.entrySet())
         {
             MiscEvent event  = entry.getKey();
-            
+
             if(window.isKeyDown(entry.getValue()) && !misc_keys.contains(entry.getValue())) // this key is being pressed
             {
                 misc_keys.add(entry.getValue());
-                updateHispeed(event);
+                switch(event)
+                {
+                    case SPEED_UP:
+                        last_speed = next_speed;
+                        if(next_speed < 10d) next_speed += 0.5d;
+                        changeSpeed(0);
+                    break;
+                    case SPEED_DOWN:
+                        last_speed = next_speed;
+                        if(next_speed > 0.5d) next_speed -= 0.5d;
+                        changeSpeed(0);
+                    break;
+                    case MAIN_VOL_UP:
+                        if(mainVolume < 1f) mainVolume += VOLUME_FACTOR;
+                        if(mainVolume > 1f) mainVolume = 1f;
+                        SoundManager.mainVolume(mainVolume);
+                    break;
+                    case MAIN_VOL_DOWN:
+                        if(mainVolume > 0f) mainVolume -= VOLUME_FACTOR;
+                        if(mainVolume < 0f) mainVolume = 0f;
+                        SoundManager.mainVolume(mainVolume);
+                    break;
+                    case KEY_VOL_UP:
+                        if(keyVolume < 1f) keyVolume += VOLUME_FACTOR;
+                        if(keyVolume > 1f) keyVolume = 1f;
+                    break;
+                    case KEY_VOL_DOWN:
+                        if(keyVolume > 0f) keyVolume -= VOLUME_FACTOR;
+                        if(keyVolume < 0f) keyVolume = 0f;
+                    break;
+                    case BGM_VOL_UP:
+                        if(bgmVolume < 1f) bgmVolume += VOLUME_FACTOR;
+                        if(bgmVolume > 1f) bgmVolume = 1f;
+                    break;
+                    case BGM_VOL_DOWN:
+                        if(bgmVolume > 0f) bgmVolume -= VOLUME_FACTOR;
+                        if(bgmVolume < 0f) bgmVolume = 0f;
+                    break;
+                }
             }
             else if(!window.isKeyDown(entry.getValue()) && misc_keys.contains(entry.getValue()))
             {
                 misc_keys.remove(entry.getValue());
             }
-        }        
+        }
     }
-    
-    
+
+
     private final IntervalTree<Double,Double> velocity_tree;
-    /**
-     * given a time segment, returns the distance, in pixels,
-     * from each segment based on the bpm.
-     *
-     * segment types returned by velocity_tree:
-     *  a    t0    b   t1  ->  b - t0
-     * t0     a   t1    b  -> t1 -  a
-     * t0     a    b   t1  ->  b -  a
-     *  a    t0   t1    b  -> t1 - t0
-     */
-    double velocity_integral(double t0, double t1)
-    {
-        boolean negative = false;
-        if(t0 > t1){
-            double tmp = t1;t1 = t0;t0 = tmp; // swap
-            negative = true;
-        }
-        List<Interval<Double,Double>> list = velocity_tree.getIntervals(t0, t1);
-        double integral = 0;
-        for(Interval<Double,Double> i : list)
-        {
-            if(i.getStart() < t0) // 1st or 4th case
-            {
-                if(i.getEnd() < t1) // 1st case
-                    integral += i.getData() * (i.getEnd() - t0);
-                else // 4th case
-                    integral += i.getData() * (t1 - t0);
-            }
-            else { // 2nd or 3rd case
-                if(t1 < i.getEnd()) // 2nd case
-                    integral += i.getData() * (t1 - i.getStart());
-                else // 3rd case
-                    integral += i.getData() * (i.getEnd() - i.getStart());
-            }
-        }
-        return (negative ? -integral : integral) * hispeed;
-    }
 
     private void construct_velocity_tree(Iterator<Event> it)
     {
@@ -691,6 +816,64 @@ public abstract class Render implements GameWindowCallback
         velocity_tree.build();
     }
 
+    /**
+     * given a time segment, returns the distance, in pixels,
+     * from each segment based on the bpm.
+     *
+     * segment types returned by velocity_tree:
+     *  a    t0    b   t1  ->  b - t0
+     * t0     a   t1    b  -> t1 -  a
+     * t0     a    b   t1  ->  b -  a
+     *  a    t0   t1    b  -> t1 - t0
+     */
+    double velocity_integral(double t0, double t1)
+    {
+        boolean negative = false;
+        if(t0 > t1){
+            double tmp = t1;t1 = t0;t0 = tmp; // swap
+            negative = true;
+        }
+        List<Interval<Double,Double>> list = velocity_tree.getIntervals(t0, t1);
+        double integral = 0;
+        for(Interval<Double,Double> i : list)
+        {
+            if(i.getStart() < t0) // 1st or 4th case
+            {
+                if(i.getEnd() < t1) // 1st case
+                    integral += i.getData() * (i.getEnd() - t0);
+                else // 4th case
+                    integral += i.getData() * (t1 - t0);
+            }
+            else { // 2nd or 3rd case
+                if(t1 < i.getEnd()) // 2nd case
+                    integral += i.getData() * (t1 - i.getStart());
+                else // 3rd case
+                    integral += i.getData() * (i.getEnd() - i.getStart());
+            }
+        }
+        return (negative ? -integral : integral) * speed;
+    }
+
+    double velocity_integral(double t0, double t1, Event.Channel chan)
+    {
+        if(!speed_xR) return velocity_integral(t0, t1);
+
+
+        double factor = 1;
+
+        switch(chan)
+        {
+            case NOTE_1: factor += speed_xR_values.get(0); break;
+            case NOTE_2: factor += speed_xR_values.get(1); break;
+            case NOTE_3: factor += speed_xR_values.get(2); break;
+            case NOTE_4: factor += speed_xR_values.get(3); break;
+            case NOTE_5: factor += speed_xR_values.get(4); break;
+            case NOTE_6: factor += speed_xR_values.get(5); break;
+            case NOTE_7: factor += speed_xR_values.get(6); break;
+        }
+
+        return velocity_integral(t0, t1) * factor;
+    }
 
      /**
      * This function will mirrorize the notes
@@ -785,7 +968,7 @@ public abstract class Render implements GameWindowCallback
 
 	    switch(e.getChannel())
 	    {
-		case NOTE_1: 
+		case NOTE_1:
                     setRandomChannel(e, lnMap, channelSwap.get(0));
                 break;
 		case NOTE_2:
@@ -852,7 +1035,7 @@ public abstract class Render implements GameWindowCallback
                 visibility_entity.getEntityList().add(new Entity(rec, skin.getEntityMap().get(ev.toString()).getX(), 0));
             }
         }
-        
+
         int layer = note_layer+1;
 
         for(Entity e : skin.getEntityList())

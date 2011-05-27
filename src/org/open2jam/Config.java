@@ -74,10 +74,14 @@ public abstract class Config
             setDirsList(new ArrayList<File>());
 
             EnumMap<MiscEvent, Integer> keyboard_misc = new EnumMap<MiscEvent, Integer>(MiscEvent.class);
-            keyboard_misc.put(MiscEvent.SPEED_DOWN, Keyboard.KEY_DOWN);
-            keyboard_misc.put(MiscEvent.SPEED_UP, Keyboard.KEY_UP);
-            keyboard_misc.put(MiscEvent.MAIN_VOL_UP, Keyboard.KEY_1);
-            keyboard_misc.put(MiscEvent.MAIN_VOL_DOWN, Keyboard.KEY_2);
+            keyboard_misc.put(MiscEvent.SPEED_DOWN,   Keyboard.KEY_DOWN);
+            keyboard_misc.put(MiscEvent.SPEED_UP,     Keyboard.KEY_UP);
+            keyboard_misc.put(MiscEvent.MAIN_VOL_UP,  Keyboard.KEY_2);
+            keyboard_misc.put(MiscEvent.MAIN_VOL_DOWN,Keyboard.KEY_1);
+            keyboard_misc.put(MiscEvent.KEY_VOL_UP,   Keyboard.KEY_4);
+            keyboard_misc.put(MiscEvent.KEY_VOL_DOWN, Keyboard.KEY_3);
+            keyboard_misc.put(MiscEvent.BGM_VOL_UP,   Keyboard.KEY_6);
+            keyboard_misc.put(MiscEvent.BGM_VOL_DOWN, Keyboard.KEY_5);
             put("keyboard_misc", keyboard_misc);
             
             // TODO Needs the 2nd player keys, if we are going to add 2p support ofc xD
@@ -149,6 +153,11 @@ public abstract class Config
     @SuppressWarnings("unchecked")
     public static EnumMap<MiscEvent,Integer> getKeyboardMisc(){
         return (EnumMap<MiscEvent, Integer>) get("keyboard_misc");
+    }
+    
+    public static void setKeyboardMisc(EnumMap<MiscEvent,Integer> km_map)
+    {
+        put("keyboard_misc", km_map);
     }
 
     public static void setKeyboardMap(EnumMap<Event.Channel,Integer> kb_map, KeyboardType kt){

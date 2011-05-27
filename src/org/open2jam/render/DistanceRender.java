@@ -2,22 +2,15 @@ package org.open2jam.render;
 
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.logging.Level;
 
-import org.open2jam.util.Logger;
 import org.open2jam.util.SystemTimer;
 
 import org.open2jam.parser.Chart;
 import org.open2jam.parser.Event;
 import org.open2jam.render.entities.Entity;
 import org.open2jam.render.entities.LongNoteEntity;
-import org.open2jam.render.entities.MeasureEntity;
 import org.open2jam.render.entities.NoteEntity;
 import org.open2jam.render.entities.NumberEntity;
-import org.open2jam.render.entities.TimeEntity;
-import org.open2jam.render.lwjgl.SoundManager;
 
 
 public class DistanceRender extends Render
@@ -40,9 +33,9 @@ public class DistanceRender extends Render
 
     private EnumMap<JUDGE,NumberEntity> note_counter;
 
-    public DistanceRender(Chart c, double hispeed, boolean autoplay, int channelModifier, int visibilityModifier, int mainVol, int keyVol, int bgmVol)
+    public DistanceRender(Chart c, double hispeed, boolean speed_xr, boolean autoplay, int channelModifier, int visibilityModifier)
     {
-        super(c,hispeed,autoplay,channelModifier,visibilityModifier, mainVol, keyVol, bgmVol);
+        super(c,hispeed,speed_xr,autoplay,channelModifier,visibilityModifier);
     }
 
     /**
@@ -62,96 +55,8 @@ public class DistanceRender extends Render
         start_time = lastLoopTime = SystemTimer.getTime();
     }
 
-    
-    /**
-    * Notification that a frame is being rendered. Responsible for
-    * running game logic and rendering the scene.
-    */
     @Override
-    public void frameRendering()
-    {
-        // work out how long its been since the last update, this
-        // will be used to calculate how far the entities should
-        // move this loop
-        double now = SystemTimer.getTime();
-        double delta = now - lastLoopTime;
-        lastLoopTime = now;
-        lastFpsTime += delta;
-        fps++;
-        
-        // update our FPS counter if a second has passed
-        if (lastFpsTime >= 1000) {
-            Logger.global.log(Level.FINEST, "FPS: {0}", fps);
-            fps_entity.setNumber(fps);
-            lastFpsTime = lastFpsTime-1000;
-            fps = 0;
-
-            //the timer counter
-            if(second_entity.getNumber() >= 59)
-            {
-                second_entity.setNumber(0);
-                minute_entity.incNumber();
-            }
-            else
-                second_entity.incNumber();
-        }
-
-        check_misc_keyboard();
-        
-        now = SystemTimer.getTime() - start_time;
-        update_note_buffer(now);
-
-        now = SystemTimer.getTime() - start_time;
-        
-	if(AUTOPLAY)do_autoplay();
-        else check_keyboard();
-
-        Iterator<LinkedList<Entity>> i = entities_matrix.iterator();
-        while(i.hasNext()) // loop over layers
-        {
-            // get entity iterator from layer
-            Iterator<Entity> j = i.next().iterator();
-            while(j.hasNext()) // loop over entities
-            {
-                Entity e = j.next();
-                e.move(delta); // move the entity
-
-                if(e instanceof TimeEntity)
-                {
-                    TimeEntity te = (TimeEntity) e;
-                    double y = getViewport() - velocity_integral(now,te.getTime());
-                    if(te.getTime() - now <= 0)
-                    {
-                        te.judgment();
-                    }
-                    if(e instanceof MeasureEntity) y += e.getHeight()*2;
-                    e.setPos(e.getX(), y);
-
-                    if(e instanceof NoteEntity){
-                        check_judgment((NoteEntity)e);
-                    }
-                }
-
-                if(e.isDead())j.remove();
-                else e.draw();
-            }
-        }
-
-        if(!buffer_iterator.hasNext() && entities_matrix.isEmpty(note_layer)){
-            for(Integer source : source_queue)
-            {
-                // this source is still playing, remove the sounds from the player
-                if(SoundManager.isPlaying(source)){
-                    last_sound.clear();
-                    return;
-                }
-            }
-            // all sources have finished playing
-            window.destroy();
-        }
-    }
-
-    private void check_judgment(NoteEntity ne)
+    void check_judgment(NoteEntity ne)
     {
         JUDGE judge;
         switch (ne.getState())
@@ -347,7 +252,8 @@ public class DistanceRender extends Render
         return judge;
     }
 
-    private void do_autoplay()
+    @Override
+    void do_autoplay(double now)
     {
         for(Event.Channel c : keyboard_map.keySet())
         {
@@ -385,7 +291,8 @@ public class DistanceRender extends Render
         }
     }
 
-    private void check_keyboard()
+    @Override
+    void check_keyboard(double now)
     {
 	for(Map.Entry<Event.Channel,Integer> entry : keyboard_map.entrySet())
         {
