@@ -272,29 +272,39 @@ public abstract class Render implements GameWindowCallback
         SoundManager.play(source, buffer);
     }
 
-    /** XXX: inline ? */
     private void updateHispeed(MiscEvent type)
     {
+        switch(type)
         {
-            switch(type)
-            {
-                case SPEED_DOWN:
-                    if(hispeed > 0.5d) hispeed -= 0.5d;                   
-                break;
-                case SPEED_UP:
-                    if(hispeed < 10d) hispeed += 0.5d;
-                break;
-            }
+            case SPEED_DOWN:
+                if(hispeed > 0.5d) hispeed -= 0.5d;                   
+            break;
+            case SPEED_UP:
+                if(hispeed < 10d) hispeed += 0.5d;
+            break;
         }
-        
+
         judgment_line_y1 = skin.getJudgmentLine() - JUDGMENT_SIZE;
         
-
         double off = JUDGMENT_SIZE * (hispeed-1);
         judgment_line_y1 -= off;
 
-        
-        System.out.println(hispeed+"  "+judgment_line_y1);
+        //update the longnotes
+        Iterator<LinkedList<Entity>> i = entities_matrix.iterator();
+        while(i.hasNext()) // loop over layers
+        {
+            // get entity iterator from layer
+            Iterator<Entity> j = i.next().iterator();
+            while(j.hasNext()) // loop over entities
+            {
+                Entity e = j.next();
+                if(e instanceof LongNoteEntity)
+                {
+                    LongNoteEntity le = (LongNoteEntity) e;
+                    le.changeEndTime(velocity_integral(le.getTime(),le.getEndTime()));
+                }
+            }
+        }
     }
 
     double getViewport() { return judgment_line_y2; }

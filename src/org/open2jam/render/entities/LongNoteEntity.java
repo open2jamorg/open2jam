@@ -46,6 +46,10 @@ public class LongNoteEntity extends NoteEntity
         end_dist = note_size;
     }
 
+    public void changeEndTime(double note_size){
+        end_dist = note_size;
+    }
+    
     public double getEndTime() {
         return end_time == null ? -10 : end_time;
     }
