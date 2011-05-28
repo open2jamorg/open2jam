@@ -110,12 +110,13 @@ public class LongNoteEntity extends NoteEntity
     @Override
     public void draw()
     {
-        double end = getY();
+        double end = getY() - normal_sprite.getHeight();
         double local_y = y;
-	float sy = (float) ((local_y + normal_sprite.getHeight() - end) / body_sprite.getHeight());
-        body_sprite.draw(x, end, body_sprite.getScaleX(), sy);                      //the middle
-        tail_sprite.draw(x,local_y+(normal_sprite.getHeight()-sprite.getHeight())); // the bottom
-        sprite.draw(x,end);                                                         // the top
+	float sy = (float) ((local_y - end) / body_sprite.getHeight());
+        
+        body_sprite.draw(x, end, body_sprite.getScaleX(), sy);                  //the middle
+        tail_sprite.draw(x, local_y-tail_sprite.getHeight());                 // the bottom
+        sprite.draw     (x, end);                            // the top
         
     }
 

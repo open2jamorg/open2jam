@@ -18,7 +18,6 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.Config;
-import org.open2jam.Config.MiscEvent;
 import org.open2jam.parser.Event;
 import org.open2jam.parser.Chart;
 import org.open2jam.render.entities.BarEntity;
@@ -67,7 +66,7 @@ public abstract class Render implements GameWindowCallback
     final EnumMap<Event.Channel, Integer> keyboard_map;
 
     /** the mapping of note channels to KeyEvent keys  */
-    final EnumMap<MiscEvent, Integer> keyboard_misc;
+    final EnumMap<Config.MiscEvent, Integer> keyboard_misc;
 
     /** The window that is being used to render the game */
     final GameWindow window;
@@ -480,19 +479,22 @@ public abstract class Render implements GameWindowCallback
                 if(e instanceof TimeEntity)
                 {
                     TimeEntity te = (TimeEntity) e;
+                    //autoplays sounds play
+                    if(te.getTime() - now <= 0) te.judgment();
+
+                    //channel needed by the xR speed
                     Event.Channel channel = Event.Channel.NONE;
                     if(e instanceof NoteEntity) channel = ((NoteEntity)e).getChannel();
+
                     double y = getViewport() - velocity_integral(now,te.getTime(), channel);
-                    if(te.getTime() - now <= 0)
-                    {
-                        te.judgment();
-                    }
-                    if(e instanceof MeasureEntity) y += e.getHeight()*2;
+                    
+                    //TODO Fix this, maybe an option in the skin
+                    //o2jam overlaps 1 px of the note with the measure and, because of this
+                    //our skin should do it too xD
+                    if(e instanceof MeasureEntity) y -= 1;
                     e.setPos(e.getX(), y);
 
-                    if(e instanceof NoteEntity){
-                        check_judgment((NoteEntity)e);
-                    }
+                    if(e instanceof NoteEntity) check_judgment((NoteEntity)e);
                 }
 
                 if(e.isDead())j.remove();
@@ -720,9 +722,9 @@ public abstract class Render implements GameWindowCallback
 
     void check_misc_keyboard()
     {
-	for(Map.Entry<MiscEvent,Integer> entry : keyboard_misc.entrySet())
+	for(Map.Entry<Config.MiscEvent,Integer> entry : keyboard_misc.entrySet())
         {
-            MiscEvent event  = entry.getKey();
+            Config.MiscEvent event  = entry.getKey();
 
             if(window.isKeyDown(entry.getValue()) && !misc_keys.contains(entry.getValue())) // this key is being pressed
             {

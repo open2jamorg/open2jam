@@ -79,11 +79,12 @@
             <frame x="225" y="138" w="188" h="3" file="main.png" />
         </sprite>
 
-        <sprite framespeed="12" id="head_note_white">
+       <sprite framespeed="12" id="head_note_white">
             <frame x="225" y="142" w="28" h="7" file="main.png" />
             <frame x="225" y="150" w="28" h="7" file="main.png" />
             <frame x="225" y="158" w="28" h="7" file="main.png" />
         </sprite>
+        
         <sprite framespeed="12" id="body_note_white">
             <frame x="225" y="143" w="28" h="5" file="main.png" />
             <frame x="225" y="151" w="28" h="5" file="main.png" />
@@ -453,7 +454,7 @@
 
     <!-- measure mark -->
         <layer>
-            <entity x="4" id="MEASURE_MARK" sprite="measure_mark" />
+            <entity x="5" id="MEASURE_MARK" sprite="measure_mark" />
         </layer>
 
     <!-- notes -->

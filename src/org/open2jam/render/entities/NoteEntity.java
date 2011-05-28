@@ -68,6 +68,13 @@ public class NoteEntity extends AnimatedEntity implements TimeEntity
         else if(p > 1)p = Math.max(0, 2 - p);
         return p;
     }
+    
+    @Override
+    public void setPos(double x, double y)
+    {
+        this.x = x;
+        this.y = y - height;
+    }
 
     @Override
     public void setTime(double time){
