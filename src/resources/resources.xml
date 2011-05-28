@@ -163,34 +163,34 @@
 	
 
 	<sprite id="combo_number_0">
-		<frame x="40" y="27" w="46" h="71" file="numbers_1.png" />
+		<frame x="39" y="27" w="48" h="71" file="numbers_1.png" />
 	</sprite>
 	<sprite id="combo_number_1">
-		<frame x="177" y="28" w="46" h="71" file="numbers_1.png" />
+		<frame x="163" y="26" w="48" h="71" file="numbers_1.png" />
 	</sprite>
 	<sprite id="combo_number_2">
-		<frame x="298" y="27" w="46" h="71" file="numbers_1.png" />
+		<frame x="296" y="26" w="48" h="71" file="numbers_1.png" />
 	</sprite>
 	<sprite id="combo_number_3">
-		<frame x="427" y="27" w="46" h="71" file="numbers_1.png" />
+		<frame x="424" y="27" w="48" h="71" file="numbers_1.png" />
 	</sprite>
 	<sprite id="combo_number_4">
-		<frame x="553" y="28" w="46" h="71" file="numbers_1.png" />
+		<frame x="552" y="26" w="48" h="71" file="numbers_1.png" />
 	</sprite>
 	<sprite id="combo_number_5">
-		<frame x="41" y="155" w="46" h="71" file="numbers_1.png" />
+		<frame x="39" y="154" w="48" h="71" file="numbers_1.png" />
 	</sprite>
 	<sprite id="combo_number_6">
-		<frame x="169" y="155" w="46" h="71" file="numbers_1.png" />
+		<frame x="167" y="154" w="48" h="71" file="numbers_1.png" />
 	</sprite>
 	<sprite id="combo_number_7">
-		<frame x="300" y="156" w="46" h="71" file="numbers_1.png" />
+		<frame x="295" y="154" w="48" h="71" file="numbers_1.png" />
 	</sprite>
 	<sprite id="combo_number_8">
-		<frame x="426" y="155" w="46" h="71" file="numbers_1.png" />
+		<frame x="423" y="155" w="48" h="71" file="numbers_1.png" />
 	</sprite>
 	<sprite id="combo_number_9">
-		<frame x="553" y="155" w="46" h="71" file="numbers_1.png" />
+		<frame x="551" y="154" w="48" h="71" file="numbers_1.png" />
 	</sprite>
 
         <sprite id="combo_title" framespeed="12">
@@ -379,6 +379,10 @@
 	<sprite id="counter_number_9">
 		<frame x="207" y="39" w="9" h="9" file="font1.png" />
 	</sprite>
+        
+        <sprite id="sudden_plus">
+            <frame x="0" y="0" w="192" h="480" file="sudden_plus.png" />
+        </sprite>
 </spriteset>
 
     <!-- background -->
@@ -496,9 +500,15 @@
 
 	<entity y="460" id="EFFECT_LONGFLARE" sprite="longflare" />
     </layer>
+    
+       
+    <!-- Layer for Hidden+ and Sudden+ -->
+    <layer id="11">
+        <entity id="SUDDEN_PLUS" x="3" y="-400" sprite="sudden_plus" />
+    </layer>
 
     <!-- counters and judgment sprites -->
-    <layer id="11">       
+    <layer id="12">       
         <entity id="COMBO_COUNTER" x="99" y="250" sprite="combo_number_0,
 	combo_number_1, combo_number_2, combo_number_3, combo_number_4, combo_number_5, 
 	combo_number_6, combo_number_7, combo_number_8, combo_number_9, combo_title" />
@@ -564,6 +574,7 @@
 	counter_number_7, counter_number_8, counter_number_9" />
 	
     </layer>
+
 </skin>
 </Resources>
 

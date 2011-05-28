@@ -17,6 +17,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.Config;
+import org.open2jam.GameOptions;
 import org.open2jam.parser.Event;
 import org.open2jam.parser.Chart;
 import org.open2jam.render.entities.BarEntity;
@@ -393,6 +394,10 @@ public abstract class Render implements GameWindowCallback
 
         judgment_line = skin.getEntityMap().get("JUDGMENT_LINE");
         entities_matrix.add(judgment_line);
+        
+        //TODO: fix sudden+ initial position
+        if (GameOptions.getSuddenPlus())
+            entities_matrix.add(skin.getEntityMap().get("SUDDEN_PLUS"));
 
         for(Event.Channel c : keyboard_map.keySet())
         {
