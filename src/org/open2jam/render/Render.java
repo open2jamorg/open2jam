@@ -1,6 +1,7 @@
 
 package org.open2jam.render;
 
+import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.Collections;
@@ -31,6 +32,7 @@ import org.open2jam.render.entities.NumberEntity;
 import org.open2jam.render.entities.SampleEntity;
 import org.open2jam.render.entities.TimeEntity;
 import org.open2jam.render.lwjgl.SoundManager;
+import org.open2jam.render.lwjgl.TrueTypeFont;
 import org.open2jam.util.Interval;
 import org.open2jam.util.IntervalTree;
 import org.open2jam.util.SystemTimer;
@@ -187,6 +189,8 @@ public abstract class Render implements GameWindowCallback
     NumberEntity maxcombo_entity;
 
     protected Entity judgment_line;
+    
+    TrueTypeFont trueTypeFont;
 
     /** statistics variables */
     double hit_sum = 0;
@@ -402,6 +406,8 @@ public abstract class Render implements GameWindowCallback
         // get the chart sound samples
         samples = chart.getSamples();
 
+        trueTypeFont = new TrueTypeFont(new Font("Thaoma", Font.BOLD, 14), false);
+        
         //clean up
         System.gc();
 
@@ -500,6 +506,8 @@ public abstract class Render implements GameWindowCallback
             }
         }
 
+        trueTypeFont.drawString(780, 300, "HI-SPEED: "+next_speed, 1, -1, TrueTypeFont.ALIGN_RIGHT);
+        
         if(!buffer_iterator.hasNext() && entities_matrix.isEmpty(note_layer)){
             for(Integer source : source_queue)
             {
