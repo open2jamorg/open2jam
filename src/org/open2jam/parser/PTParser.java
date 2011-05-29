@@ -244,6 +244,9 @@ class PTParser
         } catch (IOException e){
             Logger.global.log(Level.WARNING, "IO exception on reading PT file {0}", chart.getSource().getName());
         }
+        
+        Collections.sort(event_list);
+        
         return event_list;
     }
 

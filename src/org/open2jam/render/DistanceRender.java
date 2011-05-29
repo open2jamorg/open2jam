@@ -28,7 +28,6 @@ public class DistanceRender extends Render
         }
     }
 
-    private static final double AUTOPLAY_THRESHOLD = 0.8;
     private static final double COMBO_THRESHOLD = JUDGE.GOOD.value;
 
     private EnumMap<JUDGE,NumberEntity> note_counter;
@@ -250,45 +249,6 @@ public class DistanceRender extends Render
         total_notes++;
         
         return judge;
-    }
-
-    @Override
-    void do_autoplay(double now)
-    {
-        for(Event.Channel c : keyboard_map.keySet())
-        {
-            NoteEntity ne = nextNoteKey(c);
-
-            if(ne == null)continue;
-
-            double hit = ne.testHit(judgment_line_y1, judgment_line_y2);
-            if(hit < AUTOPLAY_THRESHOLD)continue;
-            ne.setHit(hit);
-            
-            if(ne instanceof LongNoteEntity)
-            {
-                if(ne.getState() == NoteEntity.State.NOT_JUDGED)
-                {
-                    queueSample(ne.getSample());
-                    ne.setState(NoteEntity.State.LN_HEAD_JUDGE);
-                    Entity ee = skin.getEntityMap().get("PRESSED_"+ne.getChannel()).copy();
-                    entities_matrix.add(ee);
-                    Entity to_kill = key_pressed_entity.put(ne.getChannel(), ee);
-                    if(to_kill != null)to_kill.setDead(true);
-                }
-                else if(ne.getState() == NoteEntity.State.LN_HOLD)
-                {
-                    ne.setState(NoteEntity.State.JUDGE);
-                    longflare.get(ne.getChannel()).setDead(true); //let's kill the longflare effect
-                    key_pressed_entity.get(ne.getChannel()).setDead(true);
-                }
-            }
-            else
-            {
-                queueSample(ne.getSample());
-                ne.setState(NoteEntity.State.JUDGE);
-            }
-        }
     }
 
     @Override

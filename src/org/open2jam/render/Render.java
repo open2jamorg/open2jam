@@ -55,6 +55,8 @@ public abstract class Render implements GameWindowCallback
 
     /** is autoplaying ? */
     final boolean AUTOPLAY;
+    
+    private static final double AUTOPLAY_THRESHOLD = 40;
 
     /** skin info and entities */
     Skin skin;
@@ -543,7 +545,43 @@ public abstract class Render implements GameWindowCallback
         }
     }
 
-    void do_autoplay(double now) {}
+    void do_autoplay(double now)
+    {
+        for(Event.Channel c : keyboard_map.keySet())
+        {
+            NoteEntity ne = nextNoteKey(c);
+
+            if(ne == null)continue;
+
+            double hit = ne.testTimeHit(now);
+            if(hit > AUTOPLAY_THRESHOLD)continue;
+            ne.setHit(hit);
+            
+            if(ne instanceof LongNoteEntity)
+            {
+                if(ne.getState() == NoteEntity.State.NOT_JUDGED)
+                {
+                    queueSample(ne.getSample());
+                    ne.setState(NoteEntity.State.LN_HEAD_JUDGE);
+                    Entity ee = skin.getEntityMap().get("PRESSED_"+ne.getChannel()).copy();
+                    entities_matrix.add(ee);
+                    Entity to_kill = key_pressed_entity.put(ne.getChannel(), ee);
+                    if(to_kill != null)to_kill.setDead(true);
+                }
+                else if(ne.getState() == NoteEntity.State.LN_HOLD)
+                {
+                    ne.setState(NoteEntity.State.JUDGE);
+                    longflare.get(ne.getChannel()).setDead(true); //let's kill the longflare effect
+                    key_pressed_entity.get(ne.getChannel()).setDead(true);
+                }
+            }
+            else
+            {
+                queueSample(ne.getSample());
+                ne.setState(NoteEntity.State.JUDGE);
+            }
+        }
+    }
 
     void check_keyboard(double now) {}
 
@@ -665,7 +703,7 @@ public abstract class Render implements GameWindowCallback
     **/
     void update_note_buffer(double now)
     {
-        while(buffer_iterator.hasNext() && getViewport() - velocity_integral(now,buffer_timer) > -1000)
+        while(buffer_iterator.hasNext() && getViewport() - velocity_integral(now,buffer_timer) > -10)
         {
             Event e = buffer_iterator.next();
 
@@ -801,7 +839,7 @@ public abstract class Render implements GameWindowCallback
             while(e.getMeasure() > measure)
             {
                 timer += (BEATS_PER_MSEC * (frac_measure-measure_pointer)) / my_bpm;
-                Event m = new Event(Event.Channel.MEASURE, measure, measure_pointer, 0, Event.Flag.NONE);
+                Event m = new Event(Event.Channel.MEASURE, measure, 0, 0, Event.Flag.NONE);
                 m.setTime(timer);
                 new_list.add(m);
                 measure++;
@@ -845,8 +883,6 @@ public abstract class Render implements GameWindowCallback
         // pad 10s to make sure the song ends
         velocity_tree.addInterval(last_bpm_change, timer+10000, my_note_speed);
         velocity_tree.build();
-        
-        Collections.sort(new_list);
         
         return new_list;
     }
@@ -1028,7 +1064,7 @@ public abstract class Render implements GameWindowCallback
 	}
     }
 
-    protected void setRandomChannel(Event e, EnumMap<Event.Channel, Event.Channel> lnMap, Event.Channel random)
+    private void setRandomChannel(Event e, EnumMap<Event.Channel, Event.Channel> lnMap, Event.Channel random)
     {
         Event.Channel c = random;
 
@@ -1051,7 +1087,7 @@ public abstract class Render implements GameWindowCallback
         e.setChannel(c);
     }
 
-    protected void visibility(int value)
+    private void visibility(int value)
     {
         int height = 0;
         int width  = 0;
