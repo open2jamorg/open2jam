@@ -91,7 +91,7 @@ public abstract class Render implements GameWindowCallback
     int speed_type;
     private List<Double> speed_xR_values = new LinkedList<Double>();;
 
-    static final double SPEED_FACTOR = 0.1d;
+    static final double SPEED_FACTOR = 0.005d;
 
     /** the size of a measure */
     private double measure_size;
@@ -229,7 +229,8 @@ public abstract class Render implements GameWindowCallback
         this.channelModifier = channelModifier;
         this.visibilityModifier = visibilityModifier;
 
-        this.speed = this.next_speed = this.last_speed = hispeed;
+        this.speed = 0;
+        this.next_speed = this.last_speed = hispeed;
     }
 
     /** set the screen dimensions */
@@ -459,8 +460,8 @@ public abstract class Render implements GameWindowCallback
         update_fps_counter();
 
         check_misc_keyboard();
-
-        //updateSpeed();
+        
+        changeSpeed(delta);
 
         now = SystemTimer.getTime() - start_time;
         update_note_buffer(now);
@@ -579,16 +580,37 @@ public abstract class Render implements GameWindowCallback
         SoundManager.setPan(source, sample.pan);
         SoundManager.play(source, buffer);
     }
-
+    
     void changeSpeed(double delta)
-    {
-        speed = next_speed;
+    {   
+        if(speed == next_speed) return;
+        
+        if(last_speed > next_speed)
+        {
+            speed -= SPEED_FACTOR * delta;
+            
+            if(speed < next_speed) speed = next_speed;
+        }
+        else if (last_speed < next_speed)
+        {
+            speed += SPEED_FACTOR * delta;
+            
+            if(speed > next_speed) speed = next_speed;            
+        }
+        else
+        {
+            speed = next_speed;
+        }
 
         judgment_line_y1 = skin.getJudgmentLine() - JUDGMENT_SIZE;
-
-        double off = JUDGMENT_SIZE * (speed-1);
-        judgment_line_y1 -= off;
-
+        
+        //only change the offset if the speed is > 1
+        //because lowers get a very tiny reaction window then...
+        if(speed > 1){
+            double off = JUDGMENT_SIZE * (speed-1);
+            judgment_line_y1 -= off;
+        }
+        
         //update the longnotes end time
         Iterator<LinkedList<Entity>> i = entities_matrix.iterator();
         while(i.hasNext()) // loop over layers
@@ -717,12 +739,10 @@ public abstract class Render implements GameWindowCallback
                     case SPEED_UP:
                         last_speed = next_speed;
                         if(next_speed < 10d) next_speed += 0.5d;
-                        changeSpeed(0);
                     break;
                     case SPEED_DOWN:
                         last_speed = next_speed;
                         if(next_speed > 0.5d) next_speed -= 0.5d;
-                        changeSpeed(0);
                     break;
                     case MAIN_VOL_UP:
                         if(mainVolume < 1f) mainVolume += VOLUME_FACTOR;
