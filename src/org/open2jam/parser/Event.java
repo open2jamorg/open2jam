@@ -6,6 +6,7 @@ public class Event implements Comparable<Event>
             NONE,
             TIME_SIGNATURE,
             BPM_CHANGE,
+            MEASURE,                 //This will be used when the velocity tree is constructed
             NOTE_1,                  //P1-NOTE_1
             NOTE_2,                  //P1-NOTE_2
             NOTE_3,                  //P1-NOTE_3
@@ -23,9 +24,10 @@ public class Event implements Comparable<Event>
             NOTE_14,                 //P2-NOTE_7
             NOTE_SC2,                //P2-NOTE_SC / P2-NOTE_8
             AUTO_PLAY
-     }
 
-    /**
+        }
+
+        /**
          * wrapper for the sound sample
          *
          * contains the sample id for the SoundManager
@@ -44,27 +46,24 @@ public class Event implements Comparable<Event>
                 this.pan = pan;
             }
 
-            public void toBGM()
-            {
-                this.bgm = true;
-            }
+            public void toBGM() { this.bgm = true; }
 
-            public boolean isBGM()
-            {
-                return bgm;
-            }
+            public boolean isBGM() { return bgm; }
         }
 
         
 	public enum Flag { NONE, HOLD, RELEASE }
 
-    private Channel channel;
+        private Channel channel;
 	private final int measure;
 	private final double position;
 	
 	private final double value;
 	Flag flag;
         private final SoundSample sound_sample;
+        
+        /** The time to hit */
+        private double time;
 
 	public Event(Channel channel, int measure, double position,
 			double value, Flag flag) {
@@ -98,4 +97,7 @@ public class Event implements Comparable<Event>
 	public Flag getFlag() { return flag; }
 	public double getValue() { return value; }
         public SoundSample getSample(){ return sound_sample; }
+        
+        public void setTime(double t) { this.time = t; }
+        public double getTime() { return time; }
 }

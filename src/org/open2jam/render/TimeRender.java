@@ -32,9 +32,9 @@ public class TimeRender extends Render
 
     private EnumMap<JUDGE,NumberEntity> note_counter;
 
-    public TimeRender(Chart c, double hispeed, boolean speed_xr, boolean autoplay, int channelModifier, int visibilityModifier)
+    public TimeRender(Chart c, double hispeed, int speed_type, boolean autoplay, int channelModifier, int visibilityModifier)
     {
-        super(c,hispeed,speed_xr,autoplay,channelModifier,visibilityModifier);
+        super(c,hispeed,speed_type,autoplay,channelModifier,visibilityModifier);
     }
 
     @Override

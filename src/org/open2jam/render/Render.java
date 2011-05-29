@@ -48,6 +48,8 @@ public abstract class Render implements GameWindowCallback
 
     /** 4 beats per minute, 4 * 60 beats per second, 4*60*1000 per millisecond */
     private static final int BEATS_PER_MSEC = 4 * 60 * 1000;
+    
+    private static final double DELAY_TIME = 1500;
 
     /** is autoplaying ? */
     final boolean AUTOPLAY;
@@ -84,7 +86,7 @@ public abstract class Render implements GameWindowCallback
     double speed;
     double next_speed;
 
-    boolean speed_xR = false;
+    int speed_type;
     private List<Double> speed_xR_values = new LinkedList<Double>();;
 
     static final double SPEED_FACTOR = 0.1d;
@@ -209,7 +211,7 @@ public abstract class Render implements GameWindowCallback
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
     }
 
-    Render(Chart chart, double hispeed, boolean speed_xr, boolean autoplay, int channelModifier, int visibilityModifier)
+    Render(Chart chart, double hispeed, int speed_type, boolean autoplay, int channelModifier, int visibilityModifier)
     {
         keyboard_map = Config.getKeyboardMap(Config.KeyboardType.K7);
         keyboard_misc =Config.getKeyboardMisc();
@@ -217,7 +219,7 @@ public abstract class Render implements GameWindowCallback
         entities_matrix = new EntityMatrix();
         this.chart = chart;
         this.hispeed = hispeed;
-        this.speed_xR = speed_xr;
+        this.speed_type = speed_type;
         velocity_tree = new IntervalTree<Double,Double>();
         this.AUTOPLAY = autoplay;
         this.channelModifier = channelModifier;
@@ -288,7 +290,6 @@ public abstract class Render implements GameWindowCallback
         }
 
         bpm = chart.getBPM();
-        buffer_bpm = chart.getBPM();
 
         note_layer = skin.getEntityMap().get("NOTE_1").getLayer();
 
@@ -364,25 +365,21 @@ public abstract class Render implements GameWindowCallback
         }
 
 
-        List<Event> event_list = chart.getEvents();
-
-        construct_velocity_tree(event_list.iterator());
-
-        buffer_iterator = event_list.iterator();
+        List<Event> event_list = construct_velocity_tree(chart.getEvents());
 
 	//Let's randomize "-"
 	if(channelModifier != 0)
 	{
 	    if(channelModifier == 1)
-		channelMirror(buffer_iterator);
+		channelMirror(event_list.iterator());
 	    if(channelModifier == 2)
-		channelShuffle(buffer_iterator);
+		channelShuffle(event_list.iterator());
 	    if(channelModifier == 3)
-		channelRandom(buffer_iterator);
-
-            // get a new iterator
-            buffer_iterator = event_list.iterator();
+		channelRandom(event_list.iterator());
 	}
+        
+        // get a new iterator
+        buffer_iterator = event_list.iterator();
 
         // load up initial buffer
         update_note_buffer(0);
@@ -411,7 +408,8 @@ public abstract class Render implements GameWindowCallback
         // wait a bit.. 5 seconds at min
         SystemTimer.sleep((int) (5000 - (SystemTimer.getTime() - lastLoopTime)));
 
-        start_time = lastLoopTime = SystemTimer.getTime();
+        lastLoopTime = SystemTimer.getTime();
+        start_time = lastLoopTime + DELAY_TIME;
     }
 
     /* make the rendering start */
@@ -595,7 +593,7 @@ public abstract class Render implements GameWindowCallback
                 if(e instanceof LongNoteEntity)
                 {
                     LongNoteEntity le = (LongNoteEntity) e;
-                    le.changeEndTime(velocity_integral(le.getTime(),le.getEndTime(),le.getChannel()));
+                    le.setEndDistance(velocity_integral(le.getTime(),le.getEndTime(),le.getChannel()));
                 }
             }
         }
@@ -630,63 +628,40 @@ public abstract class Render implements GameWindowCallback
         return ne;
     }
 
-
-    private int buffer_measure = 0;
-
-    private double fractional_measure = 1;
-
     private double buffer_timer = 0;
-
-    private double buffer_bpm;
-
-    private double buffer_measure_pointer = 0;
-
 
     /** update the note layer of the entities_matrix.
     *** note buffering is equally distributed between the frames
     **/
     void update_note_buffer(double now)
     {
-        while(buffer_iterator.hasNext() && getViewport() - velocity_integral(now,buffer_timer) > -10)
+        while(buffer_iterator.hasNext() && getViewport() - velocity_integral(now,buffer_timer) > -1000)
         {
             Event e = buffer_iterator.next();
-            while(e.getMeasure() > buffer_measure) // this is the start of a new measure
-            {
-                buffer_timer += (BEATS_PER_MSEC * (fractional_measure-buffer_measure_pointer)) / buffer_bpm;
-                MeasureEntity m = (MeasureEntity) skin.getEntityMap().get("MEASURE_MARK").copy();
-                m.setTime(buffer_timer);
-                entities_matrix.add(m);
-                buffer_measure++;
-                fractional_measure = 1;
-                buffer_measure_pointer = 0;
-            }
 
-            buffer_timer += (BEATS_PER_MSEC * (e.getPosition()-buffer_measure_pointer)) / buffer_bpm;
-            buffer_measure_pointer = e.getPosition();
-
+            buffer_timer = e.getTime();
+            
             switch(e.getChannel())
             {
-                case TIME_SIGNATURE:
-                fractional_measure = e.getValue();
+                case MEASURE:
+                    MeasureEntity m = (MeasureEntity) skin.getEntityMap().get("MEASURE_MARK").copy();
+                    m.setTime(e.getTime());
+                    entities_matrix.add(m);
                 break;
-
-                case BPM_CHANGE:
-                buffer_bpm = e.getValue();
-                break;
-
+                    
                 case NOTE_1:case NOTE_2:
                 case NOTE_3:case NOTE_4:
                 case NOTE_5:case NOTE_6:case NOTE_7:
                 if(e.getFlag() == Event.Flag.NONE){
                     NoteEntity n = (NoteEntity) skin.getEntityMap().get(e.getChannel().toString()).copy();
-                    n.setTime(buffer_timer);
+                    n.setTime(e.getTime());
                     n.setSample(e.getSample());
 		    entities_matrix.add(n);
                     note_channels.get(n.getChannel()).add(n);
                 }
                 else if(e.getFlag() == Event.Flag.HOLD){
                     LongNoteEntity ln = (LongNoteEntity) skin.getEntityMap().get("LONG_"+e.getChannel()).copy();
-                    ln.setTime(buffer_timer);
+                    ln.setTime(e.getTime());
                     ln.setSample(e.getSample());
 		    entities_matrix.add(ln);
 		    ln_buffer.put(e.getChannel(),ln);
@@ -697,7 +672,7 @@ public abstract class Render implements GameWindowCallback
                     if(lne == null){
                         Logger.global.log(Level.WARNING, "Attempted to RELEASE note {0}", e.getChannel());
                     }else{
-                        lne.setEndTime(buffer_timer,velocity_integral(lne.getTime(),buffer_timer, lne.getChannel()));
+                        lne.setEndTime(e.getTime(),velocity_integral(lne.getTime(),e.getTime(), lne.getChannel()));
                     }
                 }
                 break;
@@ -709,10 +684,10 @@ public abstract class Render implements GameWindowCallback
                 case NOTE_SC2:
 
                 case AUTO_PLAY:
-                e.getSample().toBGM();
-                SampleEntity s = new SampleEntity(this,e.getSample(),0);
-                s.setTime(buffer_timer);
-                entities_matrix.add(s);
+                    e.getSample().toBGM();
+                    SampleEntity s = new SampleEntity(this,e.getSample(),0);
+                    s.setTime(e.getTime());
+                    entities_matrix.add(s);
                 break;
             }
         }
@@ -779,20 +754,28 @@ public abstract class Render implements GameWindowCallback
 
     private final IntervalTree<Double,Double> velocity_tree;
 
-    private void construct_velocity_tree(Iterator<Event> it)
+    private List<Event> construct_velocity_tree(List<Event> list)
     {
         int measure = 0;
-        double timer = 0, last_bpm_change = 0;
+        double timer = DELAY_TIME;
+        double last_bpm_change = 0;
         double my_bpm = this.bpm;
         double frac_measure = 1;
         double measure_pointer = 0;
         double my_note_speed = (my_bpm * measure_size) / BEATS_PER_MSEC;
+        
+        List<Event> new_list = new LinkedList<Event>();
+        
+        Iterator<Event> it = list.iterator();
         while(it.hasNext())
         {
             Event e = it.next();
             while(e.getMeasure() > measure)
             {
                 timer += (BEATS_PER_MSEC * (frac_measure-measure_pointer)) / my_bpm;
+                Event m = new Event(Event.Channel.MEASURE, measure, measure_pointer, 0, Event.Flag.NONE);
+                m.setTime(timer);
+                new_list.add(m);
                 measure++;
                 frac_measure = 1;
                 measure_pointer = 0;
@@ -811,11 +794,33 @@ public abstract class Render implements GameWindowCallback
                 case TIME_SIGNATURE:
                     frac_measure = e.getValue();
                 break;
+
+                case NOTE_1:case NOTE_2:
+                case NOTE_3:case NOTE_4:
+                case NOTE_5:case NOTE_6:case NOTE_7:
+                case NOTE_SC:
+                case NOTE_8:case NOTE_9:
+                case NOTE_10:case NOTE_11:
+                case NOTE_12:case NOTE_13:case NOTE_14:
+                case NOTE_SC2:
+                case AUTO_PLAY:
+                    e.setTime(timer);
+                break;
+                    
+                case MEASURE:
+                    Logger.global.log(Level.WARNING, "...THE FUCK? Why is a measure event here?");
+                break;
             }
+            
+            new_list.add(e);
         }
         // pad 10s to make sure the song ends
         velocity_tree.addInterval(last_bpm_change, timer+10000, my_note_speed);
         velocity_tree.build();
+        
+        Collections.sort(new_list);
+        
+        return new_list;
     }
 
     /**
@@ -858,7 +863,7 @@ public abstract class Render implements GameWindowCallback
 
     double velocity_integral(double t0, double t1, Event.Channel chan)
     {
-        if(!speed_xR) return velocity_integral(t0, t1);
+        if(speed_type != 1) return velocity_integral(t0, t1);
 
 
         double factor = 1;
@@ -877,12 +882,12 @@ public abstract class Render implements GameWindowCallback
         return velocity_integral(t0, t1) * factor;
     }
 
-     /**
-     * This function will mirrorize the notes
-     * TODO ADD P2 SUPPORT
-     * @param buffer
-     */
-     void channelMirror(Iterator<Event> buffer)
+    /**
+    * This function will mirrorize the notes
+    * TODO ADD P2 SUPPORT
+    * @param buffer
+    */
+    void channelMirror(Iterator<Event> buffer)
     {
 	while(buffer.hasNext())
 	{
