@@ -85,7 +85,7 @@ class BMSParser
 
         Pattern note_line = Pattern.compile("^#(\\d\\d\\d)(\\d\\d):(.+)$");
 
-        int max_key = 0, max_measure = 0, total_notes = 0;
+        int max_key = 0, max_measure = 0, total_notes = 0, scratch_notes = 0;
 
         try{
         while((line = r.readLine()) != null)
@@ -174,10 +174,15 @@ class BMSParser
                     if(measure >= max_measure) max_measure = measure;
 
                     switch(channel){
-                        case 11:case 12:case 13:
+                        case 16:case 11:case 12:case 13:
                         case 14:case 15:case 18:case 19:
                             String[] notes = note_match.group(3).split("(?<=\\G.{2})");
-                            for(String n : notes)if(!n.equals("00"))total_notes++;
+                            for(String n : notes){
+                                if(!n.equals("00")){
+                                    total_notes++;
+                                    if(channel == 16)scratch_notes++;
+                                }
+                            }
                     }
                 }
 
@@ -192,6 +197,12 @@ class BMSParser
 
         chart.notes = total_notes;
         chart.duration = (int) Math.round((240 * max_measure)/chart.bpm);
+        if(max_key == 18 && scratch_notes > 0){
+            chart.o2mania_style = true;
+        } else {
+            chart.o2mania_style = false;
+            chart.notes -= scratch_notes;
+        }
 
         switch(max_key)
         {
@@ -199,6 +210,7 @@ class BMSParser
             case 16:
                 chart.keys = 5;
                 break;
+            case 18: // o2mania
             case 19:
                 chart.keys = 7;
                 break;
@@ -280,6 +292,27 @@ class BMSParser
                     continue;
                 }
                 Event.Channel ec;
+                if (chart.o2mania_style) {
+                    switch (channel)
+                    {
+                        // normal notes
+                        case 16: channel = 11; break;
+                        case 11: channel = 12; break;
+                        case 12: channel = 13; break;
+                        case 13: channel = 14; break;
+                        case 14: channel = 15; break;
+                        case 15: channel = 18; break;
+                        case 18: channel = 19; break;
+                        // long notes
+                        case 56: channel = 51; break;
+                        case 51: channel = 52; break;
+                        case 52: channel = 53; break;
+                        case 53: channel = 54; break;
+                        case 54: channel = 55; break;
+                        case 55: channel = 58; break;
+                        case 58: channel = 59; break;
+                    }
+                }
                 switch (channel)
                 {
                     case 1:
