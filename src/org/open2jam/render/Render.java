@@ -617,8 +617,38 @@ public abstract class Render implements GameWindowCallback
         SoundManager.setGain(source, vol);
         SoundManager.setPan(source, sample.pan);
         SoundManager.play(source, buffer);
+        
+        if(sample.isBGM())  bgm_sources.add(source);
+        else                key_sources.add(source);
     }
     
+    List<Integer> bgm_sources = new LinkedList<Integer>();
+    List<Integer> key_sources = new LinkedList<Integer>();
+    
+    private void change_volume(boolean isBGM, float factor) {
+        for(int source : isBGM ? bgm_sources : key_sources)
+        {
+            //shouldn't matter, but just in case xD
+            if(!SoundManager.isPlaying(source)) continue;
+            
+            float vol = SoundManager.getGain(source) + factor;
+            if(vol < 0f) vol = 0f;
+            if(vol > 1f) vol = 1f;
+
+            SoundManager.setGain(source, vol);
+        }
+    }
+    
+    void change_bgm_volume(boolean positive)
+    {
+        change_volume(true , positive ? VOLUME_FACTOR : -VOLUME_FACTOR);
+    }
+    
+    void change_key_volume(boolean positive)
+    {
+        change_volume(false , positive ? VOLUME_FACTOR : -VOLUME_FACTOR);
+    }
+            
     void changeSpeed(double delta)
     {   
         if(speed == next_speed) return;
@@ -795,18 +825,22 @@ public abstract class Render implements GameWindowCallback
                     case KEY_VOL_UP:
                         if(keyVolume < 1f) keyVolume += VOLUME_FACTOR;
                         if(keyVolume > 1f) keyVolume = 1f;
+                        change_key_volume(true);
                     break;
                     case KEY_VOL_DOWN:
                         if(keyVolume > 0f) keyVolume -= VOLUME_FACTOR;
                         if(keyVolume < 0f) keyVolume = 0f;
+                        change_key_volume(false);
                     break;
                     case BGM_VOL_UP:
                         if(bgmVolume < 1f) bgmVolume += VOLUME_FACTOR;
                         if(bgmVolume > 1f) bgmVolume = 1f;
+                        change_bgm_volume(true);
                     break;
                     case BGM_VOL_DOWN:
                         if(bgmVolume > 0f) bgmVolume -= VOLUME_FACTOR;
                         if(bgmVolume < 0f) bgmVolume = 0f;
+                        change_bgm_volume(false);
                     break;
                 }
             }

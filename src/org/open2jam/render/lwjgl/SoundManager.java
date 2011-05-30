@@ -56,6 +56,11 @@ public class SoundManager
     {
         AL10.alSourcef(source, AL10.AL_GAIN, g);
     }
+    
+    public static float getGain(int source)
+    {
+        return AL10.alGetSourcef(source, AL10.AL_GAIN);
+    }
 
     private static final FloatBuffer pan_pos_buffer = BufferUtils.createFloatBuffer(3);
     public static void setPan(int source, float x)

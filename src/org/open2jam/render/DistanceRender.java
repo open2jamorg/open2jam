@@ -147,6 +147,9 @@ public class DistanceRender extends Render
                     judgment_entity = skin.getEntityMap().get("EFFECT_"+JUDGE.MISS).copy();
                     entities_matrix.add(judgment_entity);
 
+                    Entity lf = longflare.remove(ne.getChannel());
+                    if(lf !=null)lf.setDead(true);
+                    
                     note_counter.get(JUDGE.MISS).incNumber();
                     combo_entity.resetNumber();
 
