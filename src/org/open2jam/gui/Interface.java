@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.logging.Level;
 import org.open2jam.util.Logger;
 import java.util.zip.CRC32;
@@ -193,7 +191,6 @@ public class Interface extends javax.swing.JFrame
         js_displaylag = new javax.swing.JSpinner();
         lbl_displaylag = new javax.swing.JLabel();
         lbl_ms = new javax.swing.JLabel();
-        jc_suddenplus = new javax.swing.JCheckBox();
         table_scroll = new javax.swing.JScrollPane();
         table_songlist = new javax.swing.JTable();
         txt_filter = new javax.swing.JTextField();
@@ -243,7 +240,7 @@ public class Interface extends javax.swing.JFrame
 
         lbl_time1.setText("Time:");
 
-        bt_play.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        bt_play.setFont(new java.awt.Font("Tahoma", 0, 18));
         bt_play.setText("Play !");
         bt_play.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -271,7 +268,7 @@ public class Interface extends javax.swing.JFrame
 
         lbl_channelModifier.setText("Channel Modifier:");
 
-        combo_visibilityModifier.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--None--", "Hidden", "Sudden", "Dark" }));
+        combo_visibilityModifier.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--None--", "Hidden", "Sudden", "Dark", "Towel" }));
 
         lbl_visibilityModifier.setText("Visibility Modifier:");
 
@@ -506,13 +503,6 @@ public class Interface extends javax.swing.JFrame
 
         lbl_ms.setText("ms");
 
-        jc_suddenplus.setText("Sudden+");
-        jc_suddenplus.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jc_suddenplusActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout panel_settingLayout = new javax.swing.GroupLayout(panel_setting);
         panel_setting.setLayout(panel_settingLayout);
         panel_settingLayout.setHorizontalGroup(
@@ -563,9 +553,7 @@ public class Interface extends javax.swing.JFrame
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(js_displaylag, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lbl_ms)
-                            .addComponent(jc_suddenplus))))
+                        .addComponent(lbl_ms)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panel_settingLayout.setVerticalGroup(
@@ -585,8 +573,7 @@ public class Interface extends javax.swing.JFrame
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbl_hispeed)
-                    .addComponent(js_hispeed, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jc_suddenplus))
+                    .addComponent(js_hispeed, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(10, 10, 10)
                 .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbl_displaylag)
@@ -685,11 +672,10 @@ public class Interface extends javax.swing.JFrame
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addContainerGap()
-                            .addComponent(jLabel1))
-                        .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel1)
+                        .addGap(148, 148, 148))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -700,13 +686,16 @@ public class Interface extends javax.swing.JFrame
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(slider_bgm_vol, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
                             .addComponent(slider_key_vol, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
-                            .addComponent(slider_main_vol, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(slider_main_vol, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(panel_info, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
-                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)))
+                    .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE)
+                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -803,10 +792,42 @@ public class Interface extends javax.swing.JFrame
 
         if(selected_header != null)
 	{
-	    final double hispeed = (Double) js_hispeed.getValue();
-            
             GameOptions.create();
-            GameOptions.setSuddenPlus(jc_suddenplus.isSelected());
+            String comparer;
+            
+            // Sets visibilty modifiers
+            // It's more verbose, but more resistant to index changes.
+            comparer = (String)combo_visibilityModifier.getSelectedItem();
+            
+            if (comparer.compareTo("Dark") == 0)
+                GameOptions.setDark(true);
+            else if (comparer.compareTo("Hidden") == 0)
+                GameOptions.setHidden(true);
+            else if (comparer.compareTo("Sudden") == 0)
+                GameOptions.setSudden(true);
+            else if (comparer.compareTo("Towel") == 0)
+                GameOptions.setTowel(true);
+            
+            // Sets channel modifiers
+            comparer = (String)combo_channelModifier.getSelectedItem();
+            
+            if (comparer.compareTo("Random") == 0)
+                GameOptions.setRandom(true);
+            else if (comparer.compareTo("Mirror") == 0)
+                GameOptions.setMirror(true);
+            else if (comparer.compareTo("Shuffle") == 0)
+                GameOptions.setShuffle(true);
+            
+            // Sets hi-speed
+            GameOptions.setHiSpeed((Double)js_hispeed.getValue());
+            
+            // Sets volumes
+            GameOptions.setMasterVolume(slider_main_vol.getValue() / 100f);
+            GameOptions.setKeyVolume(slider_key_vol.getValue() / 100f);
+            GameOptions.setBGMVolume(slider_bgm_vol.getValue() / 100f);
+            
+            // Sets autoplay
+            GameOptions.setAutoplay(jc_autoplay.isSelected());
 
 	    final DisplayMode dm;
 	    if(jc_custom_size.isSelected()){ // custom size selected
@@ -825,16 +846,7 @@ public class Interface extends javax.swing.JFrame
 	    final boolean vsync = jc_vsync.isSelected();
 	    boolean fs = jc_full_screen.isSelected();
 
-	    final boolean autoplay = jc_autoplay.isSelected();
-
             final boolean judgment = jc_timed_judgment.isSelected();
-
-	    final int channelModifier = combo_channelModifier.getSelectedIndex();
-            final int visibilityModifier = combo_visibilityModifier.getSelectedIndex();
-
-            final int mainVol = slider_main_vol.getValue();
-            final int keyVol = slider_key_vol.getValue();
-            final int bgmVol = slider_bgm_vol.getValue();
 
             final boolean bilinear = jc_bilinear.isSelected();
 
@@ -850,9 +862,9 @@ public class Interface extends javax.swing.JFrame
 
             Render r;
             if(judgment)
-                r = new TimeRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
+                r = new TimeRender(selected_header);
             else
-                r = new DistanceRender(selected_header, hispeed, autoplay, channelModifier, visibilityModifier, mainVol, keyVol, bgmVol);
+                r = new DistanceRender(selected_header);
             r.setDisplay(dm, vsync, fs, bilinear);
             r.startRendering();
 	}
@@ -893,10 +905,6 @@ public class Interface extends javax.swing.JFrame
         
     }//GEN-LAST:event_js_displaylagStateChanged
 
-    private void jc_suddenplusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jc_suddenplusActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jc_suddenplusActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bt_choose_dir;
@@ -918,7 +926,6 @@ public class Interface extends javax.swing.JFrame
     private javax.swing.JCheckBox jc_bilinear;
     private javax.swing.JCheckBox jc_custom_size;
     private javax.swing.JCheckBox jc_full_screen;
-    private javax.swing.JCheckBox jc_suddenplus;
     private javax.swing.JCheckBox jc_timed_judgment;
     private javax.swing.JCheckBox jc_vsync;
     private javax.swing.JRadioButton jr_rank_easy;

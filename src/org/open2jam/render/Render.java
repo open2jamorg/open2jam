@@ -48,9 +48,6 @@ public abstract class Render implements GameWindowCallback
     /** 4 beats per minute, 4 * 60 beats per second, 4*60*1000 per millisecond */
     private static final int BEATS_PER_MSEC = 4 * 60 * 1000;
 
-    /** is autoplaying ? */
-    final boolean AUTOPLAY;
-
     /** skin info and entities */
     Skin skin;
     
@@ -72,9 +69,6 @@ public abstract class Render implements GameWindowCallback
 
     /** The recorded fps */
     int fps;
-
-    /** the hispeed */
-    private final double hispeed;
     
     /** the size of a measure */
     private double measure_size;
@@ -178,34 +172,18 @@ public abstract class Render implements GameWindowCallback
     double hit_count = 0;
     double total_notes = 0;
 
-    /** the channelMirror, random select */
-    private int channelModifier = 0;
-
     protected CompositeEntity visibility_entity;
-    /** The volume */
-    private final float mainVolume;
-    private final float keyVolume;
-    private final float bgmVolume;
-    private final int visibilityModifier;
-
     static {
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
     }
 
-    Render(Chart chart, double hispeed, boolean autoplay, int channelModifier, int visibilityModifier, int mainVol, int keyVol, int bgmVol)
+    Render(Chart chart)
     {
         keyboard_map = Config.get().getKeyboardMap(Config.KeyboardType.K7);
         window = ResourceFactory.get().getGameWindow();
         entities_matrix = new EntityMatrix();
         this.chart = chart;
-        this.hispeed = hispeed;
         velocity_tree = new IntervalTree<Double,Double>();
-        this.AUTOPLAY = autoplay;
-        this.channelModifier = channelModifier;
-        this.visibilityModifier = visibilityModifier;
-        this.mainVolume = (mainVol/100f);
-        this.keyVolume = (keyVol/100f);
-        this.bgmVolume = (bgmVol/100f);
     }
 
     /** set the screen dimensions */
@@ -256,8 +234,8 @@ public abstract class Render implements GameWindowCallback
                 return;
             }
         }
-        float vol = keyVolume;
-        if(sample.isBGM()) vol = bgmVolume;
+        float vol = GameOptions.getKeyVolume();
+        if(sample.isBGM()) vol = GameOptions.getBGMVolume();
         vol = sample.volume*vol;
         if(vol < 0f) vol = 0f;
         if(vol > 1f) vol = 1f;
@@ -270,12 +248,12 @@ public abstract class Render implements GameWindowCallback
     private void updateHispeed()
     {
         judgment_line_y1 = skin.judgment_line - JUDGMENT_SIZE;
-        if(hispeed > 1){
-            double off = JUDGMENT_SIZE * (hispeed-1);
+        if(GameOptions.getHiSpeed() > 1){
+            double off = JUDGMENT_SIZE * (GameOptions.getHiSpeed() - 1);
             judgment_line_y1 -= off;
         }
 
-        measure_size = 0.8 * hispeed * getViewport();
+        measure_size = 0.8 * GameOptions.getHiSpeed() * getViewport();
     }
 
     double getViewport() { return judgment_line_y2; }
@@ -388,16 +366,21 @@ public abstract class Render implements GameWindowCallback
         entities_matrix.add(second_entity);
 
         pills_draw = new LinkedList<Entity>();
-
-        visibility_entity = new CompositeEntity();
-        if(visibilityModifier != 0) visibility(visibilityModifier);
+       
+         if (GameOptions.visibilityModifiersOn())
+         {
+             if (GameOptions.getTowel())
+                entities_matrix.add(skin.getEntityMap().get("TOWEL"));
+             
+             else
+             {
+                 visibility_entity = new CompositeEntity();
+                 visibility();
+             }
+         }
 
         judgment_line = skin.getEntityMap().get("JUDGMENT_LINE");
         entities_matrix.add(judgment_line);
-        
-        //TODO: fix sudden+ initial position
-        if (GameOptions.getSuddenPlus())
-            entities_matrix.add(skin.getEntityMap().get("SUDDEN_PLUS"));
 
         for(Event.Channel c : keyboard_map.keySet())
         {
@@ -411,20 +394,22 @@ public abstract class Render implements GameWindowCallback
         construct_velocity_tree(event_list.iterator());
 
         buffer_iterator = event_list.iterator();
-
+        
 	//Let's randomize "-"
-	if(channelModifier != 0)
-	{
-	    if(channelModifier == 1)
-		channelMirror(buffer_iterator);
-	    if(channelModifier == 2)
-		channelShuffle(buffer_iterator);
-	    if(channelModifier == 3)
-		channelRandom(buffer_iterator);
+        if (GameOptions.channelModifiersOn())
+        {        
+            if (GameOptions.getRandom())
+                channelRandom(buffer_iterator);
 
+            else if (GameOptions.getShuffle())
+                channelShuffle(buffer_iterator);
+
+            else if (GameOptions.getMirror())
+                channelMirror(buffer_iterator);
+            
             // get a new iterator
             buffer_iterator = event_list.iterator();
-	}
+        }
 
         // load up initial buffer
         update_note_buffer(0);
@@ -433,7 +418,7 @@ public abstract class Render implements GameWindowCallback
         source_queue = new LinkedList<Integer>();
 
         //set main Volume
-        SoundManager.mainVolume(mainVolume);
+        SoundManager.mainVolume(GameOptions.getMasterVolume());
 
         try{
             for(int i=0;i<MAX_SOURCES;i++)
@@ -782,7 +767,7 @@ public abstract class Render implements GameWindowCallback
         e.setChannel(c);
     }
 
-    protected void visibility(int value)
+    protected void visibility()
     {
         int height = 0;
         int width  = 0;
@@ -797,7 +782,7 @@ public abstract class Render implements GameWindowCallback
             {
                 height = (int)Math.round(getViewport());
                 width = (int)Math.round(skin.getEntityMap().get(ev.toString()).getWidth());
-                rec  = ResourceFactory.get().doRectangle(width, height, value);
+                rec  = ResourceFactory.get().doRectangle(width, height);
                 visibility_entity.getEntityList().add(new Entity(rec, skin.getEntityMap().get(ev.toString()).getX(), 0));
             }
         }
@@ -817,7 +802,8 @@ public abstract class Render implements GameWindowCallback
         }
 
 //        skin.getEntityMap().get("MEASURE_MARK").setLayer(layer);
-        if(value != 1)skin.getEntityMap().get("JUDGMENT_LINE").setLayer(layer);
+        if(GameOptions.getSudden() || GameOptions.getDark())
+            skin.getEntityMap().get("JUDGMENT_LINE").setLayer(layer);
 
         entities_matrix.add(visibility_entity);
         return;

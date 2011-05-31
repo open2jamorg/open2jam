@@ -80,12 +80,10 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Component id="panel_setting" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="148" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
@@ -101,13 +99,17 @@
                           <Component id="slider_main_vol" alignment="0" min="-2" pref="104" max="-2" attributes="1"/>
                       </Group>
                   </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="panel_setting" min="-2" max="-2" attributes="0"/>
+                  </Group>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="panel_info" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="txt_filter" pref="316" max="32767" attributes="1"/>
-                  <Component id="table_scroll" pref="316" max="32767" attributes="1"/>
+                  <Component id="txt_filter" pref="332" max="32767" attributes="1"/>
+                  <Component id="table_scroll" pref="332" max="32767" attributes="1"/>
               </Group>
           </Group>
       </Group>
@@ -406,11 +408,12 @@
         <Component class="javax.swing.JComboBox" name="combo_visibilityModifier">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="4">
+              <StringArray count="5">
                 <StringItem index="0" value="--None--"/>
                 <StringItem index="1" value="Hidden"/>
                 <StringItem index="2" value="Sudden"/>
                 <StringItem index="3" value="Dark"/>
+                <StringItem index="4" value="Towel"/>
               </StringArray>
             </Property>
           </Properties>
@@ -521,10 +524,7 @@
                               </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="lbl_ms" min="-2" max="-2" attributes="0"/>
-                              <Component id="jc_suddenplus" alignment="0" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="lbl_ms" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
@@ -551,7 +551,6 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="lbl_hispeed" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="js_hispeed" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
-                      <Component id="jc_suddenplus" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -797,14 +796,6 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="ms"/>
           </Properties>
-        </Component>
-        <Component class="javax.swing.JCheckBox" name="jc_suddenplus">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Sudden+"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jc_suddenplusActionPerformed"/>
-          </Events>
         </Component>
       </SubComponents>
     </Container>

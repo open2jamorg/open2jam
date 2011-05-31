@@ -379,9 +379,8 @@
 	<sprite id="counter_number_9">
 		<frame x="207" y="39" w="9" h="9" file="font1.png" />
 	</sprite>
-        
-        <sprite id="sudden_plus">
-            <frame x="0" y="0" w="192" h="480" file="sudden_plus.png" />
+        <sprite id="towel">
+                <frame x="0" y="0" w="192" h="480" file="towel.png" />
         </sprite>
 </spriteset>
 
@@ -502,9 +501,9 @@
     </layer>
     
        
-    <!-- Layer for Hidden+ and Sudden+ -->
+    <!-- Layer for Towel -->
     <layer id="11">
-        <entity id="SUDDEN_PLUS" x="3" y="-400" sprite="sudden_plus" />
+        <entity id="TOWEL" x="3" y="-400" sprite="towel" />
     </layer>
 
     <!-- counters and judgment sprites -->

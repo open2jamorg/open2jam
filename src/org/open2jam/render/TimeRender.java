@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import org.open2jam.Config;
+import org.open2jam.GameOptions;
 
 import org.open2jam.util.Logger;
 import org.open2jam.util.SystemTimer;
@@ -42,9 +43,9 @@ public class TimeRender extends Render
 
     private EnumMap<JUDGE,NumberEntity> note_counter;
 
-    public TimeRender(Chart c, double hispeed, boolean autoplay, int channelModifier, int visibilityModifier, int mainVol, int keyVol, int bgmVol)
+    public TimeRender(Chart c)
     {
-        super(c,hispeed,autoplay,channelModifier,visibilityModifier, mainVol, keyVol, bgmVol);
+        super(c);
     }
 
     @Override
@@ -101,7 +102,7 @@ public class TimeRender extends Render
 
         now = SystemTimer.getTime() - start_time;
 
-	if(AUTOPLAY)do_autoplay(now);
+	if (GameOptions.getAutoplay()) do_autoplay(now);         
         else check_keyboard(now);
 
         Iterator<LinkedList<Entity>> i = entities_matrix.iterator();

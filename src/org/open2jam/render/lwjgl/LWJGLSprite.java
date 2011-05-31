@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import org.lwjgl.opengl.GL11;
+import org.open2jam.GameOptions;
 import org.open2jam.render.Sprite;
 
 
@@ -60,13 +61,13 @@ public class LWJGLSprite implements Sprite {
         init(x,y,width,height);
     }
 
-    public LWJGLSprite(int w, int h, int type)
+    public LWJGLSprite(int w, int h)
     {
         texture = null;
         x = 0; y = 0;
         this.width = w;
         this.height = h;
-        createRectangle(width, height, type);
+        createRectangle(width, height);
     }
 
     private void init(int x, int y, int width, int height)
@@ -95,56 +96,58 @@ public class LWJGLSprite implements Sprite {
         GL11.glEndList();
     }
 
-    private void createRectangle(int width, int height, int type)
+    private void createRectangle(int width, int height)
     {
         int split = height/4;
 
         GL11.glNewList(list_id, GL11.GL_COMPILE);
-            GL11.glBegin(GL11.GL_QUAD_STRIP);
-                switch(type)
-                {
-                    case 1: //hidden (hidden lower part)
-                    GL11.glColor4f(0.0f,0.0f,0.0f,0f); // middle alpha
-                    GL11.glVertex2f(0,split*2);
-                    GL11.glVertex2f(width, split*2);
-                    GL11.glColor3f(0.0f,0.0f,0.0f); // second black rec
-                    GL11.glVertex2f(0,split*3);
-                    GL11.glVertex2f(width, split*3);
-                    GL11.glVertex2f(0,height);
-                    GL11.glVertex2f(width, height);
-                    break;
-                    case 2: //sudden (only shows the lower part)
-                    GL11.glColor3f(0.0f,0.0f,0.0f); // first black rec
-                    GL11.glVertex2f(0, 0);
-                    GL11.glVertex2f(width,0);
-                    GL11.glVertex2f(0,split*2);
-                    GL11.glVertex2f(width, split*2);
-                    GL11.glColor4f(0.0f,0.0f,0.0f,0f); // middle alpha
-                    GL11.glVertex2f(0,split*3);
-                    GL11.glVertex2f(width, split*3);
-                    GL11.glColor4f(0.0f,0.0f,0.0f,0f); // middle alpha
-                    GL11.glVertex2f(0,height);
-                    GL11.glVertex2f(width, height);
-                    break;
-                    case 3: //dark (only shows the middle part)
-                    GL11.glColor3f(0.0f,0.0f,0.0f); // first black rec
-                    GL11.glVertex2f(0, 0);
-                    GL11.glVertex2f(width,0);
-                    GL11.glVertex2f(0,split);
-                    GL11.glVertex2f(width, split);
-                    GL11.glColor4f(0.0f,0.0f,0.0f,0f); // middle alpha
-                    GL11.glVertex2f(0,split*2);
-                    GL11.glVertex2f(width, split*2);
-                    GL11.glColor3f(0.0f,0.0f,0.0f); // second black rec
-                    GL11.glVertex2f(0,split*3);
-                    GL11.glVertex2f(width, split*3);
-                    GL11.glVertex2f(0,height);
-                    GL11.glVertex2f(width, height);
-                    break;
-                    default: //none
-                    break;
-                }
-            GL11.glEnd();
+        GL11.glBegin(GL11.GL_QUAD_STRIP);
+        
+        if (GameOptions.getDark())
+        {
+            GL11.glColor3f(0.0f,0.0f,0.0f); // first black rec
+            GL11.glVertex2f(0, 0);
+            GL11.glVertex2f(width,0);
+            GL11.glVertex2f(0,split);
+            GL11.glVertex2f(width, split);
+            GL11.glColor4f(0.0f,0.0f,0.0f,0f); // middle alpha
+            GL11.glVertex2f(0,split*2);
+            GL11.glVertex2f(width, split*2);
+            GL11.glColor3f(0.0f,0.0f,0.0f); // second black rec
+            GL11.glVertex2f(0,split*3);
+            GL11.glVertex2f(width, split*3);
+            GL11.glVertex2f(0,height);
+            GL11.glVertex2f(width, height);
+        }
+                
+        else if (GameOptions.getHidden())
+        {
+            GL11.glColor4f(0.0f,0.0f,0.0f,0f); // middle alpha
+            GL11.glVertex2f(0,split*2);
+            GL11.glVertex2f(width, split*2);
+            GL11.glColor3f(0.0f,0.0f,0.0f); // second black rec
+            GL11.glVertex2f(0,split*3);
+            GL11.glVertex2f(width, split*3);
+            GL11.glVertex2f(0,height);
+            GL11.glVertex2f(width, height);  
+        }
+        
+        else if (GameOptions.getSudden())
+        {
+            GL11.glColor3f(0.0f,0.0f,0.0f); // first black rec
+            GL11.glVertex2f(0, 0);
+            GL11.glVertex2f(width,0);
+            GL11.glVertex2f(0,split*2);
+            GL11.glVertex2f(width, split*2);
+            GL11.glColor4f(0.0f,0.0f,0.0f,0f); // middle alpha
+            GL11.glVertex2f(0,split*3);
+            GL11.glVertex2f(width, split*3);
+            GL11.glColor4f(0.0f,0.0f,0.0f,0f); // middle alpha
+            GL11.glVertex2f(0,height);
+            GL11.glVertex2f(width, height);    
+        }
+
+        GL11.glEnd();
         GL11.glEndList();
     }
 
@@ -153,6 +156,7 @@ public class LWJGLSprite implements Sprite {
      *
      * @return The width of this sprite in pixels
      */
+    @Override
     public double getWidth() {
         return width * scale_x;
     }

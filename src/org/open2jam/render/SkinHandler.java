@@ -398,10 +398,10 @@ public class SkinHandler extends DefaultHandler
 	else if(id.equals("TIME_BAR")){
 	    //TODO
 	}
-        else if (id.equals("SUDDEN_PLUS"))
+        else if (id.equals("TOWEL"))
         {
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
-	    e = new BarEntity(s, 0, 0);
+	    e = new Entity(s, 0, 0);
         }
         else{
             Logger.global.log(Level.WARNING, "unpromoted entity [{0}]", id);

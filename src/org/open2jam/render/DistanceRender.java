@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.logging.Level;
+import org.open2jam.GameOptions;
 
 import org.open2jam.util.Logger;
 import org.open2jam.util.SystemTimer;
@@ -41,9 +42,9 @@ public class DistanceRender extends Render
 
     private EnumMap<JUDGE,NumberEntity> note_counter;
 
-    public DistanceRender(Chart c, double hispeed, boolean autoplay, int channelModifier, int visibilityModifier, int mainVol, int keyVol, int bgmVol)
+    public DistanceRender(Chart c)
     {
-        super(c,hispeed,autoplay,channelModifier,visibilityModifier, mainVol, keyVol, bgmVol);
+        super(c);
     }
 
     /**
@@ -102,7 +103,7 @@ public class DistanceRender extends Render
 
         now = SystemTimer.getTime() - start_time;
 
-	if(AUTOPLAY)do_autoplay();
+	if (GameOptions.getAutoplay()) do_autoplay();
         else check_keyboard();
 
         Iterator<LinkedList<Entity>> i = entities_matrix.iterator();
