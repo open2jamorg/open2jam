@@ -83,17 +83,22 @@ public abstract class Render implements GameWindowCallback
     /** The recorded fps */
     int fps;
 
-    /** the hispeed */
-    double hispeed;
-
+    /** the hispeed  values*/
     double last_speed;
     double speed;
     double next_speed;
-
-    int speed_type;
+    
+    boolean xr_speed = false;
+    boolean w_speed = false;
     private List<Double> speed_xR_values = new LinkedList<Double>();;
 
     static final double SPEED_FACTOR = 0.005d;
+    
+    //TODO make it changeable in options... maybe?
+    static final double W_SPEED_FACTOR = 0.0005d;
+    static final double W_SPEED_TIME = 3000d;
+    double w_time = 0;
+    boolean w_positive = true;
 
     /** the size of a measure */
     private double measure_size;
@@ -217,35 +222,45 @@ public abstract class Render implements GameWindowCallback
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
     }
 
-    Render(Chart chart, double hispeed, int speed_type, boolean autoplay, int channelModifier, int visibilityModifier)
+    Render(Chart chart, boolean autoplay, int channelModifier, int visibilityModifier)
     {
         keyboard_map = Config.getKeyboardMap(Config.KeyboardType.K7);
         keyboard_misc =Config.getKeyboardMisc();
         window = ResourceFactory.get().getGameWindow();
         entities_matrix = new EntityMatrix();
         this.chart = chart;
-        this.hispeed = hispeed;
-        this.speed_type = speed_type;
         velocity_tree = new IntervalTree<Double,Double>();
         this.AUTOPLAY = autoplay;
         this.channelModifier = channelModifier;
         this.visibilityModifier = visibilityModifier;
-
-        this.speed = 0;
-        this.next_speed = this.last_speed = hispeed;
     }
 
     /** set the screen dimensions */
     public void setDisplay(DisplayMode dm, boolean vsync, boolean fs, boolean bilinear) {
         window.setDisplay(dm,vsync,fs,bilinear);
     }
-
-
+    /** init the volumes */
     public void setVolumes(int mainVol, int keyVol, int bgmVol)
     {
         this.mainVolume = (mainVol/100f);
         this.keyVolume = (keyVol/100f);
         this.bgmVolume = (bgmVol/100f);
+    }
+    /** set the hispeed and turn on any modifier */
+    public void setSpeedModifiers(double hispeed, int speed_type)
+    {
+        this.speed = 0;
+        this.next_speed = this.last_speed = hispeed;
+        
+        switch(speed_type)
+        {
+            case 1:
+            xr_speed = true;
+            break;
+            case 2:
+            w_speed = true;
+            break;
+        }
     }
 
     /**
@@ -639,37 +654,62 @@ public abstract class Render implements GameWindowCallback
         }
     }
     
-    void change_bgm_volume(boolean positive)
+    void change_bgm_volume(float factor)
     {
-        change_volume(true , positive ? VOLUME_FACTOR : -VOLUME_FACTOR);
+        bgmVolume += factor;
+        if(bgmVolume > 1f) bgmVolume = 1f;
+        if(bgmVolume < 0f) bgmVolume = 0f;
+        change_volume(true , factor);
     }
     
-    void change_key_volume(boolean positive)
+    void change_key_volume(float factor)
     {
-        change_volume(false , positive ? VOLUME_FACTOR : -VOLUME_FACTOR);
+        keyVolume += factor;
+        if(keyVolume > 1f) keyVolume = 1f;
+        if(keyVolume < 0f) keyVolume = 0f;
+        change_volume(true , factor);
     }
             
     void changeSpeed(double delta)
     {   
-        if(speed == next_speed) return;
-        
-        if(last_speed > next_speed)
+        if(w_speed)
         {
-            speed -= SPEED_FACTOR * delta;
-            
-            if(speed < next_speed) speed = next_speed;
-        }
-        else if (last_speed < next_speed)
-        {
-            speed += SPEED_FACTOR * delta;
-            
-            if(speed > next_speed) speed = next_speed;            
+            w_time += delta;
+            if(w_time < W_SPEED_TIME)
+            {
+                speed += (w_positive ? 1 : -1) * W_SPEED_FACTOR * delta;
+                
+                if(speed < 0.5d) speed = 0.5d;
+                if(speed > 10d) speed = 10d;
+            }
+            else
+            {
+                w_time = 0;
+                w_positive = !w_positive;
+            }
         }
         else
         {
-            speed = next_speed;
-        }
+            if(speed == next_speed) return;
+            
+            if(last_speed > next_speed)
+            {
+                speed -= SPEED_FACTOR * delta;
 
+                if(speed < next_speed) speed = next_speed;
+            }
+            else if (last_speed < next_speed)
+            {
+                speed += SPEED_FACTOR * delta;
+
+                if(speed > next_speed) speed = next_speed;    
+            }
+            else
+            {
+                speed = next_speed;
+            }
+        }
+        
         judgment_line_y1 = skin.getJudgmentLine() - JUDGMENT_SIZE;
         
         //only change the offset if the speed is > 1
@@ -823,24 +863,16 @@ public abstract class Render implements GameWindowCallback
                         SoundManager.mainVolume(mainVolume);
                     break;
                     case KEY_VOL_UP:
-                        if(keyVolume < 1f) keyVolume += VOLUME_FACTOR;
-                        if(keyVolume > 1f) keyVolume = 1f;
-                        change_key_volume(true);
+                        change_key_volume(VOLUME_FACTOR);
                     break;
                     case KEY_VOL_DOWN:
-                        if(keyVolume > 0f) keyVolume -= VOLUME_FACTOR;
-                        if(keyVolume < 0f) keyVolume = 0f;
-                        change_key_volume(false);
+                        change_key_volume(-VOLUME_FACTOR);
                     break;
                     case BGM_VOL_UP:
-                        if(bgmVolume < 1f) bgmVolume += VOLUME_FACTOR;
-                        if(bgmVolume > 1f) bgmVolume = 1f;
-                        change_bgm_volume(true);
+                        change_bgm_volume(VOLUME_FACTOR);
                     break;
                     case BGM_VOL_DOWN:
-                        if(bgmVolume > 0f) bgmVolume -= VOLUME_FACTOR;
-                        if(bgmVolume < 0f) bgmVolume = 0f;
-                        change_bgm_volume(false);
+                        change_bgm_volume(-VOLUME_FACTOR);
                     break;
                 }
             }
@@ -961,7 +993,7 @@ public abstract class Render implements GameWindowCallback
 
     double velocity_integral(double t0, double t1, Event.Channel chan)
     {
-        if(speed_type != 1) return velocity_integral(t0, t1);
+        if(!xr_speed) return velocity_integral(t0, t1);
 
 
         double factor = 1;

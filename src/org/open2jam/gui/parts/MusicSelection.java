@@ -371,6 +371,11 @@ public class MusicSelection extends javax.swing.JPanel
         jc_timed_judgment.setToolTipText("Like Bemani games");
 
         combo_speedType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Hi-Speed:", "xR-Speed:", "W-Speed:" }));
+        combo_speedType.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                combo_speedTypeActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panel_modifiersLayout = new javax.swing.GroupLayout(panel_modifiers);
         panel_modifiers.setLayout(panel_modifiersLayout);
@@ -385,7 +390,7 @@ public class MusicSelection extends javax.swing.JPanel
                                 .addComponent(lbl_channelModifier)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(combo_channelModifier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
                                 .addComponent(lbl_visibilityModifier)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(combo_visibilityModifier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -398,7 +403,7 @@ public class MusicSelection extends javax.swing.JPanel
                                 .addGroup(panel_modifiersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(slider_key_vol, javax.swing.GroupLayout.Alignment.TRAILING, 0, 0, Short.MAX_VALUE)
                                     .addComponent(slider_bgm_vol, javax.swing.GroupLayout.Alignment.TRAILING, 0, 0, Short.MAX_VALUE)
-                                    .addComponent(slider_main_vol, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE))
+                                    .addComponent(slider_main_vol, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE))
                                 .addGroup(panel_modifiersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(panel_modifiersLayout.createSequentialGroup()
                                         .addGap(10, 10, 10)
@@ -417,7 +422,7 @@ public class MusicSelection extends javax.swing.JPanel
                         .addContainerGap())
                     .addGroup(panel_modifiersLayout.createSequentialGroup()
                         .addComponent(jc_timed_judgment)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 109, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 113, Short.MAX_VALUE)
                         .addComponent(jc_autoplay)
                         .addGap(14, 14, 14))))
         );
@@ -551,7 +556,7 @@ public class MusicSelection extends javax.swing.JPanel
         );
         panel_infoLayout.setVerticalGroup(
             panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 389, Short.MAX_VALUE)
+            .addGap(0, 399, Short.MAX_VALUE)
             .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(panel_infoLayout.createSequentialGroup()
                     .addContainerGap()
@@ -588,7 +593,7 @@ public class MusicSelection extends javax.swing.JPanel
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(lbl_artist)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
+                    .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -810,7 +815,7 @@ public class MusicSelection extends javax.swing.JPanel
             
             final boolean judgment = jc_timed_judgment.isSelected();
             
-            final int speed_xr = combo_speedType.getSelectedIndex();
+            final int speed_type = combo_speedType.getSelectedIndex();
             
             final int channelModifier = combo_channelModifier.getSelectedIndex();
             final int visibilityModifier = combo_visibilityModifier.getSelectedIndex();
@@ -832,11 +837,12 @@ public class MusicSelection extends javax.swing.JPanel
             
             Render r;
             if(judgment)
-                r = new TimeRender(selected_header, hispeed, speed_xr, autoplay, channelModifier, visibilityModifier);
+                r = new TimeRender(selected_header, autoplay, channelModifier, visibilityModifier);
             else
-                r = new DistanceRender(selected_header, hispeed, speed_xr, autoplay, channelModifier, visibilityModifier);
+                r = new DistanceRender(selected_header, autoplay, channelModifier, visibilityModifier);
             r.setDisplay(dm, vsync, fs, bilinear);
             r.setVolumes(mainVol, keyVol, bgmVol);
+            r.setSpeedModifiers(hispeed, speed_type);
             r.startRendering();
         }
 }//GEN-LAST:event_bt_playActionPerformed
@@ -861,6 +867,11 @@ public class MusicSelection extends javax.swing.JPanel
         if(sel_row >= 0)last_model_idx = table_songlist.convertRowIndexToModel(sel_row);
         model_songlist.setRank(rank);
 }//GEN-LAST:event_jr_rank_hardActionPerformed
+
+    private void combo_speedTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_speedTypeActionPerformed
+        if(combo_speedType.getSelectedIndex() == 2) js_hispeed.setEnabled(false);
+        else js_hispeed.setEnabled(true);
+    }//GEN-LAST:event_combo_speedTypeActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bt_choose_dir;
