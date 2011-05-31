@@ -3,7 +3,6 @@ package org.open2jam.render.lwjgl;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
-import java.util.HashMap;
 import java.util.logging.Level;
 import org.open2jam.util.Logger;
 

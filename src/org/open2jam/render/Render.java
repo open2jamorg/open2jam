@@ -424,7 +424,7 @@ public abstract class Render implements GameWindowCallback
         // get the chart sound samples
         samples = chart.getSamples();
 
-        trueTypeFont = new TrueTypeFont(new Font("Thaoma", Font.BOLD, 14), false);
+        trueTypeFont = new TrueTypeFont(new Font("Tahoma", Font.BOLD, 14), false);
         
         //clean up
         System.gc();
@@ -649,7 +649,6 @@ public abstract class Render implements GameWindowCallback
             float vol = SoundManager.getGain(source) + factor;
             if(vol < 0f) vol = 0f;
             if(vol > 1f) vol = 1f;
-
             SoundManager.setGain(source, vol);
         }
     }
@@ -657,17 +656,17 @@ public abstract class Render implements GameWindowCallback
     void change_bgm_volume(float factor)
     {
         bgmVolume += factor;
-        if(bgmVolume > 1f) bgmVolume = 1f;
         if(bgmVolume < 0f) bgmVolume = 0f;
+        if(bgmVolume > 1f) bgmVolume = 1f;
         change_volume(true , factor);
     }
     
     void change_key_volume(float factor)
     {
         keyVolume += factor;
-        if(keyVolume > 1f) keyVolume = 1f;
         if(keyVolume < 0f) keyVolume = 0f;
-        change_volume(true , factor);
+        if(keyVolume > 1f) keyVolume = 1f;
+        change_volume(false , factor);
     }
             
     void changeSpeed(double delta)

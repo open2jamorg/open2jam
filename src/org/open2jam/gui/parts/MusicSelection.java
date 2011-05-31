@@ -229,9 +229,9 @@ public class MusicSelection extends javax.swing.JPanel
         jLabel2.setText("Saved dirs:");
 
         combo_dirs.setMaximumSize(new java.awt.Dimension(34, 35));
-        combo_dirs.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                combo_dirsActionPerformed(evt);
+        combo_dirs.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                combo_dirsItemStateChanged(evt);
             }
         });
 
@@ -732,13 +732,6 @@ public class MusicSelection extends javax.swing.JPanel
        openFileChooser();
 }//GEN-LAST:event_bt_choose_dirActionPerformed
 
-    private void combo_dirsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_dirsActionPerformed
-        if(combo_dirs.getSelectedIndex() == -1) return;
-        File dir = ((FileItem)combo_dirs.getSelectedItem()).file;
-        if(dir.equals(Config.getCwd())) return;
-        loadDir(dir);
-}//GEN-LAST:event_combo_dirsActionPerformed
-
     private void btn_reloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_reloadActionPerformed
         updateSelection(Config.getCwd());
 }//GEN-LAST:event_btn_reloadActionPerformed
@@ -873,6 +866,13 @@ public class MusicSelection extends javax.swing.JPanel
         else js_hispeed.setEnabled(true);
     }//GEN-LAST:event_combo_speedTypeActionPerformed
 
+    private void combo_dirsItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_combo_dirsItemStateChanged
+        if(combo_dirs.getSelectedIndex() == -1) return;
+        File dir = ((FileItem)combo_dirs.getSelectedItem()).file;
+        if(dir.equals(Config.getCwd())) return;
+        loadDir(dir);
+    }//GEN-LAST:event_combo_dirsItemStateChanged
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bt_choose_dir;
     private javax.swing.JButton bt_play;
@@ -998,7 +998,7 @@ public class MusicSelection extends javax.swing.JPanel
             Config.setDirsList(dir_list);
         }   
         // update combo box dir list
-        System.out.println("set "+dir);
+        //System.out.println("set "+dir);
         combo_dirs.setSelectedItem(new FileItem(dir));
     }
     
