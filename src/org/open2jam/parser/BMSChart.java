@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 public class BMSChart extends Chart
 {
     int lntype;
+    boolean o2mania_style;
 
     File source;
     int lnobj;
