@@ -92,11 +92,11 @@ public abstract class Render implements GameWindowCallback
     boolean w_speed = false;
     private List<Double> speed_xR_values = new LinkedList<Double>();;
 
-    static final double SPEED_FACTOR = 0.005d;
+    private static final double SPEED_FACTOR = 0.005d;
     
     //TODO make it changeable in options... maybe?
-    static final double W_SPEED_FACTOR = 0.0005d;
-    static final double W_SPEED_TIME = 3000d;
+    private static final double W_SPEED_FACTOR = 0.0005d;
+    private double w_speed_time = 3000d;
     double w_time = 0;
     boolean w_positive = true;
 
@@ -248,10 +248,9 @@ public abstract class Render implements GameWindowCallback
     }
     /** set the hispeed and turn on any modifier */
     public void setSpeedModifiers(double hispeed, int speed_type)
-    {
+    {  
         this.speed = 0;
         this.next_speed = this.last_speed = hispeed;
-        
         switch(speed_type)
         {
             case 1:
@@ -259,6 +258,8 @@ public abstract class Render implements GameWindowCallback
             break;
             case 2:
             w_speed = true;
+            w_speed_time = hispeed;
+            this.next_speed = this.last_speed = 0;
             break;
         }
     }
@@ -524,7 +525,7 @@ public abstract class Render implements GameWindowCallback
             }
         }
 
-        trueTypeFont.drawString(780, 300, "HI-SPEED: "+next_speed, 1, -1, TrueTypeFont.ALIGN_RIGHT);
+        if(!w_speed) trueTypeFont.drawString(780, 300, "HI-SPEED: "+next_speed, 1, -1, TrueTypeFont.ALIGN_RIGHT);
         
         if(!buffer_iterator.hasNext() && entities_matrix.isEmpty(note_layer)){
             for(Integer source : source_queue)
@@ -656,16 +657,14 @@ public abstract class Render implements GameWindowCallback
     void change_bgm_volume(float factor)
     {
         bgmVolume += factor;
-        if(bgmVolume < 0f) bgmVolume = 0f;
-        if(bgmVolume > 1f) bgmVolume = 1f;
+        bgmVolume = clamp(bgmVolume, 0f, 1f);
         change_volume(true , factor);
     }
     
     void change_key_volume(float factor)
     {
         keyVolume += factor;
-        if(keyVolume < 0f) keyVolume = 0f;
-        if(keyVolume > 1f) keyVolume = 1f;
+        keyVolume = clamp(keyVolume, 0f, 1f);
         change_volume(false , factor);
     }
             
@@ -674,12 +673,11 @@ public abstract class Render implements GameWindowCallback
         if(w_speed)
         {
             w_time += delta;
-            if(w_time < W_SPEED_TIME)
+            if(w_time < w_speed_time)
             {
                 speed += (w_positive ? 1 : -1) * W_SPEED_FACTOR * delta;
                 
-                if(speed < 0.5d) speed = 0.5d;
-                if(speed > 10d) speed = 10d;
+                speed = clamp(speed, 0.5d, 10d);
             }
             else
             {
@@ -1199,5 +1197,17 @@ public abstract class Render implements GameWindowCallback
     @Override
     public void windowClosed() {
         SoundManager.killData();
+    }
+    
+    private double clamp(double value, double min, double max)
+    {
+        if (value < min) value = min;
+        if (value > max) value = max;
+        return value;
+    }
+    
+    private float clamp(float value, float min, float max)
+    {
+        return (float) clamp((double)value, (double)min, (double)max);
     }
 }

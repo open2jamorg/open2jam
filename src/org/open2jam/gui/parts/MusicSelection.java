@@ -862,8 +862,16 @@ public class MusicSelection extends javax.swing.JPanel
 }//GEN-LAST:event_jr_rank_hardActionPerformed
 
     private void combo_speedTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_speedTypeActionPerformed
-        if(combo_speedType.getSelectedIndex() == 2) js_hispeed.setEnabled(false);
-        else js_hispeed.setEnabled(true);
+        if(combo_speedType.getSelectedIndex() == 2)
+        {
+            js_hispeed.setModel(new javax.swing.SpinnerNumberModel(2000.0d, 500.0d, 6000.0d, 500.0d));
+        }
+        else
+        {
+            double value = (Double) js_hispeed.getValue();
+            if(value > 10d) value = 1d;
+            js_hispeed.setModel(new javax.swing.SpinnerNumberModel(value, 0.5d, 10.0d, 0.5d));
+        }
     }//GEN-LAST:event_combo_speedTypeActionPerformed
 
     private void combo_dirsItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_combo_dirsItemStateChanged
