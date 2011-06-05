@@ -745,6 +745,7 @@ public class MusicSelection extends javax.swing.JPanel
         List<File> dir_list = Config.getDirsList();
 
         File rem = Config.getCwd();
+        Config.delCache(rem);
         if(dir_list.contains(rem))
         {
             dir_list.remove(rem);

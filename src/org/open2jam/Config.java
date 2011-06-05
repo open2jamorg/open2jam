@@ -1,9 +1,9 @@
 package org.open2jam;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -15,12 +15,7 @@ import org.open2jam.parser.ChartList;
 import org.open2jam.parser.Event;
 import org.open2jam.parser.Event.Channel;
 import org.open2jam.util.Logger;
-import org.tmatesoft.sqljet.core.SqlJetException;
-import org.tmatesoft.sqljet.core.SqlJetTransactionMode;
-import org.tmatesoft.sqljet.core.schema.SqlJetConflictAction;
-import org.tmatesoft.sqljet.core.table.ISqlJetCursor;
-import org.tmatesoft.sqljet.core.table.ISqlJetTable;
-import org.tmatesoft.sqljet.core.table.SqlJetDb;
+import org.voile.VoileMap;
 
 /**
  *
@@ -28,18 +23,9 @@ import org.tmatesoft.sqljet.core.table.SqlJetDb;
  */
 public abstract class Config
 {
-    private static final File CONFIG_DBFILE = new File("config.db");
+    private static final File CONFIG_FILE = new File("config.db");
     
-    private static SqlJetDb db;
-    private static ISqlJetTable table;
-
-    private static final String KEY_INDEX = "key_index";
-    private static final String DATA_TABLE = "data";
-    private static final String VALUE_FIELD = "value";
-    private static String create_table = 
-            "CREATE TABLE "+DATA_TABLE+" (key TEXT PRIMARY KEY, "+VALUE_FIELD+" BLOB )";
-    private static String create_index = 
-            "CREATE INDEX "+KEY_INDEX+" ON "+DATA_TABLE+"(key)";
+    private static VoileMap<String, byte[]> VMap;
 
     public enum KeyboardType {K4, K5, K6, K7, K8, /*K9*/}
     
@@ -54,20 +40,9 @@ public abstract class Config
     
     public static void openDB() {
         
-        if(!CONFIG_DBFILE.exists()) { // create now
-        
-            try {
-                db = SqlJetDb.open(CONFIG_DBFILE, true);
-                db.createTable(create_table);
-                db.createIndex(create_index);
-                
-                table = db.getTable(DATA_TABLE);
-
-            } catch(SqlJetException e) {
-                Logger.global.severe("Unable to create config db !");
-                db = null;
-                return;
-            }
+        if(!CONFIG_FILE.exists()) { // create now
+            
+            VMap = new VoileMap<String, byte[]>(CONFIG_FILE);
             
             setCwd(null);
             
@@ -134,14 +109,8 @@ public abstract class Config
             keyboard_map_8K.put(Event.Channel.NOTE_SC, Keyboard.KEY_L);
             put("keyboard_map"+KeyboardType.K8.toString(), keyboard_map_8K);
 
-        } else {
-            try {
-                db = SqlJetDb.open(CONFIG_DBFILE, true);
-                table = db.getTable(DATA_TABLE);
-            } catch(SqlJetException e) {
-                Logger.global.severe("Unable to open the config db !");
-                db = null;
-            }
+        } else {           
+            VMap = new VoileMap<String, byte[]>(CONFIG_FILE);
         }
     }
 
@@ -184,38 +153,27 @@ public abstract class Config
         return (List<ChartList>) get("cache:"+dir.getAbsolutePath());
     }
     public static void setCache(File dir, List<ChartList> data) {
+        delete("cache:"+dir.getAbsolutePath());
         put("cache:"+dir.getAbsolutePath(),data);
+    }
+    public static void delCache(File dir){
+        delete("cache:"+dir.getAbsolutePath());
     }
     
     private static Object get(String key) {
-        if(db == null)return null;
-        
-        try {
-            db.beginTransaction(SqlJetTransactionMode.READ_ONLY);
-            try {
-                ISqlJetCursor cursor = table.lookup(KEY_INDEX,key);
-                if(cursor.eof())return null;
-                return blob2object(cursor.getBlobAsStream(VALUE_FIELD));
-                
-            } finally {
-                db.commit();
-            }
-        } catch(SqlJetException e) {
-            Logger.global.log(Level.SEVERE, "Error during db get: {0}", e.getMessage());
-        }
-        return null;
+        if(!VMap.containsKey(key)) return null;
+        return blob2object(VMap.get(key));
     }
     
-    private static void put(String key, Object value) {
-        if(db == null)return;
-        
-        try {
-            table.insertOr(SqlJetConflictAction.REPLACE, key, object2blob(value));
-        } catch(SqlJetException e) {
-            Logger.global.log(Level.SEVERE, "Error during db put: {0}", e.getMessage());
-        }
+    private static void put(String key, Object value) {       
+        VMap.put(key, object2blob(value));
     }
 
+    private static void delete(String key) {
+        if(!VMap.containsKey(key)) return;
+        VMap.remove(key);
+    }
+    
     private static byte[] object2blob(Object o) {
         ByteArrayOutputStream bao = new ByteArrayOutputStream();
         try {
@@ -226,9 +184,10 @@ public abstract class Config
         }
         return bao.toByteArray();
     }
-    private static Object blob2object(InputStream blob) {
+    private static Object blob2object(byte[] blob) {
         try {
-            return new ObjectInputStream(blob).readObject();
+            ByteArrayInputStream bs= new ByteArrayInputStream(blob);
+            return new ObjectInputStream(bs).readObject();
         } catch(IOException e) {
             Logger.global.log(Level.SEVERE, "Config db read error : {0}", e.getMessage());
         } catch (ClassNotFoundException ignored) {
