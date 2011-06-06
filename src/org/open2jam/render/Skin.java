@@ -23,6 +23,7 @@ public class Skin
 
     int judgment_line;
 
+
     public Skin()
     {
         named_entities = new HashMap<String,Entity>();
@@ -44,5 +45,20 @@ public class Skin
         al.addAll(other_entities);
 
         return al;
+    }
+
+    public float getScreenScaleX()
+    {
+        return screen_scale_x;
+    }
+
+    public float getScreenScaleY()
+    {
+        return screen_scale_y;
+    }
+
+    public int getJudgmentLine()
+    {
+        return judgment_line;
     }
 }

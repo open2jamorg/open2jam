@@ -1,168 +1,170 @@
 package org.open2jam;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import org.open2jam.util.Logger;
 import org.lwjgl.input.Keyboard;
+import org.open2jam.parser.ChartList;
 import org.open2jam.parser.Event;
+import org.open2jam.parser.Event.Channel;
+import org.voile.VoileMap;
 
 /**
  *
  * @author fox
  */
-public class Config implements Serializable
+public abstract class Config
 {
-    private static final long serialVersionUID = 1L;
-    //  EnumMap<Event.Channel,Integer> keyboard_map_9K; // Pop'n'Music // TODO Not sure if we want a 9k map :/
+    private static final File CONFIG_FILE = new File("config.vl");
     
-    private final EnumMap<KeyboardType, EnumMap<Event.Channel,Integer>> keyboard_map;
+    private static VoileMap<String, Serializable> VMap;
 
-    private ArrayList<File> dir_list;
-
-    private static final File CONFIG_FILE = new File("config.obj");
-
-    Level log_level = Level.INFO;
-    FileHandler log_handle = null;
-
-    /** singleton object */
-    private static Config config = null;
+    public enum KeyboardType {K4, K5, K6, K7, K8, /*K9*/}
     
-    /** 
-     * Stores input delay data, in milliseconds. 
-     * Decimals are allowed (but unnecessary imo).
-     */
-    private double displayLag;
-
-    public enum KeyboardType{K4, K5, K6, K7, K8, /*K9*/}
-
-    private Config()
-    {
-        dir_list = new ArrayList<File>();
-        dir_list.add(new File(System.getProperty("user.dir")));
-
-        // TODO Needs the 2nd player keys, if we are going to add 2p support ofc xD
-        EnumMap<Event.Channel, Integer> keyboard_map_4K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
-        keyboard_map_4K.put(Event.Channel.NOTE_1, Keyboard.KEY_D);
-        keyboard_map_4K.put(Event.Channel.NOTE_2, Keyboard.KEY_F);
-        keyboard_map_4K.put(Event.Channel.NOTE_3, Keyboard.KEY_J);
-        keyboard_map_4K.put(Event.Channel.NOTE_4, Keyboard.KEY_K);
-        keyboard_map_4K.put(Event.Channel.NOTE_SC, Keyboard.KEY_LSHIFT);
-
-        EnumMap<Event.Channel, Integer> keyboard_map_5K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
-        keyboard_map_5K.put(Event.Channel.NOTE_1, Keyboard.KEY_D);
-        keyboard_map_5K.put(Event.Channel.NOTE_2, Keyboard.KEY_F);
-        keyboard_map_5K.put(Event.Channel.NOTE_3, Keyboard.KEY_SPACE);
-        keyboard_map_5K.put(Event.Channel.NOTE_4, Keyboard.KEY_J);
-        keyboard_map_5K.put(Event.Channel.NOTE_5, Keyboard.KEY_K);
-        keyboard_map_5K.put(Event.Channel.NOTE_SC, Keyboard.KEY_LSHIFT);
-
-        EnumMap<Event.Channel, Integer> keyboard_map_6K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
-        keyboard_map_6K.put(Event.Channel.NOTE_1, Keyboard.KEY_S);
-        keyboard_map_6K.put(Event.Channel.NOTE_2, Keyboard.KEY_D);
-        keyboard_map_6K.put(Event.Channel.NOTE_3, Keyboard.KEY_F);
-        keyboard_map_6K.put(Event.Channel.NOTE_4, Keyboard.KEY_J);
-        keyboard_map_6K.put(Event.Channel.NOTE_5, Keyboard.KEY_K);
-        keyboard_map_6K.put(Event.Channel.NOTE_6, Keyboard.KEY_L);
-        keyboard_map_6K.put(Event.Channel.NOTE_SC, Keyboard.KEY_LSHIFT);
-
-        EnumMap<Event.Channel, Integer> keyboard_map_7K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
-        keyboard_map_7K.put(Event.Channel.NOTE_1, Keyboard.KEY_S);
-        keyboard_map_7K.put(Event.Channel.NOTE_2, Keyboard.KEY_D);
-        keyboard_map_7K.put(Event.Channel.NOTE_3, Keyboard.KEY_F);
-        keyboard_map_7K.put(Event.Channel.NOTE_4, Keyboard.KEY_SPACE);
-        keyboard_map_7K.put(Event.Channel.NOTE_5, Keyboard.KEY_J);
-        keyboard_map_7K.put(Event.Channel.NOTE_6, Keyboard.KEY_K);
-        keyboard_map_7K.put(Event.Channel.NOTE_7, Keyboard.KEY_L);
-        keyboard_map_7K.put(Event.Channel.NOTE_SC, Keyboard.KEY_LSHIFT);
-
-        EnumMap<Event.Channel, Integer> keyboard_map_8K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
-        keyboard_map_8K.put(Event.Channel.NOTE_1, Keyboard.KEY_A);
-        keyboard_map_8K.put(Event.Channel.NOTE_2, Keyboard.KEY_S);
-        keyboard_map_8K.put(Event.Channel.NOTE_3, Keyboard.KEY_D);
-        keyboard_map_8K.put(Event.Channel.NOTE_4, Keyboard.KEY_F);
-        keyboard_map_8K.put(Event.Channel.NOTE_5, Keyboard.KEY_H);
-        keyboard_map_8K.put(Event.Channel.NOTE_6, Keyboard.KEY_J);
-        keyboard_map_8K.put(Event.Channel.NOTE_7, Keyboard.KEY_K);
-        keyboard_map_8K.put(Event.Channel.NOTE_SC, Keyboard.KEY_L);
-
-        keyboard_map = new EnumMap<KeyboardType, EnumMap<Event.Channel,Integer>>(KeyboardType.class);
-        keyboard_map.put(KeyboardType.K4, keyboard_map_4K);
-        keyboard_map.put(KeyboardType.K5, keyboard_map_5K);
-        keyboard_map.put(KeyboardType.K6, keyboard_map_6K);
-        keyboard_map.put(KeyboardType.K7, keyboard_map_7K);
-        keyboard_map.put(KeyboardType.K8, keyboard_map_8K);
+    public enum MiscEvent {  
+        NONE,                       //None
+        SPEED_UP, SPEED_DOWN,       //speed changes
+        MAIN_VOL_UP, MAIN_VOL_DOWN, //main volume changes
+        KEY_VOL_UP, KEY_VOL_DOWN,   //key volume changes
+        BGM_VOL_UP, BGM_VOL_DOWN,   //bgm volume changes
+        //CHAT_TOGGLE,                //chat toggle... if we are going to add one
+    }
+    
+    public static void openDB() {
         
-        displayLag = 1000d;
-    }
-    
-    public double getDisplayLag()
-    {
-        return displayLag;
-    }
-    
-    public void setDisplayLag(double displayLag)
-    {
-        this.displayLag = displayLag;
-    }
+        if(!CONFIG_FILE.exists()) { // create now
+            
+            VMap = new VoileMap<String, Serializable>(CONFIG_FILE);
+            
+            setCwd(null);
+            
+            setDirsList(new ArrayList<File>());
 
-    public EnumMap<Event.Channel,Integer> getKeyboardMap(KeyboardType kt){
-        return keyboard_map.get(kt);
-    }
+            EnumMap<MiscEvent, Integer> keyboard_misc = new EnumMap<MiscEvent, Integer>(MiscEvent.class);
+            keyboard_misc.put(MiscEvent.SPEED_DOWN,   Keyboard.KEY_DOWN);
+            keyboard_misc.put(MiscEvent.SPEED_UP,     Keyboard.KEY_UP);
+            keyboard_misc.put(MiscEvent.MAIN_VOL_UP,  Keyboard.KEY_2);
+            keyboard_misc.put(MiscEvent.MAIN_VOL_DOWN,Keyboard.KEY_1);
+            keyboard_misc.put(MiscEvent.KEY_VOL_UP,   Keyboard.KEY_4);
+            keyboard_misc.put(MiscEvent.KEY_VOL_DOWN, Keyboard.KEY_3);
+            keyboard_misc.put(MiscEvent.BGM_VOL_UP,   Keyboard.KEY_6);
+            keyboard_misc.put(MiscEvent.BGM_VOL_DOWN, Keyboard.KEY_5);
+            put("keyboard_misc", keyboard_misc);
+            
+            // TODO Needs the 2nd player keys, if we are going to add 2p support ofc xD
+            EnumMap<Event.Channel, Integer> keyboard_map_4K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
+            keyboard_map_4K.put(Event.Channel.NOTE_1, Keyboard.KEY_D);
+            keyboard_map_4K.put(Event.Channel.NOTE_2, Keyboard.KEY_F);
+            keyboard_map_4K.put(Event.Channel.NOTE_3, Keyboard.KEY_J);
+            keyboard_map_4K.put(Event.Channel.NOTE_4, Keyboard.KEY_K);
+            keyboard_map_4K.put(Event.Channel.NOTE_SC, Keyboard.KEY_LSHIFT);
+            put("keyboard_map"+KeyboardType.K4.toString(), keyboard_map_4K);
 
-    public void setKeyboardMap(EnumMap<Event.Channel,Integer> kb_map, KeyboardType kt){
-        keyboard_map.get(kt).putAll(kb_map);
-    }
+            EnumMap<Event.Channel, Integer> keyboard_map_5K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
+            keyboard_map_5K.put(Event.Channel.NOTE_1, Keyboard.KEY_D);
+            keyboard_map_5K.put(Event.Channel.NOTE_2, Keyboard.KEY_F);
+            keyboard_map_5K.put(Event.Channel.NOTE_3, Keyboard.KEY_SPACE);
+            keyboard_map_5K.put(Event.Channel.NOTE_4, Keyboard.KEY_J);
+            keyboard_map_5K.put(Event.Channel.NOTE_5, Keyboard.KEY_K);
+            keyboard_map_5K.put(Event.Channel.NOTE_SC, Keyboard.KEY_LSHIFT);
+            put("keyboard_map"+KeyboardType.K5.toString(), keyboard_map_5K);
 
-    public ArrayList<File> getDirsList (){
-        return dir_list;
-    }
+            EnumMap<Event.Channel, Integer> keyboard_map_6K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
+            keyboard_map_6K.put(Event.Channel.NOTE_1, Keyboard.KEY_S);
+            keyboard_map_6K.put(Event.Channel.NOTE_2, Keyboard.KEY_D);
+            keyboard_map_6K.put(Event.Channel.NOTE_3, Keyboard.KEY_F);
+            keyboard_map_6K.put(Event.Channel.NOTE_4, Keyboard.KEY_J);
+            keyboard_map_6K.put(Event.Channel.NOTE_5, Keyboard.KEY_K);
+            keyboard_map_6K.put(Event.Channel.NOTE_6, Keyboard.KEY_L);
+            keyboard_map_6K.put(Event.Channel.NOTE_SC, Keyboard.KEY_LSHIFT);
+            put("keyboard_map"+KeyboardType.K6.toString(), keyboard_map_6K);
 
-    public void setDirsList(ArrayList<File> dl)
-    {
-        this.dir_list = dl;
-    }
+            EnumMap<Event.Channel, Integer> keyboard_map_7K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
+            keyboard_map_7K.put(Event.Channel.NOTE_1, Keyboard.KEY_S);
+            keyboard_map_7K.put(Event.Channel.NOTE_2, Keyboard.KEY_D);
+            keyboard_map_7K.put(Event.Channel.NOTE_3, Keyboard.KEY_F);
+            keyboard_map_7K.put(Event.Channel.NOTE_4, Keyboard.KEY_SPACE);
+            keyboard_map_7K.put(Event.Channel.NOTE_5, Keyboard.KEY_J);
+            keyboard_map_7K.put(Event.Channel.NOTE_6, Keyboard.KEY_K);
+            keyboard_map_7K.put(Event.Channel.NOTE_7, Keyboard.KEY_L);
+            keyboard_map_7K.put(Event.Channel.NOTE_SC, Keyboard.KEY_LSHIFT);
+            put("keyboard_map"+KeyboardType.K7.toString(), keyboard_map_7K);
 
-    public void save()
-    {
-        try {
-            ObjectOutputStream obj = new ObjectOutputStream(new FileOutputStream(CONFIG_FILE));
-            obj.writeObject(this);
-            obj.close();
-        } catch (FileNotFoundException ex) {
-            Logger.global.severe("Could not find file to write config !");
-        } catch (IOException ioe) {
-            Logger.global.log(Level.SEVERE, "IO Error on writing config file ! :{0}", ioe.getMessage());
+            EnumMap<Event.Channel, Integer> keyboard_map_8K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
+            keyboard_map_8K.put(Event.Channel.NOTE_1, Keyboard.KEY_A);
+            keyboard_map_8K.put(Event.Channel.NOTE_2, Keyboard.KEY_S);
+            keyboard_map_8K.put(Event.Channel.NOTE_3, Keyboard.KEY_D);
+            keyboard_map_8K.put(Event.Channel.NOTE_4, Keyboard.KEY_F);
+            keyboard_map_8K.put(Event.Channel.NOTE_5, Keyboard.KEY_H);
+            keyboard_map_8K.put(Event.Channel.NOTE_6, Keyboard.KEY_J);
+            keyboard_map_8K.put(Event.Channel.NOTE_7, Keyboard.KEY_K);
+            keyboard_map_8K.put(Event.Channel.NOTE_SC, Keyboard.KEY_L);
+            put("keyboard_map"+KeyboardType.K8.toString(), keyboard_map_8K);
+
+        } else {           
+            VMap = new VoileMap<String, Serializable>(CONFIG_FILE);
         }
     }
 
-    public static Config get()
+    @SuppressWarnings("unchecked")
+    public static EnumMap<Event.Channel,Integer> getKeyboardMap(KeyboardType kt){
+        return (EnumMap<Channel, Integer>) get("keyboard_map"+kt.toString());
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static EnumMap<MiscEvent,Integer> getKeyboardMisc(){
+        return (EnumMap<MiscEvent, Integer>) get("keyboard_misc");
+    }
+    
+    public static void setKeyboardMisc(EnumMap<MiscEvent,Integer> km_map)
     {
-        if(config == null){
-            try {
-                ObjectInputStream obj = new ObjectInputStream(new FileInputStream(CONFIG_FILE));
-                config = (Config) obj.readObject();
-                obj.close();
-                // Hard coded right now
-                config.displayLag = 15d;
-            } catch (ClassNotFoundException ex) {
-                Logger.global.severe("There's no Config class !! impossibru !");
-            } catch (FileNotFoundException ex) {
-                config = new Config();
-                config.save();
-            } catch (IOException ioe) {
-                Logger.global.log(Level.SEVERE, "IO Error on reading config file ! :{0}", ioe.getMessage());
-            }
-        }
-        return config;
+        put("keyboard_misc", km_map);
+    }
+
+    public static void setKeyboardMap(EnumMap<Event.Channel,Integer> kb_map, KeyboardType kt){
+        put("keyboard_map"+kt.toString(), kb_map);
+    }
+
+    public static File getCwd() {
+        return (File) get("cwd");
+    }
+    public static void setCwd(File new_file) {
+        put("cwd",new_file);
+    }
+
+    public static void setDirsList(ArrayList<File> dl) {
+        put("dir_list",dl);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static ArrayList<File> getDirsList() {
+        return (ArrayList<File>) get("dir_list");
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static ArrayList<ChartList> getCache(File dir) {
+        return (ArrayList<ChartList>) get("cache:"+dir.getAbsolutePath());
+    }
+
+    public static void setCache(File dir, ArrayList<ChartList> data) {
+        delete("cache:"+dir.getAbsolutePath());
+        put("cache:"+dir.getAbsolutePath(),data);
+    }
+
+    public static void delCache(File dir){
+        delete("cache:"+dir.getAbsolutePath());
+    }
+    
+    private static Serializable get(String key) {
+        return VMap.get(key);
+    }
+    
+    private static void put(String key, Serializable value) {
+        VMap.put(key, value);
+    }
+
+    private static void delete(String key) {
+        VMap.remove(key);
     }
 }

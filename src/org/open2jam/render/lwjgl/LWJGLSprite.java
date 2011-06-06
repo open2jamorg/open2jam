@@ -105,11 +105,11 @@ public class LWJGLSprite implements Sprite {
                 {
                     case 1: //hidden (hidden lower part)
                     GL11.glColor4f(0.0f,0.0f,0.0f,0f); // middle alpha
-                    GL11.glVertex2f(0,split*2);
-                    GL11.glVertex2f(width, split*2);
+                    GL11.glVertex2f(0,split*1.8f);
+                    GL11.glVertex2f(width, split*1.8f);
                     GL11.glColor3f(0.0f,0.0f,0.0f); // second black rec
-                    GL11.glVertex2f(0,split*3);
-                    GL11.glVertex2f(width, split*3);
+                    GL11.glVertex2f(0,split*2.4f);
+                    GL11.glVertex2f(width, split*2.4f);
                     GL11.glVertex2f(0,height);
                     GL11.glVertex2f(width, height);
                     break;
@@ -117,27 +117,27 @@ public class LWJGLSprite implements Sprite {
                     GL11.glColor3f(0.0f,0.0f,0.0f); // first black rec
                     GL11.glVertex2f(0, 0);
                     GL11.glVertex2f(width,0);
-                    GL11.glVertex2f(0,split*2);
-                    GL11.glVertex2f(width, split*2);
+                    GL11.glVertex2f(0,split*1.8f);
+                    GL11.glVertex2f(width, split*1.8f);
                     GL11.glColor4f(0.0f,0.0f,0.0f,0f); // middle alpha
-                    GL11.glVertex2f(0,split*3);
-                    GL11.glVertex2f(width, split*3);
-                    GL11.glColor4f(0.0f,0.0f,0.0f,0f); // middle alpha
-                    GL11.glVertex2f(0,height);
-                    GL11.glVertex2f(width, height);
+                    GL11.glVertex2f(0,split*2.4f);
+                    GL11.glVertex2f(width, split*2.4f);
                     break;
                     case 3: //dark (only shows the middle part)
                     GL11.glColor3f(0.0f,0.0f,0.0f); // first black rec
                     GL11.glVertex2f(0, 0);
                     GL11.glVertex2f(width,0);
-                    GL11.glVertex2f(0,split);
-                    GL11.glVertex2f(width, split);
-                    GL11.glColor4f(0.0f,0.0f,0.0f,0f); // middle alpha
-                    GL11.glVertex2f(0,split*2);
-                    GL11.glVertex2f(width, split*2);
+                    GL11.glVertex2f(0,split*1.78f);
+                    GL11.glVertex2f(width, split*1.78f);
+                    GL11.glColor4f(0.0f,0.0f,0.0f,0f); // 1st middle alpha
+                    GL11.glVertex2f(0,split*1.8f);
+                    GL11.glVertex2f(width, split*1.8f);
+                    GL11.glColor4f(0.0f,0.0f,0.0f,0f); // 2nd middle alpha
+                    GL11.glVertex2f(0,split*2.4f);
+                    GL11.glVertex2f(width, split*2.4f);
                     GL11.glColor3f(0.0f,0.0f,0.0f); // second black rec
-                    GL11.glVertex2f(0,split*3);
-                    GL11.glVertex2f(width, split*3);
+                    GL11.glVertex2f(0,split*2.42f);
+                    GL11.glVertex2f(width, split*2.42f);
                     GL11.glVertex2f(0,height);
                     GL11.glVertex2f(width, height);
                     break;

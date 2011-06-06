@@ -13,7 +13,7 @@ use Data::Dumper;
 #
 
 my $filename = shift;
-my $notelevel = 0; # 0,1,2 <-> Easy,Normal,Hard, which note rank to print
+my $notelevel = 2; # 0,1,2 <-> Easy,Normal,Hard, which note rank to print
 my $speed = 4; # hi-speed
 
 # this is the space height the user can see at a time,
@@ -75,6 +75,8 @@ my ($artist,$title,$noter) = ($h->{'artist'},$h->{'title'},$h->{'noter'});
 
 my ($startpos,$endpos) = ($notepos[$notelevel],$notepos[$notelevel + 1]);
 
+#print $startpos,"\n", $endpos;
+
 seek $OJN, $startpos, 0; # go to pos where lvl starts
 
 #### note parsing phase ####
@@ -106,15 +108,14 @@ while(!eof $OJN && tell $OJN < $endpos)
 			'type'    => $type,
 			};
 		}
-		next if $channel > 9;
-		print "ch: $channel, m: $measure, p: ".($i / $events_count).",v: $value\n";
+		#print "ch: $channel, m: $measure, p: ".($i / $events_count).",v: $value\n";
 	}
 }
-exit;
+#exit;
 # die Dumper \@note_list;
 
 @note_list = sort{ $a->{'measure'} <=> $b->{'measure'} } @note_list;
-my $total_measures = $note_list[-1]->{'measure'};
+my $total_measures = $note_list[$#note_list]->{'measure'};
 
 
 #### render phase ####
@@ -207,6 +208,11 @@ for my $m(0..$total_measures)
 			}
 			elsif($n->{'type'} == 3) # end long note
 			{
+				unless(defined $lch[$n->{'channel'}]) {
+					warn "note end without start";
+					warn Dumper $n;
+				}
+
 				my $y_old = $lch[$n->{'channel'}]->{'absolute_pos'};
 				$im->filledRectangle($x, $y-$note_height, $x+$note_width, $y_old, $color[10 + $c]);
 				delete $lch[$n->{'channel'}];

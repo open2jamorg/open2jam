@@ -3,11 +3,12 @@ package org.open2jam;
 import java.io.File;
 import java.awt.EventQueue;
 import java.util.logging.Handler;
+import java.util.logging.Level;
 import org.open2jam.util.Logger;
 import javax.swing.UIManager;
 import org.open2jam.gui.Interface;
 
-public class Main
+public class Main implements Runnable
 {
     private static final String LIB_PATH =
         System.getProperty("user.dir") + File.separator +
@@ -17,25 +18,28 @@ public class Main
 
     public static void main(String []args)
     {
+        Config.openDB();
+        
         setupLogging();
 
         trySetLAF();
 
         System.setProperty("org.lwjgl.librarypath", LIB_PATH);
 
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                 new Interface().setVisible(true);
-            }
-        });
+        EventQueue.invokeLater(new Main());
+    }
+    
+    @Override
+    public void run() {
+        new Interface().setVisible(true);
     }
 
     private static void setupLogging()
     {
-        Config c = Config.get();
-        if(c.log_handle != null)Logger.global.addHandler(c.log_handle);
-        for(Handler h : Logger.global.getHandlers())h.setLevel(c.log_level);
-        Logger.global.setLevel(c.log_level);
+        //Config c = Config.get();
+        //if(c.log_handle != null)Logger.global.addHandler(c.log_handle);
+        for(Handler h : Logger.global.getHandlers())h.setLevel(Level.INFO);
+        Logger.global.setLevel(Level.INFO);
     }
 
     private static void trySetLAF()

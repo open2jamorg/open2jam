@@ -14,11 +14,11 @@ import org.open2jam.parser.ChartList;
  */
 public class ChartListTableModel implements TableModel
 {
-    private List<ChartList> items;
+    private ArrayList<ChartList> items;
     private final String[] col_names = new String[] { "Name", "Level", "Genre" };
     private int rank;
     
-    private final List<TableModelListener> listeners;
+    private final ArrayList<TableModelListener> listeners;
 
     public ChartListTableModel()
     {
@@ -37,12 +37,12 @@ public class ChartListTableModel implements TableModel
         fireListeners();
     }
 
-    public void setRawList(List<ChartList> list) {
+    public void setRawList(ArrayList<ChartList> list) {
         items = list;
         fireListeners();
     }
 
-    public List<ChartList> getRawList() {
+    public ArrayList<ChartList> getRawList() {
         return items;
     }
 

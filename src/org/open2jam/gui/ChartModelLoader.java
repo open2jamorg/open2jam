@@ -6,11 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import org.open2jam.util.Logger;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.zip.GZIPOutputStream;
 import javax.swing.SwingWorker;
+import org.open2jam.Config;
 import org.open2jam.parser.ChartList;
 import org.open2jam.parser.ChartParser;
 
@@ -18,7 +15,7 @@ import org.open2jam.parser.ChartParser;
  *
  * @author fox
  */
-class ChartModelLoader extends SwingWorker<ChartListTableModel,ChartList>
+public class ChartModelLoader extends SwingWorker<ChartListTableModel,ChartList>
 {
 
     private final ChartListTableModel table_model;
@@ -29,6 +26,7 @@ class ChartModelLoader extends SwingWorker<ChartListTableModel,ChartList>
         this.dir = dir;
     }
 
+    @Override
     protected ChartListTableModel doInBackground() {
         try{
         table_model.clear();
@@ -56,17 +54,7 @@ class ChartModelLoader extends SwingWorker<ChartListTableModel,ChartList>
 
     @Override
     protected void done() {
-
-        File f = Interface.getCacheFile(dir);
-
-        try {
-            GZIPOutputStream gzip = new GZIPOutputStream(new FileOutputStream(f));
-            ObjectOutputStream obj = new ObjectOutputStream(gzip);
-            obj.writeObject(table_model.getRawList());
-            obj.close();
-        } catch (IOException ex) {
-            Logger.global.log(Level.SEVERE, "{0}", ex);
-        }
+        Config.setCache(dir, table_model.getRawList());
     }
 
     @Override

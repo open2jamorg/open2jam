@@ -13,7 +13,6 @@ import org.open2jam.parser.Event;
 import org.open2jam.render.entities.AnimatedEntity;
 import org.open2jam.render.entities.ComboCounterEntity;
 import org.open2jam.render.entities.CompositeEntity;
-import org.open2jam.render.entities.EffectEntity;
 import org.open2jam.render.entities.Entity;
 import org.open2jam.render.entities.BarEntity;
 import org.open2jam.render.entities.JudgmentEntity;
@@ -24,7 +23,7 @@ import org.open2jam.render.entities.NumberEntity;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.Attributes;
 
-public class SkinHandler extends DefaultHandler
+public class SkinParser extends DefaultHandler
 {
 
     private enum Keyword {
@@ -37,15 +36,15 @@ public class SkinHandler extends DefaultHandler
     private ArrayList<Sprite> frame_buffer;
     private HashMap<String, SpriteList> sprite_buffer;
 
+
     private ArrayList<String> style_list;
     private HashMap<String, ArrayList<String>> styles_map;
 
-    private Skin result;
+    private HashMap<String, Skin> result;
 
     private int layer = -1;
 
-    private String target_skin;
-    private boolean on_skin = false;
+    private String skin_name;
 
     private double baseW = 800;
     private double baseH = 600;
@@ -53,9 +52,8 @@ public class SkinHandler extends DefaultHandler
     private final double targetH;
 
 
-    public SkinHandler(String skin, double width, double height)
+    public SkinParser(double width, double height)
     {
-        this.target_skin = skin;
 	this.targetW = width;
 	this.targetH = height;
         call_stack = new ArrayDeque<Keyword>();
@@ -66,7 +64,7 @@ public class SkinHandler extends DefaultHandler
         style_list = new ArrayList<String>();
         styles_map = new HashMap<String, ArrayList<String>>();
         
-        result = new Skin();
+        result = new HashMap<String, Skin>();
     }
 
     @Override
@@ -83,19 +81,30 @@ public class SkinHandler extends DefaultHandler
         switch(k)
         {
             case skin:{
-                if(atts_map.get("name").equals(target_skin))on_skin = true;
+                this.skin_name = atts_map.get("name");
+                result.put(skin_name, new Skin());
 		if(atts_map.containsKey("width"))this.baseW = Double.parseDouble(atts_map.get("width"));
 		if(atts_map.containsKey("height"))this.baseH = Double.parseDouble(atts_map.get("height"));
-                result.judgment_line = Integer.parseInt(atts_map.get("judgment_line"));
+                result.get(skin_name).judgment_line = Integer.parseInt(atts_map.get("judgment_line"));
 
-		result.screen_scale_x = (float) (this.targetW/this.baseW);
-		result.screen_scale_y = (float) (this.targetH/this.baseH);
+		result.get(skin_name).screen_scale_x = (float) (this.targetW/this.baseW);
+		result.get(skin_name).screen_scale_y = (float) (this.targetH/this.baseH);
                 ResourceFactory.get().getGameWindow().initScales(this.baseW, this.baseH);
             }break;
 
             case layer:{
-                this.layer = Integer.parseInt(atts_map.get("id"));
-                if(this.layer > result.max_layer)result.max_layer = this.layer;
+                this.layer++;
+                result.get(skin_name).max_layer = this.layer;
+            }break;
+
+            case style:{
+                style_list.add(atts_map.get("id"));
+            }break;
+            case styles:{
+                ArrayList<String> al = new ArrayList<String>();
+                al.addAll(style_list);
+                styles_map.put(atts_map.get("id"), al);
+                style_list.clear();
             }break;
         }
     }
@@ -105,9 +114,6 @@ public class SkinHandler extends DefaultHandler
     {
         Keyword k = call_stack.pop();
         Map<String,String> atts = atts_stack.pop();
-
-        if(!on_skin)return;
-        else if(k == Keyword.skin)on_skin = false;
 
         switch(k)
         {
@@ -125,7 +131,7 @@ public class SkinHandler extends DefaultHandler
                 Rectangle slice = new Rectangle(x,y,w,h);
 
                 String FILE_PATH_PREFIX = "/resources/";
-                URL url = SkinHandler.class.getResource(FILE_PATH_PREFIX +atts.get("file"));
+                URL url = SkinParser.class.getResource(FILE_PATH_PREFIX +atts.get("file"));
                 if(url == null)throw new RuntimeException("Cannot find resource: "+ FILE_PATH_PREFIX +atts.get("file"));
 
                 Sprite s;
@@ -138,7 +144,6 @@ public class SkinHandler extends DefaultHandler
                 s.setScale(sx, sy);
                 frame_buffer.add(s);
             }break;
-
             case sprite:{
                 double framespeed = 0;
                 if(atts.containsKey("framespeed"))framespeed = Double.parseDouble(atts.get("framespeed"));
@@ -147,7 +152,7 @@ public class SkinHandler extends DefaultHandler
                 String id;
                 if(atts.containsKey("id"))id = atts.get("id");
                 else {
-                    Logger.global.severe("bad resource file ! sprite must have an ID !");
+                    Logger.global.log(Level.SEVERE,"bad resource file ! sprite must have an ID ! ATTS: {0}",atts);
                     break;
                 }
 
@@ -157,16 +162,6 @@ public class SkinHandler extends DefaultHandler
                 sprite_buffer.put(id, sl);
 
                 frame_buffer.clear();
-            }break;
-           
-            case style:{
-                style_list.add(atts.get("id"));
-            }break;
-            case styles:{
-                ArrayList<String> al = new ArrayList<String>();
-                al.addAll(style_list);
-                styles_map.put(atts.get("id"), al);
-                style_list.clear();
             }break;
             
             case entity:{
@@ -186,8 +181,6 @@ public class SkinHandler extends DefaultHandler
                 Logger.global.log(Level.SEVERE, "bad resource file ! entity [{0}] must have an sprite !", id);
                 break;
             }
-
-
 
             if(id != null && (e = promoteEntity(id, atts)) != null){
                     // ok
@@ -216,18 +209,18 @@ public class SkinHandler extends DefaultHandler
             e.setPos(x, y);
             
             if(id != null){
-                if(!result.getEntityMap().containsKey(id))result.getEntityMap().put(id, e);
+                if(!result.get(skin_name).getEntityMap().containsKey(id))result.get(skin_name).getEntityMap().put(id, e);
                 else{
-                    Entity prime = result.getEntityMap().get(id);
+                    Entity prime = result.get(skin_name).getEntityMap().get(id);
                     if(prime instanceof CompositeEntity){
                         ((CompositeEntity)prime).getEntityList().add(e);
                     }else{
                         CompositeEntity ce = new CompositeEntity(prime, e);
-                        result.getEntityMap().put(id, ce);
+                        result.get(skin_name).getEntityMap().put(id, ce);
                     }
                 }
             }
-            else result.getEntityList().add(e);
+            else result.get(skin_name).getEntityList().add(e);
             
             }break;
         }
@@ -238,25 +231,32 @@ public class SkinHandler extends DefaultHandler
         Entity e = null;
         if(id.startsWith("NOTE_")){
 
-            String sprites[] = atts.get("sprite").split(",");
+            SpriteList sprite = null, head = null, body = null, tail = null;
 
-            SpriteList head = null, body = null;
-            for(String s : sprites){
-                s = s.trim();
-                if(s.startsWith("head")){
-                    head = sprite_buffer.get(s);
-                }
-                else if(s.startsWith("body")){
-                    body = sprite_buffer.get(s);
-                }
-            }
+            sprite = sprite_buffer.get(atts.get("sprite"));
+
+            if(atts.containsKey("head"))
+                head = sprite_buffer.get(atts.get("head"));
+            else
+                head = sprite;
+
+            if(atts.containsKey("body"))
+                body = sprite_buffer.get(atts.get("body"));
+            else
+                body = sprite;
+
+            if(atts.containsKey("tail"))
+                tail = sprite_buffer.get(atts.get("tail"));
+            else
+                tail = sprite;
+
             int x = 0;
             if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x"));
 
-            e = new LongNoteEntity(head, body, Event.Channel.valueOf(id), x, 0);
+            e = new LongNoteEntity(head, body, tail, sprite, Event.Channel.valueOf(id), x, 0);
             e.setLayer(layer);
-            result.getEntityMap().put("LONG_"+id, e);
-            e = new NoteEntity(head, Event.Channel.valueOf(id), x, 0);
+            result.get(skin_name).getEntityMap().put("LONG_"+id, e);
+            e = new NoteEntity(sprite, Event.Channel.valueOf(id), x, 0);
         }
         else if(id.equals("MEASURE_MARK")){
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
@@ -271,13 +271,13 @@ public class SkinHandler extends DefaultHandler
             e = new JudgmentEntity(s,0, 0);
         }
         // TODO: change the name of this ???
-        else if(id.startsWith("EFFECT_LONGFLARE")){
+        else if(id.equals("EFFECT_LONGFLARE")){
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
             e = new AnimatedEntity(s,0,0);
         }
-        else if(id.startsWith("EFFECT_")){
+        else if(id.equals("EFFECT_CLICK")){
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
-            e = new EffectEntity(s,0, 0);
+            e = new AnimatedEntity(s,0, 0, false);
         }
         else if(id.startsWith("PRESSED_NOTE_")){
             SpriteList sl = sprite_buffer.get(atts.get("sprite"));
@@ -354,7 +354,9 @@ public class SkinHandler extends DefaultHandler
                 list.add( new AnimatedEntity(sprite_buffer.get(s),0,0));
             }
             Entity title = null;
-            if(list.size()>10)title = list.remove(10);
+            if(atts.containsKey("title"))
+               title = new AnimatedEntity(sprite_buffer.get(atts.get("title")),0,0);
+
 	    e = new ComboCounterEntity(list, title, 0, 0);
 	}
         else if(id.equals("COMBO_COUNTER")){
@@ -364,7 +366,9 @@ public class SkinHandler extends DefaultHandler
                 list.add( new AnimatedEntity(sprite_buffer.get(s),0,0));
             }
             Entity title = null;
-            if(list.size()>10)title = list.remove(10);
+            if(atts.containsKey("title"))
+               title = new AnimatedEntity(sprite_buffer.get(atts.get("title")),0,0);
+
 	    e = new ComboCounterEntity(list, title, 0, 0);
         }
         else if(id.equals("MINUTE_COUNTER")){
@@ -389,14 +393,24 @@ public class SkinHandler extends DefaultHandler
 	}
 	else if(id.equals("LIFE_BAR")){
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
-	    e = new BarEntity(s, 0, 0);
+	    if(atts.containsKey("fill_direction"))
+                e = new BarEntity(s, 0, 0, getFill(atts.get("fill_direction")));
+            else
+                e = new BarEntity(s, 0, 0);
 	}
 	else if(id.equals("JAM_BAR")){
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
-	    e = new BarEntity(s, 0, 0);
+	    if(atts.containsKey("fill_direction"))
+                e = new BarEntity(s, 0, 0, getFill(atts.get("fill_direction")));
+            else
+                e = new BarEntity(s, 0, 0);
 	}
 	else if(id.equals("TIME_BAR")){
-	    //TODO
+            SpriteList s = sprite_buffer.get(atts.get("sprite"));
+	    if(atts.containsKey("fill_direction"))
+                e = new BarEntity(s, 0, 0, getFill(atts.get("fill_direction")));
+            else
+                e = new BarEntity(s, 0, 0);
 	}
         else{
             Logger.global.log(Level.WARNING, "unpromoted entity [{0}]", id);
@@ -404,11 +418,33 @@ public class SkinHandler extends DefaultHandler
         return e;
     }
 
-    public Skin getResult()
+    public Skin getResult(String skin)
     {
-        return result;
+        if(result.containsKey(skin))
+            return result.get(skin);
+        else
+            return null;
     }
 
+    private BarEntity.FillDirection getFill(String fill)
+    {
+        BarEntity.FillDirection direction = BarEntity.FillDirection.LEFT_TO_RIGHT;
+        fill = fill.toLowerCase().trim();
+
+        if      (fill.equals("left_to_right"))
+                direction = BarEntity.FillDirection.LEFT_TO_RIGHT;
+        else if (fill.equals("right_to_left"))
+                direction = BarEntity.FillDirection.RIGHT_TO_LEFT;
+        else if (fill.equals("up_to_down"))
+                direction = BarEntity.FillDirection.UP_TO_DOWN;
+        else if (fill.equals("down_to_up"))
+                direction = BarEntity.FillDirection.DOWN_TO_UP;
+        else
+            Logger.global.log(Level.WARNING, "The fill_direction [{0}] is unknown !", fill);
+
+        return direction;
+    }
+    
     private Keyword getKeyword(String s)
     {
         try{

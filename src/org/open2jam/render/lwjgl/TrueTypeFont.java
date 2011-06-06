@@ -1,4 +1,4 @@
-package org.open2jam.util;
+package org.open2jam.render.lwjgl;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -20,6 +20,7 @@ import java.util.logging.Level;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
+import org.open2jam.util.Logger;
 
 
 /**
