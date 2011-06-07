@@ -20,6 +20,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.Config;
+import org.open2jam.GameOptions;
 import org.open2jam.parser.Event;
 import org.open2jam.parser.Chart;
 import org.open2jam.render.entities.BarEntity;
@@ -53,9 +54,9 @@ public abstract class Render implements GameWindowCallback
     private static final int BEATS_PER_MSEC = 4 * 60 * 1000;
     
     private static final double DELAY_TIME = 1500;
-
-    /** is autoplaying ? */
-    final boolean AUTOPLAY;
+    
+    /** player options */
+    private final GameOptions opt;
     
     private static final double AUTOPLAY_THRESHOLD = 40;
 
@@ -84,10 +85,10 @@ public abstract class Render implements GameWindowCallback
     /** The recorded fps */
     int fps;
 
-    /** the hispeed  values*/
-    double last_speed;
-    double speed;
-    double next_speed;
+    /** the hispeed values*/
+    private double last_speed;
+    private double speed;
+    private double next_speed;
     
     boolean xr_speed = false;
     boolean w_speed = false;
@@ -102,7 +103,7 @@ public abstract class Render implements GameWindowCallback
     boolean w_positive = true;
 
     /** the layer of the notes */
-    int note_layer;
+    private int note_layer;
 
     /** the bpm at which the entities are falling */
     private double bpm;
@@ -202,64 +203,47 @@ public abstract class Render implements GameWindowCallback
     double hit_count = 0;
     double total_notes = 0;
 
-    /** the channelMirror, random select */
-    private final int channelModifier;
-
-    /** the visibility modifier */
-    private final int visibilityModifier;
-
     protected CompositeEntity visibility_entity;
     /** The volume */
-    private float mainVolume = 0.5f;
-    private float keyVolume = 1.0f;
-    private float bgmVolume = 1.0f;
+    //private float mainVolume = 0.5f;
+    //private float keyVolume = 1.0f;
+    //private float bgmVolume = 1.0f;
 
     private final static float VOLUME_FACTOR = 0.05f;
 
     static {
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
     }
-
-    Render(Chart chart, boolean autoplay, int channelModifier, int visibilityModifier)
+    
+    Render(Chart chart, GameOptions opt)
     {
         keyboard_map = Config.getKeyboardMap(Config.KeyboardType.K7);
-        keyboard_misc =Config.getKeyboardMisc();
+        keyboard_misc = Config.getKeyboardMisc();
         window = ResourceFactory.get().getGameWindow();
         entities_matrix = new EntityMatrix();
         this.chart = chart;
+        this.opt = opt;
         velocity_tree = new IntervalTree<Double,Double>();
-        this.AUTOPLAY = autoplay;
-        this.channelModifier = channelModifier;
-        this.visibilityModifier = visibilityModifier;
-    }
-
-    /** set the screen dimensions */
-    public void setDisplay(DisplayMode dm, boolean vsync, boolean fs, boolean bilinear) {
-        window.setDisplay(dm,vsync,fs,bilinear);
-    }
-    /** init the volumes */
-    public void setVolumes(int mainVol, int keyVol, int bgmVol)
-    {
-        this.mainVolume = (mainVol/100f);
-        this.keyVolume = (keyVol/100f);
-        this.bgmVolume = (bgmVol/100f);
-    }
-    /** set the hispeed and turn on any modifier */
-    public void setSpeedModifiers(double hispeed, int speed_type)
-    {
-        this.speed = 0;
-        this.next_speed = this.last_speed = hispeed;
-        switch(speed_type)
+        
+        this.speed = opt.getHiSpeed();
+        
+        this.next_speed = this.last_speed = speed;
+        switch(opt.getSpeedType())
         {
             case 1:
             xr_speed = true;
             break;
             case 2:
             w_speed = true;
-            w_speed_time = hispeed;
+            w_speed_time = speed;
             this.next_speed = this.last_speed = 0;
             break;
         }
+    }
+
+    /** set the screen dimensions */
+    public void setDisplay(DisplayMode dm, boolean vsync, boolean fs, boolean bilinear) {
+        window.setDisplay(dm,vsync,fs,bilinear);
     }
 
     /**
@@ -372,7 +356,7 @@ public abstract class Render implements GameWindowCallback
         pills_draw = new LinkedList<Entity>();
 
         visibility_entity = new CompositeEntity();
-        if(visibilityModifier != 0) visibility(visibilityModifier);
+        if(opt.getVisibilityModifier() != 0) visibility(opt.getVisibilityModifier());
 
         judgment_line = skin.getEntityMap().get("JUDGMENT_LINE");
         entities_matrix.add(judgment_line);
@@ -387,15 +371,18 @@ public abstract class Render implements GameWindowCallback
         List<Event> event_list = construct_velocity_tree(chart.getEvents());
 
 	//Let's randomize "-"
-	if(channelModifier != 0)
-	{
-	    if(channelModifier == 1)
-		channelMirror(event_list.iterator());
-	    if(channelModifier == 2)
-		channelShuffle(event_list.iterator());
-	    if(channelModifier == 3)
-		channelRandom(event_list.iterator());
-	}
+        switch(opt.getVisibilityModifier())
+        {
+            case 1:
+                channelMirror(event_list.iterator());
+            break;
+            case 2:
+                channelShuffle(event_list.iterator());
+            break;
+            case 3:
+                channelRandom(event_list.iterator());
+            break;
+        }
         
         // get a new iterator
         buffer_iterator = event_list.iterator();
@@ -407,7 +394,7 @@ public abstract class Render implements GameWindowCallback
         source_queue = new LinkedList<Integer>();
 
         //set main Volume
-        SoundManager.mainVolume(mainVolume);
+        SoundManager.mainVolume(opt.getMasterVolume());
 
         try{
             for(int i=0;i<MAX_SOURCES;i++)
@@ -482,7 +469,7 @@ public abstract class Render implements GameWindowCallback
 
         now = SystemTimer.getTime() - start_time;
 
-	if(AUTOPLAY)do_autoplay(now);
+	if(opt.getAutoplay())do_autoplay(now);
         else check_keyboard(now);
 
         Iterator<LinkedList<Entity>> i = entities_matrix.iterator();
@@ -621,8 +608,8 @@ public abstract class Render implements GameWindowCallback
                 return;
             }
         }
-        float vol = keyVolume;
-        if(sample.isBGM()) vol = bgmVolume;
+        float vol = opt.getKeyVolume();
+        if(sample.isBGM()) vol = opt.getBGMVolume();
         vol = sample.volume*vol;
         if(vol < 0f) vol = 0f;
         if(vol > 1f) vol = 1f;
@@ -640,35 +627,30 @@ public abstract class Render implements GameWindowCallback
     private void change_volume(boolean isBGM, float factor) {
         for(int source : isBGM ? bgm_sources : key_sources)
         {
-            float vol = SoundManager.getGain(source) + factor;
-            vol = (float) clamp(vol, 0, 1);
-            SoundManager.setGain(source, vol);
+            SoundManager.setGain(source, factor);
         }
     }
     
-    void change_bgm_volume(float factor)
+    private void change_bgm_volume(float factor)
     {
-        bgmVolume += factor;
-        bgmVolume = (float) clamp(bgmVolume, 0, 1);
-        change_volume(true , factor);
+        opt.setBGMVolume(opt.getBGMVolume() + factor);
+        change_volume(true , opt.getBGMVolume());
     }
     
-    void change_key_volume(float factor)
+    private void change_key_volume(float factor)
     {
-        keyVolume += factor;
-        keyVolume = (float) clamp(keyVolume, 0, 1);
-        change_volume(false , factor);
+        opt.setKeyVolume(opt.getKeyVolume() + factor);
+        change_volume(false , opt.getKeyVolume());
     }
             
-    void changeSpeed(double delta)
+    private void changeSpeed(double delta)
     {
         if(w_speed)
         {
             w_time += delta;
             if(w_time < w_speed_time)
             {
-                speed += (w_positive ? 1 : -1) * W_SPEED_FACTOR * delta;
-                
+                speed += (w_positive ? 1 : -1) * W_SPEED_FACTOR * delta;                
                 speed = clamp(speed, 0.5, 10);
             }
             else
@@ -835,21 +817,19 @@ public abstract class Render implements GameWindowCallback
                 {
                     case SPEED_UP:
                         last_speed = next_speed;
-                        if(next_speed < 10d) next_speed += 0.5d;
+                        next_speed = clamp(next_speed+0.5, 0.5, 10);
                     break;
                     case SPEED_DOWN:
                         last_speed = next_speed;
-                        if(next_speed > 0.5d) next_speed -= 0.5d;
+                        next_speed = clamp(next_speed-0.5, 0.5, 10);
                     break;
                     case MAIN_VOL_UP:
-                        if(mainVolume < 1f) mainVolume += VOLUME_FACTOR;
-                        if(mainVolume > 1f) mainVolume = 1f;
-                        SoundManager.mainVolume(mainVolume);
+                        opt.setMasterVolume(opt.getMasterVolume() + VOLUME_FACTOR);
+                        SoundManager.mainVolume(opt.getMasterVolume());
                     break;
                     case MAIN_VOL_DOWN:
-                        if(mainVolume > 0f) mainVolume -= VOLUME_FACTOR;
-                        if(mainVolume < 0f) mainVolume = 0f;
-                        SoundManager.mainVolume(mainVolume);
+                        opt.setMasterVolume(opt.getMasterVolume() + VOLUME_FACTOR);
+                        SoundManager.mainVolume(opt.getMasterVolume());
                     break;
                     case KEY_VOL_UP:
                         change_key_volume(VOLUME_FACTOR);

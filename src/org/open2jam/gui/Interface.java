@@ -1,5 +1,8 @@
 package org.open2jam.gui;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import org.open2jam.gui.parts.MusicSelection;
 import org.open2jam.gui.parts.Configuration;
 
@@ -8,8 +11,10 @@ import org.open2jam.gui.parts.Configuration;
  *
  * @author CdK
  */
-public class Interface extends javax.swing.JFrame
+public class Interface extends javax.swing.JFrame implements WindowListener
 {
+    
+    private MusicSelection musicSelection;
 
     /** Creates new form Interface */
     public Interface() {
@@ -17,9 +22,15 @@ public class Interface extends javax.swing.JFrame
         
         this.setLocationRelativeTo(null);
         
-        Tabs.addTab("Music Selection", new MusicSelection());
+        musicSelection = new MusicSelection();
+        
+        Tabs.addTab("Music Selection", musicSelection);
         Tabs.addTab("Configuration", new Configuration());
+        
+        this.addWindowListener(this);
     }
+    
+    
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -55,4 +66,38 @@ public class Interface extends javax.swing.JFrame
     private javax.swing.JTabbedPane Tabs;
     // End of variables declaration//GEN-END:variables
 
+    @Override
+    public void windowOpened(WindowEvent we) {
+        
+    }
+
+    @Override
+    public void windowClosing(WindowEvent we) {
+        musicSelection.windowClosing();
+    }
+
+    @Override
+    public void windowClosed(WindowEvent we) {
+        
+    }
+
+    @Override
+    public void windowIconified(WindowEvent we) {
+        
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent we) {
+        
+    }
+
+    @Override
+    public void windowActivated(WindowEvent we) {
+        
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent we) {
+        
+    }
 }

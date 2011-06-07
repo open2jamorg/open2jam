@@ -40,6 +40,8 @@ public abstract class Config
             setCwd(null);
             
             setDirsList(new ArrayList<File>());
+            
+            setGameOptions(new GameOptions());
 
             EnumMap<MiscEvent, Integer> keyboard_misc = new EnumMap<MiscEvent, Integer>(MiscEvent.class);
             keyboard_misc.put(MiscEvent.SPEED_DOWN,   Keyboard.KEY_DOWN);
@@ -140,6 +142,15 @@ public abstract class Config
     @SuppressWarnings("unchecked")
     public static ArrayList<File> getDirsList() {
         return (ArrayList<File>) get("dir_list");
+    }
+    
+    public static void setGameOptions(GameOptions go) {
+        put("gameoptions", go);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static GameOptions getGameOptions() {
+        return (GameOptions) get("gameoptions");
     }
     
     @SuppressWarnings("unchecked")

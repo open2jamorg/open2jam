@@ -94,7 +94,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="btn_delete" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="table_scroll" alignment="2" pref="493" max="32767" attributes="1"/>
+                      <Component id="table_scroll" alignment="2" pref="488" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -102,7 +102,7 @@
                   <EmptySpace min="10" pref="10" max="10" attributes="0"/>
                   <Component id="lbl_search" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="txt_filter" pref="452" max="32767" attributes="1"/>
+                  <Component id="txt_filter" pref="426" max="32767" attributes="1"/>
                   <EmptySpace min="10" pref="10" max="10" attributes="0"/>
               </Group>
           </Group>
@@ -120,7 +120,7 @@
                       <Component id="load_progress" alignment="3" min="-2" pref="27" max="-2" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="table_scroll" pref="508" max="32767" attributes="1"/>
+                  <Component id="table_scroll" pref="505" max="32767" attributes="1"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="txt_filter" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -255,7 +255,7 @@
               </Border>
             </Property>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-              <Color id="Cursor predeterminado"/>
+              <Color id="Default Cursor"/>
             </Property>
           </Properties>
 
@@ -286,7 +286,7 @@
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="slider_key_vol" alignment="1" min="0" pref="0" max="32767" attributes="0"/>
                                           <Component id="slider_bgm_vol" alignment="1" min="0" pref="0" max="32767" attributes="0"/>
-                                          <Component id="slider_main_vol" alignment="0" pref="72" max="32767" attributes="1"/>
+                                          <Component id="slider_main_vol" alignment="0" pref="117" max="32767" attributes="1"/>
                                       </Group>
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Group type="102" alignment="0" attributes="0">
@@ -312,7 +312,7 @@
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="jc_timed_judgment" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="113" max="32767" attributes="0"/>
+                              <EmptySpace pref="161" max="32767" attributes="0"/>
                               <Component id="jc_autoplay" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                           </Group>
@@ -449,7 +449,7 @@
                   <Connection code="new javax.swing.SpinnerNumberModel(1.0d, 0.5d, 10.0d, 0.5d)" type="code"/>
                 </Property>
                 <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-                  <Color id="Cursor predeterminado"/>
+                  <Color id="Default Cursor"/>
                 </Property>
               </Properties>
             </Component>
@@ -541,13 +541,13 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="327" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="405" max="32767" attributes="0"/>
                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="table_scroll2" alignment="1" pref="307" max="32767" attributes="0"/>
-                              <Component id="lbl_title" alignment="0" pref="307" max="32767" attributes="0"/>
+                              <Component id="table_scroll2" alignment="1" pref="393" max="32767" attributes="0"/>
+                              <Component id="lbl_title" alignment="0" pref="393" max="32767" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="lbl_cover" min="-2" pref="146" max="-2" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -563,18 +563,18 @@
                                           </Group>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="lbl_level" alignment="0" pref="100" max="32767" attributes="0"/>
-                                              <Component id="lbl_notes" alignment="0" pref="100" max="32767" attributes="0"/>
-                                              <Component id="lbl_time" alignment="0" pref="100" max="32767" attributes="0"/>
-                                              <Component id="lbl_genre" alignment="0" pref="100" max="32767" attributes="0"/>
-                                              <Component id="lbl_bpm" alignment="0" pref="100" max="32767" attributes="0"/>
-                                              <Component id="lbl_keys" alignment="0" pref="100" max="32767" attributes="0"/>
+                                              <Component id="lbl_level" alignment="0" pref="175" max="32767" attributes="0"/>
+                                              <Component id="lbl_notes" alignment="0" pref="175" max="32767" attributes="0"/>
+                                              <Component id="lbl_time" alignment="0" pref="175" max="32767" attributes="0"/>
+                                              <Component id="lbl_genre" alignment="0" pref="175" max="32767" attributes="0"/>
+                                              <Component id="lbl_bpm" alignment="0" pref="175" max="32767" attributes="0"/>
+                                              <Component id="lbl_keys" alignment="0" pref="175" max="32767" attributes="0"/>
                                           </Group>
                                       </Group>
                                       <Component id="lbl_filename" alignment="1" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <Component id="lbl_artist" alignment="1" pref="307" max="32767" attributes="0"/>
+                              <Component id="lbl_artist" alignment="1" pref="393" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -583,7 +583,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="399" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="395" max="32767" attributes="0"/>
                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
@@ -628,7 +628,7 @@
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Component id="lbl_artist" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Component id="table_scroll2" pref="155" max="32767" attributes="0"/>
+                          <Component id="table_scroll2" pref="160" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>

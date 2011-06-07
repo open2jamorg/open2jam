@@ -6,5 +6,5 @@
 - lwjgl 2.7 ,  lwjgl.org ( BSD License)
 - jorbis 0.0.17 , www.jcraft.com/jorbis ( GNU LGPL)
 - jChardet 1.1, jchardet.sourceforge.net ( MOZILLA PUBLIC LICENSE)
-- sqljet 1.0.5, www.sqljet.com ( GNU GPL)
+- voile, github.com/chaosfox/voile
 

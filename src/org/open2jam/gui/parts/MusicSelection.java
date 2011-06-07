@@ -27,6 +27,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.Config;
+import org.open2jam.GameOptions;
 import org.open2jam.gui.ChartListTableModel;
 import org.open2jam.gui.ChartTableModel;
 import org.open2jam.gui.ChartModelLoader;
@@ -132,6 +133,50 @@ public class MusicSelection extends javax.swing.JPanel
                 updateInfo();
             }
         });
+        
+        readGameOptions();
+    }
+    
+    private void readGameOptions() {
+        // TODO: read Config gameOptions and set them on the GUI
+        GameOptions go = Config.getGameOptions();
+        
+        jc_autoplay.setSelected(go.getAutoplay());
+        combo_channelModifier.setSelectedIndex(go.getChannelModifier());
+        combo_visibilityModifier.setSelectedIndex(go.getVisibilityModifier());
+        slider_main_vol.setValue(Math.round(go.getMasterVolume()*100));
+        slider_key_vol.setValue(Math.round(go.getKeyVolume()*100));
+        slider_bgm_vol.setValue(Math.round(go.getBGMVolume()*100));
+        js_hispeed.setValue(go.getHiSpeed());
+        combo_speedType.setSelectedIndex(go.getSpeedType());
+
+        jc_full_screen.setSelected(go.getFullScreen());
+        jc_bilinear.setSelected(go.getBilinear());
+        jc_vsync.setSelected(go.getVsync());
+        
+    }
+    
+    /*
+     * the parent is telling us the window is closing
+     * now is a good time to save the game options
+     */
+    public void windowClosing() {
+        GameOptions go = Config.getGameOptions();
+
+        go.setAutoplay(jc_autoplay.isSelected());
+        go.setChannelModifier(combo_channelModifier.getSelectedIndex());
+        go.setVisibilityModifier(combo_visibilityModifier.getSelectedIndex());
+        go.setMasterVolume(slider_main_vol.getValue()/100f);
+        go.setKeyVolume(slider_key_vol.getValue()/100f);
+        go.setBGMVolume(slider_bgm_vol.getValue()/100f);
+        go.setHispeed((Double)js_hispeed.getValue());
+        go.setSpeedType(combo_speedType.getSelectedIndex());
+        go.setFullScreen(jc_full_screen.isSelected());
+        go.setBilinear(jc_bilinear.isSelected());
+        go.setVsync(jc_vsync.isSelected());
+        
+
+        Config.setGameOptions(go);
     }
 
     /** This method is called from within the constructor to
@@ -786,60 +831,76 @@ public class MusicSelection extends javax.swing.JPanel
 }//GEN-LAST:event_jc_custom_size_clicked
 
     private void bt_playActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_playActionPerformed
-        if(selected_header != null) {
-            final double hispeed = (Double) js_hispeed.getValue();
-            
-            final DisplayMode dm;
-            if(jc_custom_size.isSelected()){ // custom size selected
-                int w,h;
-                try{
-                    w = Integer.parseInt(txt_res_width.getText());
-                    h = Integer.parseInt(txt_res_height.getText());
-                }catch(Exception e){
-                    JOptionPane.showMessageDialog(this, "Invalid value on custom size", "Error", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-                dm = new DisplayMode(w,h);
-            }else{
-                dm = (DisplayMode) combo_displays.getSelectedItem();
+        if(selected_header == null) return;
+        
+        
+        final double hispeed = (Double) js_hispeed.getValue();
+
+        final DisplayMode dm;
+        if(jc_custom_size.isSelected()){ // custom size selected
+            int w,h;
+            try{
+                w = Integer.parseInt(txt_res_width.getText());
+                h = Integer.parseInt(txt_res_height.getText());
+            }catch(Exception e){
+                JOptionPane.showMessageDialog(this, "Invalid value on custom size", "Error", JOptionPane.WARNING_MESSAGE);
+                return;
             }
-            final boolean vsync = jc_vsync.isSelected();
-            boolean fs = jc_full_screen.isSelected();
-            
-            final boolean autoplay = jc_autoplay.isSelected();
-            
-            final boolean judgment = jc_timed_judgment.isSelected();
-            
-            final int speed_type = combo_speedType.getSelectedIndex();
-            
-            final int channelModifier = combo_channelModifier.getSelectedIndex();
-            final int visibilityModifier = combo_visibilityModifier.getSelectedIndex();
-            
-            final int mainVol = slider_main_vol.getValue();
-            final int keyVol = slider_key_vol.getValue();
-            final int bgmVol = slider_bgm_vol.getValue();
-            
-            final boolean bilinear = jc_bilinear.isSelected();
-            
-            if(!dm.isFullscreenCapable() && fs) {
-                String str = "This monitor can't support the selected resolution.\n"
-                        + "Do you want to play it in windowed mode?";
-                if(JOptionPane.showConfirmDialog(this, str, "Warning",
-                        JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE)
-                        == JOptionPane.YES_OPTION)
-                    fs = false;
-            }
-            
-            Render r;
-            if(judgment)
-                r = new TimeRender(selected_header, autoplay, channelModifier, visibilityModifier);
-            else
-                r = new DistanceRender(selected_header, autoplay, channelModifier, visibilityModifier);
-            r.setDisplay(dm, vsync, fs, bilinear);
-            r.setVolumes(mainVol, keyVol, bgmVol);
-            r.setSpeedModifiers(hispeed, speed_type);
-            r.startRendering();
+            dm = new DisplayMode(w,h);
+        }else{
+            dm = (DisplayMode) combo_displays.getSelectedItem();
         }
+        
+        final boolean vsync = jc_vsync.isSelected();
+        boolean fs = jc_full_screen.isSelected();
+
+        final boolean autoplay = jc_autoplay.isSelected();
+
+        final boolean time_judgment = jc_timed_judgment.isSelected();
+
+        final int speed_type = combo_speedType.getSelectedIndex();
+
+        final int channelModifier = combo_channelModifier.getSelectedIndex();
+        final int visibilityModifier = combo_visibilityModifier.getSelectedIndex();
+
+        final float mainVol = slider_main_vol.getValue() / 100f;
+        final float keyVol = slider_key_vol.getValue() / 100f;
+        final float bgmVol = slider_bgm_vol.getValue() / 100f;
+
+        final boolean bilinear = jc_bilinear.isSelected();
+
+        if(!dm.isFullscreenCapable() && fs) {
+            String str = "This monitor can't support the selected resolution.\n"
+                    + "Do you want to play it in windowed mode?";
+            if(JOptionPane.showConfirmDialog(this, str, "Warning",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE)
+                    == JOptionPane.YES_OPTION)
+                fs = false;
+        }
+
+        GameOptions go = Config.getGameOptions();
+        go.setAutoplay(autoplay);
+        go.setChannelModifier(channelModifier);
+        go.setVisibilityModifier(visibilityModifier);
+        go.setMasterVolume(mainVol);
+        go.setKeyVolume(keyVol);
+        go.setBGMVolume(bgmVol);
+        go.setHispeed(hispeed);
+        go.setSpeedType(speed_type);
+        go.setFullScreen(fs);
+        go.setBilinear(bilinear);
+        go.setVsync(vsync);
+        
+        //TODO: save gameoptions here ??
+
+        Render r;
+        if(time_judgment)
+            r = new TimeRender(selected_header, go);
+        else
+            r = new DistanceRender(selected_header, go);
+        r.setDisplay(dm, vsync, fs, bilinear);
+
+        r.startRendering();
 }//GEN-LAST:event_bt_playActionPerformed
 
     private void jr_rank_easyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jr_rank_easyActionPerformed

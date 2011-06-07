@@ -18,14 +18,14 @@ public class Main implements Runnable
 
     public static void main(String []args)
     {
+        System.setProperty("org.lwjgl.librarypath", LIB_PATH);
+        
         Config.openDB();
         
         setupLogging();
 
         trySetLAF();
-
-        System.setProperty("org.lwjgl.librarypath", LIB_PATH);
-
+        
         EventQueue.invokeLater(new Main());
     }
     

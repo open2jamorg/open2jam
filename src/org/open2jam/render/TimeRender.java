@@ -2,6 +2,7 @@ package org.open2jam.render;
 
 import java.util.Map;
 import java.util.EnumMap;
+import org.open2jam.GameOptions;
 
 import org.open2jam.util.SystemTimer;
 
@@ -32,9 +33,9 @@ public class TimeRender extends Render
 
     private EnumMap<JUDGE,NumberEntity> note_counter;
 
-    public TimeRender(Chart c, boolean autoplay, int channelModifier, int visibilityModifier)
+    public TimeRender(Chart c, GameOptions opt)
     {
-        super(c,autoplay,channelModifier,visibilityModifier);
+        super(c,opt);
     }
 
     @Override
