@@ -37,6 +37,9 @@ public class GameOptions implements Serializable {
     private boolean bilinear = false;
     // vsync 
     private boolean vsync = true;
+    
+    // display delay milliseconds
+    private int displaydelay = 0;
 
     //public empty constructor. give default options
     public GameOptions() { }
@@ -192,6 +195,14 @@ public class GameOptions implements Serializable {
 
     public boolean getVsync() {
         return vsync;
+    }
+    
+    public void setDisplayDelay(int dd) {
+        this.displaydelay = dd;
+    }
+    
+    public int getDisplayDelay() {
+        return displaydelay;
     }
 
     private double clamp(double value, double min, double max) {

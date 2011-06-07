@@ -153,6 +153,7 @@ public class MusicSelection extends javax.swing.JPanel
         jc_full_screen.setSelected(go.getFullScreen());
         jc_bilinear.setSelected(go.getBilinear());
         jc_vsync.setSelected(go.getVsync());
+        js_display_delay.setValue(go.getDisplayDelay());
         
     }
     
@@ -174,7 +175,7 @@ public class MusicSelection extends javax.swing.JPanel
         go.setFullScreen(jc_full_screen.isSelected());
         go.setBilinear(jc_bilinear.isSelected());
         go.setVsync(jc_vsync.isSelected());
-        
+        go.setDisplayDelay((Integer)js_display_delay.getValue());
 
         Config.setGameOptions(go);
     }
@@ -249,6 +250,8 @@ public class MusicSelection extends javax.swing.JPanel
         lbl_res_x = new javax.swing.JLabel();
         jc_full_screen = new javax.swing.JCheckBox();
         jc_bilinear = new javax.swing.JCheckBox();
+        lbl_displaydelay = new javax.swing.JLabel();
+        js_display_delay = new javax.swing.JSpinner();
         bt_play = new javax.swing.JButton();
 
         setPreferredSize(new java.awt.Dimension(900, 673));
@@ -314,13 +317,13 @@ public class MusicSelection extends javax.swing.JPanel
                         .addComponent(btn_reload, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_delete))
-                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 493, Short.MAX_VALUE))
+                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE))
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.CENTER, panel_listLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addComponent(lbl_search)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 452, Short.MAX_VALUE)
+                .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 426, Short.MAX_VALUE)
                 .addGap(10, 10, 10))
         );
         panel_listLayout.setVerticalGroup(
@@ -335,7 +338,7 @@ public class MusicSelection extends javax.swing.JPanel
                     .addComponent(btn_delete)
                     .addComponent(load_progress, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 508, Short.MAX_VALUE)
+                .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 497, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_listLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txt_filter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -449,7 +452,7 @@ public class MusicSelection extends javax.swing.JPanel
                                 .addGroup(panel_modifiersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(slider_key_vol, javax.swing.GroupLayout.Alignment.TRAILING, 0, 0, Short.MAX_VALUE)
                                     .addComponent(slider_bgm_vol, javax.swing.GroupLayout.Alignment.TRAILING, 0, 0, Short.MAX_VALUE)
-                                    .addComponent(slider_main_vol, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE))
+                                    .addComponent(slider_main_vol, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE))
                                 .addGroup(panel_modifiersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(panel_modifiersLayout.createSequentialGroup()
                                         .addGap(10, 10, 10)
@@ -468,7 +471,7 @@ public class MusicSelection extends javax.swing.JPanel
                         .addContainerGap())
                     .addGroup(panel_modifiersLayout.createSequentialGroup()
                         .addComponent(jc_timed_judgment)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 113, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 161, Short.MAX_VALUE)
                         .addComponent(jc_autoplay)
                         .addGap(14, 14, 14))))
         );
@@ -569,13 +572,13 @@ public class MusicSelection extends javax.swing.JPanel
         panel_info.setLayout(panel_infoLayout);
         panel_infoLayout.setHorizontalGroup(
             panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 327, Short.MAX_VALUE)
+            .addGap(0, 405, Short.MAX_VALUE)
             .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(panel_infoLayout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(table_scroll2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)
-                        .addComponent(lbl_title, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)
+                        .addComponent(table_scroll2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE)
+                        .addComponent(lbl_title, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE)
                         .addGroup(panel_infoLayout.createSequentialGroup()
                             .addComponent(lbl_cover, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -590,19 +593,19 @@ public class MusicSelection extends javax.swing.JPanel
                                         .addComponent(lbl_keys1))
                                     .addGap(18, 18, 18)
                                     .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(lbl_level, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                                        .addComponent(lbl_notes, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                                        .addComponent(lbl_time, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                                        .addComponent(lbl_genre, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                                        .addComponent(lbl_bpm, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                                        .addComponent(lbl_keys, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)))
+                                        .addComponent(lbl_level, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
+                                        .addComponent(lbl_notes, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
+                                        .addComponent(lbl_time, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
+                                        .addComponent(lbl_genre, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
+                                        .addComponent(lbl_bpm, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
+                                        .addComponent(lbl_keys, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)))
                                 .addComponent(lbl_filename)))
-                        .addComponent(lbl_artist, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE))
+                        .addComponent(lbl_artist, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE))
                     .addContainerGap()))
         );
         panel_infoLayout.setVerticalGroup(
             panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 399, Short.MAX_VALUE)
+            .addGap(0, 387, Short.MAX_VALUE)
             .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(panel_infoLayout.createSequentialGroup()
                     .addContainerGap()
@@ -639,7 +642,7 @@ public class MusicSelection extends javax.swing.JPanel
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(lbl_artist)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
+                    .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -675,7 +678,7 @@ public class MusicSelection extends javax.swing.JPanel
 
         lbl_display.setText("Display:");
 
-        jc_custom_size.setFont(new java.awt.Font("Tahoma", 0, 10));
+        jc_custom_size.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jc_custom_size.setText("Custom size:");
         jc_custom_size.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -690,6 +693,10 @@ public class MusicSelection extends javax.swing.JPanel
         jc_bilinear.setSelected(true);
         jc_bilinear.setText("Bilinear filter");
 
+        lbl_displaydelay.setText("Display Delay(ms):");
+
+        js_display_delay.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(0), Integer.valueOf(0), null, Integer.valueOf(1)));
+
         javax.swing.GroupLayout panel_settingLayout = new javax.swing.GroupLayout(panel_setting);
         panel_setting.setLayout(panel_settingLayout);
         panel_settingLayout.setHorizontalGroup(
@@ -701,7 +708,11 @@ public class MusicSelection extends javax.swing.JPanel
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jc_full_screen)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jc_bilinear))
+                        .addComponent(jc_bilinear)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lbl_displaydelay)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(js_display_delay, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE))
                     .addGroup(panel_settingLayout.createSequentialGroup()
                         .addComponent(lbl_display)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -714,7 +725,7 @@ public class MusicSelection extends javax.swing.JPanel
                         .addComponent(lbl_res_x)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_res_height, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         panel_settingLayout.setVerticalGroup(
             panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -730,7 +741,9 @@ public class MusicSelection extends javax.swing.JPanel
                 .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jc_vsync)
                     .addComponent(jc_full_screen)
-                    .addComponent(jc_bilinear))
+                    .addComponent(jc_bilinear)
+                    .addComponent(lbl_displaydelay)
+                    .addComponent(js_display_delay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -754,9 +767,7 @@ public class MusicSelection extends javax.swing.JPanel
                     .addComponent(bt_play, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
+                    .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(panel_list, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
@@ -766,9 +777,9 @@ public class MusicSelection extends javax.swing.JPanel
                     .addComponent(panel_song, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panel_list, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panel_setting, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(panel_setting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(bt_play)
                         .addGap(11, 11, 11))))
         );
@@ -877,6 +888,8 @@ public class MusicSelection extends javax.swing.JPanel
                     == JOptionPane.YES_OPTION)
                 fs = false;
         }
+        
+        final int displaydelay = (Integer) js_display_delay.getValue();
 
         GameOptions go = Config.getGameOptions();
         go.setAutoplay(autoplay);
@@ -890,6 +903,7 @@ public class MusicSelection extends javax.swing.JPanel
         go.setFullScreen(fs);
         go.setBilinear(bilinear);
         go.setVsync(vsync);
+        go.setDisplayDelay(displaydelay);
         
         //TODO: save gameoptions here ??
 
@@ -964,6 +978,7 @@ public class MusicSelection extends javax.swing.JPanel
     private javax.swing.JRadioButton jr_rank_easy;
     private javax.swing.JRadioButton jr_rank_hard;
     private javax.swing.JRadioButton jr_rank_normal;
+    private javax.swing.JSpinner js_display_delay;
     private javax.swing.JSpinner js_hispeed;
     private javax.swing.JLabel lbl_artist;
     private javax.swing.JLabel lbl_bgm_vol;
@@ -972,6 +987,7 @@ public class MusicSelection extends javax.swing.JPanel
     private javax.swing.JLabel lbl_channelModifier;
     private javax.swing.JLabel lbl_cover;
     private javax.swing.JLabel lbl_display;
+    private javax.swing.JLabel lbl_displaydelay;
     private javax.swing.JLabel lbl_filename;
     private javax.swing.JLabel lbl_genre;
     private javax.swing.JLabel lbl_genre1;

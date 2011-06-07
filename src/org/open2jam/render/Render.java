@@ -492,7 +492,7 @@ public abstract class Render implements GameWindowCallback
                     Event.Channel channel = Event.Channel.NONE;
                     if(e instanceof NoteEntity) channel = ((NoteEntity)e).getChannel();
 
-                    double y = getViewport() - velocity_integral(now,te.getTime(), channel);
+                    double y = getViewport() - velocity_integral(now,te.getTime()+opt.getDisplayDelay(), channel);
                     
                     //TODO Fix this, maybe an option in the skin
                     //o2jam overlaps 1 px of the note with the measure and, because of this
