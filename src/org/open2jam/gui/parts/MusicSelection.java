@@ -420,11 +420,6 @@ public class MusicSelection extends javax.swing.JPanel
         jc_timed_judgment.setToolTipText("Like Bemani games");
 
         combo_speedType.setModel(new javax.swing.DefaultComboBoxModel(GameOptions.SpeedType.values()));
-        combo_speedType.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                combo_speedTypeActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout panel_modifiersLayout = new javax.swing.GroupLayout(panel_modifiers);
         panel_modifiers.setLayout(panel_modifiersLayout);
@@ -572,13 +567,13 @@ public class MusicSelection extends javax.swing.JPanel
         panel_info.setLayout(panel_infoLayout);
         panel_infoLayout.setHorizontalGroup(
             panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 413, Short.MAX_VALUE)
+            .addGap(0, 291, Short.MAX_VALUE)
             .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(panel_infoLayout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(table_scroll2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE)
-                        .addComponent(lbl_title, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE)
+                        .addComponent(table_scroll2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
+                        .addComponent(lbl_title, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
                         .addGroup(panel_infoLayout.createSequentialGroup()
                             .addComponent(lbl_cover, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -593,14 +588,14 @@ public class MusicSelection extends javax.swing.JPanel
                                         .addComponent(lbl_keys1))
                                     .addGap(18, 18, 18)
                                     .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(lbl_level, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
-                                        .addComponent(lbl_notes, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
-                                        .addComponent(lbl_time, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
-                                        .addComponent(lbl_genre, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
-                                        .addComponent(lbl_bpm, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
-                                        .addComponent(lbl_keys, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)))
+                                        .addComponent(lbl_level, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
+                                        .addComponent(lbl_notes, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
+                                        .addComponent(lbl_time, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
+                                        .addComponent(lbl_genre, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
+                                        .addComponent(lbl_bpm, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
+                                        .addComponent(lbl_keys, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)))
                                 .addComponent(lbl_filename)))
-                        .addComponent(lbl_artist, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE))
+                        .addComponent(lbl_artist, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE))
                     .addContainerGap()))
         );
         panel_infoLayout.setVerticalGroup(
@@ -926,19 +921,6 @@ public class MusicSelection extends javax.swing.JPanel
         if(sel_row >= 0)last_model_idx = table_songlist.convertRowIndexToModel(sel_row);
         model_songlist.setRank(rank);
 }//GEN-LAST:event_jr_rank_hardActionPerformed
-
-    private void combo_speedTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_speedTypeActionPerformed
-        if(combo_speedType.getSelectedIndex() == 2)
-        {
-            js_hispeed.setModel(new javax.swing.SpinnerNumberModel(2000.0d, 500.0d, 6000.0d, 500.0d));
-        }
-        else
-        {
-            double value = (Double) js_hispeed.getValue();
-            if(value > 10d) value = 1d;
-            js_hispeed.setModel(new javax.swing.SpinnerNumberModel(value, 0.5d, 10.0d, 0.5d));
-        }
-    }//GEN-LAST:event_combo_speedTypeActionPerformed
 
     private void combo_dirsItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_combo_dirsItemStateChanged
         if(combo_dirs.getSelectedIndex() == -1) return;

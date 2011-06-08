@@ -236,7 +236,8 @@ public abstract class Render implements GameWindowCallback
             break;
             case WSpeed:
             w_speed = true;
-            w_speed_time = speed;
+            //we use the speed as a multiply to get the time
+            w_speed_time = speed * 1000; 
             this.speed = this.next_speed = this.last_speed = 0;
             break;
         }
