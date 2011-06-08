@@ -27,10 +27,10 @@ WARN2: don't forget to remove the comments from MusicInfo.xml
 # 1/1024 is the smaller possible note,
 # well, not really, but the note is impossible way before 1/1024
 # so I don't think we will ever get to this limit
-my $MAX_SM = 2**10;
+my $MAX_SM = 1024;
 
 # error tolerance
-my $epsilon = 0.001;
+my $epsilon = 0.08;
 
 # there's also "krazyhard", but o2jam only support 3 sections
 # we could make SHD versions with normal, hard, krazyhard later..
@@ -212,12 +212,18 @@ sub print_package {
 
 	# we need to find the number of events based on 
 	# how the notes are distributed on the measure
-	my $total_events = $MAX_SM / multigcf($MAX_SM,map{int($_->{'position'}*$MAX_SM)}@notes);
-
-	if($total_events != int($total_events)) {
-		# this means that there are notes smaller than 1/$MAX_SM in this measure
-		die "DEAD: WTF man, take your impossible song with you and get out of here";
+	my @factors;
+	N: for my $n(@notes) {
+		for(1..$MAX_SM) {
+			my $x = $n->{'position'} * $_;
+			if(abs(int($x)/$_ - $n->{'position'}) <= $epsilon) {
+				push @factors, $_;
+				next N;
+			}
+		}
+		die "DEAD: couldn't find a factor for [".$n->{'position'}."]";
 	}
+	my $total_events = multilcm(@factors);
 
 	print $OJN pack 'i', $notes[0]->{'measure'};
 	print $OJN pack 's', $notes[0]->{'channel'}; 
@@ -230,10 +236,7 @@ sub print_package {
 		if($bag_i <= $#notes) {
 			my $apx = $notes[$bag_i]->{'position'} * $total_events;
 		
-			if(int($apx) - $i <= $epsilon) {
-				#if($apx != int($apx)) {
-				#	warn "WARNING: approximating uneven position [$apx]";
-				#}
+			if($apx - $i <= $epsilon) {
 				print_event($OJN, $notes[$bag_i]);
 				$bag_i++;
 				next;
@@ -268,7 +271,7 @@ sub normalize_notes { # break long notes to ojn style
 			my $em = int $e->{'position'}; # extra measures
 			$e->{'position'} -= $em;
 			$e->{'measure'} += $em;
-			
+
 			push @extra_notes, $e;
 		}
 		else { # normal note
@@ -285,6 +288,7 @@ sub print_event {
 		print $OJN pack 'f', $n->{'value'};
 	} 
 	else { # normal note
+		print "NOTE chan:[$n->{channel}] nt:$n->{note_type} m: $n->{measure} pos:$n->{position} val:$n->{value}\n" if defined $n->{channel} && $n->{channel} < 9;
 		print $OJN pack 's', $n->{'value'};
 		print $OJN pack 'c', 0; # vol & pan
 		print $OJN pack 'c', $n->{'note_type'};
@@ -512,10 +516,19 @@ sub gcf {
   return $x;
 }
 
+sub lcm {
+  return($_[0] * $_[1] / gcf($_[0], $_[1]));
+}
+
 sub multigcf {
   my $x = shift;
   $x = gcf($x, shift) while @_;
   return $x;
 }
 
+sub multilcm {
+  my $x = shift;
+  $x = lcm($x, shift) while @_;
+  return $x;                   
+}  
 
