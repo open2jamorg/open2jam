@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import org.lwjgl.opengl.GL11;
+import org.open2jam.GameOptions;
 import org.open2jam.render.Sprite;
 
 
@@ -60,7 +61,7 @@ public class LWJGLSprite implements Sprite {
         init(x,y,width,height);
     }
 
-    public LWJGLSprite(int w, int h, int type)
+    public LWJGLSprite(int w, int h, GameOptions.VisibilityMod type)
     {
         texture = null;
         x = 0; y = 0;
@@ -95,7 +96,7 @@ public class LWJGLSprite implements Sprite {
         GL11.glEndList();
     }
 
-    private void createRectangle(int width, int height, int type)
+    private void createRectangle(int width, int height, GameOptions.VisibilityMod type)
     {
         int split = height/4;
 
@@ -103,7 +104,7 @@ public class LWJGLSprite implements Sprite {
             GL11.glBegin(GL11.GL_QUAD_STRIP);
                 switch(type)
                 {
-                    case 1: //hidden (hidden lower part)
+                    case Hidden: //hidden (hidden lower part)
                     GL11.glColor4f(0.0f,0.0f,0.0f,0f); // middle alpha
                     GL11.glVertex2f(0,split*1.8f);
                     GL11.glVertex2f(width, split*1.8f);
@@ -113,7 +114,7 @@ public class LWJGLSprite implements Sprite {
                     GL11.glVertex2f(0,height);
                     GL11.glVertex2f(width, height);
                     break;
-                    case 2: //sudden (only shows the lower part)
+                    case Sudden: //sudden (only shows the lower part)
                     GL11.glColor3f(0.0f,0.0f,0.0f); // first black rec
                     GL11.glVertex2f(0, 0);
                     GL11.glVertex2f(width,0);
@@ -123,7 +124,7 @@ public class LWJGLSprite implements Sprite {
                     GL11.glVertex2f(0,split*2.4f);
                     GL11.glVertex2f(width, split*2.4f);
                     break;
-                    case 3: //dark (only shows the middle part)
+                    case Dark: //dark (only shows the middle part)
                     GL11.glColor3f(0.0f,0.0f,0.0f); // first black rec
                     GL11.glVertex2f(0, 0);
                     GL11.glVertex2f(width,0);

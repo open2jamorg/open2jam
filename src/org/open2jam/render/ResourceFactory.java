@@ -3,6 +3,7 @@ package org.open2jam.render;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import org.open2jam.GameOptions;
 import org.open2jam.render.lwjgl.LWJGLGameWindow;
 import org.open2jam.render.lwjgl.LWJGLSprite;
 
@@ -119,7 +120,7 @@ public class ResourceFactory {
             throw new RuntimeException("Unknown rendering type: "+renderingType);
         }
 
-        public Sprite doRectangle(int width, int height, int type)
+        public Sprite doRectangle(int width, int height, GameOptions.VisibilityMod type)
         {
             if (window == null) {
                     throw new RuntimeException("Attempt to retrieve sprite before game window was created");

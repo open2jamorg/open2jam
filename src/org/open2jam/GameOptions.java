@@ -7,34 +7,48 @@ import java.io.Serializable;
  * @author SilverHx
  */
 public class GameOptions implements Serializable {
+    
     // Hi-speed
-
     private double hispeed = 1.0;
     /*
      * "Hi-Speed"=>0, "xR-Speed"=>1, "W-Speed"=>2
      */
-    private int speed_type = 0;
+    public enum SpeedType implements Serializable {
+        HiSpeed, xRSpeed, WSpeed;
+        
+        @Override
+        public String toString() {
+            return super.toString().replace("Speed", "-Speed:");
+        }
+    }
+    private SpeedType speed_type = SpeedType.HiSpeed;
     /*
      * "None"=>0, "Hidden"=>1, "Sudden"=>2, "Dark"=>3
      */
-    private int visibilityModifier = 0;
+    public enum VisibilityMod implements Serializable {
+        None, Hidden, Sudden, Dark;
+    }
+    private VisibilityMod visibilityModifier = VisibilityMod.None;
     /*
      * "None"=>0, "Mirror"=>1, "Shuffle"=>2, "Random"=>3
      */
-    private int channelModifier = 0;
+    public enum ChannelMod implements Serializable {
+        None, Mirror, Shuffle, Random;
+    }
+    private ChannelMod channelModifier = ChannelMod.None;
     // Key volume
     private float keyVolume = 1f;
     // BGM volume
-    private float BGMVolume = 0.8f;
+    private float BGMVolume = 1f;
     // Master volume
-    private float masterVolume = 1f;
+    private float masterVolume = 0.5f;
     // Autoplay?
     private boolean autoplay = false;
 
     // full screen
     private boolean fullscreen = false;
     // bilinear option
-    private boolean bilinear = false;
+    private boolean bilinear = true;
     // vsync 
     private boolean vsync = true;
 
@@ -43,10 +57,9 @@ public class GameOptions implements Serializable {
 
     /**
      * Gets the visibility modifier
-     * TODO: enum this crap
      * @return the modifier
      */
-    public int getVisibilityModifier() {
+    public VisibilityMod getVisibilityModifier() {
         return visibilityModifier;
     }
 
@@ -54,7 +67,7 @@ public class GameOptions implements Serializable {
      * Sets visibility option value.
      * @param new visibility option value
      */
-    public void setVisibilityModifier(int mod) {
+    public void setVisibilityModifier(VisibilityMod mod) {
         visibilityModifier = mod;
     }
 
@@ -71,14 +84,14 @@ public class GameOptions implements Serializable {
      * @param new hi-speed value
      */
     public void setHispeed(double hispeed) {
-        this.hispeed = clamp(hispeed, 0.5, 10);
+        this.hispeed = hispeed;
     }
 
     /**
      * get the speed type
      * @return 
      */
-    public int getSpeedType() {
+    public SpeedType getSpeedType() {
         return speed_type;
     }
 
@@ -86,7 +99,7 @@ public class GameOptions implements Serializable {
      * set the speed type
      * @param mod 
      */
-    public void setSpeedType(int mod) {
+    public void setSpeedType(SpeedType mod) {
         this.speed_type = mod;
     }
 
@@ -94,7 +107,7 @@ public class GameOptions implements Serializable {
      * Gets channelModifier option value.
      * @return a channel modifier
      */
-    public int getChannelModifier() {
+    public ChannelMod getChannelModifier() {
         return channelModifier;
     }
 
@@ -102,7 +115,7 @@ public class GameOptions implements Serializable {
      * Sets channelModifier option value.
      * @param new channelModifier option value
      */
-    public void setChannelModifier(int mod) {
+    public void setChannelModifier(ChannelMod mod) {
         channelModifier = mod;
     }
 

@@ -28,6 +28,9 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.Config;
 import org.open2jam.GameOptions;
+import org.open2jam.GameOptions.ChannelMod;
+import org.open2jam.GameOptions.SpeedType;
+import org.open2jam.GameOptions.VisibilityMod;
 import org.open2jam.gui.ChartListTableModel;
 import org.open2jam.gui.ChartTableModel;
 import org.open2jam.gui.ChartModelLoader;
@@ -142,13 +145,13 @@ public class MusicSelection extends javax.swing.JPanel
         GameOptions go = Config.getGameOptions();
         
         jc_autoplay.setSelected(go.getAutoplay());
-        combo_channelModifier.setSelectedIndex(go.getChannelModifier());
-        combo_visibilityModifier.setSelectedIndex(go.getVisibilityModifier());
+        combo_channelModifier.setSelectedItem(go.getChannelModifier());
+        combo_visibilityModifier.setSelectedItem(go.getVisibilityModifier());
         slider_main_vol.setValue(Math.round(go.getMasterVolume()*100));
         slider_key_vol.setValue(Math.round(go.getKeyVolume()*100));
         slider_bgm_vol.setValue(Math.round(go.getBGMVolume()*100));
         js_hispeed.setValue(go.getHiSpeed());
-        combo_speedType.setSelectedIndex(go.getSpeedType());
+        combo_speedType.setSelectedItem(go.getSpeedType());
 
         jc_full_screen.setSelected(go.getFullScreen());
         jc_bilinear.setSelected(go.getBilinear());
@@ -164,13 +167,13 @@ public class MusicSelection extends javax.swing.JPanel
         GameOptions go = Config.getGameOptions();
 
         go.setAutoplay(jc_autoplay.isSelected());
-        go.setChannelModifier(combo_channelModifier.getSelectedIndex());
-        go.setVisibilityModifier(combo_visibilityModifier.getSelectedIndex());
+        go.setChannelModifier((ChannelMod)combo_channelModifier.getSelectedItem());
+        go.setVisibilityModifier((VisibilityMod)combo_visibilityModifier.getSelectedItem());
         go.setMasterVolume(slider_main_vol.getValue()/100f);
         go.setKeyVolume(slider_key_vol.getValue()/100f);
         go.setBGMVolume(slider_bgm_vol.getValue()/100f);
         go.setHispeed((Double)js_hispeed.getValue());
-        go.setSpeedType(combo_speedType.getSelectedIndex());
+        go.setSpeedType((SpeedType)combo_speedType.getSelectedItem());
         go.setFullScreen(jc_full_screen.isSelected());
         go.setBilinear(jc_bilinear.isSelected());
         go.setVsync(jc_vsync.isSelected());
@@ -314,13 +317,13 @@ public class MusicSelection extends javax.swing.JPanel
                         .addComponent(btn_reload, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_delete))
-                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 493, Short.MAX_VALUE))
+                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE))
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.CENTER, panel_listLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addComponent(lbl_search)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 452, Short.MAX_VALUE)
+                .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE)
                 .addGap(10, 10, 10))
         );
         panel_listLayout.setVerticalGroup(
@@ -369,11 +372,11 @@ public class MusicSelection extends javax.swing.JPanel
 
         lbl_channelModifier.setText("Channel Modifier:");
 
-        combo_channelModifier.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "None", "Mirror", "Shuffle", "Random" }));
+        combo_channelModifier.setModel(new javax.swing.DefaultComboBoxModel(GameOptions.ChannelMod.values()));
 
         lbl_visibilityModifier.setText("Visibility Modifier:");
 
-        combo_visibilityModifier.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "None", "Hidden", "Sudden", "Dark" }));
+        combo_visibilityModifier.setModel(new javax.swing.DefaultComboBoxModel(GameOptions.VisibilityMod.values()));
 
         js_hispeed.setModel(new javax.swing.SpinnerNumberModel(1.0d, 0.5d, 10.0d, 0.5d));
         js_hispeed.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -416,7 +419,7 @@ public class MusicSelection extends javax.swing.JPanel
         jc_timed_judgment.setText("Use timed judgment");
         jc_timed_judgment.setToolTipText("Like Bemani games");
 
-        combo_speedType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Hi-Speed:", "xR-Speed:", "W-Speed:" }));
+        combo_speedType.setModel(new javax.swing.DefaultComboBoxModel(GameOptions.SpeedType.values()));
         combo_speedType.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 combo_speedTypeActionPerformed(evt);
@@ -436,7 +439,7 @@ public class MusicSelection extends javax.swing.JPanel
                                 .addComponent(lbl_channelModifier)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(combo_channelModifier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
                                 .addComponent(lbl_visibilityModifier)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(combo_visibilityModifier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -449,7 +452,7 @@ public class MusicSelection extends javax.swing.JPanel
                                 .addGroup(panel_modifiersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(slider_key_vol, javax.swing.GroupLayout.Alignment.TRAILING, 0, 0, Short.MAX_VALUE)
                                     .addComponent(slider_bgm_vol, javax.swing.GroupLayout.Alignment.TRAILING, 0, 0, Short.MAX_VALUE)
-                                    .addComponent(slider_main_vol, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE))
+                                    .addComponent(slider_main_vol, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE))
                                 .addGroup(panel_modifiersLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(panel_modifiersLayout.createSequentialGroup()
                                         .addGap(10, 10, 10)
@@ -468,7 +471,7 @@ public class MusicSelection extends javax.swing.JPanel
                         .addContainerGap())
                     .addGroup(panel_modifiersLayout.createSequentialGroup()
                         .addComponent(jc_timed_judgment)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 113, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 77, Short.MAX_VALUE)
                         .addComponent(jc_autoplay)
                         .addGap(14, 14, 14))))
         );
@@ -569,13 +572,13 @@ public class MusicSelection extends javax.swing.JPanel
         panel_info.setLayout(panel_infoLayout);
         panel_infoLayout.setHorizontalGroup(
             panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 327, Short.MAX_VALUE)
+            .addGap(0, 413, Short.MAX_VALUE)
             .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(panel_infoLayout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(table_scroll2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)
-                        .addComponent(lbl_title, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)
+                        .addComponent(table_scroll2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE)
+                        .addComponent(lbl_title, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE)
                         .addGroup(panel_infoLayout.createSequentialGroup()
                             .addComponent(lbl_cover, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -590,14 +593,14 @@ public class MusicSelection extends javax.swing.JPanel
                                         .addComponent(lbl_keys1))
                                     .addGap(18, 18, 18)
                                     .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(lbl_level, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                                        .addComponent(lbl_notes, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                                        .addComponent(lbl_time, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                                        .addComponent(lbl_genre, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                                        .addComponent(lbl_bpm, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                                        .addComponent(lbl_keys, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)))
+                                        .addComponent(lbl_level, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
+                                        .addComponent(lbl_notes, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
+                                        .addComponent(lbl_time, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
+                                        .addComponent(lbl_genre, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
+                                        .addComponent(lbl_bpm, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
+                                        .addComponent(lbl_keys, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)))
                                 .addComponent(lbl_filename)))
-                        .addComponent(lbl_artist, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE))
+                        .addComponent(lbl_artist, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE))
                     .addContainerGap()))
         );
         panel_infoLayout.setVerticalGroup(
@@ -858,10 +861,10 @@ public class MusicSelection extends javax.swing.JPanel
 
         final boolean time_judgment = jc_timed_judgment.isSelected();
 
-        final int speed_type = combo_speedType.getSelectedIndex();
+        final SpeedType speed_type =(SpeedType) combo_speedType.getSelectedItem();
 
-        final int channelModifier = combo_channelModifier.getSelectedIndex();
-        final int visibilityModifier = combo_visibilityModifier.getSelectedIndex();
+        final ChannelMod channelModifier = (ChannelMod) combo_channelModifier.getSelectedItem();
+        final VisibilityMod visibilityModifier = (VisibilityMod) combo_visibilityModifier.getSelectedItem();
 
         final float mainVol = slider_main_vol.getValue() / 100f;
         final float keyVol = slider_key_vol.getValue() / 100f;
