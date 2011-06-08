@@ -93,7 +93,7 @@ public abstract class Render implements GameWindowCallback
     
     boolean xr_speed = false;
     boolean w_speed = false;
-    private List<Double> speed_xR_values = new ArrayList<Double>();
+    private final List<Double> speed_xR_values = new ArrayList<Double>();
 
     private static final double SPEED_FACTOR = 0.005d;
     
@@ -190,7 +190,6 @@ public abstract class Render implements GameWindowCallback
 
     /** the combo counter */
     ComboCounterEntity combo_entity;
-    protected ComboCounterEntity combo_title;
 
     /** the maxcombo counter */
     NumberEntity maxcombo_entity;
@@ -205,10 +204,6 @@ public abstract class Render implements GameWindowCallback
     double total_notes = 0;
 
     protected CompositeEntity visibility_entity;
-    /** The volume */
-    //private float mainVolume = 0.5f;
-    //private float keyVolume = 1.0f;
-    //private float bgmVolume = 1.0f;
 
     private final static float VOLUME_FACTOR = 0.05f;
 
@@ -216,7 +211,7 @@ public abstract class Render implements GameWindowCallback
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
     }
     
-    Render(Chart chart, GameOptions opt)
+    Render(Chart chart, GameOptions opt, DisplayMode dm)
     {
         keyboard_map = Config.getKeyboardMap(Config.KeyboardType.K7);
         keyboard_misc = Config.getKeyboardMisc();
@@ -225,10 +220,8 @@ public abstract class Render implements GameWindowCallback
         this.chart = chart;
         this.opt = opt;
         velocity_tree = new IntervalTree<Double,Double>();
-        
-        this.speed = opt.getHiSpeed();
-        
-        this.next_speed = this.last_speed = speed;
+
+        this.next_speed = this.last_speed = speed = opt.getHiSpeed();
         switch(opt.getSpeedType())
         {
             case xRSpeed:
@@ -241,11 +234,7 @@ public abstract class Render implements GameWindowCallback
             this.speed = this.next_speed = this.last_speed = 0;
             break;
         }
-    }
-
-    /** set the screen dimensions */
-    public void setDisplay(DisplayMode dm, boolean vsync, boolean fs, boolean bilinear) {
-        window.setDisplay(dm,vsync,fs,bilinear);
+        window.setDisplay(dm,opt.getVsync(),opt.getFullScreen(),opt.getBilinear());
     }
 
     /**
@@ -285,7 +274,7 @@ public abstract class Render implements GameWindowCallback
 
         judgment_line_y2 = skin.getJudgmentLine();
 
-	changeSpeed(0);
+	    changeSpeed(0);
 
         Random rnd = new Random();
 
@@ -318,7 +307,7 @@ public abstract class Render implements GameWindowCallback
         // reference to long notes being holded
         longnote_holded = new EnumMap<Event.Channel,LongNoteEntity>(Event.Channel.class);
 
-	longflare = new EnumMap<Event.Channel, Entity> (Event.Channel.class);
+	    longflare = new EnumMap<Event.Channel, Entity> (Event.Channel.class);
 
         last_sound = new EnumMap<Event.Channel,Event.SoundSample>(Event.Channel.class);
 
@@ -373,7 +362,7 @@ public abstract class Render implements GameWindowCallback
 
         List<Event> event_list = construct_velocity_tree(chart.getEvents());
 
-	//Let's randomize "-"
+	    //Let's randomize "-"
         switch(opt.getChannelModifier())
         {
             case Mirror:
@@ -472,14 +461,14 @@ public abstract class Render implements GameWindowCallback
 
         now = SystemTimer.getTime() - start_time;
 
-	if(opt.getAutoplay())do_autoplay(now);
+	    if(opt.getAutoplay())do_autoplay(now);
         else check_keyboard(now);
 
-        Iterator<LinkedList<Entity>> i = entities_matrix.iterator();
-        while(i.hasNext()) // loop over layers
+        for(LinkedList<Entity> layer : entities_matrix) // loop over layers
         {
             // get entity iterator from layer
-            Iterator<Entity> j = i.next().iterator();
+            // need to use iterator here because we remove() below
+            Iterator<Entity> j = layer.iterator();
             while(j.hasNext()) // loop over entities
             {
                 Entity e = j.next();
@@ -496,7 +485,7 @@ public abstract class Render implements GameWindowCallback
                     if(e instanceof NoteEntity) channel = ((NoteEntity)e).getChannel();
 
                     double y = getViewport() - velocity_integral(now,te.getTime(), channel);
-                    
+
                     //TODO Fix this, maybe an option in the skin
                     //o2jam overlaps 1 px of the note with the measure and, because of this
                     //our skin should do it too xD
@@ -589,7 +578,7 @@ public abstract class Render implements GameWindowCallback
 
     abstract void check_judgment(NoteEntity noteEntity);
 
-    /** play a sample */
+    /* play a sample */
     public void queueSample(Event.SoundSample sample)
     {
         Integer buffer = samples.get(sample.sample_id);
@@ -623,8 +612,8 @@ public abstract class Render implements GameWindowCallback
         else                key_sources.add(source);
     }
     
-    List<Integer> bgm_sources = new LinkedList<Integer>();
-    List<Integer> key_sources = new LinkedList<Integer>();
+    final List<Integer> bgm_sources = new LinkedList<Integer>();
+    final List<Integer> key_sources = new LinkedList<Integer>();
     
     private void change_volume(boolean isBGM, float factor) {
         for(int source : isBGM ? bgm_sources : key_sources)
@@ -695,18 +684,12 @@ public abstract class Render implements GameWindowCallback
         }
         
         //update the longnotes end time
-        Iterator<LinkedList<Entity>> i = entities_matrix.iterator();
-        while(i.hasNext()) // loop over layers
+        for(LinkedList<Entity> layer : entities_matrix) // loop over layers
         {
-            // get entity iterator from layer
-            Iterator<Entity> j = i.next().iterator();
-            while(j.hasNext()) // loop over entities
-            {
-                Entity e = j.next();
-                if(e instanceof LongNoteEntity)
-                {
+            for (Entity e : layer) {
+                if (e instanceof LongNoteEntity) {
                     LongNoteEntity le = (LongNoteEntity) e;
-                    le.setEndDistance(velocity_integral(le.getTime(),le.getEndTime(),le.getChannel()));
+                    le.setEndDistance(velocity_integral(le.getTime(), le.getEndTime(), le.getChannel()));
                 }
             }
         }
@@ -723,7 +706,7 @@ public abstract class Render implements GameWindowCallback
         return 2 * judgment_line_y2 - judgment_line_y1;
     }
 
-    /** this returns the next note that needs to be played
+    /* this returns the next note that needs to be played
      ** of the defined channel or NULL if there's
      ** no such note in the moment **/
     NoteEntity nextNoteKey(Event.Channel c)
@@ -743,7 +726,7 @@ public abstract class Render implements GameWindowCallback
 
     private double buffer_timer = 0;
 
-    /** update the note layer of the entities_matrix.
+    /* update the note layer of the entities_matrix.
     *** note buffering is equally distributed between the frames
     **/
     void update_note_buffer(double now)
@@ -769,15 +752,15 @@ public abstract class Render implements GameWindowCallback
                     NoteEntity n = (NoteEntity) skin.getEntityMap().get(e.getChannel().toString()).copy();
                     n.setTime(e.getTime());
                     n.setSample(e.getSample());
-		    entities_matrix.add(n);
+		            entities_matrix.add(n);
                     note_channels.get(n.getChannel()).add(n);
                 }
                 else if(e.getFlag() == Event.Flag.HOLD){
                     LongNoteEntity ln = (LongNoteEntity) skin.getEntityMap().get("LONG_"+e.getChannel()).copy();
                     ln.setTime(e.getTime());
                     ln.setSample(e.getSample());
-		    entities_matrix.add(ln);
-		    ln_buffer.put(e.getChannel(),ln);
+		            entities_matrix.add(ln);
+		            ln_buffer.put(e.getChannel(),ln);
                     note_channels.get(ln.getChannel()).add(ln);
                 }
                 else if(e.getFlag() == Event.Flag.RELEASE){
@@ -806,11 +789,11 @@ public abstract class Render implements GameWindowCallback
         }
     }
 
-    private List<Integer> misc_keys = new LinkedList<Integer>();
+    private final List<Integer> misc_keys = new LinkedList<Integer>();
 
     void check_misc_keyboard()
     {
-	for(Map.Entry<Config.MiscEvent,Integer> entry : keyboard_misc.entrySet())
+	    for(Map.Entry<Config.MiscEvent,Integer> entry : keyboard_misc.entrySet())
         {
             Config.MiscEvent event  = entry.getKey();
 
@@ -871,11 +854,9 @@ public abstract class Render implements GameWindowCallback
         double my_note_speed = (my_bpm * measure_size) / BEATS_PER_MSEC;
         
         List<Event> new_list = new LinkedList<Event>();
-        
-        Iterator<Event> it = list.iterator();
-        while(it.hasNext())
+
+        for(Event e : list)
         {
-            Event e = it.next();
             while(e.getMeasure() > measure)
             {
                 timer += (BEATS_PER_MSEC * (frac_measure-measure_pointer)) / my_bpm;
@@ -927,7 +908,7 @@ public abstract class Render implements GameWindowCallback
         return new_list;
     }
 
-    /**
+    /*
      * given a time segment, returns the distance, in pixels,
      * from each segment based on the bpm.
      *
@@ -993,19 +974,19 @@ public abstract class Render implements GameWindowCallback
     */
     void channelMirror(Iterator<Event> buffer)
     {
-	while(buffer.hasNext())
-	{
-	    Event e = buffer.next();
-	    switch(e.getChannel())
-	    {
-		case NOTE_1: e.setChannel(Event.Channel.NOTE_7); break;
-		case NOTE_2: e.setChannel(Event.Channel.NOTE_6); break;
-		case NOTE_3: e.setChannel(Event.Channel.NOTE_5); break;
-		case NOTE_5: e.setChannel(Event.Channel.NOTE_3); break;
-		case NOTE_6: e.setChannel(Event.Channel.NOTE_2); break;
-		case NOTE_7: e.setChannel(Event.Channel.NOTE_1); break;
-	    }
-	}
+        while(buffer.hasNext())
+        {
+            Event e = buffer.next();
+            switch(e.getChannel())
+            {
+            case NOTE_1: e.setChannel(Event.Channel.NOTE_7); break;
+            case NOTE_2: e.setChannel(Event.Channel.NOTE_6); break;
+            case NOTE_3: e.setChannel(Event.Channel.NOTE_5); break;
+            case NOTE_5: e.setChannel(Event.Channel.NOTE_3); break;
+            case NOTE_6: e.setChannel(Event.Channel.NOTE_2); break;
+            case NOTE_7: e.setChannel(Event.Channel.NOTE_1); break;
+            }
+        }
     }
 
     /**
@@ -1015,32 +996,32 @@ public abstract class Render implements GameWindowCallback
      */
     void channelShuffle(Iterator<Event> buffer)
     {
-	List<Event.Channel> channelSwap = new LinkedList<Event.Channel>();
+        List<Event.Channel> channelSwap = new LinkedList<Event.Channel>();
 
-	channelSwap.add(Event.Channel.NOTE_1);
-	channelSwap.add(Event.Channel.NOTE_2);
-	channelSwap.add(Event.Channel.NOTE_3);
-	channelSwap.add(Event.Channel.NOTE_4);
-	channelSwap.add(Event.Channel.NOTE_5);
-	channelSwap.add(Event.Channel.NOTE_6);
-	channelSwap.add(Event.Channel.NOTE_7);
+        channelSwap.add(Event.Channel.NOTE_1);
+        channelSwap.add(Event.Channel.NOTE_2);
+        channelSwap.add(Event.Channel.NOTE_3);
+        channelSwap.add(Event.Channel.NOTE_4);
+        channelSwap.add(Event.Channel.NOTE_5);
+        channelSwap.add(Event.Channel.NOTE_6);
+        channelSwap.add(Event.Channel.NOTE_7);
 
-	Collections.shuffle(channelSwap);
+        Collections.shuffle(channelSwap);
 
-	while(buffer.hasNext())
-	{
-	    Event e = buffer.next();
-	    switch(e.getChannel())
-	    {
-		case NOTE_1: e.setChannel(channelSwap.get(0)); break;
-		case NOTE_2: e.setChannel(channelSwap.get(1)); break;
-		case NOTE_3: e.setChannel(channelSwap.get(2)); break;
-		case NOTE_4: e.setChannel(channelSwap.get(3)); break;
-		case NOTE_5: e.setChannel(channelSwap.get(4)); break;
-		case NOTE_6: e.setChannel(channelSwap.get(5)); break;
-		case NOTE_7: e.setChannel(channelSwap.get(6)); break;
-	    }
-	}
+        while(buffer.hasNext())
+        {
+            Event e = buffer.next();
+            switch(e.getChannel())
+            {
+            case NOTE_1: e.setChannel(channelSwap.get(0)); break;
+            case NOTE_2: e.setChannel(channelSwap.get(1)); break;
+            case NOTE_3: e.setChannel(channelSwap.get(2)); break;
+            case NOTE_4: e.setChannel(channelSwap.get(3)); break;
+            case NOTE_5: e.setChannel(channelSwap.get(4)); break;
+            case NOTE_6: e.setChannel(channelSwap.get(5)); break;
+            case NOTE_7: e.setChannel(channelSwap.get(6)); break;
+            }
+        }
     }
 
     /**
@@ -1053,55 +1034,55 @@ public abstract class Render implements GameWindowCallback
     {
         List<Event.Channel> channelSwap = new LinkedList<Event.Channel>();
 
-	channelSwap.add(Event.Channel.NOTE_1);
-	channelSwap.add(Event.Channel.NOTE_2);
-	channelSwap.add(Event.Channel.NOTE_3);
-	channelSwap.add(Event.Channel.NOTE_4);
-	channelSwap.add(Event.Channel.NOTE_5);
-	channelSwap.add(Event.Channel.NOTE_6);
-	channelSwap.add(Event.Channel.NOTE_7);
+        channelSwap.add(Event.Channel.NOTE_1);
+        channelSwap.add(Event.Channel.NOTE_2);
+        channelSwap.add(Event.Channel.NOTE_3);
+        channelSwap.add(Event.Channel.NOTE_4);
+        channelSwap.add(Event.Channel.NOTE_5);
+        channelSwap.add(Event.Channel.NOTE_6);
+        channelSwap.add(Event.Channel.NOTE_7);
 
-	Collections.shuffle(channelSwap);
+        Collections.shuffle(channelSwap);
 
-        EnumMap<Event.Channel, Event.Channel> lnMap = new EnumMap<Event.Channel, Event.Channel>(Event.Channel.class);
+            EnumMap<Event.Channel, Event.Channel> lnMap = new EnumMap<Event.Channel, Event.Channel>(Event.Channel.class);
 
-        int last_measure = -1;
-	while(buffer.hasNext())
-	{
-	    Event e = buffer.next();
+            int last_measure = -1;
+        while(buffer.hasNext())
+        {
+            Event e = buffer.next();
 
-            if(e.getMeasure() > last_measure)
+                if(e.getMeasure() > last_measure)
+                {
+                    if(lnMap.isEmpty())
+                        Collections.shuffle(channelSwap);
+                    last_measure = e.getMeasure();
+                }
+
+            switch(e.getChannel())
             {
-                if(lnMap.isEmpty())
-                    Collections.shuffle(channelSwap);
-                last_measure = e.getMeasure();
+            case NOTE_1:
+                        setRandomChannel(e, lnMap, channelSwap.get(0));
+                    break;
+            case NOTE_2:
+                        setRandomChannel(e, lnMap, channelSwap.get(1));
+                    break;
+            case NOTE_3:
+                        setRandomChannel(e, lnMap, channelSwap.get(2));
+                    break;
+            case NOTE_4:
+                        setRandomChannel(e, lnMap, channelSwap.get(3));
+                    break;
+            case NOTE_5:
+                        setRandomChannel(e, lnMap, channelSwap.get(4));
+                    break;
+            case NOTE_6:
+                        setRandomChannel(e, lnMap, channelSwap.get(5));
+                    break;
+            case NOTE_7:
+                        setRandomChannel(e, lnMap, channelSwap.get(6));
+                    break;
             }
-
-	    switch(e.getChannel())
-	    {
-		case NOTE_1:
-                    setRandomChannel(e, lnMap, channelSwap.get(0));
-                break;
-		case NOTE_2:
-                    setRandomChannel(e, lnMap, channelSwap.get(1));
-                break;
-		case NOTE_3:
-                    setRandomChannel(e, lnMap, channelSwap.get(2));
-                break;
-		case NOTE_4:
-                    setRandomChannel(e, lnMap, channelSwap.get(3));
-                break;
-		case NOTE_5:
-                    setRandomChannel(e, lnMap, channelSwap.get(4));
-                break;
-		case NOTE_6:
-                    setRandomChannel(e, lnMap, channelSwap.get(5));
-                break;
-		case NOTE_7:
-                    setRandomChannel(e, lnMap, channelSwap.get(6));
-                break;
-	    }
-	}
+        }
     }
 
     private void setRandomChannel(Event e, EnumMap<Event.Channel, Event.Channel> lnMap, Event.Channel random)
@@ -1165,7 +1146,6 @@ public abstract class Render implements GameWindowCallback
         if(value != GameOptions.VisibilityMod.Sudden)skin.getEntityMap().get("JUDGMENT_LINE").setLayer(layer);
 
         entities_matrix.add(visibility_entity);
-        return;
     }
 
     /**

@@ -888,15 +888,12 @@ public class MusicSelection extends javax.swing.JPanel
         go.setFullScreen(fs);
         go.setBilinear(bilinear);
         go.setVsync(vsync);
-        
-        //TODO: save gameoptions here ??
 
         Render r;
         if(time_judgment)
-            r = new TimeRender(selected_header, go);
+            r = new TimeRender(selected_header, go, dm);
         else
-            r = new DistanceRender(selected_header, go);
-        r.setDisplay(dm, vsync, fs, bilinear);
+            r = new DistanceRender(selected_header, go, dm);
 
         r.startRendering();
 }//GEN-LAST:event_bt_playActionPerformed

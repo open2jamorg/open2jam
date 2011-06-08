@@ -1,6 +1,5 @@
 package org.open2jam.render.entities;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -38,8 +37,6 @@ public class ComboCounterEntity extends NumberEntity
         super(list,x,y);
         base_y = y;
         base_x = x;
-        ArrayList<Entity> al = new ArrayList<Entity>();
-        al.addAll(list);
         title_sprite = title;
     }
 

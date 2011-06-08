@@ -2,6 +2,7 @@ package org.open2jam.render;
 
 import java.util.EnumMap;
 import java.util.Map;
+import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.GameOptions;
 
 import org.open2jam.util.SystemTimer;
@@ -33,9 +34,9 @@ public class DistanceRender extends Render
 
     private EnumMap<JUDGE,NumberEntity> note_counter;
 
-    public DistanceRender(Chart c, GameOptions opt)
+    public DistanceRender(Chart c, GameOptions opt, DisplayMode dm)
     {
-        super(c,opt);
+        super(c,opt,dm);
     }
 
     /**

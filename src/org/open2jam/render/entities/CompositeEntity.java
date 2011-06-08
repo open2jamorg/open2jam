@@ -76,10 +76,8 @@ public class CompositeEntity extends Entity
      */
     @Override
     public boolean isDead(){
-        Iterator<Entity> i = entity_list.iterator();
-        while(i.hasNext()){
-            Entity e = i.next();
-            if(e.isDead()) return false;
+        for (Entity e : entity_list) {
+            if (e.isDead()) return false;
         }
         return true;
 

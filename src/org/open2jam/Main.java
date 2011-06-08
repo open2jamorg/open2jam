@@ -61,13 +61,13 @@ public class Main implements Runnable
     private static String getOS()
     {
         String os = System.getProperty("os.name").toLowerCase();
-        if(os.indexOf("win") >= 0){
+        if(os.contains("win")){
             return "windows";
-        }else if(os.indexOf("mac") >= 0){
+        }else if(os.contains("mac")){
             return "macosx";
-        }else if(os.indexOf("nix") >=0 || os.indexOf("nux") >=0){
+        }else if(os.contains("nix") || os.contains("nux")){
             return "linux";
-        }else if(os.indexOf("solaris") >= 0){
+        }else if(os.contains("solaris")){
             return "solaris";
         }else{
             return os;

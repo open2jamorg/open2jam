@@ -3,6 +3,8 @@ package org.open2jam.render;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+
 import org.open2jam.render.entities.CompositeEntity;
 import org.open2jam.render.entities.Entity;
 
@@ -12,7 +14,7 @@ import org.open2jam.render.entities.Entity;
  * 
  * @author fox
  */
-class EntityMatrix
+class EntityMatrix implements Iterable<LinkedList<Entity>>
 {
     private final ArrayList<LinkedList<Entity>> matrix;
     
