@@ -94,7 +94,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="btn_delete" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="table_scroll" alignment="2" pref="440" max="32767" attributes="1"/>
+                      <Component id="table_scroll" alignment="2" pref="493" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -102,7 +102,7 @@
                   <EmptySpace min="10" pref="10" max="10" attributes="0"/>
                   <Component id="lbl_search" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="txt_filter" pref="399" max="32767" attributes="1"/>
+                  <Component id="txt_filter" pref="452" max="32767" attributes="1"/>
                   <EmptySpace min="10" pref="10" max="10" attributes="0"/>
               </Group>
           </Group>

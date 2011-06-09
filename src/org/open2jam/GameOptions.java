@@ -1,6 +1,7 @@
 package org.open2jam;
 
 import java.io.Serializable;
+import org.lwjgl.opengl.DisplayMode;
 
 /**
  * This class will store game options such as hi-speed and autoplay.
@@ -51,6 +52,8 @@ public class GameOptions implements Serializable {
     private boolean bilinear = true;
     // vsync 
     private boolean vsync = true;
+    
+    private int width,height,bpp,freq;
 
     //public empty constructor. give default options
     public GameOptions() { }
@@ -207,6 +210,19 @@ public class GameOptions implements Serializable {
         return vsync;
     }
 
+    public void setDisplay(DisplayMode dm) {
+        this.width = dm.getWidth();
+        this.height = dm.getHeight();
+        this.bpp = dm.getBitsPerPixel();
+        this.freq = dm.getFrequency();
+    }
+    
+    public boolean isDisplaySaved(DisplayMode dm)
+    {
+        return dm.getWidth() == width && dm.getHeight() == height &&
+               dm.getBitsPerPixel() == bpp && dm.getFrequency() == freq;
+    }
+    
     private double clamp(double value, double min, double max) {
         return Math.min(Math.max(value, min), max);
     }

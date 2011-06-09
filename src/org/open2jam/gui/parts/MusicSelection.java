@@ -169,6 +169,12 @@ public class MusicSelection extends javax.swing.JPanel
         slider_bgm_vol.setValue(Math.round(go.getBGMVolume()*100));
         js_hispeed.setValue(go.getHiSpeed());
         combo_speedType.setSelectedItem(go.getSpeedType());
+        
+        for(DisplayMode dm : display_modes)
+        {
+            if(go.isDisplaySaved(dm))
+                combo_displays.setSelectedItem(dm);
+        }
 
         jc_full_screen.setSelected(go.getFullScreen());
         jc_bilinear.setSelected(go.getBilinear());
@@ -195,7 +201,8 @@ public class MusicSelection extends javax.swing.JPanel
         go.setBilinear(jc_bilinear.isSelected());
         go.setVsync(jc_vsync.isSelected());
         
-
+        go.setDisplay((DisplayMode)combo_displays.getSelectedItem());
+        
         Config.setGameOptions(go);
     }
 
