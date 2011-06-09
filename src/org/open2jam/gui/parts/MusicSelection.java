@@ -964,7 +964,7 @@ public class MusicSelection extends javax.swing.JPanel
         int sel_row = table_songlist.getSelectedRow();
         if(sel_row >= 0)last_model_idx = table_songlist.convertRowIndexToModel(sel_row);
         model_songlist.setRank(rank);
-        txt_max_rand.setText(model_songlist.getMaxLevel()+"");
+        updateRandomValues();
 }//GEN-LAST:event_jr_rank_easyActionPerformed
 
     private void jr_rank_normalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jr_rank_normalActionPerformed
@@ -972,7 +972,7 @@ public class MusicSelection extends javax.swing.JPanel
         int sel_row = table_songlist.getSelectedRow();
         if(sel_row >= 0)last_model_idx = table_songlist.convertRowIndexToModel(sel_row);
         model_songlist.setRank(rank);
-        txt_max_rand.setText(model_songlist.getMaxLevel()+"");
+        updateRandomValues();
 }//GEN-LAST:event_jr_rank_normalActionPerformed
 
     private void jr_rank_hardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jr_rank_hardActionPerformed
@@ -980,7 +980,7 @@ public class MusicSelection extends javax.swing.JPanel
         int sel_row = table_songlist.getSelectedRow();
         if(sel_row >= 0)last_model_idx = table_songlist.convertRowIndexToModel(sel_row);
         model_songlist.setRank(rank);
-        txt_max_rand.setText(model_songlist.getMaxLevel()+"");
+        updateRandomValues();
 }//GEN-LAST:event_jr_rank_hardActionPerformed
 
     private void combo_dirsItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_combo_dirsItemStateChanged
@@ -1012,7 +1012,7 @@ public class MusicSelection extends javax.swing.JPanel
                 charlist.add(cl);
             }
         }
-        
+        if(charlist.isEmpty()) return;
         Collections.shuffle(charlist);
 //        System.out.println("Selected: "+c.getTitle()+" "+min+" >= "+c.getLevel()+" <= "+max);
         int selected = model_songlist.getRawList().indexOf(charlist.get(0));
@@ -1153,7 +1153,11 @@ public class MusicSelection extends javax.swing.JPanel
         //System.out.println("set "+dir);
         combo_dirs.setSelectedItem(new FileItem(dir));
         
-                        
+        updateRandomValues();
+    }
+    
+    private void updateRandomValues() {
+        txt_min_rand.setText(model_songlist.getMinLevel()+"");
         txt_max_rand.setText(model_songlist.getMaxLevel()+"");
     }
     
@@ -1206,6 +1210,8 @@ public class MusicSelection extends javax.swing.JPanel
                 load_progress.setVisible(false);
                 txt_filter.setEnabled(true);
                 table_songlist.setEnabled(true);
+                
+                updateRandomValues();
             }
         }
     }

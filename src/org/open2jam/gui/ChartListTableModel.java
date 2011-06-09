@@ -51,18 +51,6 @@ public class ChartListTableModel implements TableModel
         this.rank = rank;
         fireListeners();
     }
-
-    public int getMaxLevel() {
-        int level = 0;
-        for(ChartList cl : items)
-        {
-            if(cl.size()-1 < rank) continue;
-            Chart c = cl.get(rank);
-            if(c.getLevel() > level) level = c.getLevel();
-        }
-        
-        return level;
-    }
     
     public ChartList getRow(int row)
     {
@@ -113,6 +101,30 @@ public class ChartListTableModel implements TableModel
             case 2:return c.getGenre();
         }
         return null;
+    }
+    
+    public int getMinLevel() {
+        int level = 0;
+        for(ChartList cl : items)
+        {
+            if(cl.size()-1 < rank) continue;
+            Chart c = cl.get(rank);
+            int clvl = c.getLevel();
+            level = Math.min(level, clvl);
+        }
+        return level;
+    }
+    
+    public int getMaxLevel() {
+        int level = 0;
+        for(ChartList cl : items)
+        {
+            if(cl.size()-1 < rank) continue;
+            Chart c = cl.get(rank);
+            int clvl = c.getLevel();
+            level = Math.max(level, clvl);
+        }
+        return level;
     }
 
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
