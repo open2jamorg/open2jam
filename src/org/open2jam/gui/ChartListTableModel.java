@@ -52,6 +52,18 @@ public class ChartListTableModel implements TableModel
         fireListeners();
     }
 
+    public int getMaxLevel() {
+        int level = 0;
+        for(ChartList cl : items)
+        {
+            if(cl.size()-1 < rank) continue;
+            Chart c = cl.get(rank);
+            if(c.getLevel() > level) level = c.getLevel();
+        }
+        
+        return level;
+    }
+    
     public ChartList getRow(int row)
     {
         return items.get(row);

@@ -227,6 +227,10 @@ public class MusicSelection extends javax.swing.JPanel
         combo_dirs = new javax.swing.JComboBox();
         btn_reload = new javax.swing.JButton();
         btn_delete = new javax.swing.JButton();
+        btn_random = new javax.swing.JButton();
+        txt_min_rand = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        txt_max_rand = new javax.swing.JTextField();
         panel_song = new javax.swing.JPanel();
         panel_modifiers = new javax.swing.JPanel();
         lbl_main_vol = new javax.swing.JLabel();
@@ -322,10 +326,41 @@ public class MusicSelection extends javax.swing.JPanel
             }
         });
 
+        btn_random.setText("Select random:");
+        btn_random.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_randomActionPerformed(evt);
+            }
+        });
+
+        txt_min_rand.setColumns(3);
+        txt_min_rand.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txt_min_rand.setText("0");
+
+        jLabel1.setText("~");
+
+        txt_max_rand.setColumns(3);
+        txt_max_rand.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txt_max_rand.setText("0");
+
         javax.swing.GroupLayout panel_listLayout = new javax.swing.GroupLayout(panel_list);
         panel_list.setLayout(panel_listLayout);
         panel_listLayout.setHorizontalGroup(
             panel_listLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_listLayout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(lbl_search)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_random)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_min_rand, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_max_rand, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
             .addGroup(panel_listLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panel_listLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
@@ -341,14 +376,8 @@ public class MusicSelection extends javax.swing.JPanel
                         .addComponent(btn_reload, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_delete))
-                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE))
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.CENTER, panel_listLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(lbl_search)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE)
-                .addGap(10, 10, 10))
+                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 493, Short.MAX_VALUE))
+                .addContainerGap(10, Short.MAX_VALUE))
         );
         panel_listLayout.setVerticalGroup(
             panel_listLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -362,11 +391,15 @@ public class MusicSelection extends javax.swing.JPanel
                     .addComponent(btn_delete)
                     .addComponent(load_progress, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 508, Short.MAX_VALUE)
+                .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 505, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_listLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txt_filter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbl_search))
+                    .addComponent(lbl_search)
+                    .addComponent(btn_random)
+                    .addComponent(txt_min_rand, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1)
+                    .addComponent(txt_max_rand, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -686,9 +719,13 @@ public class MusicSelection extends javax.swing.JPanel
 
         combo_displays.setModel(new javax.swing.DefaultComboBoxModel(display_modes));
 
+        txt_res_height.setColumns(3);
+        txt_res_height.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txt_res_height.setText("600");
         txt_res_height.setEnabled(false);
 
+        txt_res_width.setColumns(3);
+        txt_res_width.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txt_res_width.setText("800");
         txt_res_width.setEnabled(false);
 
@@ -927,6 +964,7 @@ public class MusicSelection extends javax.swing.JPanel
         int sel_row = table_songlist.getSelectedRow();
         if(sel_row >= 0)last_model_idx = table_songlist.convertRowIndexToModel(sel_row);
         model_songlist.setRank(rank);
+        txt_max_rand.setText(model_songlist.getMaxLevel()+"");
 }//GEN-LAST:event_jr_rank_easyActionPerformed
 
     private void jr_rank_normalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jr_rank_normalActionPerformed
@@ -934,6 +972,7 @@ public class MusicSelection extends javax.swing.JPanel
         int sel_row = table_songlist.getSelectedRow();
         if(sel_row >= 0)last_model_idx = table_songlist.convertRowIndexToModel(sel_row);
         model_songlist.setRank(rank);
+        txt_max_rand.setText(model_songlist.getMaxLevel()+"");
 }//GEN-LAST:event_jr_rank_normalActionPerformed
 
     private void jr_rank_hardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jr_rank_hardActionPerformed
@@ -941,6 +980,7 @@ public class MusicSelection extends javax.swing.JPanel
         int sel_row = table_songlist.getSelectedRow();
         if(sel_row >= 0)last_model_idx = table_songlist.convertRowIndexToModel(sel_row);
         model_songlist.setRank(rank);
+        txt_max_rand.setText(model_songlist.getMaxLevel()+"");
 }//GEN-LAST:event_jr_rank_hardActionPerformed
 
     private void combo_dirsItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_combo_dirsItemStateChanged
@@ -950,16 +990,49 @@ public class MusicSelection extends javax.swing.JPanel
         loadDir(dir);
     }//GEN-LAST:event_combo_dirsItemStateChanged
 
+    private void btn_randomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_randomActionPerformed
+        int min, max;
+        List<ChartList> charlist = new ArrayList<ChartList>();
+        try {
+            min = Integer.parseInt(txt_min_rand.getText());
+            max = Integer.parseInt(txt_max_rand.getText());
+        } catch(Exception e) {
+            JOptionPane.showMessageDialog(this, "Invalid value, only numbers are accepted", "Error", JOptionPane.WARNING_MESSAGE);
+            return;            
+        }
+        if(min>max){ int tmp = max; max = min; min = tmp; }
+        
+        for(ChartList cl : model_songlist.getRawList())
+        {
+            if(cl.size()-1 < rank) continue;
+            Chart c = cl.get(rank);
+            if(c.getLevel() >= min && c.getLevel() <= max)
+            {
+//                System.out.println(c.getTitle()+" "+min+" >= "+c.getLevel()+" <= "+max);
+                charlist.add(cl);
+            }
+        }
+        
+        Collections.shuffle(charlist);
+//        System.out.println("Selected: "+c.getTitle()+" "+min+" >= "+c.getLevel()+" <= "+max);
+        int selected = model_songlist.getRawList().indexOf(charlist.get(0));
+        selected = table_songlist.convertRowIndexToView(selected);
+        
+        table_songlist.changeSelection(selected, 0, false, false);      
+    }//GEN-LAST:event_btn_randomActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bt_choose_dir;
     private javax.swing.JButton bt_play;
     private javax.swing.JButton btn_delete;
+    private javax.swing.JButton btn_random;
     private javax.swing.JButton btn_reload;
     private javax.swing.JComboBox combo_channelModifier;
     private javax.swing.JComboBox combo_dirs;
     private javax.swing.JComboBox combo_displays;
     private javax.swing.JComboBox combo_speedType;
     private javax.swing.JComboBox combo_visibilityModifier;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JCheckBox jc_autoplay;
     private javax.swing.JCheckBox jc_bilinear;
@@ -1011,6 +1084,8 @@ public class MusicSelection extends javax.swing.JPanel
     private javax.swing.JScrollPane table_scroll2;
     private javax.swing.JTable table_songlist;
     private javax.swing.JTextField txt_filter;
+    private javax.swing.JTextField txt_max_rand;
+    private javax.swing.JTextField txt_min_rand;
     private javax.swing.JTextField txt_res_height;
     private javax.swing.JTextField txt_res_width;
     // End of variables declaration//GEN-END:variables
@@ -1077,6 +1152,9 @@ public class MusicSelection extends javax.swing.JPanel
         // update combo box dir list
         //System.out.println("set "+dir);
         combo_dirs.setSelectedItem(new FileItem(dir));
+        
+                        
+        txt_max_rand.setText(model_songlist.getMaxLevel()+"");
     }
     
     private void openFileChooser()
