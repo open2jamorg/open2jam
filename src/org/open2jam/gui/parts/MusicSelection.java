@@ -1,5 +1,6 @@
 package org.open2jam.gui.parts;
 
+import java.awt.Container;
 import java.awt.event.ItemEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -40,6 +41,22 @@ import org.open2jam.render.Render;
 
 public class MusicSelection extends javax.swing.JPanel
     implements PropertyChangeListener, ListSelectionListener {
+
+    private class RenderThread extends Thread {
+
+        Container c;
+        Render r;
+        public RenderThread(Container c, Render r) {
+            this.c = c;
+            this.r = r;
+        }
+        @Override
+        public void run() {
+            c.setEnabled(false);
+            r.startRendering();
+            c.setEnabled(true);
+        }
+    }
 
     private ChartListTableModel model_songlist;
     private ChartTableModel model_chartlist;
@@ -889,13 +906,13 @@ public class MusicSelection extends javax.swing.JPanel
         go.setBilinear(bilinear);
         go.setVsync(vsync);
 
-        Render r;
+        final Render r;
         if(time_judgment)
             r = new TimeRender(selected_header, go, dm);
         else
             r = new DistanceRender(selected_header, go, dm);
 
-        r.startRendering();
+        new RenderThread(this.getTopLevelAncestor(), r).start();
 }//GEN-LAST:event_bt_playActionPerformed
 
     private void jr_rank_easyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jr_rank_easyActionPerformed
