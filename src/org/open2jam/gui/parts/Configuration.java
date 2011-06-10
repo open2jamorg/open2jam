@@ -19,9 +19,8 @@ import org.open2jam.render.lwjgl.TrueTypeFont;
  * @author CdK
  */
 public class Configuration extends javax.swing.JPanel {
-
+    
     private EnumMap<Event.Channel,Integer> kb_map;
-
     private HashMap<Integer, Event.Channel> table_map = new HashMap<Integer,Event.Channel>();
     
     /** Creates new form Configuration */
@@ -89,7 +88,6 @@ public class Configuration extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        tKeys.setColumnSelectionAllowed(true);
         tKeys.getTableHeader().setReorderingAllowed(false);
         tKeys.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -135,9 +133,9 @@ public class Configuration extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(panel_keys, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(bSave, javax.swing.GroupLayout.Alignment.CENTER, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(panel_keys, javax.swing.GroupLayout.Alignment.CENTER, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -147,22 +145,9 @@ public class Configuration extends javax.swing.JPanel {
                 .addComponent(panel_keys, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(152, Short.MAX_VALUE))
+                .addContainerGap(153, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
-        Config.KeyboardType kt;
-        switch(combo_keyboardConfig.getSelectedIndex()) {
-            case 0:kt = Config.KeyboardType.K7;break;
-            case 1:kt = Config.KeyboardType.K5;break;
-            case 2:kt = Config.KeyboardType.K6;break;
-            case 3:kt = Config.KeyboardType.K4;break;
-            case 4:kt = Config.KeyboardType.K8;break;
-            default: return;
-        }
-        Config.setKeyboardMap(kb_map, kt);
-}//GEN-LAST:event_bSaveActionPerformed
 
     private void tKeysMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tKeysMouseClicked
         int row = tKeys.getSelectedRow();
@@ -195,6 +180,19 @@ public class Configuration extends javax.swing.JPanel {
         }
 }//GEN-LAST:event_combo_keyboardConfigActionPerformed
 
+    private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
+        Config.KeyboardType kt;
+        switch(combo_keyboardConfig.getSelectedIndex()) {
+            case 0:kt = Config.KeyboardType.K7;break;
+            case 1:kt = Config.KeyboardType.K5;break;
+            case 2:kt = Config.KeyboardType.K6;break;
+            case 3:kt = Config.KeyboardType.K4;break;
+            case 4:kt = Config.KeyboardType.K8;break;
+            default: return;
+        }
+        Config.setKeyboardMap(kb_map, kt);
+}//GEN-LAST:event_bSaveActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bSave;
     private javax.swing.JComboBox combo_keyboardConfig;
@@ -203,7 +201,7 @@ public class Configuration extends javax.swing.JPanel {
     private javax.swing.JTable tKeys;
     private javax.swing.JScrollPane tKeys_scroll;
     // End of variables declaration//GEN-END:variables
-
+   
     private void loadTableKeys(Config.KeyboardType kt)
     {
         kb_map = Config.getKeyboardMap(kt).clone();

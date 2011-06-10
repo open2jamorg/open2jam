@@ -14,6 +14,7 @@ public class Interface extends javax.swing.JFrame implements WindowListener
 {
     
     private MusicSelection musicSelection;
+    private Configuration configuration;
 
     /** Creates new form Interface */
     public Interface() {
@@ -22,9 +23,10 @@ public class Interface extends javax.swing.JFrame implements WindowListener
         this.setLocationRelativeTo(null);
         
         musicSelection = new MusicSelection();
+        configuration = new Configuration();
         
         Tabs.addTab("Music Selection", musicSelection);
-        Tabs.addTab("Configuration", new Configuration());
+        Tabs.addTab("Configuration", configuration);
         
         this.addWindowListener(this);
     }
@@ -44,16 +46,20 @@ public class Interface extends javax.swing.JFrame implements WindowListener
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Open2Jam");
+        setMinimumSize(new java.awt.Dimension(950, 800));
+
+        Tabs.setMinimumSize(new java.awt.Dimension(930, 730));
+        Tabs.setPreferredSize(new java.awt.Dimension(950, 800));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(Tabs, javax.swing.GroupLayout.DEFAULT_SIZE, 928, Short.MAX_VALUE)
+            .addComponent(Tabs, javax.swing.GroupLayout.DEFAULT_SIZE, 950, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(Tabs, javax.swing.GroupLayout.DEFAULT_SIZE, 730, Short.MAX_VALUE)
+            .addComponent(Tabs, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
         );
 
         Tabs.getAccessibleContext().setAccessibleName("");

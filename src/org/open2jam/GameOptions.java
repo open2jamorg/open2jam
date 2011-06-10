@@ -52,7 +52,7 @@ public class GameOptions implements Serializable {
     private boolean bilinear = true;
     // vsync 
     private boolean vsync = true;
-    
+    // display properties
     private int width,height,bpp,freq;
 
     //public empty constructor. give default options
