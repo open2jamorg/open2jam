@@ -104,7 +104,7 @@ public class ChartListTableModel implements TableModel
     }
     
     public int getMinLevel() {
-        int level = 0;
+        int level = Integer.MAX_VALUE;
         for(ChartList cl : items)
         {
             if(cl.size()-1 < rank) continue;

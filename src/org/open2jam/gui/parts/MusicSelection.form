@@ -82,7 +82,7 @@
                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   <Component id="lbl_search" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Component id="txt_filter" pref="259" max="32767" attributes="2"/>
+                  <Component id="txt_filter" pref="206" max="32767" attributes="2"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Component id="btn_random" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -94,7 +94,7 @@
                   <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
                       <Group type="102" alignment="2" attributes="0">
                           <Component id="bt_choose_dir" min="-2" max="-2" attributes="0"/>
@@ -109,9 +109,9 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="btn_delete" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="table_scroll" alignment="2" pref="493" max="32767" attributes="1"/>
+                      <Component id="table_scroll" alignment="2" pref="440" max="32767" attributes="2"/>
                   </Group>
-                  <EmptySpace pref="10" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

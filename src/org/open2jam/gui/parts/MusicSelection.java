@@ -351,7 +351,7 @@ public class MusicSelection extends javax.swing.JPanel
                 .addGap(10, 10, 10)
                 .addComponent(lbl_search)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
+                .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_random)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -376,8 +376,8 @@ public class MusicSelection extends javax.swing.JPanel
                         .addComponent(btn_reload, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_delete))
-                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 493, Short.MAX_VALUE))
-                .addContainerGap(10, Short.MAX_VALUE))
+                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE))
+                .addGap(10, 10, 10))
         );
         panel_listLayout.setVerticalGroup(
             panel_listLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1140,6 +1140,7 @@ public class MusicSelection extends javax.swing.JPanel
             updateSelection(dir);
         } else {
             model_songlist.setRawList(l);
+            updateRandomValues();
         }
         
         ArrayList<File> dir_list = Config.getDirsList();
@@ -1152,8 +1153,6 @@ public class MusicSelection extends javax.swing.JPanel
         // update combo box dir list
         //System.out.println("set "+dir);
         combo_dirs.setSelectedItem(new FileItem(dir));
-        
-        updateRandomValues();
     }
     
     private void updateRandomValues() {
