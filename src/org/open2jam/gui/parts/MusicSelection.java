@@ -274,6 +274,10 @@ public class MusicSelection extends javax.swing.JPanel
         jc_vsync = new javax.swing.JCheckBox();
         jc_full_screen = new javax.swing.JCheckBox();
         jc_bilinear = new javax.swing.JCheckBox();
+        txt_res_width = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        txt_res_height = new javax.swing.JTextField();
+        jc_custom_size = new javax.swing.JCheckBox();
         bt_play = new javax.swing.JButton();
 
         setMinimumSize(new java.awt.Dimension(950, 800));
@@ -721,30 +725,63 @@ public class MusicSelection extends javax.swing.JPanel
         jc_bilinear.setSelected(true);
         jc_bilinear.setText("Bilinear filter");
 
+        txt_res_width.setColumns(3);
+        txt_res_width.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txt_res_width.setText("800");
+        txt_res_width.setEnabled(false);
+
+        jLabel4.setText("x");
+
+        txt_res_height.setColumns(3);
+        txt_res_height.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txt_res_height.setText("600");
+        txt_res_height.setEnabled(false);
+
+        jc_custom_size.setFont(jc_custom_size.getFont().deriveFont(jc_custom_size.getFont().getSize()-2f));
+        jc_custom_size.setText("Custom size:");
+        jc_custom_size.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jc_custom_sizeItemStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout panel_settingLayout = new javax.swing.GroupLayout(panel_setting);
         panel_setting.setLayout(panel_settingLayout);
         panel_settingLayout.setHorizontalGroup(
             panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel_settingLayout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jc_bilinear)
-                    .addComponent(combo_displays, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jc_vsync)
-                    .addComponent(jc_full_screen))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(panel_settingLayout.createSequentialGroup()
+                        .addComponent(jc_vsync)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jc_full_screen)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jc_bilinear))
+                    .addGroup(panel_settingLayout.createSequentialGroup()
+                        .addComponent(combo_displays, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jc_custom_size)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txt_res_width, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txt_res_height, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         panel_settingLayout.setVerticalGroup(
             panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel_settingLayout.createSequentialGroup()
-                .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jc_full_screen)
-                    .addComponent(combo_displays, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(combo_displays, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txt_res_width, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4)
+                    .addComponent(txt_res_height, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jc_custom_size))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 2, Short.MAX_VALUE)
                 .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jc_vsync)
+                    .addComponent(jc_full_screen)
                     .addComponent(jc_bilinear)))
         );
 
@@ -835,7 +872,20 @@ public class MusicSelection extends javax.swing.JPanel
         
         final double hispeed = (Double) js_hispeed.getValue();
 
-        final DisplayMode dm = (DisplayMode) combo_displays.getSelectedItem();
+        final DisplayMode dm;
+        if(jc_custom_size.isSelected()){ // custom size selected
+            int w,h;
+            try{
+                w = Integer.parseInt(txt_res_width.getText());
+                h = Integer.parseInt(txt_res_height.getText());
+            }catch(Exception e){
+                JOptionPane.showMessageDialog(this, "Invalid value on custom size", "Error", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            dm = new DisplayMode(w,h);
+        }else{
+            dm = (DisplayMode) combo_displays.getSelectedItem();
+        }
         
         final boolean vsync = jc_vsync.isSelected();
         boolean fs = jc_full_screen.isSelected();
@@ -862,6 +912,8 @@ public class MusicSelection extends javax.swing.JPanel
                     JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE)
                     == JOptionPane.YES_OPTION)
                 fs = false;
+            else
+                return;
         }
 
         GameOptions go = Config.getGameOptions();
@@ -948,6 +1000,12 @@ public class MusicSelection extends javax.swing.JPanel
         table_songlist.changeSelection(selected, 0, false, false);      
     }//GEN-LAST:event_btn_randomActionPerformed
 
+    private void jc_custom_sizeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jc_custom_sizeItemStateChanged
+        combo_displays.setEnabled(!jc_custom_size.isSelected());
+        txt_res_width.setEnabled(jc_custom_size.isSelected());
+        txt_res_height.setEnabled(jc_custom_size.isSelected());
+    }//GEN-LAST:event_jc_custom_sizeItemStateChanged
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bt_choose_dir;
     private javax.swing.JButton bt_play;
@@ -961,8 +1019,10 @@ public class MusicSelection extends javax.swing.JPanel
     private javax.swing.JComboBox combo_visibilityModifier;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JCheckBox jc_autoplay;
     private javax.swing.JCheckBox jc_bilinear;
+    private javax.swing.JCheckBox jc_custom_size;
     private javax.swing.JCheckBox jc_full_screen;
     private javax.swing.JCheckBox jc_timed_judgment;
     private javax.swing.JCheckBox jc_vsync;
@@ -1010,6 +1070,8 @@ public class MusicSelection extends javax.swing.JPanel
     private javax.swing.JTextField txt_filter;
     private javax.swing.JTextField txt_max_rand;
     private javax.swing.JTextField txt_min_rand;
+    private javax.swing.JTextField txt_res_height;
+    private javax.swing.JTextField txt_res_width;
     // End of variables declaration//GEN-END:variables
     private void initLogic() {
 
