@@ -45,8 +45,17 @@ public class Configuration extends javax.swing.JPanel {
         combo_keyboardConfig = new javax.swing.JComboBox();
         tKeys_scroll = new javax.swing.JScrollPane();
         tKeys = new javax.swing.JTable();
+        panel_skin = new javax.swing.JPanel();
+        jc_skin_selector = new javax.swing.JComboBox();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        lst_skin_modifiers = new javax.swing.JList();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        lst_skin_options = new javax.swing.JList();
+        btn_skin_reload = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        lst_skin_types = new javax.swing.JList();
 
-        bSave.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        bSave.setFont(new java.awt.Font("Tahoma", 1, 11));
         bSave.setText("Save");
         bSave.setMaximumSize(new java.awt.Dimension(65, 23));
         bSave.setMinimumSize(new java.awt.Dimension(65, 23));
@@ -55,6 +64,8 @@ public class Configuration extends javax.swing.JPanel {
                 bSaveActionPerformed(evt);
             }
         });
+
+        panel_keys.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Keyboard configuration", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP));
 
         jLabel1.setText("Select the keyboard configuration you want to edit:");
 
@@ -105,11 +116,11 @@ public class Configuration extends javax.swing.JPanel {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(combo_keyboardConfig, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(168, Short.MAX_VALUE))
+                .addContainerGap(599, Short.MAX_VALUE))
             .addGroup(panel_keysLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(panel_keysLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(tKeys_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
+                    .addComponent(tKeys_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 898, Short.MAX_VALUE)
                     .addContainerGap()))
         );
         panel_keysLayout.setVerticalGroup(
@@ -127,25 +138,92 @@ public class Configuration extends javax.swing.JPanel {
                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
+        panel_skin.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Skin configuration", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.TOP));
+
+        jc_skin_selector.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Skin 1", "Skin 2", "Skin 3", "Skin 4" }));
+
+        lst_skin_modifiers.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "BACKGROUND", "NOTE", "JUDGMENT", "NOTE EFFECTS", "OTHERS" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        lst_skin_modifiers.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(lst_skin_modifiers);
+
+        lst_skin_options.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Background 1", "Background 2", "Background 3", "Background 4", "Background 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        lst_skin_options.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane2.setViewportView(lst_skin_options);
+
+        btn_skin_reload.setText("Reload skins");
+
+        lst_skin_types.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Type 1: 5k, sc left", "Type 2: 5k, sc right", "Type 3: 5k, sc none", "Type 4: 7k, sc left", "Type 5: 7k, sc right", "Type 6: 7k, sc none" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        lst_skin_types.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane3.setViewportView(lst_skin_types);
+
+        javax.swing.GroupLayout panel_skinLayout = new javax.swing.GroupLayout(panel_skin);
+        panel_skin.setLayout(panel_skinLayout);
+        panel_skinLayout.setHorizontalGroup(
+            panel_skinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_skinLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panel_skinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panel_skinLayout.createSequentialGroup()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 517, Short.MAX_VALUE))
+                    .addGroup(panel_skinLayout.createSequentialGroup()
+                        .addComponent(btn_skin_reload)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jc_skin_selector, 0, 801, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        panel_skinLayout.setVerticalGroup(
+            panel_skinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_skinLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panel_skinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jc_skin_selector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_skin_reload))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_skinLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(bSave, javax.swing.GroupLayout.Alignment.CENTER, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(panel_keys, javax.swing.GroupLayout.Alignment.CENTER, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(panel_skin, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(panel_keys, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(panel_skin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panel_keys, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(153, Short.MAX_VALUE))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -195,13 +273,22 @@ public class Configuration extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bSave;
+    private javax.swing.JButton btn_skin_reload;
     private javax.swing.JComboBox combo_keyboardConfig;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JComboBox jc_skin_selector;
+    private javax.swing.JList lst_skin_modifiers;
+    private javax.swing.JList lst_skin_options;
+    private javax.swing.JList lst_skin_types;
     private javax.swing.JPanel panel_keys;
+    private javax.swing.JPanel panel_skin;
     private javax.swing.JTable tKeys;
     private javax.swing.JScrollPane tKeys_scroll;
     // End of variables declaration//GEN-END:variables
-   
+    
     private void loadTableKeys(Config.KeyboardType kt)
     {
         kb_map = Config.getKeyboardMap(kt).clone();
