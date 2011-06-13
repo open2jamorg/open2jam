@@ -22,7 +22,7 @@ public interface GameWindow {
 	 * Set the game display resolution
 	 *
      */
-        public void setDisplay(DisplayMode dm, boolean vsync, boolean fs, boolean bilinear);
+        public void setDisplay(DisplayMode dm, int sync_rate, boolean fs, boolean bilinear);
 
 	public int getResolutionHeight();
         public int getResolutionWidth();
@@ -50,9 +50,21 @@ public interface GameWindow {
 	 * @return True if the particular key is being held
 	 */
 	public boolean isKeyDown(int keyCode);
+        public boolean hasKeyEvent();
+        public KeyEvent nextKeyEvent();
 
         public void destroy();
 
         /** manually update the screen */
         public void update();
+        
+        
+        public class KeyEvent {
+            int keyCode;
+            double when;
+            public KeyEvent(int keyCode, double when) {
+                this.keyCode = keyCode;
+                this.when = when;
+            }
+        }
 }

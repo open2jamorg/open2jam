@@ -3,7 +3,6 @@ package org.open2jam.render;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.open2jam.render.entities.CompositeEntity;
 import org.open2jam.render.entities.Entity;

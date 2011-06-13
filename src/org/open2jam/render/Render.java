@@ -7,12 +7,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
+import org.open2jam.parser.Event.Channel;
 import org.open2jam.util.Logger;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
@@ -210,6 +212,7 @@ public abstract class Render implements GameWindowCallback
     static {
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
     }
+    final HashMap<Integer, Channel> keyboard_keys;
     
     Render(Chart chart, GameOptions opt, DisplayMode dm)
     {
@@ -234,7 +237,11 @@ public abstract class Render implements GameWindowCallback
             this.speed = this.next_speed = this.last_speed = 0;
             break;
         }
-        window.setDisplay(dm,opt.getVsync(),opt.getFullScreen(),opt.getBilinear());
+        window.setDisplay(dm,120,opt.getFullScreen(),opt.getBilinear()); // TODO sync from gameoptions
+        
+        keyboard_keys = new HashMap<Integer, Event.Channel>();
+        for(Map.Entry<Event.Channel,Integer> e : keyboard_map.entrySet())
+            keyboard_keys.put(e.getValue(), e.getKey());
     }
 
     /**
@@ -307,7 +314,7 @@ public abstract class Render implements GameWindowCallback
         // reference to long notes being holded
         longnote_holded = new EnumMap<Event.Channel,LongNoteEntity>(Event.Channel.class);
 
-	    longflare = new EnumMap<Event.Channel, Entity> (Event.Channel.class);
+        longflare = new EnumMap<Event.Channel, Entity> (Event.Channel.class);
 
         last_sound = new EnumMap<Event.Channel,Event.SoundSample>(Event.Channel.class);
 
@@ -452,17 +459,17 @@ public abstract class Render implements GameWindowCallback
 
         update_fps_counter();
 
-        check_misc_keyboard();
+        check_misc_keyboard(); //TODO: solve race cond with the event poll
         
-        changeSpeed(delta); // TODO: is everything here really needed every frame ?
+        changeSpeed(delta);
 
         now = SystemTimer.getTime() - start_time;
         update_note_buffer(now);
 
         now = SystemTimer.getTime() - start_time;
 
-	    if(opt.getAutoplay())do_autoplay(now);
-        else check_keyboard(now);
+        if(opt.getAutoplay())do_autoplay(now);
+        else check_keyboard();
 
         for(LinkedList<Entity> layer : entities_matrix) // loop over layers
         {
@@ -574,7 +581,7 @@ public abstract class Render implements GameWindowCallback
         }
     }
 
-    abstract void check_keyboard(double now);
+    abstract void check_keyboard();
 
     abstract void check_judgment(NoteEntity noteEntity);
 
@@ -793,7 +800,7 @@ public abstract class Render implements GameWindowCallback
 
     void check_misc_keyboard()
     {
-	    for(Map.Entry<Config.MiscEvent,Integer> entry : keyboard_misc.entrySet())
+        for(Map.Entry<Config.MiscEvent,Integer> entry : keyboard_misc.entrySet())
         {
             Config.MiscEvent event  = entry.getKey();
 

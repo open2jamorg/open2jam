@@ -1,6 +1,5 @@
 package org.open2jam.render;
 
-import java.util.Map;
 import java.util.EnumMap;
 import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.GameOptions;
@@ -258,14 +257,19 @@ public class TimeRender extends Render
     }
 
     @Override
-    void check_keyboard(double now)
+    void check_keyboard()
     {
-	for(Map.Entry<Event.Channel,Integer> entry : keyboard_map.entrySet())
+        while(window.hasKeyEvent())
         {
-            Event.Channel c = entry.getKey();
-            if(window.isKeyDown(entry.getValue())) // this key is being pressed
-            {
-                if(!keyboard_key_pressed.get(c)){ // started holding now
+            GameWindow.KeyEvent entry = window.nextKeyEvent();
+            if(entry == null) return;
+            
+            Event.Channel c = keyboard_keys.get(entry.keyCode);
+            if(c == null) continue; // key not mapped
+            
+            entry.when -= start_time; // correct the time offset
+            
+            if(!keyboard_key_pressed.get(c)){ // started holding now
                     keyboard_key_pressed.put(c, true);
                     Entity ee = skin.getEntityMap().get("PRESSED_"+c).copy();
                     entities_matrix.add(ee);
@@ -281,7 +285,7 @@ public class TimeRender extends Render
 
                     queueSample(e.getSample());
                    
-                    double hit = e.testTimeHit(now);
+                    double hit = e.testTimeHit(entry.when);
                     JUDGE judge = ratePrecision(hit);
                     e.setHit(hit);
 
@@ -299,7 +303,6 @@ public class TimeRender extends Render
                         }
                     }
                 }
-            }
             else
             if(keyboard_key_pressed.get(c)) { // key released now
 
@@ -313,7 +316,7 @@ public class TimeRender extends Render
 
                 if(e == null || e.getState() != NoteEntity.State.LN_HOLD)continue;
 
-                double hit = e.testTimeHit(now);
+                double hit = e.testTimeHit(entry.when);
                 e.setHit(hit);
 
                 e.setState(NoteEntity.State.JUDGE);
