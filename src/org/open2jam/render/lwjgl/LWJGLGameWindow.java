@@ -244,7 +244,6 @@ public class LWJGLGameWindow implements GameWindow {
             }
             
             Display.update(false);
-            keyboardThread.processMessages();
 
             if (Display.isCloseRequested() || Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
                 destroy();
@@ -350,15 +349,12 @@ public class LWJGLGameWindow implements GameWindow {
         @Override
         public void run() {
             while(active) {
-                processMessages();
+                Display.processMessages();
+                while(Keyboard.next()) {
+                    queue.offer(new KeyEvent(Keyboard.getEventKey(),SystemTimer.getTime()));
+                }
                 //yield();
                 //try {sleep(10);} catch (InterruptedException ex) {}
-            }
-        }
-        public void processMessages() {
-            Display.processMessages();
-            while(Keyboard.next()) {
-                queue.offer(new KeyEvent(Keyboard.getEventKey(),SystemTimer.getTime()));
             }
         }
         public void kill() {
