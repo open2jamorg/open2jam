@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.locks.LockSupport;
 import java.util.logging.Level;
 import org.open2jam.util.Logger;
 
@@ -351,7 +352,7 @@ public class LWJGLGameWindow implements GameWindow {
         public void run() {
             while(active) {
                 processMessages();
-                //yield();
+                LockSupport.parkNanos(1000); //like sleep but in nanos, 1 microsecond
                 //try {sleep(10);} catch (InterruptedException ex) {}
             }
         }       
