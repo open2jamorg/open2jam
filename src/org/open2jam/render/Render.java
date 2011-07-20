@@ -237,7 +237,7 @@ public abstract class Render implements GameWindowCallback
             this.speed = this.next_speed = this.last_speed = 0;
             break;
         }
-        window.setDisplay(dm,120,opt.getFullScreen(),opt.getBilinear()); // TODO sync from gameoptions
+        window.setDisplay(dm,opt.getVsync(),opt.getFPS(),opt.getFullScreen(),opt.getBilinear());
         
         keyboard_keys = new HashMap<Integer, Event.Channel>();
         for(Map.Entry<Event.Channel,Integer> e : keyboard_map.entrySet())

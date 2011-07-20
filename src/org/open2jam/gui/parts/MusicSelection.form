@@ -788,8 +788,16 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="lbl_display" min="-2" max="-2" attributes="1"/>
+                      <Component id="lbl_fps" alignment="0" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
+                          <Component id="txt_fps" min="-2" max="-2" attributes="1"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="jc_vsync" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jc_full_screen" min="-2" max="-2" attributes="0"/>
@@ -797,8 +805,6 @@
                           <Component id="jc_bilinear" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="lbl_display" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="combo_displays" min="-2" max="-2" attributes="1"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="jc_custom_size" min="-2" pref="85" max="-2" attributes="0"/>
@@ -810,13 +816,12 @@
                           <Component id="txt_res_height" min="-2" pref="39" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
+              <Group type="102" attributes="0">
                   <Group type="103" groupAlignment="2" attributes="0">
                       <Component id="txt_res_height" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="lbl_res_x" alignment="2" min="-2" max="-2" attributes="0"/>
@@ -827,11 +832,12 @@
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
+                      <Component id="txt_fps" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="jc_vsync" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="jc_full_screen" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="jc_bilinear" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="lbl_fps" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -861,6 +867,9 @@
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Use VSync"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jc_vsyncActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="lbl_display">
           <Properties>
@@ -892,6 +901,18 @@
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Bilinear filter"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="txt_fps">
+          <Properties>
+            <Property name="columns" type="int" value="3"/>
+            <Property name="horizontalAlignment" type="int" value="11"/>
+            <Property name="text" type="java.lang.String" value="60"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="lbl_fps">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="FPS cap:"/>
           </Properties>
         </Component>
       </SubComponents>

@@ -52,6 +52,8 @@ public class GameOptions implements Serializable {
     private boolean bilinear = true;
     // vsync 
     private boolean vsync = true;
+    //fps
+    private int fps = 60;
     
     private int width,height,bpp,freq;
 
@@ -208,6 +210,14 @@ public class GameOptions implements Serializable {
 
     public boolean getVsync() {
         return vsync;
+    }
+    
+    public void setFPS(int fps) {
+        this.fps = fps;
+    }
+    
+    public int getFPS() {
+        return fps;
     }
 
     public void setDisplay(DisplayMode dm) {

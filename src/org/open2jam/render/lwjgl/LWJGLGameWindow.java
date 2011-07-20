@@ -88,11 +88,14 @@ public class LWJGLGameWindow implements GameWindow {
      *
      */
     @Override
-    public void setDisplay(DisplayMode dm, int sync_rate, boolean fs, boolean bilinear) {
-        this.sync_rate = sync_rate;
+    public void setDisplay(DisplayMode dm, boolean vsync, int sync_rate, boolean fs, boolean bilinear) {
         try {
             Display.setDisplayMode(dm);
             Display.setFullscreen(fs);
+            if(vsync)
+                Display.setVSyncEnabled(true);
+            else
+                this.sync_rate = sync_rate;
             width = dm.getWidth();
             height = dm.getHeight();
             this.bilinear = bilinear;
