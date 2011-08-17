@@ -57,7 +57,7 @@ public class DistanceRender extends Render
     }
 
     @Override
-    void check_judgment(NoteEntity ne)
+    void check_judgment(NoteEntity ne, double now)
     {
         JUDGE judge;
         switch (ne.getState())

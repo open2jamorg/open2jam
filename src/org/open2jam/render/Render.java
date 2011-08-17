@@ -492,7 +492,7 @@ public abstract class Render implements GameWindowCallback
                     if(e instanceof MeasureEntity) y -= 1;
                     e.setPos(e.getX(), y);
 
-                    if(e instanceof NoteEntity) check_judgment((NoteEntity)e);
+                    if(e instanceof NoteEntity) check_judgment((NoteEntity)e, now);
                 }
 
                 if(e.isDead())j.remove();
@@ -576,7 +576,7 @@ public abstract class Render implements GameWindowCallback
 
     abstract void check_keyboard(double now);
 
-    abstract void check_judgment(NoteEntity noteEntity);
+    abstract void check_judgment(NoteEntity noteEntity, double now);
 
     /* play a sample */
     public void queueSample(Event.SoundSample sample)

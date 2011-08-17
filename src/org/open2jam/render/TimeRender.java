@@ -6,6 +6,8 @@ import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.GameOptions;
 
 import org.open2jam.util.SystemTimer;
+import java.util.logging.Level;
+import org.open2jam.util.Logger;
 
 import org.open2jam.parser.Chart;
 import org.open2jam.parser.Event;
@@ -56,14 +58,13 @@ public class TimeRender extends Render
     }
 
     @Override
-    void check_judgment(NoteEntity ne)
+    void check_judgment(NoteEntity ne, double now)
     {
         JUDGE judge;
         switch (ne.getState())
         {
             case NOT_JUDGED: // you missed it (no keyboard input)
-                if((ne instanceof LongNoteEntity && ne.getStartY() >= judgmentArea()) //needed by the ln head
-                        || (ne.getY() >= judgmentArea())) // TODO: compare the time, not the position
+                if(now > ne.getTime() + JUDGE.BAD.value)
                 {
                     if(judgment_entity != null)judgment_entity.setDead(true);
                     judgment_entity = skin.getEntityMap().get("EFFECT_"+JUDGE.MISS.toString()).copy();
@@ -142,7 +143,9 @@ public class TimeRender extends Render
             break;
             case LN_HOLD:    // You keept too much time the note held that it misses
                 if(ne.getY() >= judgmentArea()) // TODO: use the time
+                //if(now > ((LongNoteEntity)ne).getEndTime() + JUDGE.BAD.value) // somehow getEndTime just return -1.
                 {
+				//Logger.global.log(Level.INFO,String.format("FUCK! %.3f %.3f %d", now, ((LongNoteEntity)ne).getEndTime(), JUDGE.BAD.value));
                     if(judgment_entity != null)judgment_entity.setDead(true);
                     judgment_entity = skin.getEntityMap().get("EFFECT_"+JUDGE.MISS.toString()).copy();
                     entities_matrix.add(judgment_entity);
