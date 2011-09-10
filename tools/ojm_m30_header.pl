@@ -1,11 +1,13 @@
 use strict;
 use warnings;
+use Switch;
 use Data::Dumper;
 
 
 my $filename = shift;
 
 open DATA, $filename or die $!;
+binmode DATA;
 
 my $header;
 read DATA, $header, 28 or die $!;
@@ -24,7 +26,10 @@ die "Not a M30 file\n" unless $h->{'signature'} eq "M30";
 
 print Dumper $h;
 
+my $encrypt = $h->{'encryption_flag'}; # 16 -XOR-> nami / 32 -XOR-> 0412
+
 my $buf;
+
 while(!eof DATA)
 # for (0)
 {
@@ -41,27 +46,34 @@ while(!eof DATA)
 
 	print Dumper $nh;
 
-# 	dump_ogg($nh->{'sample_name'},$nh->{'sample_size'});
-	seek DATA, $nh->{'sample_size'}, 1;
+ 	dump_ogg($nh->{'sample_name'},$nh->{'sample_size'});
+	#seek DATA, $nh->{'sample_size'}, 1;
 }
 
 sub dump_ogg
 {
 	my ($ref,$sample_size) = @_;
+	my ($buf) = @_;
 	open MP, ">$ref.ogg";
+	binmode MP;
 	read DATA, $buf, $sample_size;
 	$buf = nami_xor($buf);
 	print MP $buf;
 	close MP;
 }
 
-
 sub nami_xor
 {
 	my ($data) = @_;
-	my $nami = 'nami';
+	my $xor;
+	switch($encrypt)
+	{
+		case 16 { $xor = 'nami'; }
+		case 32 { $xor = '0412'; }
+		default { print "Make me an error also, IDFK what encryption($encrypt) is :/ "; }
+	}
 	my $bytes = length $data;
-	my $mask = $nami x ($bytes/4);
+	my $mask = $xor x ($bytes/4);
 	$mask .= "\0" x ($bytes%4);
 	return $data ^ $mask;
 }

@@ -18,7 +18,8 @@ import org.open2jam.render.lwjgl.SoundManager;
 class OJMParser
 {
     /** the xor mask used in the M30 format */
-    private static final byte[] nami = new byte[]{0x6E, 0x61, 0x6D, 0x69};
+    private static final byte[] mask_nami = new byte[]{0x6E, 0x61, 0x6D, 0x69}; // nami
+    private static final byte[] mask_0412 = new byte[]{0x30, 0x34, 0x31, 0x32}; // 0412
 
 
     /** the M30 signature, "M30\0" in little endian */
@@ -145,7 +146,8 @@ class OJMParser
             byte[] sample_data = new byte[sample_size];
             buffer.get(sample_data);
 
-            if(encryption_flag == 16)nami_xor(sample_data);
+            if(encryption_flag == 16)nami_xor(sample_data, mask_nami);
+	    else if(encryption_flag == 32)nami_xor(sample_data, mask_0412);
             else if(encryption_flag == 0); // let it pass
             else if(encryption_flag < 16)Logger.global.log(Level.WARNING, "Unknown encryption flag({0}) !", encryption_flag);
 
@@ -165,14 +167,14 @@ class OJMParser
         return samples;
     }
 
-    private static void nami_xor(byte[] array)
+    private static void nami_xor(byte[] array, byte[] mask)
     {
         for(int i=0;i+3<array.length;i+=4)
         {
-            array[i+0] ^= nami[0];
-            array[i+1] ^= nami[1];
-            array[i+2] ^= nami[2];
-            array[i+3] ^= nami[3];
+            array[i+0] ^= mask[0];
+            array[i+1] ^= mask[1];
+            array[i+2] ^= mask[2];
+            array[i+3] ^= mask[3];
         }
     }
 
