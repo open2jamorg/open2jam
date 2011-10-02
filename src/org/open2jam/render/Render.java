@@ -211,6 +211,8 @@ public abstract class Render implements GameWindowCallback
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
     }
     
+    protected final boolean AUTOSOUND;
+    
     Render(Chart chart, GameOptions opt, DisplayMode dm)
     {
         keyboard_map = Config.getKeyboardMap(Config.KeyboardType.K7);
@@ -234,6 +236,22 @@ public abstract class Render implements GameWindowCallback
             this.speed = this.next_speed = this.last_speed = 0;
             break;
         }
+	
+	AUTOSOUND = opt.getAutosound();
+	
+	//TODO Should get values from gameoptions, but i'm lazy as hell
+	if(opt.getAutoplay()) 
+	{
+	    for(Event.Channel c : Event.Channel.values())
+	    {
+		if(c.toString().startsWith(("NOTE_")))
+		    c.enableAutoplay();
+	    }
+
+//	    Event.Channel.NOTE_4.enableAutoplay();
+//	    Event.Channel.NOTE_1.enableAutoplay();
+	}
+	
         window.setDisplay(dm,opt.getVsync(),opt.getFullScreen(),opt.getBilinear());
     }
 
@@ -461,8 +479,8 @@ public abstract class Render implements GameWindowCallback
 
         now = SystemTimer.getTime() - start_time;
 
-	    if(opt.getAutoplay())do_autoplay(now);
-        else check_keyboard(now);
+	do_autoplay(now);
+        check_keyboard(now);
 
         for(LinkedList<Entity> layer : entities_matrix) // loop over layers
         {
@@ -540,7 +558,8 @@ public abstract class Render implements GameWindowCallback
     {
         for(Event.Channel c : keyboard_map.keySet())
         {
-            NoteEntity ne = nextNoteKey(c);
+            if(!c.isAutoplay()) continue;
+	    NoteEntity ne = nextNoteKey(c);
 
             if(ne == null)continue;
 
@@ -581,7 +600,9 @@ public abstract class Render implements GameWindowCallback
     /* play a sample */
     public void queueSample(Event.SoundSample sample)
     {
-        Integer buffer = samples.get(sample.sample_id);
+        if(sample == null) return;
+	
+	Integer buffer = samples.get(sample.sample_id);
         if(buffer == null)return;
 
         if(!source_queue_iterator.hasNext())
@@ -751,16 +772,22 @@ public abstract class Render implements GameWindowCallback
                 if(e.getFlag() == Event.Flag.NONE){
                     NoteEntity n = (NoteEntity) skin.getEntityMap().get(e.getChannel().toString()).copy();
                     n.setTime(e.getTime());
-                    n.setSample(e.getSample());
-		            entities_matrix.add(n);
+		    
+                    if(AUTOSOUND) auto_sound(e, false);
+		    n.setSample(AUTOSOUND ? null : e.getSample());
+		    
+		    entities_matrix.add(n);
                     note_channels.get(n.getChannel()).add(n);
                 }
                 else if(e.getFlag() == Event.Flag.HOLD){
                     LongNoteEntity ln = (LongNoteEntity) skin.getEntityMap().get("LONG_"+e.getChannel()).copy();
                     ln.setTime(e.getTime());
-                    ln.setSample(e.getSample());
-		            entities_matrix.add(ln);
-		            ln_buffer.put(e.getChannel(),ln);
+		    
+                    if(AUTOSOUND) auto_sound(e, false);
+		    ln.setSample(AUTOSOUND ? null : e.getSample());
+		    
+		    entities_matrix.add(ln);
+		    ln_buffer.put(e.getChannel(),ln);
                     note_channels.get(ln.getChannel()).add(ln);
                 }
                 else if(e.getFlag() == Event.Flag.RELEASE){
@@ -780,13 +807,18 @@ public abstract class Render implements GameWindowCallback
                 case NOTE_SC2:
 
                 case AUTO_PLAY:
-                    e.getSample().toBGM();
-                    SampleEntity s = new SampleEntity(this,e.getSample(),0);
-                    s.setTime(e.getTime());
-                    entities_matrix.add(s);
+                    auto_sound(e, true);
                 break;
             }
         }
+    }
+    
+    private void auto_sound(Event e, boolean bgm)
+    {
+	if(bgm) e.getSample().toBGM();
+	SampleEntity s = new SampleEntity(this,e.getSample(),0);
+	s.setTime(e.getTime());
+	entities_matrix.add(s);	
     }
 
     private final List<Integer> misc_keys = new LinkedList<Integer>();

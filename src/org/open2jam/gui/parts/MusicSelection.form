@@ -265,58 +265,57 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="1" attributes="0">
-                              <Group type="103" groupAlignment="1" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="lbl_channelModifier" min="-2" max="-2" attributes="1"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="combo_channelModifier" min="-2" max="-2" attributes="1"/>
-                                      <EmptySpace pref="41" max="32767" attributes="0"/>
-                                      <Component id="lbl_visibilityModifier" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="combo_visibilityModifier" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="lbl_bgm_vol" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="lbl_key_vol" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="lbl_main_vol" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="slider_key_vol" alignment="1" min="0" pref="0" max="32767" attributes="0"/>
-                                          <Component id="slider_bgm_vol" alignment="1" min="0" pref="0" max="32767" attributes="0"/>
-                                          <Component id="slider_main_vol" alignment="0" pref="36" max="32767" attributes="1"/>
-                                      </Group>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Group type="102" alignment="0" attributes="0">
-                                              <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                                              <Component id="lbl_rank" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
-                                              <Component id="jr_rank_easy" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="jr_rank_normal" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="jr_rank_hard" min="-2" max="-2" attributes="0"/>
-                                          </Group>
-                                          <Group type="102" alignment="0" attributes="0">
-                                              <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="combo_speedType" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                              <Component id="js_hispeed" min="-2" pref="76" max="-2" attributes="1"/>
-                                          </Group>
-                                      </Group>
-                                  </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="lbl_channelModifier" min="-2" max="-2" attributes="1"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="combo_channelModifier" min="-2" max="-2" attributes="1"/>
+                              <EmptySpace pref="98" max="32767" attributes="0"/>
+                              <Component id="lbl_visibilityModifier" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="combo_visibilityModifier" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="lbl_bgm_vol" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="lbl_key_vol" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="lbl_main_vol" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="slider_key_vol" alignment="1" min="0" pref="0" max="32767" attributes="0"/>
+                                  <Component id="slider_bgm_vol" alignment="1" min="0" pref="0" max="32767" attributes="0"/>
+                                  <Component id="slider_main_vol" alignment="0" pref="93" max="32767" attributes="1"/>
+                              </Group>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                                      <Component id="lbl_rank" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                                      <Component id="jr_rank_easy" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="jr_rank_normal" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="jr_rank_hard" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="combo_speedType" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <Component id="js_hispeed" min="-2" pref="76" max="-2" attributes="1"/>
+                                  </Group>
+                              </Group>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="jc_timed_judgment" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="77" max="32767" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
+                              <Component id="jc_autosound" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="jc_autoplay" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="btn_autoplay_keys" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -359,9 +358,11 @@
                           </Group>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="2" attributes="0">
-                          <Component id="jc_autoplay" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="jc_timed_judgment" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jc_timed_judgment" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btn_autoplay_keys" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jc_autoplay" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jc_autosound" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -492,6 +493,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Autoplay"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jc_autoplayActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JCheckBox" name="jc_timed_judgment">
               <Properties>
@@ -504,6 +508,19 @@
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection code="new javax.swing.DefaultComboBoxModel(GameOptions.SpeedType.values())" type="code"/>
                 </Property>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JButton" name="btn_autoplay_keys">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Keys"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_autoplay_keysActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="jc_autosound">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="AutoSound"/>
               </Properties>
             </Component>
           </SubComponents>

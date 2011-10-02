@@ -1,7 +1,10 @@
 package org.open2jam;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import org.lwjgl.opengl.DisplayMode;
+import org.open2jam.parser.Event;
 
 /**
  * This class will store game options such as hi-speed and autoplay.
@@ -45,6 +48,10 @@ public class GameOptions implements Serializable {
     private float masterVolume = 0.5f;
     // Autoplay?
     private boolean autoplay = false;
+    // autoplay channels
+    private ArrayList<Boolean> autoplay_channels = new ArrayList<Boolean>();
+    // autosound?
+    private boolean autosound = false;
 
     // full screen
     private boolean fullscreen = false;
@@ -55,8 +62,14 @@ public class GameOptions implements Serializable {
     
     private int width,height,bpp,freq;
 
-    //public empty constructor. give default options
-    public GameOptions() { }
+    //public constructor. give default options
+    public GameOptions() {
+	for(Event.Channel c : Event.Channel.values())
+	{
+	    if(c.toString().startsWith("NOTE_"))
+		autoplay_channels.add(c.isAutoplay());
+	}
+    }
 
     /**
      * Gets the visibility modifier
@@ -184,6 +197,30 @@ public class GameOptions implements Serializable {
      */
     public void setAutoplay(boolean autoplay) {
         this.autoplay = autoplay;
+    }
+    
+    /**
+     * Gets autosound option value.
+     * @return true if autosound option is enabled, false otherwise
+     */
+    public boolean getAutosound() {
+        return autosound;
+    }
+
+    /**
+     * Sets autosound option value.
+     * @param new autosound option value
+     */
+    public void setAutosound(boolean autosound) {
+        this.autosound = autosound;
+    }
+    
+    public List<Boolean> getAutoplayChannels() {
+	return autoplay_channels;
+    }
+    
+    public void setAutoplayChannels(List<Boolean> list) {
+	this.autoplay_channels = (ArrayList<Boolean>) list;
     }
 
     public void setFullScreen(boolean fs) {

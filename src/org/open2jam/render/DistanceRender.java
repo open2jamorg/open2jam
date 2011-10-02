@@ -262,6 +262,7 @@ public class DistanceRender extends Render
 	for(Map.Entry<Event.Channel,Integer> entry : keyboard_map.entrySet())
         {
             Event.Channel c = entry.getKey();
+	    if(c.isAutoplay()) continue;
             if(window.isKeyDown(entry.getValue())) // this key is being pressed
             {
                 if(!keyboard_key_pressed.get(c)){ // started holding now

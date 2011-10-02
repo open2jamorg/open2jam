@@ -3,10 +3,6 @@ package org.open2jam.parser;
 public class Event implements Comparable<Event>
 {
  	public enum Channel {
-            NONE,
-            TIME_SIGNATURE,
-            BPM_CHANGE,
-            MEASURE,                 //This will be used when the velocity tree is constructed
             NOTE_1,                  //P1-NOTE_1
             NOTE_2,                  //P1-NOTE_2
             NOTE_3,                  //P1-NOTE_3
@@ -23,7 +19,33 @@ public class Event implements Comparable<Event>
             NOTE_13,                 //P2-NOTE_6
             NOTE_14,                 //P2-NOTE_7
             NOTE_SC2,                //P2-NOTE_SC / P2-NOTE_8
-            AUTO_PLAY
+            
+	    NONE,		     //
+            TIME_SIGNATURE,	     //
+            BPM_CHANGE,		     //
+            MEASURE,                 //This will be used when the velocity tree is constructed;
+	    
+	    AUTO_PLAY(true);	     //Autoplay, used by the background music/sounds
+	    
+	    private boolean autoplay = false;
+	    
+	    private Channel() { }
+	    
+	    private Channel(boolean auto) {
+		this.autoplay = auto;
+	    }
+	    
+	    public boolean isAutoplay() {
+		return autoplay;
+	    }
+	    
+	    public void enableAutoplay() {
+		this.autoplay = true;
+	    }
+	    
+	    public void disableAutoplay() {
+		this.autoplay = false;
+	    }
 
         }
 
