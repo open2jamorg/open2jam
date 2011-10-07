@@ -3,7 +3,13 @@ package org.open2jam.parser;
 import java.io.File;
 import java.util.List;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Map;
+import java.util.logging.Level;
+import javax.imageio.ImageIO;
+import org.open2jam.util.Logger;
 /** this encapsulates a song chart.
 *** in case there's more than one rank(difficulty)
 *** for the song, the rank integer follows this pattern:
@@ -50,5 +56,20 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
     public int compareTo(Chart c)
     {
         return getLevel() - c.getLevel();
+    }
+    
+    public BufferedImage getNoImage()
+    {
+	URL u = BMSChart.class.getResource("/resources/no_image.png"); //TODO Change this
+	if(u == null) return null;
+	
+	try {
+	    return ImageIO.read(new File(u.toURI()));
+	} catch (URISyntaxException ex) {
+	    Logger.global.log(Level.WARNING, "Someone deleted or renamed my no_image image file :_ {0}", ex.getMessage());
+	} catch (IOException ex) {
+	    Logger.global.log(Level.WARNING, "Someone deleted or renamed my no_image image file :_ {0}", ex.getMessage());
+	}
+	return null;
     }
 }

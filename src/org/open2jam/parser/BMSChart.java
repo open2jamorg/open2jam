@@ -59,7 +59,7 @@ public class BMSChart extends Chart
 
     File image_cover;
     public BufferedImage getCover() {
-        if(image_cover == null)return null;
+        if(image_cover == null) return getNoImage();
         try {
             return ImageIO.read(image_cover);
         } catch (IOException ex) {

@@ -143,17 +143,18 @@ class BMSParser
                     {
                         String target = chart.image_cover.getName();
                         int idx = target.lastIndexOf('.');
-                        if(idx > 0)target = target.substring(idx);
+                        if(idx > 0)target = target.substring(0, idx);
                         for(File ff : chart.source.getParentFile().listFiles())
                         {
-                            String s = f.getName();
+                            String s = ff.getName();
                             idx = s.lastIndexOf('.');
                             if(idx > 0)s = s.substring(0, idx);
-                            if(target.equals(s)){
+                            if(target.equalsIgnoreCase(s)){
                                 chart.image_cover = ff;
                                 break;
                             }
                         }
+			if(!chart.image_cover.exists()) chart.image_cover = null;
                     }
                 }
                 if(cmd.startsWith("#WAV")){

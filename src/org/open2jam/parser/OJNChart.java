@@ -61,6 +61,7 @@ public class OJNChart extends Chart
     int cover_size;
     public BufferedImage getCover()
     {
+	if(cover_size <= 0) return getNoImage();
         try{
             RandomAccessFile f = new RandomAccessFile(source, "r");
             ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, cover_offset, cover_size);
