@@ -266,7 +266,7 @@ class BMSParser
                 int channel = Integer.parseInt(matcher.group(2));
                 if (channel == 2) {
                     // time signature
-                    double value = Double.parseDouble(matcher.group(3));
+                    double value = Double.parseDouble(matcher.group(3).replace(",", "."));
                     event_list.add(new Event(Event.Channel.TIME_SIGNATURE, measure, 0, value, Event.Flag.NONE));
                     continue;
                 }

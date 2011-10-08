@@ -899,8 +899,9 @@ public abstract class Render implements GameWindowCallback
                 frac_measure = 1;
                 measure_pointer = 0;
             }
-            timer += (BEATS_PER_MSEC * (e.getPosition()-measure_pointer)) / my_bpm;
-            measure_pointer = e.getPosition();
+	    double position = e.getPosition() * frac_measure;
+            timer += (BEATS_PER_MSEC * (position-measure_pointer)) / my_bpm;
+            measure_pointer = position;
 
             switch(e.getChannel())
             {
