@@ -423,7 +423,13 @@ class BMSParser
                 int buffer = 0;
                 if      (st.equals(".wav")) buffer = SoundManager.newBuffer(f.toURI().toURL());
                 else if (st.equals(".ogg")) buffer = SoundManager.newBuffer(new OggInputStream(new FileInputStream(f)));
-                else                        Logger.global.log(Level.WARNING, "File {0} not supported", f.getName());
+                else if (st.equals(".mp3")) {
+		    Logger.global.log(Level.WARNING, "MP3 files [{0}] aren't supported", f.getName());
+		    continue;
+		}
+		else { //not a music file so continue
+		    continue;
+		}
                 samples.put(id, buffer);
             } catch (IOException ex) {
                 Logger.global.log(Level.SEVERE, null, ex);
