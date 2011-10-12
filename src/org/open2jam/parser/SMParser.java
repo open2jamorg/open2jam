@@ -94,10 +94,6 @@ class SMParser
 		    artist = st.nextToken().trim();
 		    continue;
                 }
-//                if(cmd.equals("#OFFSET")){
-//		    offset = Double.parseDouble(st.nextToken().trim());
-//		    continue;
-//                }
 		if(cmd.equals("#BPMS")){ //first bpm, others bpms will be readed when the parse of the events
 		    StringTokenizer sb = new StringTokenizer(st.nextToken().trim(), "=,");
 		    if(Double.parseDouble(sb.nextToken().trim()) == 0)
@@ -190,6 +186,8 @@ class SMParser
 	StringTokenizer st;
 	boolean founded = false;
 	boolean parsed = false;
+	int startMeasure = 0;
+	double offset = 0;
         try {
             while ((line = r.readLine()) != null && !parsed) {
 		line = line.trim();
@@ -198,41 +196,53 @@ class SMParser
 		
 		String cmd = st.nextToken().toUpperCase().trim();
 		
+                if(cmd.equals("#OFFSET")){
+		    offset = Double.parseDouble(st.nextToken().trim());
+		    if(offset < 0) startMeasure = 1;
+		    continue;
+                }
+		
 		if(cmd.equals("#BPMS")){
+		    if(!st.hasMoreTokens()) continue;
+		    
 		    r.mark(8192);
 		    StringTokenizer sb = new StringTokenizer(st.nextToken().trim(), "=,");
+
+		    setBPM(sb, event_list); //same line bpm
 		    
-		    event_list.add(setBPM(sb)); //same line bpms
-		    //now, other lines bpms
+		    //now, other lines bpm
 		    String s;
-		    if((s = r.readLine().trim()) != null && !s.startsWith("#"))
+		    while((s = r.readLine()) != null && !s.trim().startsWith("#"))
 		    {
-			while((s = r.readLine()) != null && !s.endsWith(";"))
-			{
-			    sb = new StringTokenizer(s.trim(), "=,");
-			    
-			    event_list.add(setBPM(sb));
-			}
+			s = s.trim();
+			if(s.endsWith(";")) s = s.replace(";", "").trim();
+			if(s.isEmpty()) continue;
+			sb = new StringTokenizer(s, "=,");
+			
+			setBPM(sb, event_list); //same line bpm
 		    }
 		    r.reset();
 		    continue;
 		}
 		
 		if(cmd.equals("#STOPS")){
+		    if(!st.hasMoreTokens()) continue;
+		    
 		    r.mark(8192);
 		    StringTokenizer sb = new StringTokenizer(st.nextToken().trim(), "=,");
+
+		    setStop(sb, event_list); //same line bpm
 		    
-		    event_list.add(setStop(sb)); //same line stops
 		    //now, other lines stops
 		    String s;
-		    if((s = r.readLine().trim()) != null && !s.startsWith("#"))
+		    while((s = r.readLine()) != null && !s.trim().startsWith("#"))
 		    {
-			while((s = r.readLine()) != null && !s.endsWith(";"))
-			{
-			    sb = new StringTokenizer(s.trim(), "=,");
-			    
-			    event_list.add(setStop(sb));
-			}
+			s = s.trim();
+			if(s.endsWith(";")) s = s.replace(";", "").trim();
+			if(s.isEmpty()) continue;
+			sb = new StringTokenizer(s, "=,");
+			
+			setStop(sb, event_list); //same line bpm
 		    }
 		    r.reset();
 		    continue;
@@ -252,14 +262,14 @@ class SMParser
 		    }
 
 		    if(!founded) continue;
-		    int measure = 1;
+		    int measure = startMeasure;
 		    List<String> notes = new ArrayList<String>();
-		    while((s = r.readLine()) != null && !parsed)
+		    while((s = r.readLine()) != null)
 		    {
 			s = s.trim().toUpperCase();
 			if(s.isEmpty()) continue;
 			
-			if(!s.startsWith(","))
+			if(!s.startsWith(",") && !parsed)
 			{
 			    if(s.contains(";")) {
 				//we have finished
@@ -307,6 +317,9 @@ class SMParser
             Logger.global.log(Level.SEVERE, null, ex);
         } catch(NoSuchElementException ignored) {}
 	
+	//add the music
+	event_list.add(new Event(Event.Channel.AUTO_PLAY, 0, 0, 1, Event.Flag.NONE));
+	
         Collections.sort(event_list);
         return event_list;
     }
@@ -331,7 +344,7 @@ class SMParser
                 int buffer = 0;
                 if      (st.equals(".wav")) buffer = SoundManager.newBuffer(f.toURI().toURL());
                 else if (st.equals(".ogg")) buffer = SoundManager.newBuffer(new OggInputStream(new FileInputStream(f)));
-                else                        Logger.global.log(Level.WARNING, "File {0} not supported", f.getName());
+                else if (st.equals(".mp3")) Logger.global.log(Level.WARNING, "File {0} not supported", f.getName());
                 samples.put(id, buffer);
             } catch (IOException ex) {
                 Logger.global.log(Level.SEVERE, null, ex);
@@ -340,7 +353,7 @@ class SMParser
         return samples;
     }
     
-    private static Event setStop(StringTokenizer sb)
+    private static void setStop(StringTokenizer sb, ArrayList<Event> event_list)
     {
 	while(sb.hasMoreTokens())
 	{
@@ -348,13 +361,11 @@ class SMParser
 	    double stop = Double.parseDouble(sb.nextToken().trim()) * 1000;
 	    double measure = beat/4;
 	    double position = Math.abs(((int)measure)-measure);
-	    return new Event(Event.Channel.STOP, (int)measure, position, stop, Event.Flag.NONE);
+	    event_list.add(new Event(Event.Channel.STOP, (int)measure, position, stop, Event.Flag.NONE));
 	}
-	
-	return null;
     }
     
-    private static Event setBPM(StringTokenizer sb)
+    private static void setBPM(StringTokenizer sb, ArrayList<Event> event_list)
     {
 	while(sb.hasMoreTokens())
 	{
@@ -362,10 +373,8 @@ class SMParser
 	    double bpm = Double.parseDouble(sb.nextToken().trim());
 	    double measure = beat/4;
 	    double position = Math.abs(((int)measure)-measure);
-	    return new Event(Event.Channel.BPM_CHANGE, (int)measure, position, bpm, Event.Flag.NONE);
+	    event_list.add(new Event(Event.Channel.BPM_CHANGE, (int)measure, position, bpm, Event.Flag.NONE));
 	}
-	
-	return null;
     }
        
     private static int getKeys(String s)

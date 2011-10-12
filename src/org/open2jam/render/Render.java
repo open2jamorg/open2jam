@@ -906,7 +906,9 @@ public abstract class Render implements GameWindowCallback
             switch(e.getChannel())
             {
 		case STOP:
-		    System.out.println("Stop aren't supported "+e.getValue()+" M "+e.getMeasure()+" P "+e.getPosition());
+		    velocity_tree.addInterval(last_bpm_change, timer, my_note_speed);
+		    velocity_tree.addInterval(timer, timer+e.getValue(), 0d);
+		    last_bpm_change = timer = timer + e.getValue();
 		break;
 		case BPM_CHANGE:
                     velocity_tree.addInterval(last_bpm_change, timer, my_note_speed);
