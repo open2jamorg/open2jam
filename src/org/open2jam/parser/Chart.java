@@ -60,7 +60,7 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
     
     public BufferedImage getNoImage()
     {
-	URL u = BMSChart.class.getResource("/resources/no_image.png"); //TODO Change this
+	URL u = Chart.class.getResource("/resources/no_image.png"); //TODO Change this
 	if(u == null) return null;
 	
 	try {

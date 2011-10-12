@@ -23,6 +23,7 @@ public class Event implements Comparable<Event>
 	    NONE,		     //
             TIME_SIGNATURE,	     //
             BPM_CHANGE,		     //
+	    STOP,
             MEASURE,                 //This will be used when the velocity tree is constructed;
 	    
 	    AUTO_PLAY(true);	     //Autoplay, used by the background music/sounds

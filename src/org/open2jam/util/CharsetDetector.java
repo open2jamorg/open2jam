@@ -4,6 +4,7 @@ package org.open2jam.util;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import org.mozilla.intl.chardet.nsDetector;
 import org.mozilla.intl.chardet.nsICharsetDetectionObserver;
 import org.mozilla.intl.chardet.nsPSMDetector;
@@ -44,18 +45,23 @@ public class CharsetDetector implements nsICharsetDetectionObserver
     public void Notify(String string) {
         charset = string;
     }
-
-    public static String analyze(File f) throws java.io.IOException
+    
+    public static String analyze(InputStream in) throws java.io.IOException
     {
         CharsetDetector c = new CharsetDetector();
         c.start();
 
-        BufferedInputStream imp = new BufferedInputStream(new FileInputStream(f));
+        BufferedInputStream imp = new BufferedInputStream(in);
         byte[] buf = new byte[1024];
         while( imp.read(buf,0,buf.length) != -1) {
             if(c.feed(buf))break;
         }
-        return c.result();
+        return c.result();	
+    }
+
+    public static String analyze(File f) throws java.io.IOException
+    {
+	return analyze(new FileInputStream(f));
     }
 
     public static String analyze(byte[] buf)
