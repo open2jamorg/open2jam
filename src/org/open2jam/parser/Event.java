@@ -81,6 +81,8 @@ public class Event implements Comparable<Event>
 	private final int measure;
 	private final double position;
 	
+	private final double offset;
+	
 	private final double value;
 	Flag flag;
         private final SoundSample sound_sample;
@@ -96,6 +98,7 @@ public class Event implements Comparable<Event>
             this.value = value;
             this.flag = flag;
             this.sound_sample = new SoundSample((int)value, 1, 0);
+	    this.offset = 0;
 	}
 
         public Event(Channel channel, int measure, double position,
@@ -106,6 +109,29 @@ public class Event implements Comparable<Event>
             this.value = value;
             this.flag = flag;
             this.sound_sample = new SoundSample((int) value,vol, pan);
+	    this.offset = 0;
+	}
+	
+	public Event(Channel channel, int measure, double position,
+			double value, double offset, Flag flag) {
+            this.channel = channel;
+            this.measure = measure;
+            this.position = position;
+            this.value = value;
+            this.flag = flag;
+            this.sound_sample = new SoundSample((int)value, 1, 0);
+	    this.offset = offset;
+	}
+
+        public Event(Channel channel, int measure, double position,
+                    double value, double offset, Flag flag, float vol, float pan) {
+            this.channel = channel;
+            this.measure = measure;
+            this.position = position;
+            this.value = value;
+            this.flag = flag;
+            this.sound_sample = new SoundSample((int) value,vol, pan);
+	    this.offset = offset;
 	}
 
 	public int compareTo(Event e)
@@ -120,6 +146,7 @@ public class Event implements Comparable<Event>
 	public Flag getFlag() { return flag; }
 	public double getValue() { return value; }
         public SoundSample getSample(){ return sound_sample; }
+	public double getOffset() { return offset; }
         
         public void setTime(double t) { this.time = t; }
         public double getTime() { return time; }

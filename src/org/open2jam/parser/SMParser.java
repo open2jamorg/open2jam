@@ -197,8 +197,8 @@ class SMParser
 		String cmd = st.nextToken().toUpperCase().trim();
 		
                 if(cmd.equals("#OFFSET")){
-		    offset = Double.parseDouble(st.nextToken().trim());
-		    if(offset < 0) startMeasure = 1;
+		    offset = Double.parseDouble(st.nextToken().trim()) * 1000d;
+//		    if(offset < 0) startMeasure = 1;
 		    continue;
                 }
 		
@@ -318,7 +318,7 @@ class SMParser
         } catch(NoSuchElementException ignored) {}
 	
 	//add the music
-	event_list.add(new Event(Event.Channel.AUTO_PLAY, 0, 0, 1, Event.Flag.NONE));
+	event_list.add(new Event(Event.Channel.AUTO_PLAY, startMeasure, 0, 1, -offset, Event.Flag.NONE));
 	
         Collections.sort(event_list);
         return event_list;

@@ -929,7 +929,8 @@ public abstract class Render implements GameWindowCallback
                 case NOTE_12:case NOTE_13:case NOTE_14:
                 case NOTE_SC2:
                 case AUTO_PLAY:
-                    e.setTime(timer);
+                    e.setTime(timer + e.getOffset());
+		    if(e.getOffset() != 0) System.out.println("offset: "+e.getOffset()+" timer: "+(timer+e.getOffset()));
                 break;
                     
                 case MEASURE:
