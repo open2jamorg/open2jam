@@ -281,37 +281,14 @@ class SMParser
 			}
 			else
 			{ //new measure, time to fill the events
-			    int size = notes.size();
-			    for(int pos=0; pos<size; pos++)
-			    {
-				String[] n = notes.get(pos).split("(?<=\\G.)");
-				double position = (double)pos/size;
-				for(int i=0; i<n.length;i++)
-				{
-				    if(n[i].equals("0")) continue;
-			    
-				    if(n[i].equals("1")) 
-					event_list.add(new Event(getChannel(i), measure, position, 0, Event.Flag.NONE));
-				    else if(n[i].equals("2"))
-					event_list.add(new Event(getChannel(i), measure, position, 0, Event.Flag.HOLD));
-				    else if(n[i].equals("3"))
-					event_list.add(new Event(getChannel(i), measure, position, 0, Event.Flag.RELEASE));
-				    else if(n[i].equals("4"))
-					Logger.global.log(Level.WARNING, "Roll not supported :/");
-				    else if(n[i].equals("M"))
-					Logger.global.log(Level.WARNING, "Mines not supported :/");
-				    else if(n[i].equals("L"))
-					Logger.global.log(Level.WARNING, "Lift not supported :/");
-				    else
-					Logger.global.log(Level.WARNING, "{0} not supported :/", n[i]);
-				}
-			    }
-			    notes.clear();
+			    fillEvents(event_list, notes, measure);
 			    measure++;
 			    continue;
 			}
-		    }	    
-		}   
+		    }
+		    
+		    if(parsed && !notes.isEmpty()) fillEvents(event_list, notes, measure);
+		}
             }
         } catch (IOException ex) {
             Logger.global.log(Level.SEVERE, null, ex);
@@ -357,6 +334,36 @@ class SMParser
             }
         }
         return samples;
+    }
+    
+    private static void fillEvents(List<Event> event_list, List<String> notes, int measure)
+    {
+	int size = notes.size();
+	for(int pos=0; pos<size; pos++)
+	{
+	    String[] n = notes.get(pos).split("(?<=\\G.)");
+	    double position = (double)pos/size;
+	    for(int i=0; i<n.length;i++)
+	    {
+		if(n[i].equals("0")) continue;
+
+		if(n[i].equals("1")) 
+		    event_list.add(new Event(getChannel(i), measure, position, 0, Event.Flag.NONE));
+		else if(n[i].equals("2"))
+		    event_list.add(new Event(getChannel(i), measure, position, 0, Event.Flag.HOLD));
+		else if(n[i].equals("3"))
+		    event_list.add(new Event(getChannel(i), measure, position, 0, Event.Flag.RELEASE));
+		else if(n[i].equals("4"))
+		    Logger.global.log(Level.WARNING, "Roll not supported :/");
+		else if(n[i].equals("M"))
+		    Logger.global.log(Level.WARNING, "Mines not supported :/");
+		else if(n[i].equals("L"))
+		    Logger.global.log(Level.WARNING, "Lift not supported :/");
+		else
+		    Logger.global.log(Level.WARNING, "{0} not supported :/", n[i]);
+	    }
+	}
+	notes.clear();	
     }
     
     private static void setStop(StringTokenizer sb, ArrayList<Event> event_list)
