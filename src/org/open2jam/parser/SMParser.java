@@ -275,8 +275,8 @@ class SMParser
 				//we have finished
 				s = s.replace(";", "").trim();
 				parsed = true;
-				if(s.isEmpty()) continue;
 			    }
+			    if(s.isEmpty()) continue;
 			    notes.add(s);
 			}
 			else
@@ -318,7 +318,7 @@ class SMParser
         } catch(NoSuchElementException ignored) {}
 	
 	//add the music
-	event_list.add(new Event(Event.Channel.AUTO_PLAY, startMeasure, 0, 1, -offset, Event.Flag.NONE));
+	event_list.add(new Event(Event.Channel.AUTO_PLAY, startMeasure, 0, 1, offset, Event.Flag.NONE));
 	
         Collections.sort(event_list);
         return event_list;
