@@ -223,15 +223,15 @@ class OJNParser
                     if(value == 0)continue; // ignore value=0 events
 
                     // MIN 1 ~ 15 MAX, special 0 = MAX
-                    float volume = (volume_pan & 0xF) / 16f;
+                    float volume = ((volume_pan >> 4) & 0x0F) / 16f;
                     if(volume == 0)volume = 1;
 
                     // LEFT 1 ~ 8 CENTER 8 ~ 15 RIGHT, special: 0 = 8
-                    float pan = (volume_pan & 0xF0) >> 4;
+                    float pan = (volume_pan & 0x0F);
                     if(pan == 0)pan = 8;
                     pan -= 8;
-                    pan /= 16;
-
+                    pan /= 8f; //TODO or maybe 7f? (15-8) / 8 = 7 / 8 = 0.875 and it should be 1, right?
+		    
                     value--; // make zero-based ( zero was the "ignore" value )
                     if(type == 0){
                         event_list.add(new Event(channel,measure,position,value,Event.Flag.NONE,volume, pan));
