@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="urn:nonstandard:resources" elementFormDefault="qualified" targetNamespace="urn:nonstandard:resources" version="0.1">
+    <xsd:element name="resources">
+	<xsd:complexType>
+	    <xsd:sequence>
+	        <xsd:element name="spriteset" type="spriteset"/>
+	        <xsd:element name="styles" minOccurs="0">
+	            <xsd:complexType>
+	                    <xsd:sequence>
+	                            <xsd:element name="style" maxOccurs="unbounded" type="style"/>
+	                        </xsd:sequence>
+	                </xsd:complexType>
+	        </xsd:element>
+	        <xsd:element name="animations" minOccurs="0">
+	            <xsd:complexType>
+	                <xsd:sequence>
+	                    <xsd:element name="animation" maxOccurs="unbounded"/>
+	                </xsd:sequence>
+	            </xsd:complexType>
+	        </xsd:element>
+	        <xsd:element name="skin" type="skin" maxOccurs="unbounded"/>
+	    </xsd:sequence>
+	</xsd:complexType>
+    </xsd:element>
+    <xsd:complexType name="spriteset">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">A set of sprites.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+	    <xsd:element name="image" maxOccurs="unbounded">
+		<xsd:complexType>
+		    <xsd:sequence>
+			<xsd:element name="sprite" maxOccurs="unbounded">
+			    <xsd:complexType>
+				<xsd:sequence>
+				    <xsd:element name="frame" maxOccurs="unbounded">
+					<xsd:complexType>
+					    <xsd:attribute name="xywh" type="xywh" use="required"/>
+					</xsd:complexType>
+				    </xsd:element>
+				</xsd:sequence>
+				<xsd:attribute name="id" type="spriteID" use="required"/>
+				<xsd:attribute name="framespeed" type="framespeed"/>
+			     <xsd:attribute name="loop" type="trueFalse"/>
+			    </xsd:complexType>
+			</xsd:element>
+		    </xsd:sequence>
+		    <xsd:attribute name="file" type="xsd:string" use="required"/>
+		</xsd:complexType>
+	    </xsd:element>
+            <xsd:element name="font" maxOccurs="unbounded" minOccurs="0">
+                <xsd:complexType>
+		    <xsd:attribute name="id" type="xsd:ID" use="required"/>
+                    <xsd:attribute name="file" type="xsd:string" use="required"/>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="skin">
+	<xsd:sequence>
+	    <xsd:element name="layer" type="layer" minOccurs="0" maxOccurs="unbounded"/>
+	    <xsd:element name="player" type="player" maxOccurs="unbounded"/>
+	    <xsd:element name="layer" type="layer" minOccurs="0" maxOccurs="unbounded"/>
+	</xsd:sequence>
+	<xsd:attribute name="name" type="xsd:string" use="required">
+	    <xsd:annotation>
+	        <xsd:documentation xml:lang="en">The skin name.</xsd:documentation>
+	    </xsd:annotation>
+	</xsd:attribute>
+        <xsd:attributeGroup ref="size"/>
+    </xsd:complexType>
+    <xsd:complexType name="layer">
+        <xsd:sequence maxOccurs="unbounded">
+            <xsd:element name="entity" type="entity" maxOccurs="unbounded" minOccurs="0"/>
+            <xsd:element name="entity_group" type="entityGroup" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+	<xsd:attributeGroup ref="position"/>
+	<xsd:attributeGroup ref="size"/>
+	<xsd:attributeGroup ref="scale"/>
+    </xsd:complexType>
+    <xsd:complexType name="notes">
+	<xsd:sequence maxOccurs="1">
+	    <xsd:element name="entity" type="entity" maxOccurs="unbounded"/>
+	</xsd:sequence>
+	<xsd:attribute name="scratch" type="scratchSelector"/>
+	<xsd:attributeGroup ref="position"/>
+	<xsd:attributeGroup ref="size"/>
+	<xsd:attributeGroup ref="scale"/>
+    </xsd:complexType>
+    <xsd:complexType name="entity">
+        <xsd:attribute name="type" type="entityID" use="optional"/>
+        <xsd:attributeGroup ref="position"/>
+        <xsd:attributeGroup ref="scale"/>
+        <xsd:attributeGroup ref="spriteGroup" />
+    </xsd:complexType>
+    <xsd:complexType name="style">
+        <xsd:sequence>
+            <xsd:element name="group" maxOccurs="unbounded">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="entry" maxOccurs="unbounded">
+			    <xsd:complexType>
+				<xsd:attributeGroup ref="spriteGroup" />
+			    </xsd:complexType>
+			</xsd:element>
+                    </xsd:sequence>
+                    <xsd:attribute name="id" type="xsd:string" use="required"/>
+                    <xsd:attribute name="name" type="xsd:string" use="required"/>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="id" type="xsd:string" use="required"/>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+    </xsd:complexType>
+    <xsd:complexType name="entityGroup">
+        <xsd:sequence>
+            <xsd:element name="entity" type="entity" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="type" type="entityID" use="optional"/>
+        <xsd:attributeGroup ref="position"/>
+        <xsd:attributeGroup ref="size"/>
+	<xsd:attributeGroup ref="scale"/>
+    </xsd:complexType>
+    <xsd:complexType name="player">
+	    <xsd:sequence>
+		<xsd:element name="layer" minOccurs="0" maxOccurs="unbounded" type="layer"/>
+		<xsd:element name="notes" minOccurs="1" maxOccurs="1" type="notes" ></xsd:element>
+		<xsd:element name="layer" minOccurs="0" maxOccurs="unbounded" type="layer"/>
+	    </xsd:sequence>
+	    <xsd:attribute name="keys" type="xsd:unsignedByte" use="required"/>
+	    <xsd:attributeGroup ref="position"/>
+	    <xsd:attributeGroup ref="size"/>
+	    <xsd:attributeGroup ref="scale"/>
+    </xsd:complexType>
+    <xsd:complexType name="animation">
+        <xsd:sequence>
+            <xsd:element name="onShow" minOccurs="0"/>
+            <xsd:element name="onHide" minOccurs="0"/>
+            <xsd:element name="onUpdate" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:simpleType name="scratchSelector">
+	<xsd:restriction base="xsd:string">
+	    <xsd:enumeration value="none"/>
+	    <xsd:enumeration value="left"/>
+	    <xsd:enumeration value="right"/>
+	    <xsd:whiteSpace value="collapse"/>
+	</xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="trueFalse">
+	<xsd:restriction base="xsd:string">
+	    <xsd:enumeration value="true"/>
+	    <xsd:enumeration value="false"/>
+	    <xsd:whiteSpace value="collapse"/>
+	</xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="entityID">
+	<xsd:restriction base="xsd:ID">
+	    <xsd:enumeration value="NOTE_1"/>
+	    <xsd:enumeration value="NOTE_2"/>
+	    <xsd:enumeration value="NOTE_3"/>
+	    <xsd:enumeration value="NOTE_4"/>
+	    <xsd:enumeration value="NOTE_5"/>
+	    <xsd:enumeration value="NOTE_6"/>
+	    <xsd:enumeration value="NOTE_7"/>
+	    <xsd:enumeration value="NOTE_SC"/>
+	    <xsd:enumeration value="MEASURE_MARK"/>
+	    <xsd:enumeration value="JUDGMENT_LINE"/>
+	    <xsd:enumeration value="EFFECT_JUDGMENT_PERFECT"/>
+	    <xsd:enumeration value="EFFECT_JUDGMENT_COOL"/>
+	    <xsd:enumeration value="EFFECT_JUDGMENT_GOOD"/>
+	    <xsd:enumeration value="EFFECT_JUDGMENT_BAD"/>
+	    <xsd:enumeration value="EFFECT_JUDGMENT_MISS"/>
+	    <xsd:enumeration value="EFFECT_LONGFLARE"/>
+	    <xsd:enumeration value="EFFECT_CLICK"/>
+	    <xsd:enumeration value="PRESSED_NOTE_1_LANE"/>
+	    <xsd:enumeration value="PRESSED_NOTE_2_LANE"/>
+	    <xsd:enumeration value="PRESSED_NOTE_3_LANE"/>
+	    <xsd:enumeration value="PRESSED_NOTE_4_LANE"/>
+	    <xsd:enumeration value="PRESSED_NOTE_5_LANE"/>
+	    <xsd:enumeration value="PRESSED_NOTE_6_LANE"/>
+	    <xsd:enumeration value="PRESSED_NOTE_7_LANE"/>
+	    <xsd:enumeration value="PRESSED_NOTE_SC_LANE"/>
+	    <xsd:enumeration value="PRESSED_NOTE_1_KEY"/>
+	    <xsd:enumeration value="PRESSED_NOTE_2_KEY"/>
+	    <xsd:enumeration value="PRESSED_NOTE_3_KEY"/>
+	    <xsd:enumeration value="PRESSED_NOTE_4_KEY"/>
+	    <xsd:enumeration value="PRESSED_NOTE_5_KEY"/>
+	    <xsd:enumeration value="PRESSED_NOTE_6_KEY"/>
+	    <xsd:enumeration value="PRESSED_NOTE_7_KEY"/>
+	    <xsd:enumeration value="PRESSED_NOTE_SC_KEY"/>
+	    <xsd:enumeration value="COUNTER_FPS"/>
+	    <xsd:enumeration value="COUNTER_JUDGMENT_PERFECT"/>
+	    <xsd:enumeration value="COUNTER_JUDGMENT_COOL"/>
+	    <xsd:enumeration value="COUNTER_JUDGMENT_GOOD"/>
+	    <xsd:enumeration value="COUNTER_JUDGMENT_BAD"/>
+	    <xsd:enumeration value="COUNTER_JUDGMENT_MISS"/>
+	    <xsd:enumeration value="COUNTER_MAXCOMBO"/>
+	    <xsd:enumeration value="COUNTER_SCORE"/>
+	    <xsd:enumeration value="COUNTER_JAM"/>
+	    <xsd:enumeration value="COUNTER_COMBO"/>
+	    <xsd:enumeration value="COUNTER_MINUTE"/>
+	    <xsd:enumeration value="COUNTER_SECOND"/>
+	    <xsd:enumeration value="COMBO_TITLE"/>
+	    <xsd:enumeration value="JAM_TITLE"/>
+	    <xsd:enumeration value="PILL_1"/>
+	    <xsd:enumeration value="PILL_2"/>
+	    <xsd:enumeration value="PILL_3"/>
+	    <xsd:enumeration value="PILL_4"/>
+	    <xsd:enumeration value="PILL_5"/>
+	    <xsd:enumeration value="LIFE_BAR"/>
+	    <xsd:enumeration value="JAM_BAR"/>
+	    <xsd:enumeration value="TIME_BAR"/>
+	    <xsd:whiteSpace value="collapse"/>
+	</xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="xywh">
+	<xsd:restriction base="xsd:string">
+	    <xsd:pattern value="\d+,\d+,\d+,\d+"/>
+	    <xsd:whiteSpace value="collapse"/>
+	</xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="spriteID">
+	<xsd:restriction base="xsd:ID">
+	    <xsd:pattern value="(([a-zA-Z_0-9\-]+){1})" />
+	    <xsd:whiteSpace value="collapse"/>
+	</xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="framespeed">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="\d+([bB][eE][aA][tT][sS]?)?"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="entitySprites">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="((([a-zA-Z_]+_[0-9]\s{0,},{1}\s{0,}){9}([a-zA-Z_]+_[0-9]){1}){1})"/>    <!-- counters numbers (10 sprites: name_n) or -->
+            <xsd:pattern value="(([a-zA-Z_0-9]+){1})" />                                                <!-- a single sprite -->
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:attributeGroup name="spriteGroup">
+        <xsd:attribute name="sprite" type="entitySprites" use="required"/>
+        <xsd:attribute name="head" type="xsd:IDREF"/>
+	<xsd:attribute name="body" type="xsd:IDREF"/>
+	<xsd:attribute name="tail" type="xsd:IDREF"/>
+	<xsd:attribute name="pressed_sprite" type="xsd:IDREF"/>
+	<xsd:attribute name="pressed_head" type="xsd:IDREF"/>
+	<xsd:attribute name="pressed_body" type="xsd:IDREF"/>
+	<xsd:attribute name="pressed_tail" type="xsd:IDREF"/>
+    </xsd:attributeGroup>
+    <xsd:attributeGroup name="position">
+        <xsd:attribute name="x" type="xsd:decimal"/>
+        <xsd:attribute name="y" type="xsd:decimal"/>
+    </xsd:attributeGroup>
+    <xsd:attributeGroup name="size">
+        <xsd:attribute name="height" type="xsd:decimal"/>
+        <xsd:attribute name="width" type="xsd:decimal"/>
+    </xsd:attributeGroup>
+    <xsd:attributeGroup name="scale">
+        <xsd:attribute name="scale" type="xsd:decimal"/>
+        <xsd:attribute name="scale_y" type="xsd:decimal"/>
+        <xsd:attribute name="scale_x" type="xsd:decimal"/>
+    </xsd:attributeGroup>
+</xsd:schema>

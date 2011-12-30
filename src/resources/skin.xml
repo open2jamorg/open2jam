@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources  xmlns="urn:nonstandard:resources"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="urn:nonstandard:resources schema.xsd">
+    <spriteset>
+	<image file="parts1-2.png">
+	    <sprite id="empty"><frame xywh="0,0,0,0"/></sprite>
+	    
+	    <sprite id="player_border1"><frame xywh="490,1,7,510"/></sprite>
+	    <sprite id="player_border2"><frame xywh="498,486,7,25"/></sprite>
+	    <sprite id="player_background"><frame xywh="386,31,100,480"/></sprite>
+	    <sprite id="player_inside_shadow_left"><frame xywh="370,31,7,480"/></sprite>
+	    <sprite id="player_inside_shadow_right"><frame xywh="378,31,7,480"/></sprite>
+	    <sprite id="player_line"><frame xywh="368,31,1,480"/></sprite>
+	    <sprite id="player_redbar"><frame xywh="161,156,200,8"/></sprite>
+	    <sprite id="player_redbar_glow" framespeed="8">
+		<frame xywh="161,95,200,30"/>
+		<frame xywh="161,126,200,30"/>
+	    </sprite>
+	    
+	    <sprite id="player_lane_white"><frame xywh="91,31,30,480"/></sprite>
+	    <sprite id="player_lane_blue"><frame xywh="32,31,23,480"/></sprite>
+	    <sprite id="player_lane_yellow"><frame xywh="56,31,34,480"/></sprite>
+	    <sprite id="player_lane_red"><frame xywh="1,31,30,480"/></sprite>
+	    
+	    <sprite id="player_measure" framespeed="8">
+		<frame xywh="162,414,200,3" />
+		<frame xywh="162,418,200,3" />
+	    </sprite>
+	    
+	    <sprite id="player_note_white" framespeed="8">
+		<frame xywh="162,292,30,7"/>
+		<frame xywh="162,300,30,7"/>
+		<frame xywh="162,308,30,7"/>
+		<frame xywh="162,300,30,7"/>
+	    </sprite>
+	    <sprite id="player_head_white" framespeed="8">
+		<frame xywh="162,293,30,6"/>
+		<frame xywh="162,301,30,6"/>
+		<frame xywh="162,309,30,6"/>
+		<frame xywh="162,301,30,6"/>
+	    </sprite>
+	    <sprite id="player_body_white" framespeed="8">
+		<frame xywh="162,293,30,5"/>
+		<frame xywh="162,301,30,5"/>
+		<frame xywh="162,309,30,5"/>
+		<frame xywh="162,301,30,5"/>
+	    </sprite>   
+	    <sprite id="player_tail_white" framespeed="8">
+		<frame xywh="162,292,30,6"/>
+		<frame xywh="162,300,30,6"/>
+		<frame xywh="162,308,30,6"/>
+		<frame xywh="162,300,30,6"/>
+	    </sprite>
+
+	    <sprite id="player_note_blue" framespeed="8">
+		<frame xywh="193,292,23,7"/>
+		<frame xywh="193,300,23,7"/>
+		<frame xywh="193,308,23,7"/>
+		<frame xywh="193,300,23,7"/>
+	    </sprite>
+	    <sprite id="player_head_blue" framespeed="8">
+		<frame xywh="193,293,23,6"/>
+		<frame xywh="193,301,23,6"/>
+		<frame xywh="193,309,23,6"/>
+		<frame xywh="193,301,23,6"/>
+	    </sprite>
+	    <sprite id="player_body_blue" framespeed="8">
+		<frame xywh="193,293,23,5"/>
+		<frame xywh="193,301,23,5"/>
+		<frame xywh="193,309,23,5"/>
+		<frame xywh="193,301,23,5"/>
+	    </sprite>   
+	    <sprite id="player_tail_blue" framespeed="8">
+		<frame xywh="193,292,23,6"/>
+		<frame xywh="193,300,23,6"/>
+		<frame xywh="193,308,23,6"/>
+		<frame xywh="193,300,23,6"/>
+	    </sprite>
+    
+	    <sprite id="player_note_yellow" framespeed="8">
+		<frame xywh="217,292,34,7"/>
+		<frame xywh="217,300,34,7"/>
+		<frame xywh="217,308,34,7"/>
+		<frame xywh="217,300,34,7"/>
+	    </sprite>
+	    <sprite id="player_head_yellow" framespeed="8">
+		<frame xywh="217,293,34,6"/>
+		<frame xywh="217,301,34,6"/>
+		<frame xywh="217,309,34,6"/>
+		<frame xywh="217,301,34,6"/>
+	    </sprite>
+	    <sprite id="player_body_yellow" framespeed="8">
+		<frame xywh="217,293,34,5"/>
+		<frame xywh="217,301,34,5"/>
+		<frame xywh="217,309,34,5"/>
+		<frame xywh="217,301,34,5"/>
+	    </sprite>   
+	    <sprite id="player_tail_yellow" framespeed="8">
+		<frame xywh="217,292,34,6"/>
+		<frame xywh="217,300,34,6"/>
+		<frame xywh="217,308,34,6"/>
+		<frame xywh="217,300,34,6"/>
+	    </sprite>
+	    
+	    <sprite id="player_keyboard_background"><frame xywh="161,316,100,49"/></sprite>
+	    <sprite id="player_keyboard_key1_part1"><frame xywh="162,423,28,43"/></sprite>
+	    <sprite id="player_keyboard_key1_part2"><frame xywh="190,464,10,2"/></sprite>
+	    <sprite id="player_keyboard_key2_part1"><frame xywh="192,422,23,39"/></sprite>
+	    <sprite id="player_keyboard_key3_part1"><frame xywh="217,423,28,40"/></sprite>
+	    <sprite id="player_keyboard_key3_part2"><frame xywh="207,463,29,3"/></sprite>
+	    <sprite id="player_keyboard_key4_part1"><frame xywh="247,422,34,41"/></sprite>
+	    <sprite id="player_keyboard_key4_part2"><frame xywh="236,463,56,3"/></sprite>
+	    <sprite id="player_keyboard_key5_part1"><frame xywh="283,423,28,40"/></sprite>
+	    <sprite id="player_keyboard_key5_part2"><frame xywh="292,463,29,3"/></sprite>
+	    <sprite id="player_keyboard_key6_part1"><frame xywh="313,422,23,39"/></sprite>
+	    <sprite id="player_keyboard_key7_part1"><frame xywh="338,423,28,43"/></sprite>
+	    <sprite id="player_keyboard_key7_part2"><frame xywh="328,464,10,2"/></sprite>
+	    <!-- pressed keys -->
+	    <sprite id="player_keyboard_key1_p_part1"><frame xywh="162,468,28,43"/></sprite>
+	    <sprite id="player_keyboard_key1_p_part2"><frame xywh="190,509,10,2"/></sprite>
+	    <sprite id="player_keyboard_key2_p_part1"><frame xywh="192,467,23,39"/></sprite>
+	    <sprite id="player_keyboard_key3_p_part1"><frame xywh="217,468,28,40"/></sprite>
+	    <sprite id="player_keyboard_key3_p_part2"><frame xywh="207,508,28,3"/></sprite>
+	    <sprite id="player_keyboard_key4_p_part1"><frame xywh="247,467,34,41"/></sprite>
+	    <sprite id="player_keyboard_key4_p_part2"><frame xywh="236,508,56,3"/></sprite>
+	    <sprite id="player_keyboard_key5_p_part1"><frame xywh="283,468,28,40"/></sprite>
+	    <sprite id="player_keyboard_key5_p_part2"><frame xywh="292,508,29,3"/></sprite>
+	    <sprite id="player_keyboard_key6_p_part1"><frame xywh="313,467,23,39"/></sprite>
+	    <sprite id="player_keyboard_key7_p_part1"><frame xywh="338,468,28,43"/></sprite>
+	    <sprite id="player_keyboard_key7_p_part2"><frame xywh="328,509,10,2"/></sprite>
+	    
+	    <sprite id="jambar_background"><frame xywh="162,402,124,10"/></sprite>
+	    <sprite id="jambar_bar"><frame xywh="164,395,120,6"/></sprite>
+	    
+	    <sprite id="player_score_background"><frame xywh="1,8,222,22"/></sprite>
+	    <sprite id="player_score_foreground"><frame xywh="162,31,151,16"/></sprite>
+	    
+	</image>
+	<image file="background.png">
+	    <sprite id="background"><frame xywh="0,0,800,600"/></sprite>
+	</image>
+	<font id="font_normal" file="font.fnt"/>
+    </spriteset>
+    <skin name="o2jam" width="800" height="600">
+	<layer width="800" height="600">
+	    <entity sprite="background" />
+	</layer>
+	<player keys="7" x="293" y="65" width="214" height="535">
+	    <layer>
+		<entity x="7" y="55" scale_x="2" sprite="player_background" />
+	    </layer>
+	    <layer x="7" y="55" width="200" height="480">
+		<entity x="29" sprite="player_line"/>
+		<entity x="53" sprite="player_line"/>
+		<entity x="82" sprite="player_line"/>
+		<entity x="117" sprite="player_line"/>
+		<entity x="146" sprite="player_line"/>
+		<entity x="170" sprite="player_line"/>
+		<entity y="8" scale_y="2" sprite="player_redbar_glow" />
+		<entity sprite="player_redbar" />
+	    </layer>
+	    <layer x="7" y="55" width="200" height="480">
+		<entity type="PRESSED_NOTE_1_LANE" sprite="player_lane_white"/>
+		<entity x="30" type="PRESSED_NOTE_2_LANE" sprite="player_lane_blue"/>
+		<entity x="53" type="PRESSED_NOTE_3_LANE" sprite="player_lane_white"/>
+		<entity x="83" type="PRESSED_NOTE_4_LANE" sprite="player_lane_yellow"/>
+		<entity x="117" type="PRESSED_NOTE_5_LANE" sprite="player_lane_white"/>
+		<entity x="147" type="PRESSED_NOTE_6_LANE" sprite="player_lane_blue"/>
+		<entity x="170" type="PRESSED_NOTE_7_LANE" sprite="player_lane_white"/>
+	    </layer>
+	    <layer x="7" y="55" width="200" height="480">
+		<entity type="MEASURE_MARK" sprite="player_measure"/>
+	    </layer>
+	    <notes x="7" y="55" width="200" height="480">
+		<entity type="NOTE_1" sprite="player_note_white" head="player_head_white" body ="player_body_white"
+		tail="player_tail_white"/>
+		<entity x="30" type="NOTE_2" sprite="player_note_blue" head="player_head_blue" body ="player_body_blue"
+		tail="player_tail_blue"/>
+		<entity x="53" type="NOTE_3" sprite="player_note_white" head="player_head_white" body ="player_body_white"
+		tail="player_tail_white"/>
+		<entity x="83" type="NOTE_4" sprite="player_note_yellow" head="player_head_yellow" body ="player_body_yellow"
+		tail="player_tail_yellow"/>
+		<entity x="117" type="NOTE_5" sprite="player_note_white" head="player_head_white" body ="player_body_white"
+		tail="player_tail_white"/>
+		<entity x="147" type="NOTE_6" sprite="player_note_blue" head="player_head_blue" body ="player_body_blue"
+		tail="player_tail_blue"/>
+		<entity x="170" type="NOTE_7" sprite="player_note_white" head="player_head_white" body ="player_body_white"
+		tail="player_tail_white"/>
+	    </notes>
+	    <layer x="7" y="6" width="200" height="49">
+		<entity scale_x="2" sprite="player_keyboard_background"/>
+		<entity x="1" sprite="player_keyboard_key1_part1"/>
+		<entity x="29" sprite="player_keyboard_key1_part2"/>
+		<entity x="30" y="6" sprite="player_keyboard_key2_part1"/>
+		<entity x="54" y="3" sprite="player_keyboard_key3_part1"/>
+		<entity x="44" sprite="player_keyboard_key3_part2"/>
+		<entity x="83" y="3" sprite="player_keyboard_key4_part1"/>
+		<entity x="72" sprite="player_keyboard_key4_part2"/>
+		<entity x="118" y="3" sprite="player_keyboard_key5_part1"/>
+		<entity x="128" sprite="player_keyboard_key5_part2"/>
+		<entity x="147" y="6" sprite="player_keyboard_key6_part1"/>
+		<entity x="171" sprite="player_keyboard_key7_part1"/>
+		<entity x="161" sprite="player_keyboard_key7_part2"/>
+	    </layer>
+	    <layer x="7" y="55" width="200" height="480">
+		<entity sprite="player_inside_shadow_left" />	
+		<entity x="193" sprite="player_inside_shadow_right" />
+	    </layer>
+	    <layer x="7" y="6" width="200" height="49">
+		<entity_group type="PRESSED_NOTE_1_KEY" x="1" >
+		    <entity sprite="player_keyboard_key1_p_part1"/>
+		    <entity x="28" sprite="player_keyboard_key1_p_part2"/>
+		</entity_group>
+		<entity type="PRESSED_NOTE_2_KEY" x="30" y="6" sprite="player_keyboard_key2_p_part1"/>
+		<entity_group type="PRESSED_NOTE_3_KEY" x="44" >
+		    <entity x="10" y="3" sprite="player_keyboard_key3_p_part1"/>
+		    <entity sprite="player_keyboard_key3_p_part2"/>
+		</entity_group>
+		<entity_group type="PRESSED_NOTE_4_KEY" x="72">
+		    <entity x="11" y="3" sprite="player_keyboard_key4_p_part1"/>
+		    <entity sprite="player_keyboard_key4_p_part2"/>
+		</entity_group>
+		<entity_group type="PRESSED_NOTE_5_KEY" x="118">
+		    <entity y="3" sprite="player_keyboard_key5_p_part1"/>
+		    <entity x="10" sprite="player_keyboard_key5_p_part2"/>
+		</entity_group>		
+		<entity type="PRESSED_NOTE_6_KEY" x="147" y="6" sprite="player_keyboard_key6_p_part1"/>
+		<entity_group type="PRESSED_NOTE_7_KEY" x="161" >
+		    <entity x="10" sprite="player_keyboard_key7_p_part1"/>
+		    <entity sprite="player_keyboard_key7_p_part2"/>
+		</entity_group>
+	    </layer>
+	    
+	    <layer x="44" y="142">
+	    <entity_group>
+		<entity sprite="jambar_background"/>
+		<entity x="2" y="2" sprite="jambar_bar" />
+	    </entity_group>
+	    </layer>
+	    
+	    <layer>
+		<entity x="0" y="25" sprite="player_border1" />
+		<entity x="0" y="0" sprite="player_border2" />
+		<entity x="207" y="25" sprite="player_border1" />
+		<entity x="207" y="0" sprite="player_border2" />
+	    </layer>
+	    
+	    <layer x="-4" y="-16">
+		<entity sprite="player_score_background" />
+		<entity x="65" y="3" sprite="player_score_foreground" />
+	    </layer>
+	</player>
+    </skin>
+</resources>

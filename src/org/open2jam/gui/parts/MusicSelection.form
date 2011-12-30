@@ -94,7 +94,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="btn_delete" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="table_scroll" alignment="2" pref="493" max="32767" attributes="1"/>
+                      <Component id="table_scroll" alignment="2" pref="472" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -102,7 +102,7 @@
                   <EmptySpace min="10" pref="10" max="10" attributes="0"/>
                   <Component id="lbl_search" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="txt_filter" pref="452" max="32767" attributes="1"/>
+                  <Component id="txt_filter" pref="431" max="32767" attributes="1"/>
                   <EmptySpace min="10" pref="10" max="10" attributes="0"/>
               </Group>
           </Group>
@@ -541,13 +541,13 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="291" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="348" max="32767" attributes="0"/>
                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="table_scroll2" alignment="1" pref="271" max="32767" attributes="0"/>
-                              <Component id="lbl_title" alignment="0" pref="271" max="32767" attributes="0"/>
+                              <Component id="table_scroll2" alignment="1" pref="328" max="32767" attributes="0"/>
+                              <Component id="lbl_title" alignment="0" pref="328" max="32767" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="lbl_cover" min="-2" pref="146" max="-2" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -563,18 +563,18 @@
                                           </Group>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="lbl_level" alignment="0" pref="64" max="32767" attributes="0"/>
-                                              <Component id="lbl_notes" alignment="0" pref="64" max="32767" attributes="0"/>
-                                              <Component id="lbl_time" alignment="0" pref="64" max="32767" attributes="0"/>
-                                              <Component id="lbl_genre" alignment="0" pref="64" max="32767" attributes="0"/>
-                                              <Component id="lbl_bpm" alignment="0" pref="64" max="32767" attributes="0"/>
-                                              <Component id="lbl_keys" alignment="0" pref="64" max="32767" attributes="0"/>
+                                              <Component id="lbl_level" alignment="0" pref="121" max="32767" attributes="0"/>
+                                              <Component id="lbl_notes" alignment="0" pref="121" max="32767" attributes="0"/>
+                                              <Component id="lbl_time" alignment="0" pref="121" max="32767" attributes="0"/>
+                                              <Component id="lbl_genre" alignment="0" pref="121" max="32767" attributes="0"/>
+                                              <Component id="lbl_bpm" alignment="0" pref="121" max="32767" attributes="0"/>
+                                              <Component id="lbl_keys" alignment="0" pref="121" max="32767" attributes="0"/>
                                           </Group>
                                       </Group>
                                       <Component id="lbl_filename" alignment="1" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <Component id="lbl_artist" alignment="1" pref="271" max="32767" attributes="0"/>
+                              <Component id="lbl_artist" alignment="1" pref="328" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -917,9 +917,6 @@
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Tahoma" size="24" style="1"/>
-        </Property>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/resources/open2jam_icon.png"/>
         </Property>
         <Property name="text" type="java.lang.String" value="PLAY !!!"/>
       </Properties>

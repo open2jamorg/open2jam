@@ -10,7 +10,6 @@
 <project name="open2jam" default="default" basedir=".">
     <description>Builds, tests, and runs the project open2jam.</description>
     <import file="nbproject/build-impl.xml"/>
-
     <!--
 
     There exist several targets which are by default empty and which can be 

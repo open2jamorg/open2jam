@@ -1,13 +1,14 @@
 package org.open2jam;
 
+import com.badlogic.gdx.Input;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import org.lwjgl.input.Keyboard;
-import org.open2jam.parser.ChartList;
-import org.open2jam.parser.Event;
-import org.open2jam.parser.Event.Channel;
+import org.open2jam.parsers.ChartList;
+import org.open2jam.parsers.Event;
+import org.open2jam.parsers.Event.Channel;
 import org.voile.VoileMap;
 
 /**
@@ -44,64 +45,64 @@ public abstract class Config
             setGameOptions(new GameOptions());
 
             EnumMap<MiscEvent, Integer> keyboard_misc = new EnumMap<MiscEvent, Integer>(MiscEvent.class);
-            keyboard_misc.put(MiscEvent.SPEED_DOWN,   Keyboard.KEY_DOWN);
-            keyboard_misc.put(MiscEvent.SPEED_UP,     Keyboard.KEY_UP);
-            keyboard_misc.put(MiscEvent.MAIN_VOL_UP,  Keyboard.KEY_2);
-            keyboard_misc.put(MiscEvent.MAIN_VOL_DOWN,Keyboard.KEY_1);
-            keyboard_misc.put(MiscEvent.KEY_VOL_UP,   Keyboard.KEY_4);
-            keyboard_misc.put(MiscEvent.KEY_VOL_DOWN, Keyboard.KEY_3);
-            keyboard_misc.put(MiscEvent.BGM_VOL_UP,   Keyboard.KEY_6);
-            keyboard_misc.put(MiscEvent.BGM_VOL_DOWN, Keyboard.KEY_5);
+            keyboard_misc.put(MiscEvent.SPEED_DOWN,   Input.Keys.DOWN);
+            keyboard_misc.put(MiscEvent.SPEED_UP,     Input.Keys.UP);
+            keyboard_misc.put(MiscEvent.MAIN_VOL_UP,  Input.Keys.NUM_2);
+            keyboard_misc.put(MiscEvent.MAIN_VOL_DOWN,Input.Keys.NUM_1);
+            keyboard_misc.put(MiscEvent.KEY_VOL_UP,   Input.Keys.NUM_4);
+            keyboard_misc.put(MiscEvent.KEY_VOL_DOWN, Input.Keys.NUM_3);
+            keyboard_misc.put(MiscEvent.BGM_VOL_UP,   Input.Keys.NUM_6);
+            keyboard_misc.put(MiscEvent.BGM_VOL_DOWN, Input.Keys.NUM_5);
             put("keyboard_misc", keyboard_misc);
             
             // TODO Needs the 2nd player keys, if we are going to add 2p support ofc xD
             EnumMap<Event.Channel, Integer> keyboard_map_4K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
-            keyboard_map_4K.put(Event.Channel.NOTE_1, Keyboard.KEY_D);
-            keyboard_map_4K.put(Event.Channel.NOTE_2, Keyboard.KEY_F);
-            keyboard_map_4K.put(Event.Channel.NOTE_3, Keyboard.KEY_J);
-            keyboard_map_4K.put(Event.Channel.NOTE_4, Keyboard.KEY_K);
-            keyboard_map_4K.put(Event.Channel.NOTE_SC, Keyboard.KEY_LSHIFT);
+            keyboard_map_4K.put(Event.Channel.NOTE_1, Input.Keys.D);
+            keyboard_map_4K.put(Event.Channel.NOTE_2, Input.Keys.F);
+            keyboard_map_4K.put(Event.Channel.NOTE_3, Input.Keys.J);
+            keyboard_map_4K.put(Event.Channel.NOTE_4, Input.Keys.K);
+            keyboard_map_4K.put(Event.Channel.NOTE_SC, Input.Keys.SHIFT_LEFT);
             put("keyboard_map"+KeyboardType.K4.toString(), keyboard_map_4K);
 
             EnumMap<Event.Channel, Integer> keyboard_map_5K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
-            keyboard_map_5K.put(Event.Channel.NOTE_1, Keyboard.KEY_D);
-            keyboard_map_5K.put(Event.Channel.NOTE_2, Keyboard.KEY_F);
-            keyboard_map_5K.put(Event.Channel.NOTE_3, Keyboard.KEY_SPACE);
-            keyboard_map_5K.put(Event.Channel.NOTE_4, Keyboard.KEY_J);
-            keyboard_map_5K.put(Event.Channel.NOTE_5, Keyboard.KEY_K);
-            keyboard_map_5K.put(Event.Channel.NOTE_SC, Keyboard.KEY_LSHIFT);
+            keyboard_map_5K.put(Event.Channel.NOTE_1, Input.Keys.D);
+            keyboard_map_5K.put(Event.Channel.NOTE_2, Input.Keys.F);
+            keyboard_map_5K.put(Event.Channel.NOTE_3, Input.Keys.SPACE);
+            keyboard_map_5K.put(Event.Channel.NOTE_4, Input.Keys.J);
+            keyboard_map_5K.put(Event.Channel.NOTE_5, Input.Keys.K);
+            keyboard_map_5K.put(Event.Channel.NOTE_SC, Input.Keys.SHIFT_LEFT);
             put("keyboard_map"+KeyboardType.K5.toString(), keyboard_map_5K);
 
             EnumMap<Event.Channel, Integer> keyboard_map_6K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
-            keyboard_map_6K.put(Event.Channel.NOTE_1, Keyboard.KEY_S);
-            keyboard_map_6K.put(Event.Channel.NOTE_2, Keyboard.KEY_D);
-            keyboard_map_6K.put(Event.Channel.NOTE_3, Keyboard.KEY_F);
-            keyboard_map_6K.put(Event.Channel.NOTE_4, Keyboard.KEY_J);
-            keyboard_map_6K.put(Event.Channel.NOTE_5, Keyboard.KEY_K);
-            keyboard_map_6K.put(Event.Channel.NOTE_6, Keyboard.KEY_L);
-            keyboard_map_6K.put(Event.Channel.NOTE_SC, Keyboard.KEY_LSHIFT);
+            keyboard_map_6K.put(Event.Channel.NOTE_1, Input.Keys.S);
+            keyboard_map_6K.put(Event.Channel.NOTE_2, Input.Keys.D);
+            keyboard_map_6K.put(Event.Channel.NOTE_3, Input.Keys.F);
+            keyboard_map_6K.put(Event.Channel.NOTE_4, Input.Keys.J);
+            keyboard_map_6K.put(Event.Channel.NOTE_5, Input.Keys.K);
+            keyboard_map_6K.put(Event.Channel.NOTE_6, Input.Keys.L);
+            keyboard_map_6K.put(Event.Channel.NOTE_SC, Input.Keys.SHIFT_LEFT);
             put("keyboard_map"+KeyboardType.K6.toString(), keyboard_map_6K);
 
             EnumMap<Event.Channel, Integer> keyboard_map_7K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
-            keyboard_map_7K.put(Event.Channel.NOTE_1, Keyboard.KEY_S);
-            keyboard_map_7K.put(Event.Channel.NOTE_2, Keyboard.KEY_D);
-            keyboard_map_7K.put(Event.Channel.NOTE_3, Keyboard.KEY_F);
-            keyboard_map_7K.put(Event.Channel.NOTE_4, Keyboard.KEY_SPACE);
-            keyboard_map_7K.put(Event.Channel.NOTE_5, Keyboard.KEY_J);
-            keyboard_map_7K.put(Event.Channel.NOTE_6, Keyboard.KEY_K);
-            keyboard_map_7K.put(Event.Channel.NOTE_7, Keyboard.KEY_L);
-            keyboard_map_7K.put(Event.Channel.NOTE_SC, Keyboard.KEY_LSHIFT);
+            keyboard_map_7K.put(Event.Channel.NOTE_1, Input.Keys.S);
+            keyboard_map_7K.put(Event.Channel.NOTE_2, Input.Keys.D);
+            keyboard_map_7K.put(Event.Channel.NOTE_3, Input.Keys.F);
+            keyboard_map_7K.put(Event.Channel.NOTE_4, Input.Keys.SPACE);
+            keyboard_map_7K.put(Event.Channel.NOTE_5, Input.Keys.J);
+            keyboard_map_7K.put(Event.Channel.NOTE_6, Input.Keys.K);
+            keyboard_map_7K.put(Event.Channel.NOTE_7, Input.Keys.L);
+            keyboard_map_7K.put(Event.Channel.NOTE_SC, Input.Keys.SHIFT_LEFT);
             put("keyboard_map"+KeyboardType.K7.toString(), keyboard_map_7K);
 
             EnumMap<Event.Channel, Integer> keyboard_map_8K = new EnumMap<Event.Channel, Integer>(Event.Channel.class);
-            keyboard_map_8K.put(Event.Channel.NOTE_1, Keyboard.KEY_A);
-            keyboard_map_8K.put(Event.Channel.NOTE_2, Keyboard.KEY_S);
-            keyboard_map_8K.put(Event.Channel.NOTE_3, Keyboard.KEY_D);
-            keyboard_map_8K.put(Event.Channel.NOTE_4, Keyboard.KEY_F);
-            keyboard_map_8K.put(Event.Channel.NOTE_5, Keyboard.KEY_H);
-            keyboard_map_8K.put(Event.Channel.NOTE_6, Keyboard.KEY_J);
-            keyboard_map_8K.put(Event.Channel.NOTE_7, Keyboard.KEY_K);
-            keyboard_map_8K.put(Event.Channel.NOTE_SC, Keyboard.KEY_L);
+            keyboard_map_8K.put(Event.Channel.NOTE_1, Input.Keys.A);
+            keyboard_map_8K.put(Event.Channel.NOTE_2, Input.Keys.S);
+            keyboard_map_8K.put(Event.Channel.NOTE_3, Input.Keys.D);
+            keyboard_map_8K.put(Event.Channel.NOTE_4, Input.Keys.F);
+            keyboard_map_8K.put(Event.Channel.NOTE_5, Input.Keys.H);
+            keyboard_map_8K.put(Event.Channel.NOTE_6, Input.Keys.J);
+            keyboard_map_8K.put(Event.Channel.NOTE_7, Input.Keys.K);
+            keyboard_map_8K.put(Event.Channel.NOTE_SC, Input.Keys.L);
             put("keyboard_map"+KeyboardType.K8.toString(), keyboard_map_8K);
 
         } else {           
