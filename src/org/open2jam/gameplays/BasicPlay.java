@@ -16,6 +16,7 @@ import org.open2jam.screen2d.Actors.EGroup;
 import org.open2jam.entities.Entity;
 import org.open2jam.parsers.Chart;
 import org.open2jam.parsers.Event;
+import org.open2jam.screen2d.Actors.ShaderGroup;
 import org.open2jam.screen2d.skin.Skin;
 import org.open2jam.screen2d.skin.Skin.entityID;
 
@@ -28,8 +29,8 @@ public class BasicPlay implements Gameplay {
     final Stage stage;
     final Skin skin;
     final EGroup player;
-    final EGroup notes;
-    final EGroup measures;
+    final ShaderGroup notes;
+    final ShaderGroup measures;
     final Chart chart;
     final GameOptions opt;
     
@@ -61,8 +62,8 @@ public class BasicPlay implements Gameplay {
 	this.start_time = time;
 	
 	player = (EGroup) stage.findActor("player");
-	notes = (EGroup) stage.findActor("notes");
-	measures = (EGroup) stage.findActor("measures");
+	notes = (ShaderGroup) stage.findActor("notes");
+	measures = (ShaderGroup) stage.findActor("measures");
 	
 	AUTOSOUND = opt.getAutosound();
 	

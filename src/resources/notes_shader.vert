@@ -7,7 +7,6 @@ uniform mat4 u_projTrans;
 varying vec4 v_color;
 varying vec2 v_texCoords;
 varying vec4 v_position;
-varying float v_alpha;
 
 void main()
 {
@@ -15,5 +14,4 @@ void main()
    v_texCoords = a_texCoord0;
    gl_Position =  u_projTrans * a_position;
    v_position = u_proj * a_position;
-   v_alpha = 1.0;
 }

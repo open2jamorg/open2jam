@@ -64,8 +64,6 @@ public class TestScreen extends BasicScreen {
 //	player.y -=300;
 //	player.rotation = 45;
 	
-//	((ShaderGroup)notes).setUniformi("u_hidden", 1);
-	
 	for(String s : skin.getEntityMap().keySet())
 	{
 	    if(skin.getEntityMap().get(s).name.toLowerCase().startsWith("layer")) continue;

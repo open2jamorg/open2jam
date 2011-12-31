@@ -98,6 +98,9 @@ public class O2JamPlay extends BasicPlay {
 	
 	speed = opt.getHiSpeed();
 	
+	notes.setVisibility(opt.getVisibilityModifier());
+	notes.setVisibilityPoints(0.1f, 0f, -0.2f, -0.3f);
+	
 	return true;
     }
 

@@ -6,9 +6,9 @@ package org.open2jam.screen2d.Actors;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
+import org.open2jam.GameOptions.VisibilityMod;
 
 /**
  *
@@ -16,14 +16,19 @@ import java.util.Map.Entry;
  */
 public class ShaderGroup extends EGroup {
     
+    /** The start of the visible part in gl viewport **/
+    private static final float VIEWPORT_START = 0.6f;
+    /** The end of the visible part in gl viewport **/
+    private static final float VIEWPORT_END = -1f;    
+    
     ShaderProgram shader = null;
     
-    Map<String, Integer> uniformi;
+    VisibilityMod visibility = VisibilityMod.None;
+    Vector2 hidden_part, sudden_part;
 
     public ShaderGroup(String name) {
 	super(name);
-	
-	uniformi = new HashMap<String, Integer>();
+	hidden_part = sudden_part = new Vector2(VIEWPORT_START, VIEWPORT_END);
     }
 
     public void createShader (String vertex, String frag) {
@@ -34,9 +39,20 @@ public class ShaderGroup extends EGroup {
 	if (shader.isCompiled() == false) throw new IllegalArgumentException("couldn't compile shader: " + shader.getLog());
     }
     
-    public void setUniformi(String name, int value)
+    public void setVisibility(VisibilityMod v)
     {
-	uniformi.put(name, value);
+	visibility = v;
+    }
+    
+    public void setVisibilityPoints(float p1, float p2, float p3, float p4)
+    {
+	p1 = MathUtils.clamp(p1, -1, 1);
+	p2 = MathUtils.clamp(p2, -1, 1);
+	p3 = MathUtils.clamp(p3, -1, 1);
+	p4 = MathUtils.clamp(p4, -1, 1);
+	
+	hidden_part = new Vector2(p1, p2);
+	sudden_part = new Vector2(p3, p4);
     }
 
     @Override
@@ -49,8 +65,9 @@ public class ShaderGroup extends EGroup {
 	batch.end();
 	batch.setShader(shader);
 	batch.begin();
-	for(Entry e : uniformi.entrySet())
-	    shader.setUniformi((String)e.getKey(), (Integer)e.getValue());
+        shader.setUniformi("u_visibility", visibility.ordinal());
+	shader.setUniformf("u_v_points", hidden_part.x, hidden_part.y, sudden_part.x, sudden_part.y);
+	shader.setUniformf("u_cut_points", VIEWPORT_START, VIEWPORT_END);
 	drawChildren(batch, parentAlpha);
 	batch.end();
 	batch.setShader(null);
