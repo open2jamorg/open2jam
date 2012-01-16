@@ -233,18 +233,36 @@ class OJNParser
                     pan /= 8f; //TODO or maybe 7f? (15-8) / 8 = 7 / 8 = 0.875 and it should be 1, right?
 		    
                     value--; // make zero-based ( zero was the "ignore" value )
-                    if(type == 0){
-                        event_list.add(new Event(channel,measure,position,value,Event.Flag.NONE,volume, pan));
-                    }
-                    else if(type == 2){
-                        event_list.add(new Event(channel,measure,position,value,Event.Flag.HOLD,volume, pan));
-                    }
-                    else if(type == 3){
-                        event_list.add(new Event(channel,measure,position,value,Event.Flag.RELEASE,volume, pan));
-                    }
-                    else if(type == 4){ // M### auto-play
-                        event_list.add(new Event(channel,measure,position,1000+value,Event.Flag.NONE,volume, pan));
-                    }
+		    
+		    //thanks to keigen-shu
+		    type %= 8;
+		    switch(type)
+		    {
+			case 0:
+			    event_list.add(new Event(channel,measure,position,value,Event.Flag.NONE,volume, pan));
+			break;
+			case 1:
+			    //Unused (#W Normal displayed in NoteTool)
+			break;
+			case 2:
+			    event_list.add(new Event(channel,measure,position,value,Event.Flag.HOLD,volume, pan));
+			break;
+			case 3:
+			    event_list.add(new Event(channel,measure,position,value,Event.Flag.RELEASE,volume, pan));
+			break;
+			case 4:
+			    event_list.add(new Event(channel,measure,position,1000+value,Event.Flag.NONE,volume, pan));
+			break;
+			case 5:
+			    //Unused (#M Hold displayed in NoteTool. Does not link with 0x06.)
+			break;
+			case 6:
+			    event_list.add(new Event(channel,measure,position,1000+value,Event.Flag.HOLD,volume, pan));
+			break;
+			case 7:
+			    event_list.add(new Event(channel,measure,position,1000+value,Event.Flag.RELEASE,volume, pan));
+			break;
+		    }
                 }
             }
         }
