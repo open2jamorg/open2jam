@@ -233,8 +233,9 @@ class OJNParser
                     pan /= 8f; //TODO or maybe 7f? (15-8) / 8 = 7 / 8 = 0.875 and it should be 1, right?
 		    
                     value--; // make zero-based ( zero was the "ignore" value )
-		    
-		    //thanks to keigen-shu
+		    	    
+		    // A lot of fixes here are done thanks to keigen shu. He's stealing my protagonism D:
+		    Event.Flag f;
 		    type %= 8;
 		    switch(type)
 		    {
@@ -245,9 +246,13 @@ class OJNParser
 			    //Unused (#W Normal displayed in NoteTool)
 			break;
 			case 2:
-			    event_list.add(new Event(channel,measure,position,value,Event.Flag.HOLD,volume, pan));
+			    //fix for autoplay longnotes, convert them to normal notes (it doesn't matter but... still xD)
+			    f = channel == Event.Channel.AUTO_PLAY ? Event.Flag.NONE : Event.Flag.HOLD;
+			    event_list.add(new Event(channel,measure,position,value,f,volume, pan));
 			break;
 			case 3:
+			    //Skip if autoplay
+			    if(channel == Event.Channel.AUTO_PLAY) break;
 			    event_list.add(new Event(channel,measure,position,value,Event.Flag.RELEASE,volume, pan));
 			break;
 			case 4:
@@ -257,9 +262,13 @@ class OJNParser
 			    //Unused (#M Hold displayed in NoteTool. Does not link with 0x06.)
 			break;
 			case 6:
-			    event_list.add(new Event(channel,measure,position,1000+value,Event.Flag.HOLD,volume, pan));
+			    //fix for autoplay longnotes, convert them to normal notes (it doesn't matter but... still xD)
+			    f = channel == Event.Channel.AUTO_PLAY ? Event.Flag.NONE : Event.Flag.HOLD;
+			    event_list.add(new Event(channel,measure,position,1000+value,f,volume, pan));
 			break;
 			case 7:
+			    //Skip if autoplay
+			    if(channel == Event.Channel.AUTO_PLAY) break;
 			    event_list.add(new Event(channel,measure,position,1000+value,Event.Flag.RELEASE,volume, pan));
 			break;
 		    }
