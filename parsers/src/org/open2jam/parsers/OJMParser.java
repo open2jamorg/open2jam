@@ -145,10 +145,13 @@ class OJMParser
             byte[] sample_data = new byte[sample_size];
             buffer.get(sample_data);
 
-            if(encryption_flag == 16)nami_xor(sample_data, mask_nami);
-	    else if(encryption_flag == 32)nami_xor(sample_data, mask_0412);
-            else if(encryption_flag == 0); // let it pass
-            else if(encryption_flag < 16)Logger.global.log(Level.WARNING, "Unknown encryption flag({0}) !", encryption_flag);
+	    switch(encryption_flag)
+	    {
+		case 0:  break; //Let it pass
+		case 16: M30_xor(sample_data, mask_nami); break;
+		case 32: M30_xor(sample_data, mask_0412); break;
+		default: Logger.global.log(Level.WARNING, "Unknown encryption flag({0}) !", encryption_flag);
+	    }
 
             AudioData audioData = AudioData.create(new OggInputStream(new ByteArrayInputStream(sample_data)));
             int value = ref;
@@ -164,7 +167,7 @@ class OJMParser
         return samples;
     }
 
-    private static void nami_xor(byte[] array, byte[] mask)
+    private static void M30_xor(byte[] array, byte[] mask)
     {
         for(int i=0;i+3<array.length;i+=4)
         {
@@ -225,7 +228,7 @@ class OJMParser
            if(decrypt)
            {
                buf = rearrange(buf);
-               buf = acc_xor(buf);
+               buf = OMC_xor(buf);
            }
 
            buffer = ByteBuffer.allocateDirect(buf.length);
@@ -290,7 +293,7 @@ class OJMParser
     /** some weird encryption */
     private static int acc_keybyte = 0xFF;
     private static int acc_counter = 0;
-    private static byte[] acc_xor(byte[] buf)
+    private static byte[] OMC_xor(byte[] buf)
     {
         int temp;
         byte this_byte;

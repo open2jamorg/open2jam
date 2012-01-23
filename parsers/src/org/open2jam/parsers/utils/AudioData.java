@@ -1,7 +1,6 @@
 package org.open2jam.parsers.utils;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -50,7 +49,7 @@ public class AudioData {
     }
     
     /**
-     * Creates a new AudioData from a uncompressed ByteBuffer
+     * Creates a new AudioData from an uncompressed ByteBuffer
      * @param buffer The ByteBuffer
      * @param bits The numbers of bits per channel
      * @param channels The number of channels
