@@ -21,7 +21,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableRowSorter;
 
-import org.open2jam.parser.Chart;
+import org.open2jam.parsers.Chart;
 import org.open2jam.render.TimeRender;
 
 import org.lwjgl.LWJGLException;
@@ -35,7 +35,7 @@ import org.open2jam.GameOptions.VisibilityMod;
 import org.open2jam.gui.ChartListTableModel;
 import org.open2jam.gui.ChartTableModel;
 import org.open2jam.gui.ChartModelLoader;
-import org.open2jam.parser.ChartList;
+import org.open2jam.parsers.ChartList;
 import org.open2jam.render.DistanceRender;
 import org.open2jam.render.Render;
 

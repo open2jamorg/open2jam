@@ -1,20 +1,23 @@
-package org.open2jam.parser;
+package org.open2jam.parsers;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import org.open2jam.util.Logger;
 import javax.imageio.ImageIO;
+import org.open2jam.parsers.utils.AudioData;
+import org.open2jam.parsers.utils.Logger;
 
-public class PTChart extends Chart
+public class BMSChart extends Chart
 {
-    int eztr_start = 0;
+    int lntype;
+    boolean o2mania_style;
 
     File source;
+    int lnobj;
+
     public File getSource() { return source; }
 
     int level;
@@ -38,11 +41,10 @@ public class PTChart extends Chart
     public String getGenre() {
         return genre;
     }
-    
+
     Map<String, Integer> sample_files;
-    File sample_file;
-    public Map<Integer,Integer> getSamples() {
-        return new HashMap<Integer, Integer>();
+    public Map<Integer,AudioData> getSamples() {
+        return BMSParser.getSamples(this);
     }
 
     double bpm = 130;
@@ -58,7 +60,7 @@ public class PTChart extends Chart
 
     File image_cover;
     public BufferedImage getCover() {
-        if(image_cover == null)return null;
+        if(image_cover == null) return getNoImage();
         try {
             return ImageIO.read(image_cover);
         } catch (IOException ex) {
@@ -71,6 +73,6 @@ public class PTChart extends Chart
 
 
     public List<Event> getEvents() {
-        return PTParser.parseChart(this);
+        return BMSParser.parseChart(this);
     }
 }

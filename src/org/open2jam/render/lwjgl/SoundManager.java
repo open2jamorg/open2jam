@@ -1,22 +1,14 @@
 package org.open2jam.render.lwjgl;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import org.open2jam.util.Logger;
-import java.net.URL;
-
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
-import org.lwjgl.util.WaveData;
-
-import org.open2jam.util.OggInputStream;
+import org.open2jam.parsers.utils.AudioData;
+import org.open2jam.util.Logger;
 
 /**
   this class is the bridge between OpenAL and the app.
@@ -113,82 +105,28 @@ public class SoundManager
     {
         AL10.alSourceStop(source);
     }
-
-    private static final byte[] tmp_buffer = new byte[1024];
-    public static int newBuffer(OggInputStream in)
+    
+    public static int newBuffer(AudioData data)
     {
-        IntBuffer buffer = BufferUtils.createIntBuffer(1);
-        AL10.alGenBuffers(buffer);
-
-        try{
-            org.lwjgl.openal.Util.checkALError();
-
-            boolean mono = (in.getFormat() == OggInputStream.FORMAT_MONO16);
-            int format = (mono ? AL10.AL_FORMAT_MONO16 : AL10.AL_FORMAT_STEREO16);
-
-            ByteArrayOutputStream out = new ByteArrayOutputStream(tmp_buffer.length);
-
-            while(true) {
-                    int r = in.read(tmp_buffer);
-                    if (r == -1) break;
-                    out.write(tmp_buffer,0,r);
-            }
-            ByteBuffer b = ByteBuffer.allocateDirect(out.size());
-            b.put(out.toByteArray());
-            b.flip();
-
-            AL10.alBufferData(buffer.get(0), format, b, in.getRate());
-
-            org.lwjgl.openal.Util.checkALError();
-
-        } catch(IOException e) {
-            Logger.global.log(Level.SEVERE, "IO Exception on OggInputStream : {0}", e.getMessage());
-        }
-
-        sample_buffer.add(buffer.get(0));
-        return buffer.get(0);
-    }
-
-    public static int newBuffer(ByteBuffer buffer, int bits, int channels, int sample_rate)
-    {
-        IntBuffer id_buf = BufferUtils.createIntBuffer(1);
+	IntBuffer id_buf = BufferUtils.createIntBuffer(1);
         AL10.alGenBuffers(id_buf);
 
         org.lwjgl.openal.Util.checkALError();
+	int format = -1;
+	switch(data.format)
+	{
+	    case AudioData.FORMAT_MONO8: format = AL10.AL_FORMAT_MONO8; break;
+	    case AudioData.FORMAT_MONO16: format = AL10.AL_FORMAT_MONO16; break;
+	    case AudioData.FORMAT_STEREO8: format = AL10.AL_FORMAT_STEREO8; break;
+	    case AudioData.FORMAT_STEREO16: format = AL10.AL_FORMAT_STEREO16; break;
+	}
 
-        int format;
-        if(channels == 1){
-            if(bits == 8)format = AL10.AL_FORMAT_MONO8;
-            else format = AL10.AL_FORMAT_MONO16;
-        }else {
-            if(bits == 8)format = AL10.AL_FORMAT_STEREO8;
-            else format = AL10.AL_FORMAT_STEREO16;
-        }
-
-        AL10.alBufferData(id_buf.get(0), format, buffer, sample_rate);
+        AL10.alBufferData(id_buf.get(0), format, data.data, data.samplerate);
 
         org.lwjgl.openal.Util.checkALError();
 
         sample_buffer.add(id_buf.get(0));
-        return id_buf.get(0);
-    }
-
-    public static int newBuffer(URL wavfile)
-    {
-        IntBuffer id_buf = BufferUtils.createIntBuffer(1);
-        AL10.alGenBuffers(id_buf);
-
-        org.lwjgl.openal.Util.checkALError();
-
-        WaveData waveFile = WaveData.create(wavfile);
-
-        AL10.alBufferData(id_buf.get(0), waveFile.format, waveFile.data, waveFile.samplerate);
-        waveFile.dispose();
-
-        org.lwjgl.openal.Util.checkALError();
-
-        sample_buffer.add(id_buf.get(0));
-        return id_buf.get(0);
+        return id_buf.get(0);	
     }
 
     public static void killData()

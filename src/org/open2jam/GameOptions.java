@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import org.lwjgl.opengl.DisplayMode;
-import org.open2jam.parser.Event;
+import org.open2jam.parsers.Event;
 
 /**
  * This class will store game options such as hi-speed and autoplay.

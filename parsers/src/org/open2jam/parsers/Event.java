@@ -1,4 +1,4 @@
-package org.open2jam.parser;
+package org.open2jam.parsers;
 
 public class Event implements Comparable<Event>
 {

@@ -1,4 +1,4 @@
-package org.open2jam.parser;
+package org.open2jam.parsers;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -9,9 +9,10 @@ import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import org.open2jam.util.Logger;
 import javax.imageio.ImageIO;
-import org.open2jam.util.ByteBufferInputStream;
+import org.open2jam.parsers.utils.AudioData;
+import org.open2jam.parsers.utils.ByteBufferInputStream;
+import org.open2jam.parsers.utils.Logger;
 
 public class OJNChart extends Chart
 {
@@ -40,7 +41,7 @@ public class OJNChart extends Chart
     public String getNoter(){ return noter; }
 
     File sample_file;
-    public Map<Integer,Integer> getSamples(){ return OJMParser.parseFile(sample_file); }
+    public Map<Integer, AudioData> getSamples(){ return OJMParser.parseFile(sample_file); }
 
     /** the bpm as specified is the header */
     double bpm;

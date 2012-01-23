@@ -4,39 +4,24 @@ package org.open2jam.render;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.Map.Entry;
+import java.util.*;
 import java.util.logging.Level;
-import org.open2jam.util.Logger;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
-
 import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.Config;
 import org.open2jam.GameOptions;
-import org.open2jam.parser.Event;
-import org.open2jam.parser.Chart;
-import org.open2jam.render.entities.BarEntity;
-import org.open2jam.render.entities.ComboCounterEntity;
-import org.open2jam.render.entities.CompositeEntity;
-import org.open2jam.render.entities.Entity;
-import org.open2jam.render.entities.LongNoteEntity;
-import org.open2jam.render.entities.MeasureEntity;
-import org.open2jam.render.entities.NoteEntity;
-import org.open2jam.render.entities.NumberEntity;
-import org.open2jam.render.entities.SampleEntity;
-import org.open2jam.render.entities.TimeEntity;
+import org.open2jam.parsers.Chart;
+import org.open2jam.parsers.Event;
+import org.open2jam.parsers.utils.AudioData;
+import org.open2jam.render.entities.*;
 import org.open2jam.render.lwjgl.SoundManager;
 import org.open2jam.render.lwjgl.TrueTypeFont;
 import org.open2jam.util.Interval;
 import org.open2jam.util.IntervalTree;
+import org.open2jam.util.Logger;
 import org.open2jam.util.SystemTimer;
 
 /**
@@ -416,8 +401,13 @@ public abstract class Render implements GameWindowCallback
         source_queue_iterator = source_queue.iterator();
 
         // get the chart sound samples
-        samples = chart.getSamples();
-
+	samples = new HashMap<Integer, Integer>();
+        for(Entry<Integer, AudioData> entry : chart.getSamples().entrySet())
+	{
+	    samples.put(entry.getKey(), SoundManager.newBuffer(entry.getValue()));
+	    entry.getValue().dispose();
+	}
+	
         trueTypeFont = new TrueTypeFont(new Font("Tahoma", Font.BOLD, 14), false);
         
         //clean up
@@ -1193,6 +1183,7 @@ public abstract class Render implements GameWindowCallback
     @Override
     public void windowClosed() {
         SoundManager.killData();
+	System.gc();
     }
     
     private double clamp(double value, double min, double max)

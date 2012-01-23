@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 import org.open2jam.util.Logger;
-import org.open2jam.parser.Event;
+import org.open2jam.parsers.Event;
 import org.open2jam.render.entities.AnimatedEntity;
 import org.open2jam.render.entities.ComboCounterEntity;
 import org.open2jam.render.entities.CompositeEntity;

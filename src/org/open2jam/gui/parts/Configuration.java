@@ -11,7 +11,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.open2jam.Config;
-import org.open2jam.parser.Event;
+import org.open2jam.parsers.Event;
 import org.open2jam.render.lwjgl.TrueTypeFont;
 
 /**

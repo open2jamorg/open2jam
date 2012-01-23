@@ -1,34 +1,16 @@
-package org.open2jam.parser;
+package org.open2jam.parsers;
 
+import java.io.*;
+import java.util.*;
 import java.util.logging.Level;
-import org.open2jam.util.OggInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileReader;
-import java.util.StringTokenizer;
-import java.util.NoSuchElementException;
-import java.io.FileNotFoundException;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import org.open2jam.util.Logger;
-import org.open2jam.render.lwjgl.SoundManager;
+import javazoom.jl.decoder.Bitstream;
+import org.open2jam.parsers.utils.AudioData;
+import org.open2jam.parsers.utils.Logger;
+import org.open2jam.parsers.utils.OggInputStream;
+
 
 class SMParser
 {
-
-    private static final FileFilter sm_filter = new FileFilter(){
-        public boolean accept(File f){
-            String s = f.getName().toLowerCase();
-            return (!f.isDirectory()) && (s.endsWith(".sm"));
-        }
-    };
-
     public static boolean canRead(File f)
     {
 	return f.getName().toLowerCase().endsWith(".sm");
@@ -301,34 +283,31 @@ class SMParser
         return event_list;
     }
 
-    public static HashMap<Integer,Integer> loadSamples(SMChart h)
+    public static HashMap<Integer, AudioData> loadSamples(SMChart h)
     {
-        HashMap<Integer,Integer> samples = new HashMap<Integer,Integer>();
+        HashMap<Integer, AudioData> samples = new HashMap<Integer, AudioData>();
         for(File f : h.source.getParentFile().listFiles())
         {
             try {
-                String s = f.getName();
-                String st = s;
-                int idx = s.lastIndexOf('.');
+                String name = f.getName();
+                String ext = name;
+                int idx = name.lastIndexOf('.');
                 if (idx > 0) {
-                    s = s.substring(0, idx);
-                    st = st.substring(idx).toLowerCase();
+                    name = name.substring(0, idx);
+                    ext = ext.substring(idx).toLowerCase();
                 }
-                Integer id = h.sample_files.get(s);
+                Integer id = h.sample_files.get(name);
                 if (id == null) {
                     continue;
                 }
-                int buffer = 0;
-                if      (st.equals(".wav")) buffer = SoundManager.newBuffer(f.toURI().toURL());
-                else if (st.equals(".ogg")) buffer = SoundManager.newBuffer(new OggInputStream(new FileInputStream(f)));
-                else if (st.equals(".mp3")) {
-		    Logger.global.log(Level.WARNING, "MP3 files [{0}] aren't supported", f.getName());
-		    continue;
-		}
+                AudioData audioData;
+                if      (ext.equals(".wav")) audioData = AudioData.create(new FileInputStream(f));
+                else if (ext.equals(".ogg")) audioData = AudioData.create(new OggInputStream(new FileInputStream(f)));
+                else if (ext.equals(".mp3")) audioData = AudioData.create(new Bitstream(new FileInputStream(f)));
 		else { //not a music file so continue
 		    continue;
 		} 
-                samples.put(id, buffer);
+                samples.put(id, audioData);
             } catch (IOException ex) {
                 Logger.global.log(Level.SEVERE, null, ex);
             }

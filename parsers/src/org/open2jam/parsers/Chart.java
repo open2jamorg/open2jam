@@ -1,41 +1,54 @@
-package org.open2jam.parser;
+package org.open2jam.parsers;
 
-import java.io.File;
-import java.util.List;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
-import org.open2jam.util.Logger;
-/** this encapsulates a song chart.
-*** in case there's more than one rank(difficulty)
-*** for the song, the rank integer follows this pattern:
-*** 0 - easy, 1 - normal, 2 - hard, 3 - very hard, ... 
-*** there's no upper bound.
-**/
+import org.open2jam.parsers.utils.AudioData;
+import org.open2jam.parsers.utils.Logger;
+
+/** 
+* this encapsulates a song chart.
+* in case there's more than one rank(difficulty)
+* for the song, the rank integer follows this pattern:
+* 0 - easy, 1 - normal, 2 - hard, 3 - very hard, ... 
+* there's no upper bound.
+*/
 public abstract class Chart implements Comparable<Chart>, java.io.Serializable
 {
     /** the File object to the source file of this header */
     public abstract File getSource();
 
-    /** an integer representing difficulty.
-    *** we _should_ have some standard here
-    *** maybe we could use o2jam as the default
-    *** and normalize the others to this rule
-    **/
+    /** 
+    * an integer representing difficulty.
+    * we _should_ have some standard here
+    * maybe we could use o2jam as the default
+    * and normalize the others to this rule
+    */
     public abstract int getLevel();
 
-    /** the number of keys in this chart */
+    /** The number of keys in this chart */
     public abstract int getKeys();
 
+    /** The title of the song */
     public abstract String getTitle();
+    
+    /** The artist of the song */
     public abstract String getArtist();
+    
+    /** The genre of the song */
     public abstract String getGenre();
+    
+    /** The noter of the song (Unused?) */
     public abstract String getNoter();
-    public abstract Map<Integer,Integer> getSamples();
+    
+    /** The samples of the song */
+    public abstract Map<Integer, AudioData> getSamples();
 
     /** a bpm representing the whole song.
     *** doesn't need to be exact, just for info */

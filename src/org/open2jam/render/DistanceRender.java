@@ -7,8 +7,8 @@ import org.open2jam.GameOptions;
 
 import org.open2jam.util.SystemTimer;
 
-import org.open2jam.parser.Chart;
-import org.open2jam.parser.Event;
+import org.open2jam.parsers.Chart;
+import org.open2jam.parsers.Event;
 import org.open2jam.render.entities.Entity;
 import org.open2jam.render.entities.LongNoteEntity;
 import org.open2jam.render.entities.NoteEntity;

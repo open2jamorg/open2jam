@@ -1,4 +1,4 @@
-package org.open2jam.parser;
+package org.open2jam.parsers;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -6,16 +6,15 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import org.open2jam.util.Logger;
 import javax.imageio.ImageIO;
+import org.open2jam.parsers.utils.AudioData;
+import org.open2jam.parsers.utils.Logger;
 
-public class BMSChart extends Chart
+public class SMChart extends Chart
 {
-    int lntype;
-    boolean o2mania_style;
 
     File source;
-    int lnobj;
+
 
     public File getSource() { return source; }
 
@@ -42,10 +41,14 @@ public class BMSChart extends Chart
     }
 
     Map<String, Integer> sample_files;
-    public Map<Integer,Integer> getSamples() {
-        return BMSParser.loadSamples(this);
+    public Map<Integer, AudioData> getSamples() {
+        return SMParser.loadSamples(this);
     }
 
+    public void writeSamples(File path) {
+	//Nothin yet
+    }
+    
     double bpm = 130;
     public double getBPM() {
         return bpm;
@@ -67,11 +70,12 @@ public class BMSChart extends Chart
         }
         return null;
     }
-
-    public String getNoter() { return ""; }
+    
+    String noter;
+    public String getNoter() { return noter; }
 
 
     public List<Event> getEvents() {
-        return BMSParser.parseChart(this);
+        return SMParser.parseChart(this);
     }
 }

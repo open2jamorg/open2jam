@@ -1,17 +1,17 @@
-package org.open2jam.parser;
+package org.open2jam.parsers;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-import org.open2jam.util.Logger;
-import org.open2jam.util.CharsetDetector;
+import org.open2jam.parsers.utils.CharsetDetector;
+import org.open2jam.parsers.utils.Logger;
 
 class OJNParser
 {
@@ -153,7 +153,7 @@ class OJNParser
         list.add(hard);
 
         list.source_file = file;
-        buffer = null;
+	buffer.clear();
 
         try {
             f.close();
@@ -167,15 +167,15 @@ class OJNParser
     {
         ArrayList<Event> event_list = new ArrayList<Event>();
         try{
-                RandomAccessFile f = new RandomAccessFile(chart.getSource().getAbsolutePath(), "r");
+	    RandomAccessFile f = new RandomAccessFile(chart.getSource().getAbsolutePath(), "r");
 
-                int start = chart.note_offset;
-                int end = chart.note_offset_end;
+	    int start = chart.note_offset;
+	    int end = chart.note_offset_end;
 
-                ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, start, end - start);
-                buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
-                readNoteBlock(event_list, buffer);
-                f.close();
+	    ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, start, end - start);
+	    buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
+	    readNoteBlock(event_list, buffer);
+	    f.close();
         }catch(java.io.FileNotFoundException e){
             Logger.global.log(Level.WARNING, "File {0} not found !!", chart.getSource().getName());
         } catch (IOException e){
@@ -278,7 +278,7 @@ class OJNParser
         Collections.sort(event_list);
     }
 
-    private static String bytes2string(byte[] ch)
+    public static String bytes2string(byte[] ch)
     {
         int i = 0;
         while(i<ch.length && ch[i]!=0)i++; // find \0 terminator
