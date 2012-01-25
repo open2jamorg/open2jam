@@ -1,0 +1,705 @@
+﻿<MusicInfo>
+
+  <Music id="0001" path="C0011" title="Digital Love(Beginner)" price_type="0" price_gold="0" campaign_only="0" genre="electronic" genre_sub="Electronica" bpm="128" playtime="02:15" Composer="Groovit" Pattern="Groovit" icon_image ="C0001_icon.jpg" small_image="C0001_small.jpg" big_image="C0001_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="1" key="5" note="112" price_test="0" price_buy="0" xnt_file="Digital_Love_5KE.xnt" xne_file="Digital_Love_5KE.xne"/>
+    <Note difficult="easy" level="1" key="7" note="112" price_test="0" price_buy="0" xnt_file="Digital_Love_7KE.xnt" xne_file="Digital_Love_7KE.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0002" path="C0013" title="Passion(Beginner)" price_type="0" price_gold="0" campaign_only="0" genre="soft" genre_sub="Cute_pop" bpm="133" playtime="01:59" Composer="Groovit" Pattern="Groovit" icon_image ="C0002_icon.jpg" small_image="C0002_small.jpg" big_image="C0002_big.jpg" desc="Why not imagine our past experiences while enjoying this song?" >
+    <Note difficult="easy" level="1" key="5" note="108" price_test="0" price_buy="0" xnt_file="Passion_5KE.xnt" xne_file="Passion_5KE.xne"/>
+    <Note difficult="easy" level="1" key="7" note="108" price_test="0" price_buy="0" xnt_file="Passion_7KE.xnt" xne_file="Passion_7KE.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0003" path="C0016" title="Time Is Now(Beginner)" price_type="0" price_gold="0" campaign_only="0" genre="electronic" genre_sub="Techno" bpm="140" playtime="02:15" Composer="Zetto" Pattern="Zetto" icon_image ="C0003_icon.jpg" small_image="C0003_small.jpg" big_image="C0003_big.jpg" desc="Our fast paced daily lives and the repetitiveness of our lives" >
+    <Note difficult="easy" level="1" key="5" note="136" price_test="0" price_buy="0" xnt_file="Time_Is_Now_5KE.xnt" xne_file="Time_Is_Now_5KE.xne"/>
+    <Note difficult="easy" level="1" key="7" note="136" price_test="0" price_buy="0" xnt_file="Time_Is_Now_7KE.xnt" xne_file="Time_Is_Now_7KE.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0004" path="C0028" title="Two Step(Beginner)" price_type="0" price_gold="0" campaign_only="0" genre="groove" genre_sub="Hip_hop" bpm="136" playtime="02:26" Composer="RimShot" Pattern="SHIN" icon_image ="C0004_icon.jpg" small_image="C0004_small.jpg" big_image="C0004_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="1" key="5" note="138" price_test="0" price_buy="0" xnt_file="2step_5KE.xnt" xne_file="2step_5KE.xne"/>
+    <Note difficult="easy" level="1" key="7" note="138" price_test="0" price_buy="0" xnt_file="2step_7KE.xnt" xne_file="2step_7KE.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0005" path="C0029" title="Get Out(Beginner)" price_type="0" price_gold="0" campaign_only="0" genre="heavy" genre_sub="Alternative" bpm="152" playtime="02:41" Composer="BellaMafia" Pattern="SHIN" icon_image ="C0005_icon.jpg" small_image="C0005_small.jpg" big_image="C0005_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="1" key="5" note="210" price_test="0" price_buy="0" xnt_file="out_5KE.xnt" xne_file="out_5KE.xne"/>
+    <Note difficult="easy" level="1" key="7" note="210" price_test="0" price_buy="0" xnt_file="out_7KE.xnt" xne_file="out_7KE.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0006" path="C0036" title="Jump Around(Beginner)" price_type="0" price_gold="0" campaign_only="0" genre="heavy" genre_sub="Pop Punk" bpm="102" playtime="02:11" Composer="Gogoboys" Pattern="Zetto" icon_image ="C0006_icon.jpg" small_image="C0006_small.jpg" big_image="C0006_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="1" key="5" note="122" price_test="0" price_buy="0" xnt_file="Jump_Around_5KE.xnt" xne_file="Jump_Around_5KE.xne"/>
+    <Note difficult="easy" level="1" key="7" note="122" price_test="0" price_buy="0" xnt_file="Jump_Around_7KE.xnt" xne_file="Jump_Around_7KE.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0007" path="C0037" title="Instrumental(Beginner)" price_type="0" price_gold="0" campaign_only="0" genre="heavy" genre_sub="Rock" bpm="154" playtime="01:37" Composer="Zygot" Pattern="T-Goon" icon_image ="C0007_icon.jpg" small_image="C0007_small.jpg" big_image="C0007_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="1" key="5" note="90" price_test="0" price_buy="0" xnt_file="Instrumental_5KE.xnt" xne_file="Instrumental_5KE.xne"/>
+    <Note difficult="easy" level="1" key="7" note="90" price_test="0" price_buy="0" xnt_file="Instrumental_7KE.xnt" xne_file="Instrumental_7KE.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0008" path="C0059" title="Teletonic Girl(Beginner)" price_type="0" price_gold="0" campaign_only="0" genre="electronic" genre_sub="Electronica" bpm="127" playtime="02:17" Composer="Brian.k" Pattern="T-Goon" icon_image ="C0008_icon.jpg" small_image="C0008_small.jpg" big_image="C0008_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="1" key="5" note="129" price_test="0" price_buy="0" xnt_file="TeletonicGirl_5KE.xnt" xne_file="TeletonicGirl_5KE.xne"/>
+    <Note difficult="easy" level="1" key="7" note="129" price_test="0" price_buy="0" xnt_file="TeletonicGirl_7KE.xnt" xne_file="TeletonicGirl_7KE.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0009" path="C0060" title="Krazy Rain(Beginner)" price_type="0" price_gold="0" campaign_only="0" genre="soft" genre_sub="Pop" bpm="126" playtime="03:03" Composer="3Views" Pattern="Zetto" icon_image ="C0009_icon.jpg" small_image="C0009_small.jpg" big_image="C0009_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="1" key="5" note="152" price_test="0" price_buy="0" xnt_file="KrazyRain_5KE.xnt" xne_file="KrazyRain_5KE.xne"/>
+    <Note difficult="easy" level="1" key="7" note="152" price_test="0" price_buy="0" xnt_file="KrazyRain_7KE.xnt" xne_file="KrazyRain_7KE.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0010" path="C0062" title="Cake House(Beginner)" price_type="0" price_gold="0" campaign_only="0" genre="groove" genre_sub="Dance" bpm="130" playtime="02:02" Composer="Tensi-Love" Pattern="Zetto" icon_image ="C0010_icon.jpg" small_image="C0010_small.jpg" big_image="C0010_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="1" key="5" note="123" price_test="0" price_buy="0" xnt_file="Cakehouse_5KE.xnt" xne_file="Cakehouse_5KE.xne"/>
+    <Note difficult="easy" level="1" key="7" note="123" price_test="0" price_buy="0" xnt_file="Cakehouse_7KE.xnt" xne_file="Cakehouse_7KE.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0011" title="Digital Love" price_type="0" price_gold="0" campaign_only="0" genre="electronic" genre_sub="Electronica" bpm="128" playtime="02:15" Composer="Groovit" Pattern="Groovit" icon_image ="C0011_icon.jpg" small_image="C0001_small.jpg" big_image="C0001_big.jpg" desc="It is a reflection of a man and woman falling in love in our virtual worlds, how relationship blossom and die in instants." >
+    <Note difficult="easy" level="3" key="5" note="418" price_test="0" price_buy="0" xnt_file="Digital_Love_5E.xnt" xne_file="Digital_Love_5E.xne"/>
+    <Note difficult="normal" level="6" key="5" note="632" price_test="0" price_buy="0" xnt_file="Digital_Love_5N.xnt" xne_file="Digital_Love_5N.xne"/>
+    <Note difficult="hard" level="10" key="5" note="744" price_test="0" price_buy="0" xnt_file="Digital_Love_5H.xnt" xne_file="Digital_Love_5H.xne"/>
+    <Note difficult="easy" level="3" key="7" note="418" price_test="0" price_buy="0" xnt_file="Digital_Love_7E.xnt" xne_file="Digital_Love_7E.xne"/>
+    <Note difficult="normal" level="5" key="7" note="634" price_test="0" price_buy="0" xnt_file="Digital_Love_7N.xnt" xne_file="Digital_Love_7N.xne"/>
+    <Note difficult="hard" level="9" key="7" note="766" price_test="0" price_buy="0" xnt_file="Digital_Love_7H.xnt" xne_file="Digital_Love_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0012" title="Like This" price_type="0" price_gold="0" campaign_only="0" genre="Groove" genre_sub="HipHop" bpm="93" playtime="2:12" Composer="Zetto" Pattern="Zetto" icon_image ="C0012_icon.jpg" small_image="C0002_small.jpg" big_image="C0002_big.jpg" desc="Enjoy the Krazy Rain with music." >
+    <Note difficult="easy" level="3" key="5" note="314" price_test="0" price_buy="0" xnt_file="Like_This_5E.xnt" xne_file="Like_This_5E.xne"/>
+    <Note difficult="normal" level="5" key="5" note="430" price_test="0" price_buy="0" xnt_file="Like_This_5N.xnt" xne_file="Like_This_5N.xne"/>
+    <Note difficult="hard" level="9" key="5" note="574" price_test="0" price_buy="0" xnt_file="Like_This_5H.xnt" xne_file="Like_This_5H.xne"/>
+    <Note difficult="easy" level="2" key="7" note="314" price_test="0" price_buy="0" xnt_file="Like_This_7E.xnt" xne_file="Like_This_7E.xne"/>
+    <Note difficult="normal" level="4" key="7" note="433" price_test="0" price_buy="0" xnt_file="Like_This_7N.xnt" xne_file="Like_This_7N.xne"/>
+    <Note difficult="hard" level="5" key="7" note="574" price_test="0" price_buy="0" xnt_file="Like_This_7H.xnt" xne_file="Like_This_7N.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0013" title="Passion" price_type="0" price_gold="0" campaign_only="0" genre="soft" genre_sub="Cute_pop" bpm="133" playtime="01:59" Composer="Groovit" Pattern="Groovit" icon_image ="C0013_icon.jpg" small_image="C0013_small.jpg" big_image="C0013_big.jpg" desc="Why not imagine our past experiences while enjoying this song?" >
+    <Note difficult="easy" level="3" key="5" note="278" price_test="0" price_buy="0" xnt_file="Passion_5E.xnt" xne_file="Passion_5E.xne"/>
+    <Note difficult="normal" level="7" key="5" note="506" price_test="0" price_buy="0" xnt_file="Passion_5N.xnt" xne_file="Passion_5N.xne"/>
+    <Note difficult="hard" level="13" key="5" note="736" price_test="0" price_buy="0" xnt_file="Passion_5H.xnt" xne_file="Passion_5H.xne"/>
+    <Note difficult="easy" level="2" key="7" note="278" price_test="0" price_buy="0" xnt_file="Passion_7E.xnt" xne_file="Passion_7E.xne"/>
+    <Note difficult="normal" level="6" key="7" note="510" price_test="0" price_buy="0" xnt_file="Passion_7N.xnt" xne_file="Passion_7N.xne"/>
+    <Note difficult="hard" level="12" key="7" note="767" price_test="0" price_buy="0" xnt_file="Passion_7H.xnt" xne_file="Passion_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0014" title="Rage In My Heart" price_type="0" price_gold="0" campaign_only="0" genre="electronic" genre_sub="Trance" bpm="145" playtime="02:12" Composer="Groovit" Pattern="Groovit" icon_image ="C0014_icon.jpg" small_image="C0014_small.jpg" big_image="C0014_big.jpg" desc="Enjoy the Krazy Rain with music." >
+    <Note difficult="easy" level="3" key="5" note="324" price_test="0" price_buy="0" xnt_file="Rage_In_My_Heart_5E.xnt" xne_file="Rage_In_My_Heart_5E.xne"/>
+    <Note difficult="normal" level="6" key="5" note="657" price_test="0" price_buy="0" xnt_file="Rage_In_My_Heart_5N.xnt" xne_file="Rage_In_My_Heart_5N.xne"/>
+    <Note difficult="hard" level="12" key="5" note="871" price_test="0" price_buy="0" xnt_file="Rage_In_My_Heart_5H.xnt" xne_file="Rage_In_My_Heart_5H.xne"/>
+    <Note difficult="easy" level="2" key="7" note="336" price_test="0" price_buy="0" xnt_file="Rage_In_My_Heart_7E.xnt" xne_file="Rage_In_My_Heart_7E.xne"/>
+    <Note difficult="normal" level="5" key="7" note="657" price_test="0" price_buy="0" xnt_file="Rage_In_My_Heart_7N.xnt" xne_file="Rage_In_My_Heart_7N.xne"/>
+    <Note difficult="hard" level="11" key="7" note="878" price_test="0" price_buy="0" xnt_file="Rage_In_My_Heart_7H.xnt" xne_file="Rage_In_My_Heart_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0015" title="The Sense" price_type="0" price_gold="0" campaign_only="0" genre="electronic" genre_sub="Electronica" bpm="132" playtime="02:29" Composer="Zetto" Pattern="Zetto" icon_image ="C0015_icon.jpg" small_image="C0015_small.jpg" big_image="C0015_big.jpg" desc="Enjoy the Krazy Rain with music." >
+    <Note difficult="easy" level="3" key="5" note="373" price_test="0" price_buy="0" xnt_file="The_Sense_5E.xnt" xne_file="The_Sense_5E.xne"/>
+    <Note difficult="normal" level="6" key="5" note="528" price_test="0" price_buy="0" xnt_file="The_Sense_5N.xnt" xne_file="The_Sense_5N.xne"/>
+    <Note difficult="hard" level="11" key="5" note="688" price_test="0" price_buy="0" xnt_file="The_Sense_5H.xnt" xne_file="The_Sense_5H.xne"/>
+    <Note difficult="easy" level="3" key="7" note="373" price_test="0" price_buy="0" xnt_file="The_Sense_7E.xnt" xne_file="The_Sense_7E.xne"/>
+    <Note difficult="normal" level="6" key="7" note="532" price_test="0" price_buy="0" xnt_file="The_Sense_7N.xnt" xne_file="The_Sense_7N.xne"/>
+    <Note difficult="hard" level="12" key="7" note="889" price_test="0" price_buy="0" xnt_file="The_Sense_7H.xnt" xne_file="The_Sense_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0016" title="Time Is Now" price_type="0" price_gold="0" campaign_only="0" genre="electronic" genre_sub="Techno" bpm="140" playtime="02:15" Composer="Zetto" Pattern="Zetto" icon_image ="C0016_icon.jpg" small_image="C0016_small.jpg" big_image="C0016_big.jpg" desc="Our fast paced daily lives and the repetitiveness of our lives" >
+    <Note difficult="easy" level="3" key="5" note="288" price_test="0" price_buy="0" xnt_file="Time_Is_Now_5E.xnt" xne_file="Time_Is_Now_5E.xne"/>
+    <Note difficult="normal" level="6" key="5" note="508" price_test="0" price_buy="0" xnt_file="Time_Is_Now_5N.xnt" xne_file="Time_Is_Now_5N.xne"/>
+    <Note difficult="hard" level="9" key="5" note="656" price_test="0" price_buy="0" xnt_file="Time_Is_Now_5H.xnt" xne_file="Time_Is_Now_5H.xne"/>
+    <Note difficult="easy" level="3" key="7" note="289" price_test="0" price_buy="0" xnt_file="Time_Is_Now_7E.xnt" xne_file="Time_Is_Now_7E.xne"/>
+    <Note difficult="normal" level="5" key="7" note="509" price_test="0" price_buy="0" xnt_file="Time_Is_Now_7N.xnt" xne_file="Time_Is_Now_7N.xne"/>
+    <Note difficult="hard" level="9" key="7" note="664" price_test="0" price_buy="0" xnt_file="Time_Is_Now_7H.xnt" xne_file="Time_Is_Now_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+ <Music id="0017" title="Catslike" price_type="0" price_gold="0" campaign_only="0" genre="Acid" genre_sub="Acid Jazz" bpm="125" playtime="02:39" Composer="Groovit" Pattern="Groovit" icon_image ="C0017_icon.jpg" small_image="C0017_small.jpg" big_image="C0017_big.jpg" desc="Enjoy the Krazy Rain with music." >
+    <Note difficult="easy" level="4" key="5" note="445" price_test="0" price_buy="0" xnt_file="Catslike_5E.xnt" xne_file="Catslike_5E.xne"/>
+    <Note difficult="normal" level="7" key="5" note="614" price_test="0" price_buy="0" xnt_file="Catslike_5N.xnt" xne_file="Catslike_5N.xne"/>
+    <Note difficult="hard" level="10" key="5" note="888" price_test="0" price_buy="0" xnt_file="Catslike_5H.xnt" xne_file="Catslike_5H.xne"/>
+    <Note difficult="easy" level="3" key="7" note="445" price_test="0" price_buy="0" xnt_file="Catslike_7E.xnt" xne_file="Catslike_7E.xne"/>
+    <Note difficult="normal" level="6" key="7" note="647" price_test="0" price_buy="0" xnt_file="Catslike_7N.xnt" xne_file="Catslike_7N.xne"/>
+    <Note difficult="hard" level="10" key="7" note="929" price_test="0" price_buy="0" xnt_file="Catslike_7H.xnt" xne_file="Catslike_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0018" title="Like This (Type.E)" price_type="0" price_gold="0" campaign_only="0" genre="Groove" genre_sub="HipHop" bpm="93" playtime="02:12" Composer="Zetto" Pattern="Zetto" icon_image ="C0018_icon.jpg" small_image="C0018_small.jpg" big_image="C0018_big.jpg" desc="Enjoy the Krazy Rain with music." >
+    <Note difficult="normal" level="4" key="5" note="430" price_test="0" price_buy="0" xnt_file="Like_This_TypeE_5N.xnt" xne_file="Like_This_TypeE_5N.xne"/>
+    <Note difficult="hard" level="5" key="5" note="574" price_test="0" price_buy="0" xnt_file="Like_This_TypeE_5H.xnt" xne_file="Like_This_TypeE_5H.xne"/>
+    <Note difficult="normal" level="3" key="7" note="433" price_test="0" price_buy="0" xnt_file="Like_This_TypeE_7N.xnt" xne_file="Like_This_TypeE_7N.xne"/>
+    <Note difficult="hard" level="7" key="7" note="574" price_test="0" price_buy="0" xnt_file="Like_This_TypeE_7H.xnt" xne_file="Like_This_TypeE_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0019" title="The Sense (Type.E)" price_type="0" price_gold="0" campaign_only="0" genre="Electronic" genre_sub="Electronica" bpm="132" playtime="02:29" Composer="Zetto" Pattern="Zetto" icon_image ="C0019_icon.jpg" small_image="C0019_small.jpg" big_image="C0019_big.jpg" desc="Enjoy the Krazy Rain with music." >
+    <Note difficult="easy" level="3" key="5" note="329" price_test="0" price_buy="0" xnt_file="The_Sense_TypeE_5E.xnt" xne_file="The_Sense_TypeE_5E.xne"/>
+    <Note difficult="easy" level="3" key="7" note="333" price_test="0" price_buy="0" xnt_file="The_Sense_TypeE_7E.xnt" xne_file="The_Sense_TypeE_7E.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0020" title="Alchemist" price_type="0" price_gold="0" campaign_only="0" genre="ethnic" genre_sub="Ethnic_house" bpm="140" playtime="02:29" Composer="Zetto" Pattern="Zetto" icon_image ="C0020_icon.jpg" small_image="C0020_small.jpg" big_image="C0020_big.jpg" desc="A myth something that does not exist nowadays, an Alchemist that can make everything golden" >
+    <Note difficult="easy" level="3" key="5" note="407" price_test="0" price_buy="0" xnt_file="Alchemist_5E.xnt" xne_file="Alchemist_5E.xne"/>
+    <Note difficult="normal" level="11" key="5" note="889" price_test="0" price_buy="0" xnt_file="Alchemist_5N.xnt" xne_file="Alchemist_5N.xne"/>
+    <Note difficult="hard" level="17" key="5" note="1097" price_test="0" price_buy="0" xnt_file="Alchemist_5H.xnt" xne_file="Alchemist_5H.xne"/>
+    <Note difficult="easy" level="3" key="7" note="408" price_test="0" price_buy="0" xnt_file="Alchemist_7E.xnt" xne_file="Alchemist_7E.xne"/>
+    <Note difficult="normal" level="12" key="7" note="914" price_test="0" price_buy="0" xnt_file="Alchemist_7N.xnt" xne_file="Alchemist_7N.xne"/>
+    <Note difficult="hard" level="17" key="7" note="1171" price_test="0" price_buy="0" xnt_file="Alchemist_7H.xnt" xne_file="Alchemist_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0021" title="Limpman" price_type="0" price_gold="0" campaign_only="0" genre="electronic" genre_sub="Piano_trance" bpm="160" playtime="02:27" Composer="Zetto" Pattern="Zetto" icon_image ="C0021_icon.jpg" small_image="C0021_small.jpg" big_image="C0021_big.jpg" desc="Appearances might make you look weak and helpless but in the inside there is a super hero in the making with unlimited potential." >
+    <Note difficult="easy" level="4" key="5" note="441" price_test="0" price_buy="0" xnt_file="Limpman_5E.xnt" xne_file="Limpman_5E.xne"/>
+    <Note difficult="normal" level="11" key="5" note="820" price_test="0" price_buy="0" xnt_file="Limpman_5N.xnt" xne_file="Limpman_5N.xne"/>
+    <Note difficult="hard" level="19" key="5" note="1332" price_test="0" price_buy="0" xnt_file="Limpman_5H.xnt" xne_file="Limpman_5H.xne"/>
+    <Note difficult="easy" level="4" key="7" note="448" price_test="0" price_buy="0" xnt_file="Limpman_7E.xnt" xne_file="Limpman_7E.xne"/>
+    <Note difficult="normal" level="10" key="7" note="829" price_test="0" price_buy="0" xnt_file="Limpman_7N.xnt" xne_file="Limpman_7N.xne"/>
+    <Note difficult="hard" level="19" key="7" note="1594" price_test="0" price_buy="0" xnt_file="Limpman_7H.xnt" xne_file="Limpman_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0022" title="Symphony No.5" price_type="0" price_gold="0" campaign_only="0" genre="remix" genre_sub="Classical Remix" bpm="188" playtime="02:00" Composer="Groovit" Pattern="Groovit" icon_image ="C0022_icon.jpg" small_image="C0022_small.jpg" big_image="C0022_big.jpg" desc="This is a remix of Beethoven's Symphony No. 5 into a Groovit Version." >
+    <Note difficult="easy" level="5" key="5" note="446" price_test="0" price_buy="0" xnt_file="Symphony_No5_5E.xnt" xne_file="Symphony_No5_5E.xne"/>
+    <Note difficult="normal" level="14" key="5" note="804" price_test="0" price_buy="0" xnt_file="Symphony_No5_5N.xnt" xne_file="Symphony_No5_5N.xne"/>
+    <Note difficult="hard" level="20" key="5" note="1053" price_test="0" price_buy="0" xnt_file="Symphony_No5_5H.xnt" xne_file="Symphony_No5_5H.xne"/>
+    <Note difficult="krazy" level="24" key="5" note="1187" price_test="0" price_buy="0" xnt_file="Symphony_No5_5KH.xnt" xne_file="Symphony_No5_5KH.xne"/>
+    <Note difficult="easy" level="6" key="7" note="525" price_test="0" price_buy="0" xnt_file="Symphony_No5_7E.xnt" xne_file="Symphony_No5_7E.xne"/>
+    <Note difficult="normal" level="16" key="7" note="826" price_test="0" price_buy="0" xnt_file="Symphony_No5_7N.xnt" xne_file="Symphony_No5_7N.xne"/>
+    <Note difficult="hard" level="23" key="7" note="1104" price_test="0" price_buy="0" xnt_file="Symphony_No5_7H.xnt" xne_file="Symphony_No5_7H.xne"/>
+    <Note difficult="krazy" level="26" key="7" note="1348" price_test="0" price_buy="0" xnt_file="Symphony_No5_7KH.xnt" xne_file="Symphony_No5_7KH.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+ <Music id="0023" title="My Car" price_type="0" price_gold="0" campaign_only="0" genre="Groove" genre_sub="Dance" bpm="96" playtime="01:27" Composer="Zetto" Pattern="Zetto" icon_image ="C0023_icon.jpg" small_image="C0023_small.jpg" big_image="C0023_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="2" key="5" note="148" price_test="0" price_buy="0" xnt_file="My_Car_5E.xnt" xne_file="My_Car_5E.xne"/>
+    <Note difficult="normal" level="5" key="5" note="273" price_test="0" price_buy="0" xnt_file="My_Car_5N.xnt" xne_file="My_Car_5N.xne"/>
+    <Note difficult="hard" level="9" key="5" note="426" price_test="0" price_buy="0" xnt_file="My_Car_5H.xnt" xne_file="My_Car_5H.xne"/>
+    <Note difficult="easy" level="2" key="7" note="169" price_test="0" price_buy="0" xnt_file="My_Car_7E.xnt" xne_file="My_Car_7E.xne"/>
+    <Note difficult="normal" level="6" key="7" note="277" price_test="0" price_buy="0" xnt_file="My_Car_7N.xnt" xne_file="My_Car_7N.xne"/>
+    <Note difficult="hard" level="10" key="7" note="376" price_test="0" price_buy="0" xnt_file="My_Car_7H.xnt" xne_file="My_Car_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+ <Music id="0024" title="Fashion" price_type="0" price_gold="0" campaign_only="0" genre="Groove" genre_sub="Dance" bpm="136" playtime="01:20" Composer="Zetto" Pattern="Zetto" icon_image ="C0024_icon.jpg" small_image="C0024_small.jpg" big_image="C0024_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="1" key="5" note="169" price_test="0" price_buy="0" xnt_file="Fashion_5E.xnt" xne_file="Fashion_5E.xne"/>
+    <Note difficult="normal" level="4" key="5" note="306" price_test="0" price_buy="0" xnt_file="Fashion_5N.xnt" xne_file="Fashion_5N.xne"/>
+    <Note difficult="hard" level="6" key="5" note="463" price_test="0" price_buy="0" xnt_file="Fashion_5H.xnt" xne_file="Fashion_5H.xne"/>
+    <Note difficult="easy" level="2" key="7" note="169" price_test="0" price_buy="0" xnt_file="Fashion_7E.xnt" xne_file="Fashion_7E.xne"/>
+    <Note difficult="normal" level="5" key="7" note="314" price_test="0" price_buy="0" xnt_file="Fashion_7N.xnt" xne_file="Fashion_7N.xne"/>
+    <Note difficult="hard" level="7" key="7" note="466" price_test="0" price_buy="0" xnt_file="Fashion_7H.xnt" xne_file="Fashion_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0025" title="I Like You" price_type="0" price_gold="0" campaign_only="0" genre="Heavy" genre_sub="Pop Punk" bpm="110" playtime="02:46" Composer="GoGoBoys" Pattern="SHIN" icon_image ="C0025_icon.jpg" small_image="C0025_small.jpg" big_image="C0025_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="5" key="5" note="556" price_test="0" price_buy="0" xnt_file="I_Like_You_5E.xnt" xne_file="I_Like_You_5E.xne"/>
+    <Note difficult="normal" level="7" key="5" note="809" price_test="0" price_buy="0" xnt_file="I_Like_You_5N.xnt" xne_file="I_Like_You_5N.xne"/>
+    <Note difficult="hard" level="11" key="5" note="1063" price_test="0" price_buy="0" xnt_file="I_Like_You_5H.xnt" xne_file="I_Like_You_5H.xne"/>
+    <Note difficult="easy" level="5" key="7" note="556" price_test="0" price_buy="0" xnt_file="I_Like_You_7E.xnt" xne_file="I_Like_You_7E.xne"/>
+    <Note difficult="normal" level="7" key="7" note="809" price_test="0" price_buy="0" xnt_file="I_Like_You_7N.xnt" xne_file="I_Like_You_7N.xne"/>
+    <Note difficult="hard" level="11" key="7" note="1064" price_test="0" price_buy="0" xnt_file="I_Like_You_7H.xnt" xne_file="I_Like_You_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0026" title="Let Do Best" price_type="0" price_gold="0" campaign_only="0" genre="Heavy" genre_sub="Pop Punk" bpm="170" playtime="02:42" Composer="SuperKids" Pattern="SHIN" icon_image ="C0026_icon.jpg" small_image="C0026_small.jpg" big_image="C0026_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="7" key="5" note="632" price_test="0" price_buy="0" xnt_file="SuperKids_Life_5E.xnt" xne_file="SuperKids_Life_5E.xne"/>
+    <Note difficult="normal" level="9" key="5" note="891" price_test="0" price_buy="0" xnt_file="SuperKids_Life_5N.xnt" xne_file="SuperKids_Life_5N.xne"/>
+    <Note difficult="hard" level="11" key="5" note="1161" price_test="0" price_buy="0" xnt_file="SuperKids_Life_5H.xnt" xne_file="SuperKids_Life_5H.xne"/>
+    <Note difficult="easy" level="7" key="7" note="632" price_test="0" price_buy="0" xnt_file="SuperKids_Life_7E.xnt" xne_file="SuperKids_Life_7E.xne"/>
+    <Note difficult="normal" level="9" key="7" note="891" price_test="0" price_buy="0" xnt_file="SuperKids_Life_7N.xnt" xne_file="SuperKids_Life_7N.xne"/>
+    <Note difficult="hard" level="12" key="7" note="1162" price_test="0" price_buy="0" xnt_file="SuperKids_Life_7H.xnt" xne_file="SuperKids_Life_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0027" title="Blue Bossa" price_type="0" price_gold="0" campaign_only="0" genre="Acid" genre_sub="Jazz" bpm="130" playtime="02:24" Composer="Madame Kims Music" Pattern="SHIN" icon_image ="C0027_icon.jpg" small_image="C0027_small.jpg" big_image="C0027_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="5" key="5" note="378" price_test="0" price_buy="0" xnt_file="blue_bossa_5E.xnt" xne_file="blue_bossa_5E.xne"/>
+    <Note difficult="normal" level="10" key="5" note="536" price_test="0" price_buy="0" xnt_file="blue_bossa_5N.xnt" xne_file="blue_bossa_5N.xne"/>
+    <Note difficult="hard" level="13" key="5" note="730" price_test="0" price_buy="0" xnt_file="blue_bossa_5H.xnt" xne_file="blue_bossa_5H.xne"/>
+    <Note difficult="easy" level="7" key="7" note="376" price_test="0" price_buy="0" xnt_file="blue_bossa_7E.xnt" xne_file="blue_bossa_7E.xne"/>
+    <Note difficult="normal" level="10" key="7" note="536" price_test="0" price_buy="0" xnt_file="blue_bossa_7N.xnt" xne_file="blue_bossa_7N.xne"/>
+    <Note difficult="hard" level="14" key="7" note="730" price_test="0" price_buy="0" xnt_file="blue_bossa_7H.xnt" xne_file="blue_bossa_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0028" title="Two Step" price_type="0" price_gold="0" campaign_only="0" genre="groove" genre_sub="Hip_hop" bpm="136" playtime="02:26" Composer="RimShot" Pattern="SHIN" icon_image ="C0028_icon.jpg" small_image="C0028_small.jpg" big_image="C0028_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="2" key="5" note="307" price_test="0" price_buy="0" xnt_file="2step_5E.xnt" xne_file="2step_5E.xne"/>
+    <Note difficult="normal" level="6" key="5" note="656" price_test="0" price_buy="0" xnt_file="2step_5N.xnt" xne_file="2step_5N.xne"/>
+    <Note difficult="hard" level="12" key="5" note="907" price_test="0" price_buy="0" xnt_file="2step_5H.xnt" xne_file="2step_5H.xne"/>
+    <Note difficult="easy" level="3" key="7" note="307" price_test="0" price_buy="0" xnt_file="2step_7E.xnt" xne_file="2step_7E.xne"/>
+    <Note difficult="normal" level="6" key="7" note="656" price_test="0" price_buy="0" xnt_file="2step_7N.xnt" xne_file="2step_7N.xne"/>
+    <Note difficult="hard" level="12" key="7" note="1081" price_test="0" price_buy="0" xnt_file="2step_7H.xnt" xne_file="2step_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0029" title="Get Out" price_type="0" price_gold="0" campaign_only="0" genre="heavy" genre_sub="Alternative" bpm="152" playtime="02:41" Composer="BellaMafia" Pattern="SHIN" icon_image ="C0029_icon.jpg" small_image="C0029_small.jpg" big_image="C0029_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="2" key="5" note="349" price_test="0" price_buy="0" xnt_file="out_5E.xnt" xne_file="out_5E.xne"/>
+    <Note difficult="normal" level="4" key="5" note="595" price_test="0" price_buy="0" xnt_file="out_5N.xnt" xne_file="out_5N.xne"/>
+    <Note difficult="hard" level="7" key="5" note="829" price_test="0" price_buy="0" xnt_file="out_5H.xnt" xne_file="out_5H.xne"/>
+    <Note difficult="easy" level="2" key="7" note="349" price_test="0" price_buy="0" xnt_file="out_7E.xnt" xne_file="out_7E.xne"/>
+    <Note difficult="normal" level="5" key="7" note="596" price_test="0" price_buy="0" xnt_file="out_7N.xnt" xne_file="out_7N.xne"/>
+    <Note difficult="hard" level="8" key="7" note="833" price_test="0" price_buy="0" xnt_file="out_7H.xnt" xne_file="out_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0030" title="Big Buddy" price_type="0" price_gold="0" campaign_only="0" genre="Groove" genre_sub="Dance" bpm="112" playtime="02:36" Composer="heenain" Pattern="T-Goon" icon_image ="C0030_icon.jpg" small_image="C0030_small.jpg" big_image="C0030_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="1" key="5" note="315" price_test="0" price_buy="0" xnt_file="BigBuddy_5E.xnt" xne_file="BigBuddy_5E.xne"/>
+    <Note difficult="normal" level="5" key="5" note="621" price_test="0" price_buy="0" xnt_file="BigBuddy_5N.xnt" xne_file="BigBuddy_5N.xne"/>
+    <Note difficult="hard" level="11" key="5" note="856" price_test="0" price_buy="0" xnt_file="BigBuddy_5H.xnt" xne_file="BigBuddy_5H.xne"/>
+    <Note difficult="easy" level="1" key="7" note="312" price_test="0" price_buy="0" xnt_file="BigBuddy_7E.xnt" xne_file="BigBuddy_7E.xne"/>
+    <Note difficult="normal" level="6" key="7" note="623" price_test="0" price_buy="0" xnt_file="BigBuddy_7N.xnt" xne_file="BigBuddy_7N.xne"/>
+    <Note difficult="hard" level="13" key="7" note="985" price_test="0" price_buy="0" xnt_file="BigBuddy_7H.xnt" xne_file="BigBuddy_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0031" title="Boing" price_type="0" price_gold="0" campaign_only="0" genre="Groove" genre_sub="Dance" bpm="112" playtime="02:36" Composer="heenain" Pattern="T-Goon" icon_image ="C0031_icon.jpg" small_image="C0031_small.jpg" big_image="C0031_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="1" key="5" note="332" price_test="0" price_buy="0" xnt_file="Boing_5E.xnt" xne_file="Boing_5E.xne"/>
+    <Note difficult="normal" level="5" key="5" note="312" price_test="0" price_buy="0" xnt_file="Boing_5N.xnt" xne_file="Boing_5N.xne"/>
+    <Note difficult="hard" level="8" key="5" note="833" price_test="0" price_buy="0" xnt_file="Boing_5H.xnt" xne_file="Boing_5H.xne"/>
+    <Note difficult="easy" level="1" key="7" note="333" price_test="0" price_buy="0" xnt_file="Boing_7E.xnt" xne_file="Boing_7E.xne"/>
+    <Note difficult="normal" level="5" key="7" note="612" price_test="0" price_buy="0" xnt_file="Boing_7N.xnt" xne_file="Boing_7N.xne"/>
+    <Note difficult="hard" level="9" key="7" note="889" price_test="0" price_buy="0" xnt_file="Boing_7H.xnt" xne_file="Boing_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0032" title="Bloom Song" price_type="0" price_gold="0" campaign_only="0" genre="Groove" genre_sub="Hiphop" bpm="92" playtime="02:33" Composer="RimShot" Pattern="SHIN" icon_image ="C0032_icon.jpg" small_image="C0032_small.jpg" big_image="C0032_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="1" key="5" note="273" price_test="0" price_buy="0" xnt_file="young_5E.xnt" xne_file="young_5E.xne"/>
+    <Note difficult="normal" level="3" key="5" note="444" price_test="0" price_buy="0" xnt_file="young_5N.xnt" xne_file="young_5N.xne"/>
+    <Note difficult="hard" level="6" key="5" note="693" price_test="0" price_buy="0" xnt_file="young_5H.xnt" xne_file="young_5H.xne"/>
+    <Note difficult="easy" level="1" key="7" note="277" price_test="0" price_buy="0" xnt_file="young_7E.xnt" xne_file="young_7E.xne"/>
+    <Note difficult="normal" level="4" key="7" note="445" price_test="0" price_buy="0" xnt_file="young_7N.xnt" xne_file="young_7N.xne"/>
+    <Note difficult="hard" level="6" key="7" note="693" price_test="0" price_buy="0" xnt_file="young_7H.xnt" xne_file="young_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0033" title="Wonderful Life" price_type="0" price_gold="0" campaign_only="0" genre="Heavy" genre_sub="Pop Punk" bpm="120" playtime="02:40" Composer="SuperKids" Pattern="SHIN" icon_image ="C0033_icon.jpg" small_image="C0033_small.jpg" big_image="C0033_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="2" key="5" note="324" price_test="0" price_buy="0" xnt_file="beautiful_5E.xnt" xne_file="beautiful_5E.xne"/>
+    <Note difficult="normal" level="5" key="5" note="496" price_test="0" price_buy="0" xnt_file="beautiful_5N.xnt" xne_file="beautiful_5N.xne"/>
+    <Note difficult="hard" level="8" key="5" note="756" price_test="0" price_buy="0" xnt_file="beautiful_5H.xnt" xne_file="beautiful_5H.xne"/>
+    <Note difficult="easy" level="2" key="7" note="324" price_test="0" price_buy="0" xnt_file="beautiful_7E.xnt" xne_file="beautiful_7E.xne"/>
+    <Note difficult="normal" level="5" key="7" note="496" price_test="0" price_buy="0" xnt_file="beautiful_7N.xnt" xne_file="beautiful_7N.xne"/>
+    <Note difficult="hard" level="9" key="7" note="917" price_test="0" price_buy="0" xnt_file="beautiful_7H.xnt" xne_file="beautiful_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0034" title="BellaMafia" price_type="0" price_gold="0" campaign_only="0" genre="Heavy" genre_sub="Alternative" bpm="132" playtime="02:22" Composer=" BellaMafia" Pattern="Zetto" icon_image ="C0034_icon.jpg" small_image="C0034_small.jpg" big_image="C0034_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="6" key="5" note="395" price_test="0" price_buy="0" xnt_file="Bellamafia_5E.xnt" xne_file="Bellamafia_5E.xne"/>
+    <Note difficult="normal" level="9" key="5" note="712" price_test="0" price_buy="0" xnt_file="Bellamafia_5N.xnt" xne_file="Bellamafia_5N.xne"/>
+    <Note difficult="hard" level="15" key="5" note="1094" price_test="0" price_buy="0" xnt_file="Bellamafia_5H.xnt" xne_file="Bellamafia_5H.xne"/>
+    <Note difficult="easy" level="6" key="7" note="397" price_test="0" price_buy="0" xnt_file="Bellamafia_7E.xnt" xne_file="Bellamafia_7E.xne"/>
+    <Note difficult="normal" level="9" key="7" note="712" price_test="0" price_buy="0" xnt_file="Bellamafia_7N.xnt" xne_file="Bellamafia_7N.xne"/>
+    <Note difficult="hard" level="16" key="7" note="1094" price_test="0" price_buy="0" xnt_file="Bellamafia_7H.xnt" xne_file="Bellamafia_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0035" title="Your Possession" price_type="0" price_gold="0" campaign_only="0" genre="Soft" genre_sub="Pop" bpm="125" playtime="02:39" Composer=" Kim Sung-Hoon" Pattern="T-Goon" icon_image ="C0035_icon.jpg" small_image="C0035_small.jpg" big_image="C0035_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="3" key="5" note="355" price_test="0" price_buy="0" xnt_file="YourPossession_5E.xnt" xne_file="YourPossession_5E.xne"/>
+    <Note difficult="normal" level="5" key="5" note="653" price_test="0" price_buy="0" xnt_file="YourPossession_5N.xnt" xne_file="YourPossession_5N.xne"/>
+    <Note difficult="hard" level="9" key="5" note="982" price_test="0" price_buy="0" xnt_file="YourPossession_5H.xnt" xne_file="YourPossession_5H.xne"/>
+    <Note difficult="easy" level="3" key="7" note="355" price_test="0" price_buy="0" xnt_file="YourPossession_7E.xnt" xne_file="YourPossession_7E.xne"/>
+    <Note difficult="normal" level="6" key="7" note="678" price_test="0" price_buy="0" xnt_file="YourPossession_7N.xnt" xne_file="YourPossession_7N.xne"/>
+    <Note difficult="hard" level="10" key="7" note="1055" price_test="0" price_buy="0" xnt_file="YourPossession_7H.xnt" xne_file="YourPossession_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0036" title="Jump Around" price_type="0" price_gold="0" campaign_only="0" genre="heavy" genre_sub="Pop Punk" bpm="102" playtime="02:11" Composer="Gogoboys" Pattern="Zetto" icon_image ="C0036_icon.jpg" small_image="C0036_small.jpg" big_image="C0036_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="3" key="5" note="295" price_test="0" price_buy="0" xnt_file="Jump_Around_5E.xnt" xne_file="Jump_Around_5E.xne"/>
+    <Note difficult="normal" level="6" key="5" note="534" price_test="0" price_buy="0" xnt_file="Jump_Around_5N.xnt" xne_file="Jump_Around_5N.xne"/>
+    <Note difficult="hard" level="11" key="5" note="801" price_test="0" price_buy="0" xnt_file="Jump_Around_5H.xnt" xne_file="Jump_Around_5H.xne"/>
+    <Note difficult="easy" level="4" key="7" note="301" price_test="0" price_buy="0" xnt_file="Jump_Around_7E.xnt" xne_file="Jump_Around_7E.xne"/>
+    <Note difficult="normal" level="7" key="7" note="538" price_test="0" price_buy="0" xnt_file="Jump_Around_7N.xnt" xne_file="Jump_Around_7N.xne"/>
+    <Note difficult="hard" level="12" key="7" note="863" price_test="0" price_buy="0" xnt_file="Jump_Around_7H.xnt" xne_file="Jump_Around_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0037" title="Instrumental" price_type="0" price_gold="0" campaign_only="0" genre="heavy" genre_sub="Rock" bpm="154" playtime="01:37" Composer="Zygot" Pattern="T-Goon" icon_image ="C0037_icon.jpg" small_image="C0037_small.jpg" big_image="C0037_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="4" key="5" note="309" price_test="0" price_buy="0" xnt_file="Instrumental_5E.xnt" xne_file="Instrumental_5E.xne"/>
+    <Note difficult="normal" level="8" key="5" note="514" price_test="0" price_buy="0" xnt_file="Instrumental_5N.xnt" xne_file="Instrumental_5N.xne"/>
+    <Note difficult="hard" level="14" key="5" note="713" price_test="0" price_buy="0" xnt_file="Instrumental_5H.xnt" xne_file="Instrumental_5H.xne"/>
+    <Note difficult="easy" level="4" key="7" note="310" price_test="0" price_buy="0" xnt_file="Instrumental_7E.xnt" xne_file="Instrumental_7E.xne"/>
+    <Note difficult="normal" level="9" key="7" note="514" price_test="0" price_buy="0" xnt_file="Instrumental_7N.xnt" xne_file="Instrumental_7N.xne"/>
+    <Note difficult="hard" level="16" key="7" note="782" price_test="0" price_buy="0" xnt_file="Instrumental_7H.xnt" xne_file="Instrumental_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0038" title="Easy Lover" price_type="0" price_gold="0" campaign_only="0" genre="Acid" genre_sub="Jazz" bpm="136" playtime="02:42" Composer="Kim Sung-Hoon" Pattern="Zetto" icon_image ="C0038_icon.jpg" small_image="C0038_small.jpg" big_image="C0038_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="2" key="5" note="318" price_test="0" price_buy="0" xnt_file="Easy_Lover_5E.xnt" xne_file="Easy_Lover_5E.xne"/>
+    <Note difficult="normal" level="7" key="5" note="677" price_test="0" price_buy="0" xnt_file="Easy_Lover_5N.xnt" xne_file="Easy_Lover_5N.xne"/>
+    <Note difficult="hard" level="10" key="5" note="1087" price_test="0" price_buy="0" xnt_file="Easy_Lover_5H.xnt" xne_file="Easy_Lover_5H.xne"/>
+    <Note difficult="easy" level="3" key="7" note="347" price_test="0" price_buy="0" xnt_file="Easy_Lover_7E.xnt" xne_file="Easy_Lover_7E.xne"/>
+    <Note difficult="normal" level="8" key="7" note="769" price_test="0" price_buy="0" xnt_file="Easy_Lover_7N.xnt" xne_file="Easy_Lover_7N.xne"/>
+    <Note difficult="hard" level="13" key="7" note="1443" price_test="0" price_buy="0" xnt_file="Easy_Lover_7H.xnt" xne_file="Easy_Lover_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0039" title="Shower" price_type="0" price_gold="0" campaign_only="0" genre="Heavy" genre_sub="Rock" bpm="140" playtime="02:44" Composer="Monni" Pattern="T-Goon" icon_image ="C0039_icon.jpg" small_image="C0039_small.jpg" big_image="C0039_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="3" key="5" note="544" price_test="0" price_buy="0" xnt_file="Sonagi_5E.xnt" xne_file="Sonagi_5E.xne"/>
+    <Note difficult="normal" level="8" key="5" note="934" price_test="0" price_buy="0" xnt_file="Sonagi_5N.xnt" xne_file="Sonagi_5N.xne"/>
+    <Note difficult="hard" level="13" key="5" note="1239" price_test="0" price_buy="0" xnt_file="Sonagi_5H.xnt" xne_file="Sonagi_5H.xne"/>
+    <Note difficult="easy" level="3" key="7" note="544" price_test="0" price_buy="0" xnt_file="Sonagi_7E.xnt" xne_file="Sonagi_7E.xne"/>
+    <Note difficult="normal" level="9" key="7" note="934" price_test="0" price_buy="0" xnt_file="Sonagi_7N.xnt" xne_file="Sonagi_7N.xne"/>
+    <Note difficult="hard" level="15" key="7" note="1265" price_test="0" price_buy="0" xnt_file="Sonagi_7H.xnt" xne_file="Sonagi_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0040" title="Marshmallow" price_type="0" price_gold="0" campaign_only="0" genre="Groove" genre_sub="Hiphop" bpm="83" playtime="02:30" Composer="Rimshot" Pattern="Zetto" icon_image ="C0040_icon.jpg" small_image="C0040_small.jpg" big_image="C0040_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="2" key="5" note="302" price_test="0" price_buy="0" xnt_file="Marshmallow_5E.xnt" xne_file="Marshmallow_5E.xne"/>
+    <Note difficult="normal" level="4" key="5" note="492" price_test="0" price_buy="0" xnt_file="Marshmallow_5N.xnt" xne_file="Marshmallow_5N.xne"/>
+    <Note difficult="hard" level="6" key="5" note="610" price_test="0" price_buy="0" xnt_file="Marshmallow_5H.xnt" xne_file="Marshmallow_5H.xne"/>
+    <Note difficult="easy" level="3" key="7" note="302" price_test="0" price_buy="0" xnt_file="Marshmallow_7E.xnt" xne_file="Marshmallow_7E.xne"/>
+    <Note difficult="normal" level="5" key="7" note="496" price_test="0" price_buy="0" xnt_file="Marshmallow_7N.xnt" xne_file="Marshmallow_7N.xne"/>
+    <Note difficult="hard" level="7" key="7" note="729" price_test="0" price_buy="0" xnt_file="Marshmallow_7H.xnt" xne_file="Marshmallow_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0041" title="when the sint go marchin" price_type="0" price_gold="0" campaign_only="0" genre="Acid" genre_sub="Jazz" bpm="129" playtime="02:28" Composer="Madame Kims Music" Pattern="SHIN" icon_image ="C0041_icon.jpg" small_image="C0041_small.jpg" big_image="C0041_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="5" key="5" note="379" price_test="0" price_buy="0" xnt_file="sint_5E.xnt" xne_file="sint_5E.xne"/>
+    <Note difficult="normal" level="10" key="5" note="877" price_test="0" price_buy="0" xnt_file="sint_5N.xnt" xne_file="sint_5N.xne"/>
+    <Note difficult="hard" level="19" key="5" note="1310" price_test="0" price_buy="0" xnt_file="sint_5H.xnt" xne_file="sint_5H.xne"/>
+    <Note difficult="easy" level="5" key="7" note="376" price_test="0" price_buy="0" xnt_file="sint_7E.xnt" xne_file="sint_7E.xne"/>
+    <Note difficult="normal" level="11" key="7" note="831" price_test="0" price_buy="0" xnt_file="sint_7N.xnt" xne_file="sint_7N.xne"/>
+    <Note difficult="hard" level="21" key="7" note="1320" price_test="0" price_buy="0" xnt_file="sint_7H.xnt" xne_file="sint_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0042" title="Get in the Flow" price_type="0" price_gold="0" campaign_only="0" genre="Groove" genre_sub="Hiphop" bpm="73" playtime="02:50" Composer="Rimshot" Pattern="Groovit" icon_image ="C0042_icon.jpg" small_image="C0042_small.jpg" big_image="C0042_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="1" key="5" note="327" price_test="0" price_buy="0" xnt_file="Get_In_The_Flow_5E.xnt" xne_file="Get_In_The_Flow_5E.xne"/>
+    <Note difficult="normal" level="7" key="5" note="936" price_test="0" price_buy="0" xnt_file="Get_In_The_Flow_5N.xnt" xne_file="Get_In_The_Flow_5N.xne"/>
+    <Note difficult="hard" level="10" key="5" note="1280" price_test="0" price_buy="0" xnt_file="Get_In_The_Flow_5H.xnt" xne_file="Get_In_The_Flow_5H.xne"/>
+    <Note difficult="easy" level="2" key="7" note="327" price_test="0" price_buy="0" xnt_file="Get_In_The_Flow_7E.xnt" xne_file="Get_In_The_Flow_7E.xne"/>
+    <Note difficult="normal" level="9" key="7" note="1009" price_test="0" price_buy="0" xnt_file="Get_In_The_Flow_7N.xnt" xne_file="Get_In_The_Flow_7N.xne"/>
+    <Note difficult="hard" level="12" key="7" note="1341" price_test="0" price_buy="0" xnt_file="Get_In_The_Flow_7H.xnt" xne_file="Get_In_The_Flow_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0043" title="close" price_type="0" price_gold="0" campaign_only="0" genre="Soft" genre_sub="Pop" bpm="120" playtime="02:26" Composer="Woman Project" Pattern="Groovit" icon_image ="C0043_icon.jpg" small_image="C0043_small.jpg" big_image="C0043_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="1" key="5" note="212" price_test="0" price_buy="0" xnt_file="close_5E.xnt" xne_file="close_5E.xne"/>
+    <Note difficult="normal" level="4" key="5" note="660" price_test="0" price_buy="0" xnt_file="close_5N.xnt" xne_file="close_5N.xne"/>
+    <Note difficult="hard" level="9" key="5" note="866" price_test="0" price_buy="0" xnt_file="close_5H.xnt" xne_file="close_5H.xne"/>
+    <Note difficult="easy" level="1" key="7" note="215" price_test="0" price_buy="0" xnt_file="close_7E.xnt" xne_file="close_7E.xne"/>
+    <Note difficult="normal" level="7" key="7" note="708" price_test="0" price_buy="0" xnt_file="close_7N.xnt" xne_file="close_7N.xne"/>
+    <Note difficult="hard" level="11" key="7" note="909" price_test="0" price_buy="0" xnt_file="close_7H.xnt" xne_file="close_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0044" title="Change" price_type="0" price_gold="0" campaign_only="0" genre="Soft" genre_sub="Pop Punk" bpm="147" playtime="01:47" Composer="SuperKids" Pattern="Groovit" icon_image ="C0044_icon.jpg" small_image="C0044_small.jpg" big_image="C0044_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="1" key="5" note="277" price_test="0" price_buy="0" xnt_file="Change_5E.xnt" xne_file="Change_5E.xne"/>
+    <Note difficult="normal" level="6" key="5" note="746" price_test="0" price_buy="0" xnt_file="Change_5N.xnt" xne_file="Change_5N.xne"/>
+    <Note difficult="hard" level="10" key="5" note="913" price_test="0" price_buy="0" xnt_file="Change_5H.xnt" xne_file="Change_5H.xne"/>
+    <Note difficult="easy" level="2" key="7" note="298" price_test="0" price_buy="0" xnt_file="Change_7E.xnt" xne_file="Change_7E.xne"/>
+    <Note difficult="normal" level="8" key="7" note="758" price_test="0" price_buy="0" xnt_file="Change_7N.xnt" xne_file="Change_7N.xne"/>
+    <Note difficult="hard" level="12" key="7" note="1057" price_test="0" price_buy="0" xnt_file="Change_7H.xnt" xne_file="Change_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0045" title="SummerBreeze" price_type="0" price_gold="0" campaign_only="0" genre="Groove" genre_sub="Hiphop" bpm="125" playtime="02:51" Composer="Rimshot" Pattern="Groovit" icon_image ="C0045_icon.jpg" small_image="C0045_small.jpg" big_image="C0045_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="1" key="5" note="278" price_test="0" price_buy="0" xnt_file="SummerBreeze_5E.xnt" xne_file="SummerBreeze_5E.xne"/>
+    <Note difficult="normal" level="4" key="5" note="758" price_test="0" price_buy="0" xnt_file="SummerBreeze_5N.xnt" xne_file="SummerBreeze_5N.xne"/>
+    <Note difficult="hard" level="10" key="5" note="1042" price_test="0" price_buy="0" xnt_file="SummerBreeze_5H.xnt" xne_file="SummerBreeze_5H.xne"/>
+    <Note difficult="easy" level="2" key="7" note="284" price_test="0" price_buy="0" xnt_file="SummerBreeze_7E.xnt" xne_file="SummerBreeze_7E.xne"/>
+    <Note difficult="normal" level="6" key="7" note="794" price_test="0" price_buy="0" xnt_file="SummerBreeze_7N.xnt" xne_file="SummerBreeze_7N.xne"/>
+    <Note difficult="hard" level="12" key="7" note="1244" price_test="0" price_buy="0" xnt_file="SummerBreeze_7H.xnt" xne_file="SummerBreeze_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0046" title="Come Again" price_type="0" price_gold="0" campaign_only="0" genre="Heavy" genre_sub="Modern Rock" bpm="100" playtime="02:24" Composer="Monni" Pattern="Zetto" icon_image ="C0046_icon.jpg" small_image="C0046_small.jpg" big_image="C0046_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="1" key="5" note="243" price_test="0" price_buy="0" xnt_file="Dagawa_5E.xnt" xne_file="Dagawa_5E.xne"/>
+    <Note difficult="normal" level="3" key="5" note="453" price_test="0" price_buy="0" xnt_file="Dagawa_5N.xnt" xne_file="Dagawa_5N.xne"/>
+    <Note difficult="hard" level="5" key="5" note="621" price_test="0" price_buy="0" xnt_file="Dagawa_5H.xnt" xne_file="Dagawa_5H.xne"/>
+    <Note difficult="easy" level="2" key="7" note="243" price_test="0" price_buy="0" xnt_file="Dagawa_7E.xnt" xne_file="Dagawa_7E.xne"/>
+    <Note difficult="normal" level="4" key="7" note="454" price_test="0" price_buy="0" xnt_file="Dagawa_7N.xnt" xne_file="Dagawa_7N.xne"/>
+    <Note difficult="hard" level="6" key="7" note="694" price_test="0" price_buy="0" xnt_file="Dagawa_7H.xnt" xne_file="Dagawa_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0047" title="Vanity" price_type="0" price_gold="0" campaign_only="0" genre="heavy" genre_sub="Hard Rock" bpm="130" playtime="02:08" Composer="Rabihem" Pattern="Zetto" icon_image ="C0047_icon.jpg" small_image="C0047_small.jpg" big_image="C0047_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="2" key="5" note="311" price_test="0" price_buy="0" xnt_file="Vanity_5E.xnt" xne_file="Vanity_5E.xne"/>
+    <Note difficult="normal" level="5" key="5" note="533" price_test="0" price_buy="0" xnt_file="Vanity_5N.xnt" xne_file="Vanity_5N.xne"/>
+    <Note difficult="hard" level="6" key="5" note="552" price_test="0" price_buy="0" xnt_file="Vanity_5H.xnt" xne_file="Vanity_5H.xne"/>
+    <Note difficult="easy" level="3" key="7" note="311" price_test="0" price_buy="0" xnt_file="Vanity_7E.xnt" xne_file="Vanity_7E.xne"/>
+    <Note difficult="normal" level="6" key="7" note="534" price_test="0" price_buy="0" xnt_file="Vanity_7N.xnt" xne_file="Vanity_7N.xne"/>
+    <Note difficult="hard" level="10" key="7" note="762" price_test="0" price_buy="0" xnt_file="Vanity_7H.xnt" xne_file="Vanity_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0048" title="Night Love" price_type="0" price_gold="0" campaign_only="0" genre="Groove" genre_sub="Funky" bpm="104" playtime="02:18" Composer="The Cat House" Pattern="Zetto" icon_image ="C0048_icon.jpg" small_image="C0048_small.jpg" big_image="C0048_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="1" key="5" note="236" price_test="0" price_buy="0" xnt_file="NightLove_5E.xnt" xne_file="NightLove_5E.xne"/>
+    <Note difficult="normal" level="4" key="5" note="507" price_test="0" price_buy="0" xnt_file="NightLove_5N.xnt" xne_file="NightLove_5N.xne"/>
+    <Note difficult="hard" level="6" key="5" note="738" price_test="0" price_buy="0" xnt_file="NightLove_5H.xnt" xne_file="NightLove_5H.xne"/>
+    <Note difficult="easy" level="2" key="7" note="258" price_test="0" price_buy="0" xnt_file="NightLove_7E.xnt" xne_file="NightLove_7E.xne"/>
+    <Note difficult="normal" level="7" key="7" note="598" price_test="0" price_buy="0" xnt_file="NightLove_7N.xnt" xne_file="NightLove_7N.xne"/>
+    <Note difficult="hard" level="11" key="7" note="854" price_test="0" price_buy="0" xnt_file="NightLove_7H.xnt" xne_file="NightLove_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0049" title="Tequilla" price_type="0" price_gold="0" campaign_only="0" genre="Acid" genre_sub="Jazz" bpm="106" playtime="02:38" Composer="Madame Kim`s" Pattern="Zetto" icon_image ="C0049_icon.jpg" small_image="C0049_small.jpg" big_image="C0049_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="3" key="5" note="416" price_test="0" price_buy="0" xnt_file="Tequilla_5E.xnt" xne_file="Tequilla_5E.xne"/>
+    <Note difficult="normal" level="6" key="5" note="601" price_test="0" price_buy="0" xnt_file="Tequilla_5N.xnt" xne_file="Tequilla_5N.xne"/>
+    <Note difficult="hard" level="8" key="5" note="778" price_test="0" price_buy="0" xnt_file="Tequilla_5H.xnt" xne_file="Tequilla_5H.xne"/>
+    <Note difficult="easy" level="4" key="7" note="422" price_test="0" price_buy="0" xnt_file="Tequilla_7E.xnt" xne_file="Tequilla_7E.xne"/>
+    <Note difficult="normal" level="9" key="7" note="665" price_test="0" price_buy="0" xnt_file="Tequilla_7N.xnt" xne_file="Tequilla_7N.xne"/>
+    <Note difficult="hard" level="12" key="7" note="887" price_test="0" price_buy="0" xnt_file="Tequilla_7H.xnt" xne_file="Tequilla_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0050" title="Love Dance" price_type="0" price_gold="0" campaign_only="0" genre="Heavy" genre_sub="Pop Punk" bpm="144" playtime="02:11" Composer="SuperKids" Pattern="T-Goon" icon_image ="C0050_icon.jpg" small_image="C0050_small.jpg" big_image="C0050_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="2" key="5" note="495" price_test="0" price_buy="0" xnt_file="LoveDance_5E.xnt" xne_file="LoveDance_5E.xne"/>
+    <Note difficult="normal" level="6" key="5" note="814" price_test="0" price_buy="0" xnt_file="LoveDance_5N.xnt" xne_file="LoveDance_5N.xne"/>
+    <Note difficult="hard" level="11" key="5" note="1061" price_test="0" price_buy="0" xnt_file="LoveDance_5H.xnt" xne_file="LoveDance_5H.xne"/>
+    <Note difficult="easy" level="2" key="7" note="495" price_test="0" price_buy="0" xnt_file="LoveDance_7E.xnt" xne_file="LoveDance_7E.xne"/>
+    <Note difficult="normal" level="7" key="7" note="822" price_test="0" price_buy="0" xnt_file="LoveDance_7N.xnt" xne_file="LoveDance_7N.xne"/>
+    <Note difficult="hard" level="13" key="7" note="1061" price_test="0" price_buy="0" xnt_file="LoveDance_7H.xnt" xne_file="LoveDance_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0051" title="Wicked Fear" price_type="0" price_gold="0" campaign_only="0" genre="heavy" genre_sub="Rock" bpm="143" playtime="02:31" Composer="Rabihem" Pattern="T-Goon" icon_image ="C0051_icon.jpg" small_image="C0051_small.jpg" big_image="C0051_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="4" key="5" note="505" price_test="0" price_buy="0" xnt_file="Wicked_Fear_5E.xnt" xne_file="Wicked_Fear_5E.xne"/>
+    <Note difficult="normal" level="9" key="5" note="986" price_test="0" price_buy="0" xnt_file="Wicked_Fear_5N.xnt" xne_file="Wicked_Fear_5N.xne"/>
+    <Note difficult="hard" level="13" key="5" note="1241" price_test="0" price_buy="0" xnt_file="Wicked_Fear_5H.xnt" xne_file="Wicked_Fear_5H.xne"/>
+    <Note difficult="easy" level="4" key="7" note="506" price_test="0" price_buy="0" xnt_file="Wicked_Fear_7E.xnt" xne_file="Wicked_Fear_7E.xne"/>
+    <Note difficult="normal" level="10" key="7" note="988" price_test="0" price_buy="0" xnt_file="Wicked_Fear_7N.xnt" xne_file="Wicked_Fear_7N.xne"/>
+    <Note difficult="hard" level="13" key="7" note="1249" price_test="0" price_buy="0" xnt_file="Wicked_Fear_7H.xnt" xne_file="Wicked_Fear_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0052" title="Palpitations" price_type="0" price_gold="0" campaign_only="0" genre="Soft" genre_sub="Pop" bpm="84" playtime="02:39" Composer="DOT" Pattern="T-Goon" icon_image ="C0052_icon.jpg" small_image="C0052_small.jpg" big_image="C0052_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="1" key="5" note="326" price_test="0" price_buy="0" xnt_file="Pitapat_5E.xnt" xne_file="Pitapat_5E.xne"/>
+    <Note difficult="normal" level="4" key="5" note="519" price_test="0" price_buy="0" xnt_file="Pitapat_5N.xnt" xne_file="Pitapat_5N.xne"/>
+    <Note difficult="hard" level="8" key="5" note="844" price_test="0" price_buy="0" xnt_file="Pitapat_5H.xnt" xne_file="Pitapat_5H.xne"/>
+    <Note difficult="easy" level="1" key="7" note="326" price_test="0" price_buy="0" xnt_file="Pitapat_7E.xnt" xne_file="Pitapat_7E.xne"/>
+    <Note difficult="normal" level="4" key="7" note="519" price_test="0" price_buy="0" xnt_file="Pitapat_7N.xnt" xne_file="Pitapat_7N.xne"/>
+    <Note difficult="hard" level="8" key="7" note="844" price_test="0" price_buy="0" xnt_file="Pitapat_7H.xnt" xne_file="Pitapat_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+   <Music id="0053" title="Mo Better Blues" price_type="0" price_gold="0" campaign_only="0" genre="Acid" genre_sub="Jazz" bpm="112" playtime="02:56" Composer="Madame Kims Music" Pattern="T-Goon" icon_image ="C0053_icon.jpg" small_image="C0053_small.jpg" big_image="C0053_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="1" key="5" note="249" price_test="0" price_buy="0" xnt_file="MoBetterBlues_5E.xnt" xne_file="MoBetterBlues_5E.xne"/>
+    <Note difficult="normal" level="8" key="5" note="744" price_test="0" price_buy="0" xnt_file="MoBetterBlues_5N.xnt" xne_file="MoBetterBlues_5N.xne"/>
+    <Note difficult="hard" level="16" key="5" note="1170" price_test="0" price_buy="0" xnt_file="MoBetterBlues_5H.xnt" xne_file="MoBetterBlues_5H.xne"/>
+    <Note difficult="easy" level="2" key="7" note="250" price_test="0" price_buy="0" xnt_file="MoBetterBlues_7E.xnt" xne_file="MoBetterBlues_7E.xne"/>
+    <Note difficult="normal" level="10" key="7" note="755" price_test="0" price_buy="0" xnt_file="MoBetterBlues_7N.xnt" xne_file="MoBetterBlues_7N.xne"/>
+    <Note difficult="hard" level="17" key="7" note="1204" price_test="0" price_buy="0" xnt_file="MoBetterBlues_7H.xnt" xne_file="MoBetterBlues_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0054" title="Drama" price_type="0" price_gold="0" campaign_only="0" genre="acid" genre_sub="Classical" bpm="134" playtime="02:46" Composer="Diana" Pattern="T-Goon" icon_image ="C0054_icon.jpg" small_image="C0054_small.jpg" big_image="C0054_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="2" key="5" note="329" price_test="0" price_buy="0" xnt_file="Drama_5E.xnt" xne_file="Drama_5E.xne"/>
+    <Note difficult="normal" level="11" key="5" note="913" price_test="0" price_buy="0" xnt_file="Drama_5N.xnt" xne_file="Drama_5N.xne"/>
+    <Note difficult="hard" level="20" key="5" note="1314" price_test="0" price_buy="0" xnt_file="Drama_5H.xnt" xne_file="Drama_5H.xne"/>
+    <Note difficult="easy" level="2" key="7" note="346" price_test="0" price_buy="0" xnt_file="Drama_7E.xnt" xne_file="Drama_7E.xne"/>
+    <Note difficult="normal" level="11" key="7" note="941" price_test="0" price_buy="0" xnt_file="Drama_7N.xnt" xne_file="Drama_7N.xne"/>
+    <Note difficult="hard" level="19" key="7" note="1342" price_test="0" price_buy="0" xnt_file="Drama_7H.xnt" xne_file="Drama_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0055" title="The Brave" price_type="0" price_gold="0" campaign_only="0" genre="heavy" genre_sub="Hard Rock" bpm="100" playtime="02:19" Composer="Rabihem" Pattern="Zetto" icon_image ="C0055_icon.jpg" small_image="C0055_small.jpg" big_image="C0055_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="2" key="5" note="319" price_test="0" price_buy="0" xnt_file="Thebrave_5E.xnt" xne_file="Thebrave_5E.xne"/>
+    <Note difficult="normal" level="8" key="5" note="787" price_test="0" price_buy="0" xnt_file="Thebrave_5N.xnt" xne_file="Thebrave_5N.xne"/>
+    <Note difficult="hard" level="10" key="5" note="984" price_test="0" price_buy="0" xnt_file="Thebrave_5H.xnt" xne_file="Thebrave_5H.xne"/>
+    <Note difficult="easy" level="3" key="7" note="345" price_test="0" price_buy="0" xnt_file="Thebrave_7E.xnt" xne_file="Thebrave_7E.xne"/>
+    <Note difficult="normal" level="10" key="7" note="805" price_test="0" price_buy="0" xnt_file="Thebrave_7N.xnt" xne_file="Thebrave_7N.xne"/>
+    <Note difficult="hard" level="12" key="7" note="1141" price_test="0" price_buy="0" xnt_file="Thebrave_7H.xnt" xne_file="Thebrave_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0056" title="Racing Kid" price_type="0" price_gold="0" campaign_only="0" genre="Heavy" genre_sub="Pop" bpm="130" playtime="01:40" Composer="SuperKids" Pattern="T-Goon" icon_image ="C0056_icon.jpg" small_image="C0056_small.jpg" big_image="C0056_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="4" key="5" note="275" price_test="0" price_buy="0" xnt_file="Skit_5E.xnt" xne_file="Skit_5E.xne"/>
+    <Note difficult="normal" level="7" key="5" note="438" price_test="0" price_buy="0" xnt_file="Skit_5N.xnt" xne_file="Skit_5N.xne"/>
+    <Note difficult="hard" level="11" key="5" note="705" price_test="0" price_buy="0" xnt_file="Skit_5H.xnt" xne_file="Skit_5H.xne"/>
+    <Note difficult="krazy" level="19" key="5" note="936" price_test="0" price_buy="0" xnt_file="Skit_5KH.xnt" xne_file="Skit_5KH.xne"/>
+    <Note difficult="easy" level="5" key="7" note="275" price_test="0" price_buy="0" xnt_file="Skit_7E.xnt" xne_file="Skit_7E.xne"/>
+    <Note difficult="normal" level="8" key="7" note="438" price_test="0" price_buy="0" xnt_file="Skit_7N.xnt" xne_file="Skit_7N.xne"/>
+    <Note difficult="hard" level="14" key="7" note="707" price_test="0" price_buy="0" xnt_file="Skit_7H.xnt" xne_file="Skit_7H.xne"/>
+    <Note difficult="krazy" level="22" key="7" note="943" price_test="0" price_buy="0" xnt_file="Skit_7KH.xnt" xne_file="Skit_7KH.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0057" title="Faraway" price_type="0" price_gold="0" campaign_only="0" genre="Ethnic" genre_sub="Ethnic House" bpm="144" playtime="02:28" Composer="Diana" Pattern="Zetto" icon_image ="C0057_icon.jpg" small_image="C0057_small.jpg" big_image="C0057_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="3" key="5" note="421" price_test="0" price_buy="0" xnt_file="Faraway_5E.xnt" xne_file="Faraway_5E.xne"/>
+    <Note difficult="normal" level="8" key="5" note="860" price_test="0" price_buy="0" xnt_file="Faraway_5N.xnt" xne_file="Faraway_5N.xne"/>
+    <Note difficult="hard" level="11" key="5" note="981" price_test="0" price_buy="0" xnt_file="Faraway_5H.xnt" xne_file="Faraway_5H.xne"/>
+    <Note difficult="easy" level="4" key="7" note="438" price_test="0" price_buy="0" xnt_file="Faraway_7E.xnt" xne_file="Faraway_7E.xne"/>
+    <Note difficult="normal" level="10" key="7" note="889" price_test="0" price_buy="0" xnt_file="Faraway_7N.xnt" xne_file="Faraway_7N.xne"/>
+    <Note difficult="hard" level="13" key="7" note="1289" price_test="0" price_buy="0" xnt_file="Faraway_7H.xnt" xne_file="Faraway_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0058" title="Beethoven Virus" price_type="0" price_gold="0" campaign_only="0" genre="remix" genre_sub="Classical Remix" bpm="156" playtime="02:35" Composer="Diana" Pattern="Groovit" icon_image ="C0058_icon.jpg" small_image="C0058_small.jpg" big_image="C0058_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="3" key="5" note="502" price_test="0" price_buy="0" xnt_file="Beethoven_Virus_5E.xnt" xne_file="Beethoven_Virus_5E.xne"/>
+    <Note difficult="normal" level="8" key="5" note="967" price_test="0" price_buy="0" xnt_file="Beethoven_Virus_5N.xnt" xne_file="Beethoven_Virus_5N.xne"/>
+    <Note difficult="hard" level="13" key="5" note="1346" price_test="0" price_buy="0" xnt_file="Beethoven_Virus_5H.xnt" xne_file="Beethoven_Virus_5H.xne"/>
+    <Note difficult="krazy" level="16" key="5" note="1539" price_test="0" price_buy="0" xnt_file="Beethoven_Virus_5KH.xnt" xne_file="Beethoven_Virus_5KH.xne"/>
+    <Note difficult="easy" level="4" key="7" note="509" price_test="0" price_buy="0" xnt_file="Beethoven_Virus_7E.xnt" xne_file="Beethoven_Virus_7E.xne"/>
+    <Note difficult="normal" level="10" key="7" note="972" price_test="0" price_buy="0" xnt_file="Beethoven_Virus_7N.xnt" xne_file="Beethoven_Virus_7N.xne"/>
+    <Note difficult="hard" level="15" key="7" note="1376" price_test="0" price_buy="0" xnt_file="Beethoven_Virus_7H.xnt" xne_file="Beethoven_Virus_7H.xne"/>
+    <Note difficult="krazy" level="18" key="7" note="1617" price_test="0" price_buy="0" xnt_file="Beethoven_Virus_7KH.xnt" xne_file="Beethoven_Virus_7KH.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0059" title="Teletonic Girl" price_type="0" price_gold="0" campaign_only="0" genre="electronic" genre_sub="Electronica" bpm="127" playtime="02:17" Composer="Brian.k" Pattern="T-Goon" icon_image ="C0059_icon.jpg" small_image="C0059_small.jpg" big_image="C0059_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="2" key="5" note="369" price_test="0" price_buy="0" xnt_file="TeletonicGirl_5E.xnt" xne_file="TeletonicGirl_5E.xne"/>
+    <Note difficult="normal" level="8" key="5" note="777" price_test="0" price_buy="0" xnt_file="TeletonicGirl_5N.xnt" xne_file="TeletonicGirl_5N.xne"/>
+    <Note difficult="hard" level="11" key="5" note="1073" price_test="0" price_buy="0" xnt_file="TeletonicGirl_5H.xnt" xne_file="TeletonicGirl_5H.xne"/>
+    <Note difficult="easy" level="3" key="7" note="381" price_test="0" price_buy="0" xnt_file="TeletonicGirl_7E.xnt" xne_file="TeletonicGirl_7E.xne"/>
+    <Note difficult="normal" level="8" key="7" note="783" price_test="0" price_buy="0" xnt_file="TeletonicGirl_7N.xnt" xne_file="TeletonicGirl_7N.xne"/>
+    <Note difficult="hard" level="13" key="7" note="1115" price_test="0" price_buy="0" xnt_file="TeletonicGirl_7H.xnt" xne_file="TeletonicGirl_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0060" title="Krazy Rain (Title)" price_type="0" price_gold="0" campaign_only="0" genre="soft" genre_sub="Pop" bpm="126" playtime="03:03" Composer="3Views" Pattern="Zetto" icon_image ="C0060_icon.jpg" small_image="C0060_small.jpg" big_image="C0060_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="3" key="5" note="334" price_test="0" price_buy="0" xnt_file="KrazyRain_5E.xnt" xne_file="KrazyRain_5E.xne"/>
+    <Note difficult="normal" level="8" key="5" note="712" price_test="0" price_buy="0" xnt_file="KrazyRain_5N.xnt" xne_file="KrazyRain_5N.xne"/>
+    <Note difficult="hard" level="13" key="5" note="1022" price_test="0" price_buy="0" xnt_file="KrazyRain_5H.xnt" xne_file="KrazyRain_5H.xne"/>
+    <Note difficult="easy" level="4" key="7" note="356" price_test="0" price_buy="0" xnt_file="KrazyRain_7E.xnt" xne_file="KrazyRain_7E.xne"/>
+    <Note difficult="normal" level="10" key="7" note="752" price_test="0" price_buy="0" xnt_file="KrazyRain_7N.xnt" xne_file="KrazyRain_7N.xne"/>
+    <Note difficult="hard" level="15" key="7" note="1253" price_test="0" price_buy="0" xnt_file="KrazyRain_7H.xnt" xne_file="KrazyRain_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0061" title="The Days" price_type="0" price_gold="0" campaign_only="0" genre="Acid" genre_sub="Jazz" bpm="144" playtime="02:45" Composer="Diana" Pattern="T-Goon" icon_image ="C0061_icon.jpg" small_image="C0061_small.jpg" big_image="C0061_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="1" key="5" note="302" price_test="0" price_buy="0" xnt_file="TheDays_5E.xnt" xne_file="TheDays_5E.xne"/>
+    <Note difficult="normal" level="9" key="5" note="714" price_test="0" price_buy="0" xnt_file="TheDays_5N.xnt" xne_file="TheDays_5N.xne"/>
+    <Note difficult="hard" level="13" key="5" note="1137" price_test="0" price_buy="0" xnt_file="TheDays_5H.xnt" xne_file="TheDays_5H.xne"/>
+    <Note difficult="easy" level="1" key="7" note="316" price_test="0" price_buy="0" xnt_file="TheDays_7E.xnt" xne_file="TheDays_7E.xne"/>
+    <Note difficult="normal" level="10" key="7" note="727" price_test="0" price_buy="0" xnt_file="TheDays_7N.xnt" xne_file="TheDays_7N.xne"/>
+    <Note difficult="hard" level="15" key="7" note="1153" price_test="0" price_buy="0" xnt_file="TheDays_7H.xnt" xne_file="TheDays_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0062" title="Cake House" price_type="0" price_gold="0" campaign_only="0" genre="groove" genre_sub="Dance" bpm="130" playtime="02:02" Composer="Tensi-Love" Pattern="Zetto" icon_image ="C0062_icon.jpg" small_image="C0062_small.jpg" big_image="C0062_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="2" key="5" note="273" price_test="0" price_buy="0" xnt_file="Cakehouse_5E.xnt" xne_file="Cakehouse_5E.xne"/>
+    <Note difficult="normal" level="7" key="5" note="499" price_test="0" price_buy="0" xnt_file="Cakehouse_5N.xnt" xne_file="Cakehouse_5N.xne"/>
+    <Note difficult="hard" level="13" key="5" note="740" price_test="0" price_buy="0" xnt_file="Cakehouse_5H.xnt" xne_file="Cakehouse_5H.xne"/>
+    <Note difficult="easy" level="3" key="7" note="303" price_test="0" price_buy="0" xnt_file="Cakehouse_7E.xnt" xne_file="Cakehouse_7E.xne"/>
+    <Note difficult="normal" level="8" key="7" note="534" price_test="0" price_buy="0" xnt_file="Cakehouse_7N.xnt" xne_file="Cakehouse_7N.xne"/>
+    <Note difficult="hard" level="14" key="7" note="892" price_test="0" price_buy="0" xnt_file="Cakehouse_7H.xnt" xne_file="Cakehouse_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0063" title="Believe" price_type="0" price_gold="0" campaign_only="0" genre="Acid" genre_sub="Pop" bpm="127" playtime="02:05" Composer="Sugar Coating" Pattern="T-Goon" icon_image ="C0063_icon.jpg" small_image="C0063_small.jpg" big_image="C0063_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="1" key="5" note="272" price_test="0" price_buy="0" xnt_file="Believe_5E.xnt" xne_file="Believe_5E.xne"/>
+    <Note difficult="normal" level="6" key="5" note="609" price_test="0" price_buy="0" xnt_file="Believe_5N.xnt" xne_file="Believe_5N.xne"/>
+    <Note difficult="hard" level="10" key="5" note="872" price_test="0" price_buy="0" xnt_file="Believe_5H.xnt" xne_file="Believe_5H.xne"/>
+    <Note difficult="easy" level="1" key="7" note="272" price_test="0" price_buy="0" xnt_file="Believe_7E.xnt" xne_file="Believe_7E.xne"/>
+    <Note difficult="normal" level="7" key="7" note="652" price_test="0" price_buy="0" xnt_file="Believe_7N.xnt" xne_file="Believe_7N.xne"/>
+    <Note difficult="hard" level="11" key="7" note="901" price_test="0" price_buy="0" xnt_file="Believe_7H.xnt" xne_file="Believe_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0064" title="Stand Up" price_type="0" price_gold="0" campaign_only="0" genre="Heavy" genre_sub="Hard Rock" bpm="96" playtime="02:38" Composer="Gogoboys" Pattern="Zetto" icon_image ="C0064_icon.jpg" small_image="C0064_small.jpg" big_image="C0064_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="1" key="5" note="409" price_test="0" price_buy="0" xnt_file="Standup_5E.xnt" xne_file="Standup_5E.xne"/>
+    <Note difficult="normal" level="3" key="5" note="676" price_test="0" price_buy="0" xnt_file="Standup_5N.xnt" xne_file="Standup_5N.xne"/>
+    <Note difficult="hard" level="5" key="5" note="1003" price_test="0" price_buy="0" xnt_file="Standup_5H.xnt" xne_file="Standup_5H.xne"/>
+    <Note difficult="easy" level="2" key="7" note="428" price_test="0" price_buy="0" xnt_file="Standup_7E.xnt" xne_file="Standup_7E.xne"/>
+    <Note difficult="normal" level="4" key="7" note="721" price_test="0" price_buy="0" xnt_file="Standup_7N.xnt" xne_file="Standup_7N.xne"/>
+    <Note difficult="hard" level="6" key="7" note="1108" price_test="0" price_buy="0" xnt_file="Standup_7H.xnt" xne_file="Standup_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0065" title="CCTV" price_type="0" price_gold="0" campaign_only="0" genre="Heavy" genre_sub="Popk" bpm="106" playtime="02:31" Composer="3Views" Pattern="T-Goon" icon_image ="C0065_icon.jpg" small_image="C0065_small.jpg" big_image="C0065_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="2" key="5" note="363" price_test="0" price_buy="0" xnt_file="CCTV_5E.xnt" xne_file="CCTV_5E.xne"/>
+    <Note difficult="normal" level="7" key="5" note="661" price_test="0" price_buy="0" xnt_file="CCTV_5N.xnt" xne_file="CCTV_5N.xne"/>
+    <Note difficult="hard" level="10" key="5" note="954" price_test="0" price_buy="0" xnt_file="CCTV_5H.xnt" xne_file="CCTV_5H.xne"/>
+    <Note difficult="easy" level="2" key="7" note="363" price_test="0" price_buy="0" xnt_file="CCTV_7E.xnt" xne_file="CCTV_7E.xne"/>
+    <Note difficult="normal" level="7" key="7" note="675" price_test="0" price_buy="0" xnt_file="CCTV_7N.xnt" xne_file="CCTV_7N.xne"/>
+    <Note difficult="hard" level="11" key="7" note="991" price_test="0" price_buy="0" xnt_file="CCTV_7H.xnt" xne_file="CCTV_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0069" title="The Girl from ipanema" price_type="0" price_gold="0" campaign_only="0" genre="acid" genre_sub="Jazz" bpm="140" playtime="02:39" Composer="Madame Kim's" Pattern="T-Goon" icon_image ="C0069_icon.jpg" small_image="C0069_small.jpg" big_image="C0069_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="2" key="5" note="335" price_test="0" price_buy="0" xnt_file="Ipanema_5E.xnt" xne_file="Ipanema_5E.xne"/>
+    <Note difficult="normal" level="6" key="5" note="555" price_test="0" price_buy="0" xnt_file="Ipanema_5N.xnt" xne_file="Ipanema_5N.xne"/>
+    <Note difficult="hard" level="9" key="5" note="877" price_test="0" price_buy="0" xnt_file="Ipanema_5H.xnt" xne_file="Ipanema_5H.xne"/>
+    <Note difficult="easy" level="3" key="7" note="339" price_test="0" price_buy="0" xnt_file="Ipanema_7E.xnt" xne_file="Ipanema_7E.xne"/>
+    <Note difficult="normal" level="7" key="7" note="591" price_test="0" price_buy="0" xnt_file="Ipanema_7N.xnt" xne_file="Ipanema_7N.xne"/>
+    <Note difficult="hard" level="12" key="7" note="903" price_test="0" price_buy="0" xnt_file="Ipanema_7H.xnt" xne_file="Ipanema_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0070" title="Do You Feel" price_type="0" price_gold="0" campaign_only="0" genre="Electronic" genre_sub="Electronica" bpm="128" playtime="02:44" Composer="Tensi Love" Pattern="Groovit" icon_image ="C0070_icon.jpg" small_image="C0070_small.jpg" big_image="C0070_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="2" key="5" note="315" price_test="0" price_buy="0" xnt_file="Do_You_Feel_5E.xnt" xne_file="Do_You_Feel_5E.xne"/>
+    <Note difficult="normal" level="5" key="5" note="826" price_test="0" price_buy="0" xnt_file="Do_You_Feel_5N.xnt" xne_file="Do_You_Feel_5N.xne"/>
+    <Note difficult="hard" level="9" key="5" note="996" price_test="0" price_buy="0" xnt_file="Do_You_Feel_5H.xnt" xne_file="Do_You_Feel_5H.xne"/>
+    <Note difficult="easy" level="2" key="7" note="315" price_test="0" price_buy="0" xnt_file="Do_You_Feel_7E.xnt" xne_file="Do_You_Feel_7E.xne"/>
+    <Note difficult="normal" level="6" key="7" note="834" price_test="0" price_buy="0" xnt_file="Do_You_Feel_7N.xnt" xne_file="Do_You_Feel_7N.xne"/>
+    <Note difficult="hard" level="11" key="7" note="1094" price_test="0" price_buy="0" xnt_file="Do_You_Feel_7H.xnt" xne_file="Do_You_Feel_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0071" title="Look in her eyes" price_type="0" price_gold="0" campaign_only="0" genre="Groove" genre_sub="Dance" bpm="127" playtime="02:33" Composer="heenain" Pattern="Zetto" icon_image ="C0071_icon.jpg" small_image="C0071_small.jpg" big_image="C0071_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="2" key="5" note="338" price_test="0" price_buy="0" xnt_file="Look_in_her_eyes_5E.xnt" xne_file="Look_in_her_eyes_5E.xne"/>
+    <Note difficult="normal" level="6" key="5" note="600" price_test="0" price_buy="0" xnt_file="Look_in_her_eyes_5N.xnt" xne_file="Look_in_her_eyes_5N.xne"/>
+    <Note difficult="hard" level="13" key="5" note="792" price_test="0" price_buy="0" xnt_file="Look_in_her_eyes_5H.xnt" xne_file="Look_in_her_eyes_5H.xne"/>
+    <Note difficult="easy" level="2" key="7" note="349" price_test="0" price_buy="0" xnt_file="Look_in_her_eyes_7E.xnt" xne_file="Look_in_her_eyes_7E.xne"/>
+    <Note difficult="normal" level="8" key="7" note="635" price_test="0" price_buy="0" xnt_file="Look_in_her_eyes_7N.xnt" xne_file="Look_in_her_eyes_7N.xne"/>
+    <Note difficult="hard" level="17" key="7" note="1923" price_test="0" price_buy="0" xnt_file="Look_in_her_eyes_7H.xnt" xne_file="Look_in_her_eyes_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0072" title="The Message" price_type="0" price_gold="0" campaign_only="0" genre="Heavy" genre_sub="Electronica" bpm="128" playtime="02:04" Composer="RRM" Pattern="T-Goon" icon_image ="C0072_icon.jpg" small_image="C0072_small.jpg" big_image="C0072_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="3" key="5" note="307" price_test="0" price_buy="0" xnt_file="Message_5E.xnt" xne_file="Message_5E.xne"/>
+    <Note difficult="normal" level="7" key="5" note="660" price_test="0" price_buy="0" xnt_file="Message_5N.xnt" xne_file="Message_5N.xne"/>
+    <Note difficult="hard" level="10" key="5" note="820" price_test="0" price_buy="0" xnt_file="Message_5H.xnt" xne_file="Message_5H.xne"/>
+    <Note difficult="easy" level="3" key="7" note="308" price_test="0" price_buy="0" xnt_file="Message_7E.xnt" xne_file="Message_7E.xne"/>
+    <Note difficult="normal" level="8" key="7" note="668" price_test="0" price_buy="0" xnt_file="Message_7N.xnt" xne_file="Message_7N.xne"/>
+    <Note difficult="hard" level="12" key="7" note="840" price_test="0" price_buy="0" xnt_file="Message_7H.xnt" xne_file="Message_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0073" title="Zero Tolerence" price_type="0" price_gold="0" campaign_only="0" genre="Heavy" genre_sub="Instrumental " bpm="136" playtime="01:55" Composer="Tensi Love" Pattern="T-Goon" icon_image ="C0073_icon.jpg" small_image="C0073_small.jpg" big_image="C0073_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="3" key="5" note="266" price_test="0" price_buy="0" xnt_file="ZeroTolerence_5E.xnt" xne_file="ZeroTolerence_5E.xne"/>
+    <Note difficult="normal" level="6" key="5" note="664" price_test="0" price_buy="0" xnt_file="ZeroTolerence_5N.xnt" xne_file="ZeroTolerence_5N.xne"/>
+    <Note difficult="hard" level="10" key="5" note="876" price_test="0" price_buy="0" xnt_file="ZeroTolerence_5H.xnt" xne_file="ZeroTolerence_5H.xne"/>
+    <Note difficult="easy" level="3" key="7" note="266" price_test="0" price_buy="0" xnt_file="ZeroTolerence_7E.xnt" xne_file="ZeroTolerence_7E.xne"/>
+    <Note difficult="normal" level="6" key="7" note="664" price_test="0" price_buy="0" xnt_file="ZeroTolerence_7N.xnt" xne_file="ZeroTolerence_7N.xne"/>
+    <Note difficult="hard" level="11" key="7" note="936" price_test="0" price_buy="0" xnt_file="ZeroTolerence_7H.xnt" xne_file="ZeroTolerence_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0074" title="Free" price_type="0" price_gold="0" campaign_only="0" genre="Electronic" genre_sub="Electronica " bpm="127" playtime="02:16" Composer="Lowprofile" Pattern="Groovit" icon_image ="C0074_icon.jpg" small_image="C0074_small.jpg" big_image="C0074_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="2" key="5" note="254" price_test="0" price_buy="0" xnt_file="Free_5E.xnt" xne_file="Free_5E.xne"/>
+    <Note difficult="normal" level="5" key="5" note="607" price_test="0" price_buy="0" xnt_file="Free_5N.xnt" xne_file="Free_5N.xne"/>
+    <Note difficult="hard" level="9" key="5" note="851" price_test="0" price_buy="0" xnt_file="Free_5H.xnt" xne_file="Free_5H.xne"/>
+    <Note difficult="easy" level="2" key="7" note="254" price_test="0" price_buy="0" xnt_file="Free_7E.xnt" xne_file="Free_7E.xne"/>
+    <Note difficult="normal" level="5" key="7" note="607" price_test="0" price_buy="0" xnt_file="Free_7N.xnt" xne_file="Free_7N.xne"/>
+    <Note difficult="hard" level="10" key="7" note="879" price_test="0" price_buy="0" xnt_file="Free_7H.xnt" xne_file="Free_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0075" title="Siren" price_type="0" price_gold="0" campaign_only="0" genre="Electronic" genre_sub="Electronica " bpm="140" playtime="02:22" Composer="Multicraft" Pattern="Zetto" icon_image ="C0075_icon.jpg" small_image="C0075_small.jpg" big_image="C0075_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="2" key="5" note="246" price_test="0" price_buy="0" xnt_file="Siren_5E.xnt" xne_file="Siren_5E.xne"/>
+    <Note difficult="normal" level="5" key="5" note="444" price_test="0" price_buy="0" xnt_file="Siren_5N.xnt" xne_file="Siren_5N.xne"/>
+    <Note difficult="hard" level="7" key="5" note="653" price_test="0" price_buy="0" xnt_file="Siren_5H.xnt" xne_file="Siren_5H.xne"/>
+    <Note difficult="easy" level="2" key="7" note="278" price_test="0" price_buy="0" xnt_file="Siren_7E.xnt" xne_file="Siren_7E.xne"/>
+    <Note difficult="normal" level="6" key="7" note="486" price_test="0" price_buy="0" xnt_file="Siren_7N.xnt" xne_file="Siren_7N.xne"/>
+    <Note difficult="hard" level="8" key="7" note="699" price_test="0" price_buy="0" xnt_file="Siren_7H.xnt" xne_file="Siren_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0076" title="Dead Or Alive" price_type="0" price_gold="0" campaign_only="0" genre="Electronic" genre_sub="Techno " bpm="130" playtime="02:25" Composer="RRM" Pattern="Zetto" icon_image ="C0076_icon.jpg" small_image="C0076_small.jpg" big_image="C0076_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="4" key="5" note="365" price_test="0" price_buy="0" xnt_file="DeadOrAlive_5E.xnt" xne_file="DeadOrAlive_5E.xne"/>
+    <Note difficult="normal" level="6" key="5" note="685" price_test="0" price_buy="0" xnt_file="DeadOrAlive_5N.xnt" xne_file="DeadOrAlive_5N.xne"/>
+    <Note difficult="hard" level="8" key="5" note="864" price_test="0" price_buy="0" xnt_file="DeadOrAlive_5H.xnt" xne_file="DeadOrAlive_5H.xne"/>
+    <Note difficult="easy" level="5" key="7" note="406" price_test="0" price_buy="0" xnt_file="DeadOrAlive_7E.xnt" xne_file="DeadOrAlive_7E.xne"/>
+    <Note difficult="normal" level="7" key="7" note="707" price_test="0" price_buy="0" xnt_file="DeadOrAlive_7N.xnt" xne_file="DeadOrAlive_7N.xne"/>
+    <Note difficult="hard" level="9" key="7" note="915" price_test="0" price_buy="0" xnt_file="DeadOrAlive_7H.xnt" xne_file="DeadOrAlive_7H.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+  <Music id="0077" title="Maria" price_type="0" price_gold="0" campaign_only="0" genre="Remix" genre_sub="Classical Remix" bpm="160" playtime="01:58" Composer="T-Goon" Pattern="T-Goon" icon_image ="C0077_icon.jpg" small_image="C0077_small.jpg" big_image="C0077_big.jpg" desc="Enjoy the Krazy Rain with music" >
+    <Note difficult="easy" level="5" key="5" note="372" price_test="0" price_buy="0" xnt_file="Maria_5E.xnt" xne_file="Maria_5E.xne"/>
+    <Note difficult="normal" level="10" key="5" note="784" price_test="0" price_buy="0" xnt_file="Maria_5N.xnt" xne_file="Maria_5N.xne"/>
+    <Note difficult="hard" level="20" key="5" note="1214" price_test="0" price_buy="0" xnt_file="Maria_5H.xnt" xne_file="Maria_5H.xne"/>
+    <Note difficult="krazy" level="24" key="5" note="1525" price_test="0" price_buy="0" xnt_file="Maria_5KH.xnt" xne_file="Maria_5KH.xne"/>
+    <Note difficult="easy" level="5" key="7" note="372" price_test="0" price_buy="0" xnt_file="Maria_7E.xnt" xne_file="Maria_7E.xne"/>
+    <Note difficult="normal" level="10" key="7" note="796" price_test="0" price_buy="0" xnt_file="Maria_7N.xnt" xne_file="Maria_7N.xne"/>
+    <Note difficult="hard" level="20" key="7" note="1218" price_test="0" price_buy="0" xnt_file="Maria_7H.xnt" xne_file="Maria_7H.xne"/>
+    <Note difficult="krazy" level="24" key="7" note="1552" price_test="0" price_buy="0" xnt_file="Maria_7KH.xnt" xne_file="Maria_7KH.xne"/>
+    <Compressor threshold_level="-18" attack_time="15" release_time="150" makeup_gain="8" />
+  </Music>
+
+</MusicInfo>

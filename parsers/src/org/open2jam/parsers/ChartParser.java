@@ -14,6 +14,7 @@ public abstract class ChartParser
 	    if(OJNParser.canRead(file))return OJNParser.parseFile(file);
 	    if(BMSParser.canRead(file))return BMSParser.parseFile(file);
 	    if(SMParser.canRead(file)) return SMParser.parseFile(file);
+	    if(SNPParser.canRead(file)) return SNPParser.parseFile(file);
 	    return null;
 	}
 }

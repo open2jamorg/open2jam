@@ -3,14 +3,13 @@ package org.open2jam.parsers;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-import org.open2jam.parsers.utils.CharsetDetector;
+import org.open2jam.parsers.utils.ByteHelper;
 import org.open2jam.parsers.utils.Logger;
 
 class OJNParser
@@ -95,28 +94,28 @@ class OJNParser
 
         byte title[] = new byte[64];
         buffer.get(title);
-        String str_title = bytes2string(title);
+        String str_title = ByteHelper.toString(title);
         easy.title = str_title;
         normal.title = str_title;
         hard.title = str_title;
 
         byte artist[] = new byte[32];
         buffer.get(artist);
-        String str_artist = bytes2string(artist);
+        String str_artist = ByteHelper.toString(artist);
         easy.artist = str_artist;
         normal.artist = str_artist;
         hard.artist = str_artist;
 
         byte noter[] = new byte[32];
         buffer.get(noter);
-        String str_noter = bytes2string(noter);
+        String str_noter = ByteHelper.toString(noter);
         easy.noter = str_noter;
         normal.noter = str_noter;
         hard.noter = str_noter;
 
         byte ojm_file[] = new byte[32];
         buffer.get(ojm_file);
-        File sample_file = new File(file.getParent(), bytes2string(ojm_file));
+        File sample_file = new File(file.getParent(), ByteHelper.toString(ojm_file));
         easy.sample_file = sample_file;
         normal.sample_file = sample_file;
         hard.sample_file = sample_file;
@@ -276,18 +275,5 @@ class OJNParser
             }
         }
         Collections.sort(event_list);
-    }
-
-    public static String bytes2string(byte[] ch)
-    {
-        int i = 0;
-        while(i<ch.length && ch[i]!=0)i++; // find \0 terminator
-        String charset = CharsetDetector.analyze(ch);
-        try {
-            return new String(ch,0,i,charset);
-        } catch (UnsupportedEncodingException ex) {
-            Logger.global.log(Level.WARNING, "Encoding [{0}] not supported !", charset);
-            return new String(ch,0,i);
-        }
     }
 }
