@@ -92,7 +92,6 @@ public class SNPParser {
 	ChartList list = new ChartList();
 	
 	try {
-	    
 	    long pointer = VDISK_HEADER;
 	    
 	    while(pointer < f.length())

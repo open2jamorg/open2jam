@@ -11,6 +11,7 @@ import java.util.Map;
 import org.open2jam.parsers.utils.AudioData;
 
 /**
+ * A class to read the XNT files from KrazyRain
  *
  * @author CdK
  */
@@ -92,7 +93,6 @@ public class XNTChart extends Chart {
 
     @Override
     public List<Event> getEvents() {
-	return null;
-	//return SNPParser.parseChart(this);
+	return XNTParser.parseChart(this);
     }    
 }
