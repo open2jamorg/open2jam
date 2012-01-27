@@ -12,10 +12,9 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.logging.Level;
-import org.open2jam.parsers.utils.ByteHelper;
-import org.open2jam.parsers.utils.Compressor;
-import org.open2jam.parsers.utils.Logger;
+import org.open2jam.parsers.utils.*;
 
 /**
  * This class let us parse a SNP file
@@ -31,7 +30,7 @@ public class SNPParser {
     private static final int VDISK_HEADER = 24;
     private static final int FILE_HEADER = 145;
     
-    public static class SNPFileHeader{
+    public static class SNPFileHeader implements java.io.Serializable{
 	final byte isDir;
 	final String file_name;
 	final int size_original;
@@ -109,6 +108,7 @@ public class SNPParser {
 		if(fh.size_packed > 0 && fh.file_name.trim().endsWith(".xnt"))
 		{		    
 		    XNTChart chart = new XNTChart();
+		    chart.xnt_filename = fh.file_name.trim();
 		    //TODO read the krazyrain.xml file and get the info so we can
 		    //fill with all the data
 		    list.add(chart);
@@ -126,7 +126,7 @@ public class SNPParser {
 	{
 	    XNTChart chart = (XNTChart)list.get(i);
 	    chart.file_index = file_index;
-	    chart.snp_file = file;
+	    chart.source = file;
 	}
 	
         try {
@@ -148,5 +148,41 @@ public class SNPParser {
 	bout.write(Compressor.decompress(b).array());
 	
 	return ByteBuffer.wrap(bout.toByteArray());
+    }
+    
+    public static HashMap<Integer, AudioData> getSamples(XNTChart chart)
+    {
+	HashMap<Integer, AudioData> samples = new HashMap<Integer, AudioData>();
+	
+	ByteBuffer buffer;
+        RandomAccessFile f;
+	SNPFileHeader fh;
+        try{
+            f = new RandomAccessFile(chart.source.getAbsolutePath(),"r"); 
+	    for(Entry<Integer, String> entry : chart.samples_index.entrySet())
+	    {
+		int id = entry.getKey();
+		String fname = entry.getValue();
+		
+		if(!chart.file_index.containsKey(fname))
+		{
+		    Logger.global.log(Level.WARNING, "I can't find the file {0} in the snp :/", fname);
+		    return new HashMap<Integer, AudioData>(); //it will xplode if It's return null so... XD
+		}
+		fh = chart.file_index.get(fname);
+		buffer = SNPParser.extract(fh, f);
+		buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
+		
+		AudioData data = AudioData.create(new OggInputStream(new ByteBufferInputStream(buffer)));
+		
+		samples.put(id, data);
+	    }
+        }catch(IOException e){
+            Logger.global.log(Level.WARNING, "IO exception on reading SNP file {0}", chart.source.getName());
+            return null;
+        }
+	
+	
+	return samples;
     }
 }

@@ -1,11 +1,14 @@
 package org.open2jam.parsers;
 
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
+import org.open2jam.parsers.SNPParser.SNPFileHeader;
 import org.open2jam.parsers.utils.ByteHelper;
 import org.open2jam.parsers.utils.Logger;
 
@@ -15,13 +18,53 @@ import org.open2jam.parsers.utils.Logger;
  */
 public class XNTParser {
     
+    /** The *.xnt files have "XNOT" as signature */
+    private final static int XNT_SIGNATURE = 0x544F4E58;
+    
     public static List<Event> parseChart(XNTChart chart)
     {
 	ArrayList<Event> list = new ArrayList<Event>();
 	
+	ByteBuffer buffer;
+        RandomAccessFile f;
+	SNPFileHeader fh;
+        try{
+            f = new RandomAccessFile(chart.source.getAbsolutePath(),"r");
+	    if(!chart.file_index.containsKey(chart.xnt_filename))
+	    {
+		Logger.global.log(Level.WARNING, "Where is my xnt file? {0}", chart.source.getName());
+		return null;
+	    }
+	    fh = chart.file_index.get(chart.xnt_filename);
+            buffer = SNPParser.extract(fh, f);
+        }catch(IOException e){
+            Logger.global.log(Level.WARNING, "IO exception on reading SNP file {0}", chart.source.getName());
+            return null;
+        }
+        buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
 	
+	int signature = buffer.getInt();
+	short unk1    = buffer.getShort();
+	int segments  = buffer.getInt();
+	byte unk2    = buffer.get();
 	
-	return null;
+	if(signature != XNT_SIGNATURE)
+	{
+	    Logger.global.log(Level.WARNING, "This isn't a XNT file :/ {0}", fh.file_name);
+            return null;	    
+	}
+	
+	System.out.println("seg: "+segments);
+	
+	if(segments == 3)
+	    readBPMChange(list, buffer);
+	
+	readNoteBlock(list, buffer, false); //first key sounds
+	readNoteBlock(list, buffer, true);  //then bgm sounds
+	    
+	chart.samples_index = readSamples(buffer);
+	
+	return list;
     }
     
     private static void readNoteBlock(List<Event> list, ByteBuffer buffer, boolean bgm)
@@ -30,12 +73,14 @@ public class XNTParser {
 	buffer.get(junk);
 	int number_events = buffer.getInt();
 	
+	System.out.println("NoteBlock: bgm: "+bgm+" Num events: "+number_events);
+	
 	for(int i = 0; i < number_events; i++)
 	{	
 	    byte  zero     = buffer.get();
 	    short measure  = buffer.getShort();
 	    float position = buffer.getFloat();
-	    char  chan     = buffer.getChar();
+	    short chan     = buffer.get();
 	    short sample_id= buffer.getShort();
 	    float hold     = buffer.getFloat();
 	    

@@ -6,6 +6,7 @@ package org.open2jam.parsers;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.open2jam.parsers.utils.AudioData;
@@ -18,7 +19,10 @@ import org.open2jam.parsers.utils.AudioData;
 public class XNTChart extends Chart {
     
     Map<String, SNPParser.SNPFileHeader> file_index;
-    File snp_file;
+    
+    String xnt_filename;
+    
+    Map<Integer, String> samples_index;
     
     File source;
     @Override
@@ -64,10 +68,10 @@ public class XNTChart extends Chart {
     Map<Integer, AudioData> samples;
     @Override
     public Map<Integer, AudioData> getSamples() {
-	throw new UnsupportedOperationException("Not supported yet.");
+	return SNPParser.getSamples(this);
     }
 
-    double bpm=0d;
+    double bpm=130d;
     @Override
     public double getBPM() {
 	return bpm;
@@ -88,7 +92,7 @@ public class XNTChart extends Chart {
     File image_file;
     @Override
     public BufferedImage getCover() {
-	throw new UnsupportedOperationException("Not supported yet.");
+	return null;
     }
 
     @Override
