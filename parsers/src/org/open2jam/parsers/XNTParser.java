@@ -30,11 +30,27 @@ public class XNTParser {
 	SNPFileHeader fh;
         try{
             f = new RandomAccessFile(chart.source.getAbsolutePath(),"r");
+	    //First, the xne file
+	    if(!chart.file_index.containsKey(chart.xne_filename))
+	    {
+		Logger.global.log(Level.WARNING, "Where is my xne file? {0}", chart.source.getName());
+		return null;
+	    }
+	    
+	    fh = chart.file_index.get(chart.xne_filename);
+	    buffer = SNPParser.extract(fh, f);  
+	    String xne = new String(buffer.array());
+	    String tempo = xne.toLowerCase().split("tempo=\"")[1].split("\"")[0];
+	    //this is the real BPM, the xml bpm isn't it :/
+	    list.add(new Event(Event.Channel.BPM_CHANGE,0,0,Float.parseFloat(tempo),Event.Flag.NONE));
+	    
+	    //Then, the xnt file
 	    if(!chart.file_index.containsKey(chart.xnt_filename))
 	    {
 		Logger.global.log(Level.WARNING, "Where is my xnt file? {0}", chart.source.getName());
 		return null;
 	    }
+
 	    fh = chart.file_index.get(chart.xnt_filename);
             buffer = SNPParser.extract(fh, f);
         }catch(IOException e){
@@ -64,6 +80,7 @@ public class XNTParser {
 	    
 	chart.samples_index = readSamples(buffer);
 	
+	Collections.sort(list);
 	return list;
     }
     
@@ -118,8 +135,6 @@ public class XNTParser {
 	    }
 	    
 	}
-	
-	Collections.sort(list);
     }
     
     private static void readBPMChange(List<Event> list, ByteBuffer buffer)
@@ -138,8 +153,6 @@ public class XNTParser {
 	    
 	    list.add(new Event(Event.Channel.BPM_CHANGE, measure, position, bpm, Event.Flag.NONE));
 	}
-	
-	Collections.sort(list);
     }
     
     private static HashMap<Integer, String> readSamples(ByteBuffer buffer)

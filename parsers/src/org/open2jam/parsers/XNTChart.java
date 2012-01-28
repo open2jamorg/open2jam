@@ -6,7 +6,6 @@ package org.open2jam.parsers;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.open2jam.parsers.utils.AudioData;
@@ -21,6 +20,7 @@ public class XNTChart extends Chart {
     Map<String, SNPParser.SNPFileHeader> file_index;
     
     String xnt_filename;
+    String xne_filename;
     
     Map<Integer, String> samples_index;
     

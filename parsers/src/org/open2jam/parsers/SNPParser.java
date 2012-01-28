@@ -23,9 +23,8 @@ import org.open2jam.parsers.utils.*;
  */
 public class SNPParser {
 
-    /** the signature , "VDISK1.0" in little endian */
-    private static final int SNP2_SIGNATURE = 0x302E314B;
-    //private static final int SNP_SIGNATURE = 0x302E314B53494456;
+    /** the signature, "VDISK1.0" in little endian */
+    private static final long SNP_SIGNATURE = 0x302E314B53494456L;
     
     private static final int VDISK_HEADER = 24;
     private static final int FILE_HEADER = 145;
@@ -79,10 +78,7 @@ public class SNPParser {
 	
 	buffer.order(ByteOrder.LITTLE_ENDIAN);
 
-	//TODO FIX THIS
-	buffer.getInt();
-	
-	if(buffer.getInt() != SNP2_SIGNATURE)
+	if(buffer.getLong() != SNP_SIGNATURE)
 	{
             Logger.global.log(Level.WARNING, "This isn't a snp file you! {0}", file.getName());
             return null;	    
@@ -104,11 +100,12 @@ public class SNPParser {
 		if(fh.isDir < 1) //DO NOT WANT DIRS D:
 		    file_index.put(fh.file_name, fh); //add the file
 		
-		
 		if(fh.size_packed > 0 && fh.file_name.trim().endsWith(".xnt"))
 		{		    
 		    XNTChart chart = new XNTChart();
+		    //TODO Change this with the info in the xml 
 		    chart.xnt_filename = fh.file_name.trim();
+		    chart.xne_filename = fh.file_name.trim().substring(0, fh.file_name.trim().lastIndexOf("."))+".xne";
 		    //TODO read the krazyrain.xml file and get the info so we can
 		    //fill with all the data
 		    list.add(chart);
