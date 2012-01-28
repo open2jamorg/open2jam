@@ -45,6 +45,7 @@ public class Compressor {
         }
 
         decompressor.end();
+	in.clear();
         try {
             bos.close();
         } catch (IOException e) {

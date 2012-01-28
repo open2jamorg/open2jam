@@ -139,12 +139,8 @@ public class SNPParser {
 	ByteBuffer b =
 		f.getChannel().map(FileChannel.MapMode.READ_ONLY, fh.file_offset+FILE_HEADER, fh.size_packed);
 	b.order(ByteOrder.LITTLE_ENDIAN);
-	
-	ByteArrayOutputStream bout = new ByteArrayOutputStream();
-	
-	bout.write(Compressor.decompress(b).array());
-	
-	return ByteBuffer.wrap(bout.toByteArray());
+
+	return Compressor.decompress(b);
     }
     
     public static HashMap<Integer, AudioData> getSamples(XNTChart chart)
@@ -171,6 +167,7 @@ public class SNPParser {
 		buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
 		
 		AudioData data = AudioData.create(new OggInputStream(new ByteBufferInputStream(buffer)));
+		buffer.clear();
 		
 		samples.put(id, data);
 	    }

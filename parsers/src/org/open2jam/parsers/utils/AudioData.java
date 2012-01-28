@@ -92,6 +92,8 @@ public class AudioData {
 	    b.put(out.toByteArray());
 	    b.flip();
 	    
+	    ois.close();
+	    
 	    return new AudioData(b, format, samplerate);
 	    
 	} catch(IOException e) {
@@ -122,6 +124,8 @@ public class AudioData {
 	    ByteBuffer b = ByteBuffer.allocateDirect(out.size());
 	    b.put(out.toByteArray());
 	    b.flip();
+	    
+	    ais.close();
 	    
 	    return create(b, audioformat.getSampleSizeInBits(), audioformat.getChannels(), (int) audioformat.getSampleRate());
 	} catch (Exception e) {
@@ -166,6 +170,8 @@ public class AudioData {
 	    ByteBuffer b = ByteBuffer.allocateDirect(out.size());
 	    b.put(out.toByteArray());
 	    b.flip();
+
+	    stream.close();
 
 	    return create(b, 16/*TODO find&fix this*/, channels, sampleRate);
 	} catch (BitstreamException ex) {

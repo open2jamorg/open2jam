@@ -180,7 +180,7 @@ class OJMParser
 
     private static HashMap<Integer, AudioData> parseOMC(RandomAccessFile f, boolean decrypt) throws IOException
     {
-       HashMap<Integer, AudioData> samples =  new HashMap();
+       HashMap<Integer, AudioData> samples =  new HashMap<Integer, AudioData>();
        
        ByteBuffer buffer = f.getChannel().map(java.nio.channels.FileChannel.MapMode.READ_ONLY, 4, 16);
        buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
