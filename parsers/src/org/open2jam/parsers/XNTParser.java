@@ -70,8 +70,6 @@ public class XNTParser {
             return null;	    
 	}
 	
-	System.out.println("seg: "+segments);
-	
 	if(segments == 3)
 	    readBPMChange(list, buffer);
 	
@@ -89,9 +87,7 @@ public class XNTParser {
 	byte[] junk = new byte[12]; //skip this, idk what it is 
 	buffer.get(junk);
 	int number_events = buffer.getInt();
-	
-	System.out.println("NoteBlock: bgm: "+bgm+" Num events: "+number_events);
-	
+
 	for(int i = 0; i < number_events; i++)
 	{	
 	    byte  zero     = buffer.get();

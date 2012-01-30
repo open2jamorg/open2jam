@@ -4,13 +4,13 @@
  */
 package org.open2jam.parsers;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -97,21 +97,39 @@ public class SNPParser {
 		
 		SNPFileHeader fh = SNPFileHeader.readHeader(buffer, pointer);
 		
+		pointer += FILE_HEADER+fh.size_packed; //header + packed bits
+		
 		if(fh.isDir < 1) //DO NOT WANT DIRS D:
 		    file_index.put(fh.file_name, fh); //add the file
 		
 		if(fh.size_packed > 0 && fh.file_name.trim().endsWith(".xnt"))
 		{		    
 		    XNTChart chart = new XNTChart();
-		    //TODO Change this with the info in the xml 
-		    chart.xnt_filename = fh.file_name.trim();
-		    chart.xne_filename = fh.file_name.trim().substring(0, fh.file_name.trim().lastIndexOf("."))+".xne";
-		    //TODO read the krazyrain.xml file and get the info so we can
-		    //fill with all the data
+		    ArrayList<XNTChart> charts = KrazyRainDB.getInstance().getCharts(file.getName().toUpperCase());
+		    if(charts != null) {
+			for(XNTChart c : charts)
+			{
+			    if(c.getXNTFile().toUpperCase().equals(fh.file_name.trim().toUpperCase()))
+				chart = c;
+			}
+		    }
+		    else {
+			//so, the charts wheren't in the xml file D: Let's make a gracefully fallback xD
+			chart.title = file.getName().toUpperCase();
+			chart.artist = "KrazyRain";
+			chart.genre = "Unknown";
+			chart.level = 1;
+			
+			chart.xnt_filename = fh.file_name.trim();
+			chart.xne_filename = fh.file_name.trim().substring(0, fh.file_name.trim().lastIndexOf("."))+".xne";
+		    }
+		    //Something weird happened and any of this files aren't in the chart so continue 
+		    if(chart.getXNEFile().isEmpty() || chart.getXNTFile().isEmpty()) {
+			Logger.global.log(Level.WARNING, "Something weird happened with this chart. XNT: {0}", fh.file_name);
+			continue;
+		    }
 		    list.add(chart);
 		} 
-		
-		pointer += FILE_HEADER+fh.size_packed; //header + packed bits
 	    }    
 	} catch (IOException ex) {
             Logger.global.log(Level.WARNING, "Fuck :_ {0}", file.getName());

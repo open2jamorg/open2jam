@@ -19,10 +19,23 @@ public class XNTChart extends Chart {
     
     Map<String, SNPParser.SNPFileHeader> file_index;
     
-    String xnt_filename;
-    String xne_filename;
-    
     Map<Integer, String> samples_index;
+    
+    String xnt_filename = "";
+    public String getXNTFile() {
+	return xnt_filename;
+    }
+    public void setXNTFile(String name) {
+	xnt_filename = name;
+    }
+    
+    String xne_filename = "";
+    public String getXNEFile() {
+	return xne_filename;
+    }
+    public void setXNEFile(String name) {
+	xne_filename = name;
+    }
     
     File source;
     @Override
@@ -35,11 +48,17 @@ public class XNTChart extends Chart {
     public int getLevel() {
 	return level;
     }
+    public void setLevel(int level) {
+	this.level = level;
+    }
 
     int keys=0;
     @Override
     public int getKeys() {
 	return keys;
+    }
+    public void setKeys(int keys) {
+	this.keys = keys;
     }
 
     String title="";
@@ -47,11 +66,17 @@ public class XNTChart extends Chart {
     public String getTitle() {
 	return title;
     }
+    public void setTitle(String title) {
+	this.title = title;
+    }
 
     String artist="";
     @Override
     public String getArtist() {
 	return artist;
+    }
+    public void setArtist(String artist) {
+	this.artist = artist;
     }
 
     String genre="";
@@ -59,10 +84,17 @@ public class XNTChart extends Chart {
     public String getGenre() {
 	return genre;
     }
+    public void setGenre(String genre) {
+	this.genre = genre;
+    }
 
+    String noter="";
     @Override
     public String getNoter() {
-	return "";
+	return noter;
+    }
+    public void setNoter(String noter) {
+	this.noter = noter;
     }
 
     Map<Integer, AudioData> samples;
@@ -76,17 +108,26 @@ public class XNTChart extends Chart {
     public double getBPM() {
 	return bpm;
     }
+    public void setBPM(double bpm) {
+	this.bpm = bpm;
+    }
 
     int notecount=0;
     @Override
     public int getNoteCount() {
 	return notecount;
     }
+    public void setNoteCount(int count) {
+	this.notecount = count;
+    }
 
     int duration=0;
     @Override
     public int getDuration() {
 	return duration;
+    }
+    public void setDuration(int duration) {
+	this.duration = duration;
     }
 
     File image_file;
