@@ -133,7 +133,7 @@ public class XNTChart extends Chart {
     File image_file;
     @Override
     public BufferedImage getCover() {
-	return null;
+	return getNoImage();
     }
 
     @Override

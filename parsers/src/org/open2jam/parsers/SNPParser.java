@@ -11,6 +11,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -143,12 +144,14 @@ public class SNPParser {
 	    chart.file_index = file_index;
 	    chart.source = file;
 	}
-	
+
         try {
             f.close();
         } catch (IOException ex) {
             Logger.global.log(Level.WARNING, "Error closing the file (lol?) {0}", ex);
         }
+	
+	Collections.sort(list);
 	return list;
     }
     
@@ -157,7 +160,7 @@ public class SNPParser {
 	ByteBuffer b =
 		f.getChannel().map(FileChannel.MapMode.READ_ONLY, fh.file_offset+FILE_HEADER, fh.size_packed);
 	b.order(ByteOrder.LITTLE_ENDIAN);
-
+	
 	return Compressor.decompress(b);
     }
     
@@ -177,8 +180,8 @@ public class SNPParser {
 		
 		if(!chart.file_index.containsKey(fname))
 		{
-		    Logger.global.log(Level.WARNING, "I can't find the file {0} in the snp :/", fname);
-		    return new HashMap<Integer, AudioData>(); //it will xplode if It's return null so... XD
+		    Logger.global.log(Level.WARNING, "I can\'t find the file [{0}] in the snp :/", fname);
+		    continue;
 		}
 		fh = chart.file_index.get(fname);
 		buffer = SNPParser.extract(fh, f);
