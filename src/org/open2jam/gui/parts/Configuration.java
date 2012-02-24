@@ -1,9 +1,11 @@
 package org.open2jam.gui.parts;
 
+import java.awt.Container;
 import java.awt.Font;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -23,6 +25,30 @@ public class Configuration extends javax.swing.JPanel {
     private EnumMap<Event.Channel,Integer> kb_map;
 
     private HashMap<Integer, Event.Channel> table_map = new HashMap<Integer,Event.Channel>();
+    
+    private class RenderThread extends Thread {
+	Container c;
+	private int lastKey;
+	public int key;
+	
+	public RenderThread(Container c, int lastKey) {
+	    this.c = c;
+	    this.lastKey = lastKey;
+	}
+
+	@Override
+	public void run() {
+	    c.setEnabled(false);
+	    try {
+		key = read_keyboard_key(lastKey);
+	    } catch (LWJGLException ex) {
+		// FML
+		key = lastKey;
+		return;
+	    }
+	    c.setEnabled(true);
+	}
+    }
     
     /** Creates new form Configuration */
     public Configuration() {
@@ -170,13 +196,14 @@ public class Configuration extends javax.swing.JPanel {
         
         int code;
         int lastkey = Keyboard.getKeyIndex(tKeys.getValueAt(row, 1).toString());
-        try {
-            code = read_keyboard_key(lastkey);
-        } catch(LWJGLException e) {
-            // FML
-            return;
-        }
-        if(kb_map.containsValue(code)) return; //check for duplicates, TODO something informing about the duplicate
+        RenderThread r = new RenderThread(this.getTopLevelAncestor(), lastkey);
+	r.start();
+	while(r.isAlive()) {}
+	code = r.key;
+        if(kb_map.containsValue(code)) { //check for duplicates, TODO something informing about the duplicate
+	    JOptionPane.showMessageDialog(this, "The "+Keyboard.getKeyName(code)+" key is already blinded :(", "Well... that sucks", JOptionPane.WARNING_MESSAGE);
+	    return;
+	} 
         Event.Channel c = table_map.get(row);
         kb_map.put(c, code);
         tKeys.setValueAt(Keyboard.getKeyName(code), row, 1);
