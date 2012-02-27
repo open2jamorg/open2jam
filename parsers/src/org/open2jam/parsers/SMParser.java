@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.logging.Level;
 import javazoom.jl.decoder.Bitstream;
 import org.open2jam.parsers.utils.AudioData;
+import org.open2jam.parsers.utils.CharsetDetector;
 import org.open2jam.parsers.utils.Logger;
 import org.open2jam.parsers.utils.OggInputStream;
 
@@ -36,9 +37,10 @@ class SMParser
         ChartList list = new ChartList();
         list.source_file = file;
 
+	String charset = CharsetDetector.analyze(file);
         BufferedReader r;
         try{
-            r = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+            r = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));
         }catch(FileNotFoundException e){
             Logger.global.log(Level.WARNING, "File {0} not found !!", file.getName());
             return null;

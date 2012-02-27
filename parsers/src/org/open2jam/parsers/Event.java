@@ -150,4 +150,14 @@ public class Event implements Comparable<Event>
         
         public void setTime(double t) { this.time = t; }
         public double getTime() { return time; }
+
+	@Override
+	public String toString() {
+	    String s = "";
+	    s += "Event ("+this.flag+", "+this.value+")\n";
+	    s += "\tCHANNEL: "+this.channel+" @ "+(this.measure+this.position)+"\n";
+	    s += this.offset != 0f ? "\tOFFSET: "+this.offset+"\n" : "";
+	    s += "\tTIME: "+this.time;    
+	    return s;
+	}	
 }
