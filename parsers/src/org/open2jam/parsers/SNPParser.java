@@ -187,7 +187,7 @@ public class SNPParser {
 		buffer = SNPParser.extract(fh, f);
 		buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
 		
-		AudioData data = AudioData.create(new OggInputStream(new ByteBufferInputStream(buffer)));
+		AudioData data = AudioData.create(new OggInputStream(new ByteBufferInputStream(buffer)), fname);
 		buffer.clear();
 		
 		samples.put(id, data);

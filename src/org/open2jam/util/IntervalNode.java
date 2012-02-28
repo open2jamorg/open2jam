@@ -1,12 +1,7 @@
 package org.open2jam.util;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.Map.Entry;
+import java.util.*;
 
 /**
  * The Node class contains the interval tree information for one single node

@@ -2,26 +2,17 @@ package org.open2jam.render;
 
 import java.awt.Rectangle;
 import java.io.IOException;
-import java.util.Map;
 import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
-import org.open2jam.util.Logger;
 import org.open2jam.parsers.Event;
-import org.open2jam.render.entities.AnimatedEntity;
-import org.open2jam.render.entities.ComboCounterEntity;
-import org.open2jam.render.entities.CompositeEntity;
-import org.open2jam.render.entities.Entity;
-import org.open2jam.render.entities.BarEntity;
-import org.open2jam.render.entities.JudgmentEntity;
-import org.open2jam.render.entities.LongNoteEntity;
-import org.open2jam.render.entities.MeasureEntity;
-import org.open2jam.render.entities.NoteEntity;
-import org.open2jam.render.entities.NumberEntity;
-import org.xml.sax.helpers.DefaultHandler;
+import org.open2jam.render.entities.*;
+import org.open2jam.util.Logger;
 import org.xml.sax.Attributes;
+import org.xml.sax.helpers.DefaultHandler;
 
 public class SkinParser extends DefaultHandler
 {

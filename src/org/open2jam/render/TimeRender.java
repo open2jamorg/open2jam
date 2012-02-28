@@ -1,20 +1,16 @@
 package org.open2jam.render;
 
-import java.util.Map;
 import java.util.EnumMap;
+import java.util.Map;
 import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.GameOptions;
-
-import org.open2jam.util.SystemTimer;
-import java.util.logging.Level;
-import org.open2jam.util.Logger;
-
 import org.open2jam.parsers.Chart;
 import org.open2jam.parsers.Event;
 import org.open2jam.render.entities.Entity;
 import org.open2jam.render.entities.LongNoteEntity;
 import org.open2jam.render.entities.NoteEntity;
 import org.open2jam.render.entities.NumberEntity;
+import org.open2jam.util.SystemTimer;
 
 
 public class TimeRender extends Render

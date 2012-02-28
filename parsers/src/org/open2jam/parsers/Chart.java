@@ -2,11 +2,8 @@ package org.open2jam.parsers;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import org.open2jam.parsers.utils.AudioData;
@@ -34,6 +31,9 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
 
     /** The number of keys in this chart */
     public abstract int getKeys();
+    
+    /** The number of player for this chart */
+    public abstract int getPlayers();
 
     /** The title of the song */
     public abstract String getTitle();
@@ -65,6 +65,42 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
 
     /** this should return the list of events from this chart at this rank */
     public abstract List<Event> getEvents();
+    
+    /** 
+     * This method will return a map with measures and a list of events for each measure
+     * @param event_list The list of events
+     * @return A map with measures => list of events
+     */
+    public static Map<Integer, List<Event>> getEventsPerMeasure(List<Event> event_list) {
+	Map<Integer, List<Event>> epm = new HashMap<Integer, List<Event>>();
+	
+	Integer max_measure = null;
+	for(Event e : event_list) {
+	    if(max_measure == null || e.getMeasure() > max_measure) {
+		max_measure = e.getMeasure();
+		epm.put(e.getMeasure(), new ArrayList<Event>());
+	    }
+	    
+	    epm.get(max_measure).add(e);
+	}
+	
+	return epm;
+    }
+    
+    public static Map<Event.Channel, List<Event>> getEventsPerChannel(List<Event> event_list) {
+	Map<Event.Channel, List<Event>> epc = new EnumMap<Event.Channel, List<Event>>(Event.Channel.class);
+	
+//	for(Event.Channel c : Event.Channel.values()) 
+//	    epc.put(c, new ArrayList<Event>());
+	
+	for(Event e : event_list) {
+	    if(!epc.containsKey(e.getChannel()))
+		epc.put(e.getChannel(), new ArrayList<Event>());
+	    epc.get(e.getChannel()).add(e);
+	}
+	
+	return epc;
+    }
 
     public int compareTo(Chart c)
     {
@@ -78,9 +114,7 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
 	
 	try {
 	    return ImageIO.read(new File(u.toURI()));
-	} catch (URISyntaxException ex) {
-	    Logger.global.log(Level.WARNING, "Someone deleted or renamed my no_image image file :_ {0}", ex.getMessage());
-	} catch (IOException ex) {
+	} catch (Exception ex) {
 	    Logger.global.log(Level.WARNING, "Someone deleted or renamed my no_image image file :_ {0}", ex.getMessage());
 	}
 	return null;

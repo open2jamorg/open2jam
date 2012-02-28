@@ -303,9 +303,9 @@ class SMParser
                     continue;
                 }
                 AudioData audioData;
-                if      (ext.equals(".wav")) audioData = AudioData.create(new FileInputStream(f));
-                else if (ext.equals(".ogg")) audioData = AudioData.create(new OggInputStream(new FileInputStream(f)));
-                else if (ext.equals(".mp3")) audioData = AudioData.create(new Bitstream(new FileInputStream(f)));
+                if      (ext.equals(".wav")) audioData = AudioData.create(new FileInputStream(f), f.getName());
+                else if (ext.equals(".ogg")) audioData = AudioData.create(new OggInputStream(new FileInputStream(f)), f.getName());
+                else if (ext.equals(".mp3")) audioData = AudioData.create(new Bitstream(new FileInputStream(f)), f.getName());
 		else { //not a music file so continue
 		    continue;
 		} 

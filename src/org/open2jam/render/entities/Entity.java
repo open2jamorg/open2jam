@@ -1,8 +1,8 @@
 package org.open2jam.render.entities;
 
-import org.open2jam.util.Copyable;
 import org.open2jam.render.Sprite;
 import org.open2jam.render.SpriteList;
+import org.open2jam.util.Copyable;
 
 public class Entity implements Copyable<Entity>
 {

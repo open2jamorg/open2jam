@@ -1,12 +1,12 @@
 package org.open2jam;
 
-import java.io.File;
 import java.awt.EventQueue;
+import java.io.File;
 import java.util.logging.Handler;
 import java.util.logging.Level;
-import org.open2jam.util.Logger;
 import javax.swing.UIManager;
 import org.open2jam.gui.Interface;
+import org.open2jam.util.Logger;
 
 public class Main implements Runnable
 {

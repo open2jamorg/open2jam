@@ -1,18 +1,19 @@
 package org.open2jam.gui.parts;
 
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ItemEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.logging.Level;
-import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.RowFilter;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -29,6 +30,7 @@ import org.open2jam.GameOptions.VisibilityMod;
 import org.open2jam.gui.ChartListTableModel;
 import org.open2jam.gui.ChartModelLoader;
 import org.open2jam.gui.ChartTableModel;
+import org.open2jam.parsers.BMSWriter;
 import org.open2jam.parsers.Chart;
 import org.open2jam.parsers.ChartList;
 import org.open2jam.render.DistanceRender;
@@ -53,6 +55,40 @@ public class MusicSelection extends javax.swing.JPanel
             r.startRendering();
             c.setEnabled(true);
         }
+    }
+    
+    private class PopupListener extends MouseAdapter {
+
+	private final JPopupMenu menu;
+	
+	public PopupListener(JPopupMenu menu) {
+	    this.menu = menu;
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+	    showPopup(e);
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+	    showPopup(e);
+	}
+	
+	private void showPopup(MouseEvent e) {
+	    if(e.isPopupTrigger()) {
+		Component c = e.getComponent();
+		if(c instanceof ListSelectionListener) {
+		    JTable t = (JTable) c;
+		    int row = t.rowAtPoint(e.getPoint());
+		    t.getSelectionModel().setSelectionInterval(row, row);
+		}
+		
+		if(menu == null) return;
+		
+		menu.show(e.getComponent(), e.getX(), e.getY());
+	    }
+	}
     }
 
     private ChartListTableModel model_songlist;
@@ -154,6 +190,27 @@ public class MusicSelection extends javax.swing.JPanel
         readGameOptions();
 	
 	btn_autoplay_keys.setEnabled(jc_autoplay.isSelected());
+	
+	JPopupMenu popMenu = new JPopupMenu();
+	JMenuItem bmsConvItem = new JMenuItem("Convert to BMS");
+	
+	bmsConvItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+		try {
+		    BMSWriter.export(selected_header, "converted");
+		} catch (IOException ex) {
+		    java.util.logging.Logger.getLogger(MusicSelection.class.getName()).log(Level.SEVERE, null, ex);
+		}
+            }
+        });
+	
+	popMenu.add(bmsConvItem);
+	popMenu.add(new JMenuItem("Convert to OJN"));
+	popMenu.add(new JMenuItem("Convert to SM"));
+	popMenu.add(new JMenuItem("Convert to SNP"));
+	
+	//table_chartlist.addMouseListener(new PopupListener(popMenu));
+	table_songlist.addMouseListener(new PopupListener(popMenu));
     }
     
     private void readGameOptions() {
@@ -1124,11 +1181,11 @@ public class MusicSelection extends javax.swing.JPanel
         if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             loadDir(jfc.getSelectedFile());
         }
-        else
-        {
+//        else
+//        {
 //            JOptionPane.showMessageDialog(this, "You haven't selected any directory. Byebye...", "You failed to humanity :(", JOptionPane.ERROR_MESSAGE);
 //            System.exit(1);
-        }
+//        }
     }
 
     private void updateSelection(File f) {

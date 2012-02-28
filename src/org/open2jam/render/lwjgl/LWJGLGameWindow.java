@@ -4,8 +4,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.logging.Level;
-import org.open2jam.util.Logger;
-
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -15,6 +13,7 @@ import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.open2jam.render.GameWindow;
 import org.open2jam.render.GameWindowCallback;
+import org.open2jam.util.Logger;
 
 /**
  * An implementation of GameWindow that will use OPENGL (JOGL) to 

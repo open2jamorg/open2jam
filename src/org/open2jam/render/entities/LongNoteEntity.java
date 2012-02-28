@@ -1,8 +1,8 @@
 package org.open2jam.render.entities;
 
 import org.open2jam.parsers.Event;
-import org.open2jam.render.SpriteList;
 import org.open2jam.render.Sprite;
+import org.open2jam.render.SpriteList;
 
 public class LongNoteEntity extends NoteEntity
 {

@@ -16,9 +16,8 @@ import org.open2jam.parsers.utils.AudioData;
  * @author CdK
  */
 public class XNTChart extends Chart {
-    
+
     Map<String, SNPParser.SNPFileHeader> file_index;
-    
     Map<Integer, String> samples_index;
     
     String xnt_filename = "";
@@ -38,106 +37,98 @@ public class XNTChart extends Chart {
     }
     
     File source;
-    @Override
     public File getSource() {
 	return source;
     }
-
-    int level=0;
-    @Override
+    
+    int level = 0;
     public int getLevel() {
 	return level;
     }
     public void setLevel(int level) {
 	this.level = level;
     }
-
-    int keys=0;
-    @Override
+    
+    int keys = 0;
     public int getKeys() {
 	return keys;
     }
     public void setKeys(int keys) {
 	this.keys = keys;
     }
-
-    String title="";
-    @Override
+    
+    int players = 1;
+    public int getPlayers() {
+	return players;
+    }
+    
+    String title = "";
     public String getTitle() {
 	return title;
     }
     public void setTitle(String title) {
 	this.title = title;
     }
-
-    String artist="";
-    @Override
+    
+    String artist = "";
     public String getArtist() {
 	return artist;
     }
     public void setArtist(String artist) {
 	this.artist = artist;
     }
-
-    String genre="";
-    @Override
+    
+    String genre = "";
     public String getGenre() {
 	return genre;
     }
     public void setGenre(String genre) {
 	this.genre = genre;
     }
-
-    String noter="";
-    @Override
+    
+    String noter = "";
     public String getNoter() {
 	return noter;
     }
     public void setNoter(String noter) {
 	this.noter = noter;
     }
-
+    
     Map<Integer, AudioData> samples;
-    @Override
     public Map<Integer, AudioData> getSamples() {
 	return SNPParser.getSamples(this);
     }
-
-    double bpm=130d;
-    @Override
+    
+    double bpm = 130d;
     public double getBPM() {
 	return bpm;
     }
     public void setBPM(double bpm) {
 	this.bpm = bpm;
     }
-
-    int notecount=0;
-    @Override
+    
+    int notecount = 0;
     public int getNoteCount() {
 	return notecount;
     }
     public void setNoteCount(int count) {
 	this.notecount = count;
     }
-
-    int duration=0;
-    @Override
+    
+    int duration = 0;
     public int getDuration() {
 	return duration;
     }
     public void setDuration(int duration) {
 	this.duration = duration;
     }
-
+    
     File image_file;
-    @Override
     public BufferedImage getCover() {
 	return getNoImage();
     }
 
-    @Override
     public List<Event> getEvents() {
 	return XNTParser.parseChart(this);
-    }    
+    }
 }

@@ -8,10 +8,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.logging.Level;
-import org.open2jam.parsers.utils.AudioData;
-import org.open2jam.parsers.utils.ByteBufferInputStream;
-import org.open2jam.parsers.utils.Logger;
-import org.open2jam.parsers.utils.OggInputStream;
+import org.open2jam.parsers.utils.*;
 
 
 class OJMParser
@@ -130,8 +127,10 @@ class OJMParser
                 Logger.global.log(Level.INFO, "Wrong number of samples on OJM header : {0}", file.getName());
                 break;
             }
-            byte[] sample_name = new byte[32];
-            buffer.get(sample_name);
+            byte[] byte_name = new byte[32];
+            buffer.get(byte_name);
+	    String sample_name = ByteHelper.toString(byte_name);
+	    
             int sample_size = buffer.getInt();
             
             short codec_code = buffer.getShort();
@@ -153,7 +152,7 @@ class OJMParser
 		default: Logger.global.log(Level.WARNING, "Unknown encryption flag({0}) !", encryption_flag);
 	    }
 
-            AudioData audioData = AudioData.create(new OggInputStream(new ByteArrayInputStream(sample_data)));
+            AudioData audioData = AudioData.create(new OggInputStream(new ByteArrayInputStream(sample_data)), sample_name);
             int value = ref;
             if(codec_code == 0){
                 value = 1000 + ref;
@@ -204,8 +203,9 @@ class OJMParser
            buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
            file_offset += 56;
 
-           byte[] sample_name = new byte[32];
-           buffer.get(sample_name);
+           byte[] byte_name = new byte[32];
+           buffer.get(byte_name);
+	   String sample_name = ByteHelper.toString(byte_name);
 
            short audio_format = buffer.getShort();
            short num_channels = buffer.getShort();
@@ -235,7 +235,7 @@ class OJMParser
            buffer.put(buf);
            buffer.flip();
 
-           AudioData audioData = AudioData.create(buffer, bits_per_sample, num_channels, sample_rate);
+           AudioData audioData = AudioData.create(buffer, bits_per_sample, num_channels, sample_rate, sample_name);
            samples.put(sample_id, audioData);
            sample_id++;
        }
@@ -246,9 +246,10 @@ class OJMParser
            buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
            file_offset += 36;
 
-           byte[] sample_name = new byte[32];
-           buffer.get(sample_name);
-
+           byte[] byte_name = new byte[32];
+           buffer.get(byte_name);
+	   String sample_name = ByteHelper.toString(byte_name);
+	   
            int sample_size = buffer.getInt();
 
            if(sample_size == 0){ sample_id++; continue; }
@@ -257,7 +258,7 @@ class OJMParser
            buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
            file_offset += sample_size;
 
-           AudioData audioData = AudioData.create(new OggInputStream(new ByteBufferInputStream(buffer)));
+           AudioData audioData = AudioData.create(new OggInputStream(new ByteBufferInputStream(buffer)), sample_name);
            samples.put(sample_id, audioData);
            sample_id++;
        }

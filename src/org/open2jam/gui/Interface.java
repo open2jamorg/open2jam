@@ -2,8 +2,8 @@ package org.open2jam.gui;
 
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import org.open2jam.gui.parts.MusicSelection;
 import org.open2jam.gui.parts.Configuration;
+import org.open2jam.gui.parts.MusicSelection;
 
 
 /**

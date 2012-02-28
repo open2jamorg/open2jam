@@ -13,33 +13,48 @@ import org.open2jam.parsers.utils.Logger;
 public class BMSChart extends Chart
 {
     int lntype;
+    int lnobj;
+    
     boolean o2mania_style;
 
     File source;
-    int lnobj;
+    public File getSource() {
+	return source; 
+    }
 
-    public File getSource() { return source; }
+    int level = 0;
+    public int getLevel() {
+	return level; 
+    }
 
-    int level;
-    public int getLevel() { return level; }
+    int keys = 7;
+    public int getKeys() {
+	return keys; 
+    }
+    
+    int players = 1;
+    public int getPlayers() {
+	return players;
+    }
 
-    int keys;
-    public int getKeys()  {  return keys; }
-
-
-    String title;
+    String title = "";
     public String getTitle() {
         return title;
     }
 
-    String artist;
+    String artist = "";
     public String getArtist() {
         return artist;
     }
 
-    String genre;
+    String genre = "";
     public String getGenre() {
         return genre;
+    }
+    
+    String noter = "";
+    public String getNoter() {
+	return noter; 
     }
 
     Map<String, Integer> sample_files;
@@ -53,10 +68,14 @@ public class BMSChart extends Chart
     }
 
     int notes = 0;
-    public int getNoteCount() { return notes; }
+    public int getNoteCount() {
+	return notes; 
+    }
 
     int duration = 0;
-    public int getDuration() { return duration; }
+    public int getDuration() {
+	return duration; 
+    }
 
     File image_cover;
     public BufferedImage getCover() {
@@ -68,9 +87,6 @@ public class BMSChart extends Chart
         }
         return null;
     }
-
-    public String getNoter() { return ""; }
-
 
     public List<Event> getEvents() {
         return BMSParser.parseChart(this);

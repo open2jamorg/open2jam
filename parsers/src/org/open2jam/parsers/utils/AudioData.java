@@ -30,14 +30,16 @@ public class AudioData {
     public final ByteBuffer data;
     public final int format;
     public final int samplerate;
+    public final String filename;
     
     private static final byte[] tmp_buffer = new byte[1024];
     
-    private AudioData(ByteBuffer data, int format, int samplerate)
+    private AudioData(ByteBuffer data, int format, int samplerate, String filename)
     {
 	this.data = data;
 	this.format = format;
 	this.samplerate = samplerate;
+	this.filename = filename;
     }
     
     /**
@@ -54,9 +56,10 @@ public class AudioData {
      * @param bits The numbers of bits per channel
      * @param channels The number of channels
      * @param samplerate The sample rate
+     * @param filename The name of the file
      * @return A new AudioData
      */
-    public static AudioData create(ByteBuffer buffer, int bits, int channels, int samplerate)
+    public static AudioData create(ByteBuffer buffer, int bits, int channels, int samplerate, String filename)
     {
 	int format;
 	if(channels == 1){
@@ -65,15 +68,16 @@ public class AudioData {
 	    format = bits == 8 ? FORMAT_STEREO8 : FORMAT_STEREO16;
 	}
 	
-	return new AudioData(buffer, format, samplerate);
+	return new AudioData(buffer, format, samplerate, filename);
     }
     
     /**
      * Creates a new AudioData from an OggInputStream
      * @param ois The OggInputStream
+     * @param filename The name of the file
      * @return a new AudioData
      */
-    public static AudioData create(OggInputStream ois)
+    public static AudioData create(OggInputStream ois, String filename)
     {
 	try
 	{
@@ -94,7 +98,7 @@ public class AudioData {
 	    
 	    ois.close();
 	    
-	    return new AudioData(b, format, samplerate);
+	    return new AudioData(b, format, samplerate, filename);
 	    
 	} catch(IOException e) {
 	    Logger.global.log(Level.SEVERE, "Exception creating AudioData(OGG) : {0}", e.getMessage());
@@ -105,9 +109,10 @@ public class AudioData {
     /**
      * Creates a new AudioData from an InputStream (Only PCM uncompressed WAVE files please)
      * @param wav The InputStream
+     * @param filename The name of the file
      * @return a new AudioData
      */
-    public static AudioData create(InputStream wav)
+    public static AudioData create(InputStream wav, String filename)
     {
 	try {
 	    AudioInputStream ais = AudioSystem.getAudioInputStream(wav);
@@ -127,7 +132,7 @@ public class AudioData {
 	    
 	    ais.close();
 	    
-	    return create(b, audioformat.getSampleSizeInBits(), audioformat.getChannels(), (int) audioformat.getSampleRate());
+	    return create(b, audioformat.getSampleSizeInBits(), audioformat.getChannels(), (int) audioformat.getSampleRate(), filename);
 	} catch (Exception e) {
 	    Logger.global.log(Level.SEVERE, "Exception creating AudioData(WAVE) : {0}", e.getMessage());
 	    return null;
@@ -137,9 +142,10 @@ public class AudioData {
     /**
      * Creates a new AudioData from a Bitstream (Thanks to the libgdx team for the function & library :D)
      * @param stream The Bitstream
+     * @param filename The name of the file
      * @return a new AudioData
      */
-    public static AudioData create(Bitstream stream)
+    public static AudioData create(Bitstream stream, String filename)
     {
 	try {
 	    ByteArrayOutputStream out = new ByteArrayOutputStream(tmp_buffer.length);
@@ -173,7 +179,7 @@ public class AudioData {
 
 	    stream.close();
 
-	    return create(b, 16/*TODO find&fix this*/, channels, sampleRate);
+	    return create(b, 16/*TODO find&fix this*/, channels, sampleRate, filename);
 	} catch (BitstreamException ex) {
 	    Logger.global.log(Level.SEVERE, "Exception creating AudioData(MP3) : {0}", ex.getMessage());
 	    return null;

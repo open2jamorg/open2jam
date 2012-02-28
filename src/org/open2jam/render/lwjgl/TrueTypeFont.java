@@ -1,10 +1,6 @@
 package org.open2jam.render.lwjgl;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
@@ -14,9 +10,7 @@ import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
-import java.awt.GraphicsEnvironment;
 import java.util.logging.Level;
-
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
