@@ -173,7 +173,7 @@ public class SNPParser {
 	SNPFileHeader fh;
         try{
             f = new RandomAccessFile(chart.source.getAbsolutePath(),"r"); 
-	    for(Entry<Integer, String> entry : chart.samples_index.entrySet())
+	    for(Entry<Integer, String> entry : chart.sample_index.entrySet())
 	    {
 		int id = entry.getKey();
 		String fname = entry.getValue();

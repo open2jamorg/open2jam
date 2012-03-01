@@ -18,7 +18,6 @@ import org.open2jam.parsers.utils.AudioData;
 public class XNTChart extends Chart {
 
     Map<String, SNPParser.SNPFileHeader> file_index;
-    Map<Integer, String> samples_index;
     
     String xnt_filename = "";
     public String getXNTFile() {
@@ -36,12 +35,10 @@ public class XNTChart extends Chart {
 	xne_filename = name;
     }
     
-    File source;
     public File getSource() {
 	return source;
     }
     
-    int level = 0;
     public int getLevel() {
 	return level;
     }
@@ -49,7 +46,6 @@ public class XNTChart extends Chart {
 	this.level = level;
     }
     
-    int keys = 0;
     public int getKeys() {
 	return keys;
     }
@@ -57,12 +53,10 @@ public class XNTChart extends Chart {
 	this.keys = keys;
     }
     
-    int players = 1;
     public int getPlayers() {
 	return players;
     }
     
-    String title = "";
     public String getTitle() {
 	return title;
     }
@@ -70,7 +64,6 @@ public class XNTChart extends Chart {
 	this.title = title;
     }
     
-    String artist = "";
     public String getArtist() {
 	return artist;
     }
@@ -78,7 +71,6 @@ public class XNTChart extends Chart {
 	this.artist = artist;
     }
     
-    String genre = "";
     public String getGenre() {
 	return genre;
     }
@@ -86,7 +78,6 @@ public class XNTChart extends Chart {
 	this.genre = genre;
     }
     
-    String noter = "";
     public String getNoter() {
 	return noter;
     }
@@ -99,7 +90,10 @@ public class XNTChart extends Chart {
 	return SNPParser.getSamples(this);
     }
     
-    double bpm = 130d;
+    public Map<Integer, String> getSampleIndex() {
+	return sample_index;
+    }
+    
     public double getBPM() {
 	return bpm;
     }
@@ -107,15 +101,13 @@ public class XNTChart extends Chart {
 	this.bpm = bpm;
     }
     
-    int notecount = 0;
     public int getNoteCount() {
-	return notecount;
+	return notes;
     }
     public void setNoteCount(int count) {
-	this.notecount = count;
+	this.notes = count;
     }
     
-    int duration = 0;
     public int getDuration() {
 	return duration;
     }
@@ -123,7 +115,6 @@ public class XNTChart extends Chart {
 	this.duration = duration;
     }
     
-    File image_file;
     public BufferedImage getCover() {
 	return getNoImage();
     }

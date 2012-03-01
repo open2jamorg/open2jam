@@ -76,7 +76,7 @@ public class XNTParser {
 	readNoteBlock(list, buffer, false); //first key sounds
 	readNoteBlock(list, buffer, true);  //then bgm sounds
 	    
-	chart.samples_index = readSamples(buffer);
+	chart.sample_index = readSamples(buffer);
 	
 	Collections.sort(list);
 	return list;

@@ -73,9 +73,9 @@ class OJNParser
         event_count[1] = buffer.getInt();
         event_count[2] = buffer.getInt();
 
-        easy.note_count = buffer.getInt();
-        normal.note_count = buffer.getInt();
-        hard.note_count = buffer.getInt();
+        easy.notes = buffer.getInt();
+        normal.notes = buffer.getInt();
+        hard.notes = buffer.getInt();
 
         int measure_count[] = new int[3];
         measure_count[0] = buffer.getInt();

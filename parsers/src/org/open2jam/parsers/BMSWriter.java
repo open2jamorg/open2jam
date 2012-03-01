@@ -4,10 +4,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import org.open2jam.parsers.Event.Channel;
-import org.open2jam.parsers.utils.AudioData;
 
 /**
  *
@@ -16,6 +17,9 @@ import org.open2jam.parsers.utils.AudioData;
 public class BMSWriter {
     
     private static final int MAX_POSITIONS = 192;
+    
+    private static List<Event> event_list;
+    private static HashMap<Event, Integer> bpmChanges;
     
     public static void export(ChartList list, String path) throws IOException
     {
@@ -26,6 +30,8 @@ public class BMSWriter {
     
     public static void export(Chart chart, String path) throws IOException
     {
+	event_list = chart.getEvents();
+	
 	String dirName = (chart.getArtist()+" - "+chart.getTitle()).replaceAll("/", " ");
 	String name = chart.getSource().getName();
 	name = name.substring(0, name.lastIndexOf("."))+"_"+chart.hashCode()+".bms";
@@ -36,7 +42,7 @@ public class BMSWriter {
 	System.out.println(file.getAbsolutePath());
 	
 	BufferedWriter buffer = new BufferedWriter(new FileWriter(file));
-	
+        
 	makeHeader(buffer, chart);
 	writeEvents(buffer, chart);
 	
@@ -58,30 +64,56 @@ public class BMSWriter {
 	buffer.newLine();
 	
 	buffer.write("*----WAV LIST----*\n");
-	for(Entry<Integer, AudioData> entry : chart.getSamples().entrySet())
+	for(Entry<Integer, String> entry : chart.getSampleIndex().entrySet())
 	{
-	    buffer.write(String.format("#WAV%s %s\n", toBase36(entry.getKey() + 1), entry.getValue().filename));
+	    buffer.write(String.format("#WAV%s %s\n", toBase36(entry.getKey() + 1), entry.getValue()));
 	}
-	
 	buffer.newLine();
+        
+        bpmChanges = new HashMap<Event, Integer>();
+        int i = 1;
+        for(Event e : EventHelper.getEventsFromThisChannel(event_list, Channel.BPM_CHANGE))
+            bpmChanges.put(e, i++);
+
+        buffer.write("*----BPM LIST----*\n");
+        
+        for(Entry<Event, Integer> entry : bpmChanges.entrySet()) {
+            buffer.write(String.format("#BPM%s %f\n", toBase36(entry.getValue()), entry.getKey().getValue()));
+        }    
+        buffer.newLine();
     }
     
     private static void writeEvents(BufferedWriter buffer, Chart chart) throws IOException
     {
 	buffer.write("*----EVENTS----*\n");
 	
-	for(Entry<Integer, List<Event>> measures : Chart.getEventsPerMeasure(chart.getEvents()).entrySet()) {
-	    String measure_start = String.format("#%03d", measures.getKey());
+	Iterator<Entry<Integer, List<Event>>> measure_iterator = 
+		EventHelper.getEventsPerMeasure(event_list).entrySet().iterator();
+	
+	while(measure_iterator.hasNext()) {
+	    Entry<Integer, List<Event>> measure = measure_iterator.next();
+	    String measure_start = String.format("#%03d", measure.getKey());
 	    
-	    for(Entry<Channel, List<Event>> channels : Chart.getEventsPerChannel(measures.getValue()).entrySet()) {
-		String channel = String.format("%02d", getChannel(channels.getKey()));
-		
+	    Iterator<Entry<Channel, List<Event>>> channel_iterator =
+		    EventHelper.getEventsPerChannel(measure.getValue()).entrySet().iterator();
+	    
+	    while(channel_iterator.hasNext()) {
+		Entry<Channel, List<Event>> channel = channel_iterator.next();
+		String channel_start = String.format("%02d", getChannel(channel.getKey()));
+
 		int step = MAX_POSITIONS;
 		String[] values = new String[MAX_POSITIONS];
-		for(Event e : channels.getValue()) {
+		for(Event e : channel.getValue()) {
 		    int p = (int) (MAX_POSITIONS * e.getPosition());
 		    step = gcd(step, p);
-		    values[p] = toBase36((int)e.getValue() + 1);
+                    if(channel.getKey().equals(Channel.BPM_CHANGE)) {
+                        if(bpmChanges.containsKey(e))
+                            values[p] = toBase36(bpmChanges.get(e));
+                    }
+		    else if(channel.getKey().equals(Channel.TIME_SIGNATURE))
+			values[p] = Double.toString(e.getValue());
+		    else
+                        values[p] = toBase36((int)e.getValue() + 1);
 		}
 		
 		String v = "";
@@ -91,7 +123,8 @@ public class BMSWriter {
 		    else
 			v += values[i];
 		}
-		buffer.write(measure_start+channel+":"+v);
+		
+		buffer.write(measure_start+channel_start+":"+v);
 		buffer.newLine();
 	    }
 	    
@@ -111,6 +144,9 @@ public class BMSWriter {
 	    case NOTE_5: return 15;
 	    case NOTE_6: return 18;
 	    case NOTE_7: return 19;
+		
+	    case NOTE_SC: return 16;
+		
 	    default: return 0;
 	}
     }

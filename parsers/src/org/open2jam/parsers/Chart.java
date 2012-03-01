@@ -3,7 +3,8 @@ package org.open2jam.parsers;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import org.open2jam.parsers.utils.AudioData;
@@ -18,6 +19,22 @@ import org.open2jam.parsers.utils.Logger;
 */
 public abstract class Chart implements Comparable<Chart>, java.io.Serializable
 {
+    protected File source;
+    protected int level = 0;
+    protected int keys = 7;
+    protected int players = 1;
+    protected String title = "";
+    protected String artist = "";
+    protected String genre = "";
+    protected String noter = "";
+    protected double bpm = 130;
+    protected int notes = 0;
+    protected int duration = 0;
+    
+    protected File image_cover = null;
+    
+    protected Map<Integer, String> sample_index;
+    
     /** the File object to the source file of this header */
     public abstract File getSource();
 
@@ -49,6 +66,9 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
     
     /** The samples of the song */
     public abstract Map<Integer, AudioData> getSamples();
+    
+    /** Get the sample index of the chart */
+    public abstract Map<Integer, String> getSampleIndex();
 
     /** a bpm representing the whole song.
     *** doesn't need to be exact, just for info */
@@ -65,42 +85,6 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
 
     /** this should return the list of events from this chart at this rank */
     public abstract List<Event> getEvents();
-    
-    /** 
-     * This method will return a map with measures and a list of events for each measure
-     * @param event_list The list of events
-     * @return A map with measures => list of events
-     */
-    public static Map<Integer, List<Event>> getEventsPerMeasure(List<Event> event_list) {
-	Map<Integer, List<Event>> epm = new HashMap<Integer, List<Event>>();
-	
-	Integer max_measure = null;
-	for(Event e : event_list) {
-	    if(max_measure == null || e.getMeasure() > max_measure) {
-		max_measure = e.getMeasure();
-		epm.put(e.getMeasure(), new ArrayList<Event>());
-	    }
-	    
-	    epm.get(max_measure).add(e);
-	}
-	
-	return epm;
-    }
-    
-    public static Map<Event.Channel, List<Event>> getEventsPerChannel(List<Event> event_list) {
-	Map<Event.Channel, List<Event>> epc = new EnumMap<Event.Channel, List<Event>>(Event.Channel.class);
-	
-//	for(Event.Channel c : Event.Channel.values()) 
-//	    epc.put(c, new ArrayList<Event>());
-	
-	for(Event e : event_list) {
-	    if(!epc.containsKey(e.getChannel()))
-		epc.put(e.getChannel(), new ArrayList<Event>());
-	    epc.get(e.getChannel()).add(e);
-	}
-	
-	return epc;
-    }
 
     public int compareTo(Chart c)
     {

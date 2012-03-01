@@ -130,6 +130,7 @@ class OJMParser
             byte[] byte_name = new byte[32];
             buffer.get(byte_name);
 	    String sample_name = ByteHelper.toString(byte_name);
+	    if(sample_name.lastIndexOf(".") < 0) sample_name += ".ogg";
 	    
             int sample_size = buffer.getInt();
             
@@ -206,6 +207,7 @@ class OJMParser
            byte[] byte_name = new byte[32];
            buffer.get(byte_name);
 	   String sample_name = ByteHelper.toString(byte_name);
+	   if(sample_name.lastIndexOf(".") < 0) sample_name += ".wav";
 
            short audio_format = buffer.getShort();
            short num_channels = buffer.getShort();
@@ -235,7 +237,7 @@ class OJMParser
            buffer.put(buf);
            buffer.flip();
 
-           AudioData audioData = AudioData.create(buffer, bits_per_sample, num_channels, sample_rate, sample_name);
+           AudioData audioData = AudioData.create(buffer, bits_per_sample, num_channels, sample_rate, AudioData.Type.WAV_NO_HEADER, sample_name);
            samples.put(sample_id, audioData);
            sample_id++;
        }
@@ -249,6 +251,7 @@ class OJMParser
            byte[] byte_name = new byte[32];
            buffer.get(byte_name);
 	   String sample_name = ByteHelper.toString(byte_name);
+	   if(sample_name.lastIndexOf(".") < 0) sample_name += ".ogg";
 	   
            int sample_size = buffer.getInt();
 

@@ -6,8 +6,11 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import org.open2jam.parsers.utils.AudioData;
@@ -21,42 +24,34 @@ public class OJNChart extends Chart {
     int cover_offset;
     int cover_size;
     
-    File source;
     public File getSource() {
 	return source;
     }
     
-    short level = 0;
     public int getLevel() {
 	return level;
     }
 
-    int keys = 7;
     public int getKeys() {
 	return keys;
     }
     
-    int players = 1;
     public int getPlayers() {
 	return players;
     }
     
-    String title = "";
     public String getTitle() {
 	return title;
     }
     
-    String artist = "";
     public String getArtist() {
 	return artist;
     }
     
-    String genre = "";
     public String getGenre() {
 	return genre;
     }
     
-    String noter = "";
     public String getNoter() {
 	return noter;
     }
@@ -66,17 +61,24 @@ public class OJNChart extends Chart {
 	return OJMParser.parseFile(sample_file);
     }
     
-    double bpm = 120d;
+    public Map<Integer, String> getSampleIndex() {
+	sample_index = new HashMap<Integer, String>();
+	Iterator<Entry<Integer, AudioData>> it = OJMParser.parseFile(sample_file).entrySet().iterator();
+	while(it.hasNext()) {
+	    Entry<Integer, AudioData> entry = it.next();
+	    sample_index.put(entry.getKey(), entry.getValue().filename);
+	}
+	return sample_index;
+    }   
+    
     public double getBPM() {
 	return bpm;
     }
     
-    int note_count = 0;
     public int getNoteCount() {
-	return note_count;
+	return notes;
     }
     
-    int duration = 0;
     public int getDuration() {
 	return duration;
     }

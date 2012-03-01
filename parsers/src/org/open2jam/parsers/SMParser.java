@@ -46,7 +46,7 @@ class SMParser
             return null;
         }
 	
-        HashMap<String, Integer> sample_files = new HashMap<String, Integer>();
+        HashMap<Integer, String> sample_files = new HashMap<Integer, String>();
 
 	String title = "", subtitle = "", artist = "";
 	double bpm = 130;
@@ -107,9 +107,7 @@ class SMParser
                 if(cmd.startsWith("#MUSIC")){
 		    int id = 1;
 		    String name = st.nextToken().trim();
-		    int idx = name.lastIndexOf('.');
-		    if(idx > 0)name = name.substring(0, idx);
-		    sample_files.put(name, id);
+		    sample_files.put(id, name);
 		    continue;
                 }
 		if(cmd.startsWith("#NOTES")){
@@ -119,7 +117,7 @@ class SMParser
 		    chart.artist = artist;
 		    chart.bpm = bpm;
 		    chart.image_cover = image_cover;
-		    chart.sample_files = sample_files;
+		    chart.sample_index = sample_files;
 		    
 		    for(int i = 0; i<5;i++)
 		    {
@@ -285,36 +283,46 @@ class SMParser
         return event_list;
     }
 
-    public static HashMap<Integer, AudioData> loadSamples(SMChart h)
+    public static HashMap<Integer, AudioData> getSamples(SMChart chart)
     {
-        HashMap<Integer, AudioData> samples = new HashMap<Integer, AudioData>();
-        for(File f : h.source.getParentFile().listFiles())
-        {
-            try {
-                String name = f.getName();
-                String ext = name;
-                int idx = name.lastIndexOf('.');
-                if (idx > 0) {
-                    name = name.substring(0, idx);
-                    ext = ext.substring(idx).toLowerCase();
-                }
-                Integer id = h.sample_files.get(name);
-                if (id == null) {
-                    continue;
-                }
-                AudioData audioData;
-                if      (ext.equals(".wav")) audioData = AudioData.create(new FileInputStream(f), f.getName());
-                else if (ext.equals(".ogg")) audioData = AudioData.create(new OggInputStream(new FileInputStream(f)), f.getName());
-                else if (ext.equals(".mp3")) audioData = AudioData.create(new Bitstream(new FileInputStream(f)), f.getName());
-		else { //not a music file so continue
-		    continue;
-		} 
-                samples.put(id, audioData);
-            } catch (IOException ex) {
-                Logger.global.log(Level.SEVERE, null, ex);
-            }
-        }
-        return samples;
+	HashMap<Integer, AudioData> samples = new HashMap<Integer, AudioData>();
+	
+	FilenameFilter filter = new FilenameFilter() {
+
+	    public boolean accept(File dir, String name) {
+		String n = name.substring(name.lastIndexOf("."), name.length());
+		
+		return (n.equalsIgnoreCase(".wav") || n.equalsIgnoreCase(".ogg") || n.equalsIgnoreCase(".mp3"));
+	    }
+	};
+	
+	File[] files = chart.source.getParentFile().listFiles(filter);
+	
+	for(Map.Entry<Integer, String> entry : chart.sample_index.entrySet()) {
+	    try {
+		for(File f : files) {
+		    String sn = entry.getValue().toLowerCase();
+		    String fn = f.getName().toLowerCase();
+		    String ext = fn.substring(fn.lastIndexOf("."), fn.length());
+		    sn = sn.substring(0, sn.lastIndexOf("."));
+		    fn = fn.substring(0,fn.lastIndexOf("."));
+
+		    if(sn.equals(fn)) {
+			AudioData audioData;
+			if      (ext.equals(".wav")) audioData = AudioData.create(new FileInputStream(f), f.getName());
+			else if (ext.equals(".ogg")) audioData = AudioData.create(new OggInputStream(new FileInputStream(f)), f.getName());
+			else if (ext.equals(".mp3")) audioData = AudioData.create(new Bitstream(new FileInputStream(f)), f.getName());
+			else { //not a music file so continue
+			    continue;
+			}
+			samples.put(entry.getKey(), audioData);
+		    }
+		}
+	    } catch (IOException ex) {
+		Logger.global.log(Level.SEVERE, null, ex);
+	    }
+	}
+	return samples;
     }
     
     private static void fillEvents(List<Event> event_list, List<String> notes, int measure)

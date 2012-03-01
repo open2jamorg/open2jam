@@ -200,6 +200,8 @@ public class MusicSelection extends javax.swing.JPanel
 		    BMSWriter.export(selected_header, "converted");
 		} catch (IOException ex) {
 		    java.util.logging.Logger.getLogger(MusicSelection.class.getName()).log(Level.SEVERE, null, ex);
+		} finally {
+		    System.gc();
 		}
             }
         });

@@ -22,23 +22,26 @@ import javazoom.jl.decoder.*;
  */
 public class AudioData {
     
-    public final static int FORMAT_MONO8 = 1;
-    public final static int FORMAT_STEREO8 = 2;
-    public final static int FORMAT_MONO16 = 3;
-    public final static int FORMAT_STEREO16 = 4;
+    public enum Format { MONO8, STEREO8, MONO16, STEREO16 };
+    public enum Method { STREAM_FROM_FILE, COPY_TO_MEMORY }; //TODO do this D:
+    public enum Type { WAV, WAV_NO_HEADER, OGG, MP3 };
     
     public final ByteBuffer data;
-    public final int format;
+    public final Format format;
     public final int samplerate;
+    public final Type type;
+    public final Method method;
     public final String filename;
     
     private static final byte[] tmp_buffer = new byte[1024];
     
-    private AudioData(ByteBuffer data, int format, int samplerate, String filename)
+    private AudioData(ByteBuffer data, Format format, int samplerate, Type type, String filename)
     {
 	this.data = data;
 	this.format = format;
 	this.samplerate = samplerate;
+        this.type = type;
+        this.method = Method.COPY_TO_MEMORY;
 	this.filename = filename;
     }
     
@@ -59,16 +62,16 @@ public class AudioData {
      * @param filename The name of the file
      * @return A new AudioData
      */
-    public static AudioData create(ByteBuffer buffer, int bits, int channels, int samplerate, String filename)
+    public static AudioData create(ByteBuffer buffer, int bits, int channels, int samplerate, Type type, String filename)
     {
-	int format;
+	Format format;
 	if(channels == 1){
-	    format = bits == 8 ? FORMAT_MONO8 : FORMAT_MONO16;
+	    format = bits == 8 ? Format.MONO8 : Format.MONO16;
 	}else{
-	    format = bits == 8 ? FORMAT_STEREO8 : FORMAT_STEREO16;
+	    format = bits == 8 ? Format.STEREO8 : Format.STEREO16;
 	}
 	
-	return new AudioData(buffer, format, samplerate, filename);
+	return new AudioData(buffer, format, samplerate, type, filename);
     }
     
     /**
@@ -81,8 +84,8 @@ public class AudioData {
     {
 	try
 	{
-	    int format = ois.getFormat() == OggInputStream.FORMAT_MONO16 ?
-							    FORMAT_MONO16 : FORMAT_STEREO16;
+	    Format format = ois.getFormat() == OggInputStream.FORMAT_MONO16 ?
+							    Format.MONO16 : Format.STEREO16;
 	    int samplerate = ois.getRate();
 
 	    ByteArrayOutputStream out = new ByteArrayOutputStream(tmp_buffer.length);
@@ -98,7 +101,7 @@ public class AudioData {
 	    
 	    ois.close();
 	    
-	    return new AudioData(b, format, samplerate, filename);
+	    return new AudioData(b, format, samplerate, Type.OGG, filename);
 	    
 	} catch(IOException e) {
 	    Logger.global.log(Level.SEVERE, "Exception creating AudioData(OGG) : {0}", e.getMessage());
@@ -132,7 +135,8 @@ public class AudioData {
 	    
 	    ais.close();
 	    
-	    return create(b, audioformat.getSampleSizeInBits(), audioformat.getChannels(), (int) audioformat.getSampleRate(), filename);
+	    return create(b, audioformat.getSampleSizeInBits(), audioformat.getChannels(), (int) audioformat.getSampleRate(),
+                    Type.WAV, filename);
 	} catch (Exception e) {
 	    Logger.global.log(Level.SEVERE, "Exception creating AudioData(WAVE) : {0}", e.getMessage());
 	    return null;
@@ -179,7 +183,7 @@ public class AudioData {
 
 	    stream.close();
 
-	    return create(b, 16/*TODO find&fix this*/, channels, sampleRate, filename);
+	    return create(b, 16/*TODO find&fix this*/, channels, sampleRate, Type.MP3, filename);
 	} catch (BitstreamException ex) {
 	    Logger.global.log(Level.SEVERE, "Exception creating AudioData(MP3) : {0}", ex.getMessage());
 	    return null;

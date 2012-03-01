@@ -115,10 +115,10 @@ public class SoundManager
 	int format = -1;
 	switch(data.format)
 	{
-	    case AudioData.FORMAT_MONO8: format = AL10.AL_FORMAT_MONO8; break;
-	    case AudioData.FORMAT_MONO16: format = AL10.AL_FORMAT_MONO16; break;
-	    case AudioData.FORMAT_STEREO8: format = AL10.AL_FORMAT_STEREO8; break;
-	    case AudioData.FORMAT_STEREO16: format = AL10.AL_FORMAT_STEREO16; break;
+	    case MONO8: format = AL10.AL_FORMAT_MONO8; break;
+	    case MONO16: format = AL10.AL_FORMAT_MONO16; break;
+	    case STEREO8: format = AL10.AL_FORMAT_STEREO8; break;
+	    case STEREO16: format = AL10.AL_FORMAT_STEREO16; break;
 	}
 
         AL10.alBufferData(id_buf.get(0), format, data.data, data.samplerate);
