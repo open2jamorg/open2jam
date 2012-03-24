@@ -50,7 +50,7 @@ public class BMSWriter {
 	
 	buffer.close();
 	
-	//chart.copySampleFiles(dir);
+	chart.copySampleFiles(dir);
     }
     
     private static void makeHeader(BufferedWriter buffer, Chart chart) throws IOException

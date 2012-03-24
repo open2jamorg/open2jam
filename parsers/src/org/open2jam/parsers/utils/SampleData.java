@@ -116,7 +116,7 @@ public class SampleData {
 	    out.write(ByteHelper.intToByteArray(header.chunk_size+36), 0, 4);
 	    out.write("WAVE".getBytes());
 	    out.write("fmt ".getBytes());
-	    out.write(ByteHelper.shortToByteArray((short) 0x10), 0, 2);
+	    out.write(ByteHelper.intToByteArray(0x10), 0, 4);
 	    out.write(ByteHelper.shortToByteArray(header.audio_format), 0, 2);
 	    out.write(ByteHelper.shortToByteArray(header.num_channels), 0, 2);
 	    out.write(ByteHelper.intToByteArray(header.sample_rate), 0, 4);
