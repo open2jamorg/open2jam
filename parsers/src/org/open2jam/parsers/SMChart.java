@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
-import org.open2jam.parsers.utils.AudioData;
 import org.open2jam.parsers.utils.Logger;
+import org.open2jam.parsers.utils.SampleData;
 
 public class SMChart extends Chart {
 
@@ -44,12 +44,8 @@ public class SMChart extends Chart {
 	return noter;
     }
     
-    public Map<Integer, AudioData> getSamples() {
+    public Map<Integer, SampleData> getSamples() {
 	return SMParser.getSamples(this);
-    }
-    
-    public Map<Integer, String> getSampleIndex() {
-	return sample_index;
     }
 
     public double getBPM() {

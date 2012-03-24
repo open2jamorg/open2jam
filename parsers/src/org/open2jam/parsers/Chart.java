@@ -2,13 +2,15 @@ package org.open2jam.parsers;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
-import org.open2jam.parsers.utils.AudioData;
 import org.open2jam.parsers.utils.Logger;
+import org.open2jam.parsers.utils.SampleData;
 
 /** 
 * this encapsulates a song chart.
@@ -33,7 +35,7 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
     
     protected File image_cover = null;
     
-    protected Map<Integer, String> sample_index;
+    protected Map<Integer, String> sample_index = new HashMap<Integer, String>();
     
     /** the File object to the source file of this header */
     public abstract File getSource();
@@ -65,10 +67,7 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
     public abstract String getNoter();
     
     /** The samples of the song */
-    public abstract Map<Integer, AudioData> getSamples();
-    
-    /** Get the sample index of the chart */
-    public abstract Map<Integer, String> getSampleIndex();
+    public abstract Map<Integer, SampleData> getSamples();
 
     /** a bpm representing the whole song.
     *** doesn't need to be exact, just for info */
@@ -85,6 +84,18 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
 
     /** this should return the list of events from this chart at this rank */
     public abstract List<Event> getEvents();
+           
+    /** Get the sample index of the chart */
+    public Map<Integer, String> getSampleIndex() {
+	return sample_index;
+    }
+    
+    /** Copy the sample files to another directory */
+    public void copySampleFiles(File directory) throws IOException {
+	for(SampleData ad : getSamples().values()) {
+	    ad.copyToFolder(directory);
+	}
+    }
 
     public int compareTo(Chart c)
     {

@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
-import org.open2jam.parsers.utils.AudioData;
+import org.open2jam.parsers.utils.SampleData;
 
 /**
  * A class to read the XNT files from KrazyRain
@@ -85,13 +85,9 @@ public class XNTChart extends Chart {
 	this.noter = noter;
     }
     
-    Map<Integer, AudioData> samples;
-    public Map<Integer, AudioData> getSamples() {
+    Map<Integer, SampleData> samples;
+    public Map<Integer, SampleData> getSamples() {
 	return SNPParser.getSamples(this);
-    }
-    
-    public Map<Integer, String> getSampleIndex() {
-	return sample_index;
     }
     
     public double getBPM() {

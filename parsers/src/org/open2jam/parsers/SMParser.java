@@ -3,11 +3,9 @@ package org.open2jam.parsers;
 import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
-import javazoom.jl.decoder.Bitstream;
-import org.open2jam.parsers.utils.AudioData;
 import org.open2jam.parsers.utils.CharsetDetector;
 import org.open2jam.parsers.utils.Logger;
-import org.open2jam.parsers.utils.OggInputStream;
+import org.open2jam.parsers.utils.SampleData;
 
 
 class SMParser
@@ -283,9 +281,9 @@ class SMParser
         return event_list;
     }
 
-    public static HashMap<Integer, AudioData> getSamples(SMChart chart)
+    public static HashMap<Integer, SampleData> getSamples(SMChart chart)
     {
-	HashMap<Integer, AudioData> samples = new HashMap<Integer, AudioData>();
+	HashMap<Integer, SampleData> samples = new HashMap<Integer, SampleData>();
 	
 	FilenameFilter filter = new FilenameFilter() {
 
@@ -308,14 +306,14 @@ class SMParser
 		    fn = fn.substring(0,fn.lastIndexOf("."));
 
 		    if(sn.equals(fn)) {
-			AudioData audioData;
-			if      (ext.equals(".wav")) audioData = AudioData.create(new FileInputStream(f), f.getName());
-			else if (ext.equals(".ogg")) audioData = AudioData.create(new OggInputStream(new FileInputStream(f)), f.getName());
-			else if (ext.equals(".mp3")) audioData = AudioData.create(new Bitstream(new FileInputStream(f)), f.getName());
+			SampleData.Type t;
+			if      (ext.equals(".wav")) t = SampleData.Type.WAV;
+			else if (ext.equals(".ogg")) t = SampleData.Type.OGG;
+			else if (ext.equals(".mp3")) t = SampleData.Type.WAV;
 			else { //not a music file so continue
 			    continue;
 			}
-			samples.put(entry.getKey(), audioData);
+			samples.put(entry.getKey(), new SampleData(new FileInputStream(f), t, f.getName()));
 		    }
 		}
 	    } catch (IOException ex) {

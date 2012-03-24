@@ -3,6 +3,7 @@ package org.open2jam.render;
 
 import java.awt.Font;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Map.Entry;
 import java.util.*;
@@ -15,7 +16,7 @@ import org.open2jam.Config;
 import org.open2jam.GameOptions;
 import org.open2jam.parsers.Chart;
 import org.open2jam.parsers.Event;
-import org.open2jam.parsers.utils.AudioData;
+import org.open2jam.parsers.utils.SampleData;
 import org.open2jam.render.entities.*;
 import org.open2jam.render.lwjgl.SoundManager;
 import org.open2jam.render.lwjgl.TrueTypeFont;
@@ -402,10 +403,14 @@ public abstract class Render implements GameWindowCallback
 
         // get the chart sound samples
 	samples = new HashMap<Integer, Integer>();
-        for(Entry<Integer, AudioData> entry : chart.getSamples().entrySet())
+        for(Entry<Integer, SampleData> entry : chart.getSamples().entrySet())
 	{
-	    samples.put(entry.getKey(), SoundManager.newBuffer(entry.getValue()));
-	    entry.getValue().dispose();
+	    samples.put(entry.getKey(), SoundManager.newBuffer(entry.getValue().decode()));
+	    try {
+		entry.getValue().dispose();
+	    } catch (IOException ex) {
+		java.util.logging.Logger.getLogger(Render.class.getName()).log(Level.SEVERE, null, ex);
+	    }
 	}
 	
         trueTypeFont = new TrueTypeFont(new Font("Tahoma", Font.BOLD, 14), false);

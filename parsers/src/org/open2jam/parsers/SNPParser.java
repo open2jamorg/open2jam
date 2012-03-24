@@ -164,9 +164,9 @@ public class SNPParser {
 	return Compressor.decompress(b);
     }
     
-    public static HashMap<Integer, AudioData> getSamples(XNTChart chart)
+    public static HashMap<Integer, SampleData> getSamples(XNTChart chart)
     {
-	HashMap<Integer, AudioData> samples = new HashMap<Integer, AudioData>();
+	HashMap<Integer, SampleData> samples = new HashMap<Integer, SampleData>();
 	
 	ByteBuffer buffer;
         RandomAccessFile f;
@@ -187,7 +187,7 @@ public class SNPParser {
 		buffer = SNPParser.extract(fh, f);
 		buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
 		
-		AudioData data = AudioData.create(new OggInputStream(new ByteBufferInputStream(buffer)), fname);
+		SampleData data = new SampleData(new ByteBufferInputStream(buffer), SampleData.Type.OGG, fname);
 		buffer.clear();
 		
 		samples.put(id, data);

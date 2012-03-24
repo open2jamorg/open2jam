@@ -21,6 +21,8 @@ public class BMSWriter {
     private static List<Event> event_list;
     private static HashMap<Event, Integer> bpmChanges;
     
+    private static char sampleStart = 0;
+    
     public static void export(ChartList list, String path) throws IOException
     {
 	for(Chart c : list) {
@@ -35,9 +37,9 @@ public class BMSWriter {
 	String dirName = (chart.getArtist()+" - "+chart.getTitle()).replaceAll("/", " ");
 	String name = chart.getSource().getName();
 	name = name.substring(0, name.lastIndexOf("."))+"_"+chart.hashCode()+".bms";
-	File dirs = new File(path+File.separator+dirName);
-	File file = new File(dirs, name);
-	dirs.mkdirs();
+	File dir = new File(path+File.separator+dirName);
+	File file = new File(dir, name);
+	dir.mkdirs();
 	file.createNewFile();
 	System.out.println(file.getAbsolutePath());
 	
@@ -47,6 +49,8 @@ public class BMSWriter {
 	writeEvents(buffer, chart);
 	
 	buffer.close();
+	
+	//chart.copySampleFiles(dir);
     }
     
     private static void makeHeader(BufferedWriter buffer, Chart chart) throws IOException
@@ -63,10 +67,15 @@ public class BMSWriter {
 	
 	buffer.newLine();
 	
+	if(chart.getSampleIndex().containsKey(0)) 
+	    sampleStart = 1;
+	else
+	    sampleStart = 0;
+	
 	buffer.write("*----WAV LIST----*\n");
 	for(Entry<Integer, String> entry : chart.getSampleIndex().entrySet())
 	{
-	    buffer.write(String.format("#WAV%s %s\n", toBase36(entry.getKey() + 1), entry.getValue()));
+	    buffer.write(String.format("#WAV%s %s\n", toBase36(entry.getKey() + sampleStart), entry.getValue()));
 	}
 	buffer.newLine();
         
@@ -75,11 +84,13 @@ public class BMSWriter {
         for(Event e : EventHelper.getEventsFromThisChannel(event_list, Channel.BPM_CHANGE))
             bpmChanges.put(e, i++);
 
-        buffer.write("*----BPM LIST----*\n");
-        
-        for(Entry<Event, Integer> entry : bpmChanges.entrySet()) {
-            buffer.write(String.format("#BPM%s %f\n", toBase36(entry.getValue()), entry.getKey().getValue()));
-        }    
+	if(!bpmChanges.isEmpty()) {
+	    buffer.write("*----BPM LIST----*\n");
+
+	    for(Entry<Event, Integer> entry : bpmChanges.entrySet()) {
+		buffer.write(String.format("#BPM%s %f\n", toBase36(entry.getValue()), entry.getKey().getValue()));
+	    }    
+	}
         buffer.newLine();
     }
     
@@ -99,7 +110,9 @@ public class BMSWriter {
 	    
 	    while(channel_iterator.hasNext()) {
 		Entry<Channel, List<Event>> channel = channel_iterator.next();
-		String channel_start = String.format("%02d", getChannel(channel.getKey()));
+		int c = getChannel(channel.getKey());
+		if(c == 0) continue;
+		String channel_start = String.format("%02d", c);
 
 		int step = MAX_POSITIONS;
 		String[] values = new String[MAX_POSITIONS];
@@ -113,7 +126,7 @@ public class BMSWriter {
 		    else if(channel.getKey().equals(Channel.TIME_SIGNATURE))
 			values[p] = Double.toString(e.getValue());
 		    else
-                        values[p] = toBase36((int)e.getValue() + 1);
+                        values[p] = toBase36((int)e.getValue() + sampleStart);
 		}
 		
 		String v = "";
@@ -137,6 +150,7 @@ public class BMSWriter {
 	    case AUTO_PLAY: return 1;
 	    case TIME_SIGNATURE: return 2;
 	    case BPM_CHANGE: return 8;
+		
 	    case NOTE_1: return 11;
 	    case NOTE_2: return 12;
 	    case NOTE_3: return 13;

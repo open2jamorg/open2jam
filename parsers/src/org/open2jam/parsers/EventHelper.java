@@ -47,6 +47,28 @@ public class EventHelper {
 	return epc;
     }
     
+    public static List<Event> getOnlyNormalNotes(List<Event> event_list) {
+	List<Event> nn = new ArrayList<Event>();
+	
+	for(Event e : event_list) {
+	    if(e.getFlag().equals(Event.Flag.NONE))
+		nn.add(e);
+	}
+	
+	return nn;
+    }
+    
+    public static List<Event> getOnlyLongNotes(List<Event> event_list) {
+	List<Event> ln = new ArrayList<Event>();
+	
+	for(Event e : event_list) {
+	    if(e.getFlag().equals(Event.Flag.HOLD) || e.getFlag().equals(Event.Flag.RELEASE))
+		ln.add(e);
+	}
+	
+	return ln;
+    }
+    
     public static List<Event> getEventsFromThisChannel(List<Event> event_list, Channel channel) {
         List<Event> eftc = new ArrayList<Event>();
         

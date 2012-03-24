@@ -27,4 +27,22 @@ public class ByteHelper {
         }
     }
     
+    public static byte[] intToByteArray(int i)
+    {
+	return new byte[] {
+	    (byte) (i),
+	    (byte) (i >> 8),
+	    (byte) (i >> 16),
+	    (byte) (i >> 24)
+	};
+    }
+    
+    public static byte[] shortToByteArray(short i)
+    {
+	return new byte[] {
+	    (byte) (i),
+	    (byte) (i >> 8)
+	};
+    }    
+    
 }

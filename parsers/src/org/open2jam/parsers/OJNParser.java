@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import org.open2jam.parsers.utils.ByteHelper;
@@ -174,6 +175,9 @@ class OJNParser
 	    ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, start, end - start);
 	    buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
 	    readNoteBlock(event_list, buffer);
+	    
+	    fixLongNotes(event_list);
+	    
 	    f.close();
         }catch(java.io.FileNotFoundException e){
             Logger.global.log(Level.WARNING, "File {0} not found !!", chart.getSource().getName());
@@ -234,12 +238,16 @@ class OJNParser
                     value--; // make zero-based ( zero was the "ignore" value )
 		    	    
 		    // A lot of fixes here are done thanks to keigen shu. He's stealing my protagonism D:
-		    Event.Flag f;
-		    type %= 8;
+		    Event.Flag f = Event.Flag.NONE;
+
+		    if(type > 3)
+			value += 1000;
+		    type %= 4;
+		    
 		    switch(type)
 		    {
 			case 0:
-			    event_list.add(new Event(channel,measure,position,value,Event.Flag.NONE,volume, pan));
+			    f = Event.Flag.NONE;
 			break;
 			case 1:
 			    //Unused (#W Normal displayed in NoteTool)
@@ -247,33 +255,49 @@ class OJNParser
 			case 2:
 			    //fix for autoplay longnotes, convert them to normal notes (it doesn't matter but... still xD)
 			    f = channel == Event.Channel.AUTO_PLAY ? Event.Flag.NONE : Event.Flag.HOLD;
-			    event_list.add(new Event(channel,measure,position,value,f,volume, pan));
 			break;
 			case 3:
 			    //Skip if autoplay
 			    if(channel == Event.Channel.AUTO_PLAY) break;
-			    event_list.add(new Event(channel,measure,position,value,Event.Flag.RELEASE,volume, pan));
-			break;
-			case 4:
-			    event_list.add(new Event(channel,measure,position,1000+value,Event.Flag.NONE,volume, pan));
-			break;
-			case 5:
-			    //Unused (#M Hold displayed in NoteTool. Does not link with 0x06.)
-			break;
-			case 6:
-			    //fix for autoplay longnotes, convert them to normal notes (it doesn't matter but... still xD)
-			    f = channel == Event.Channel.AUTO_PLAY ? Event.Flag.NONE : Event.Flag.HOLD;
-			    event_list.add(new Event(channel,measure,position,1000+value,f,volume, pan));
-			break;
-			case 7:
-			    //Skip if autoplay
-			    if(channel == Event.Channel.AUTO_PLAY) break;
-			    event_list.add(new Event(channel,measure,position,1000+value,Event.Flag.RELEASE,volume, pan));
+			    f = Event.Flag.RELEASE;
 			break;
 		    }
+		    
+		    event_list.add(new Event(channel,measure,position,value,f,volume, pan));
                 }
             }
         }
         Collections.sort(event_list);
+    }
+    
+    private static void fixLongNotes(List<Event> event_list) {
+	
+	List<Event.Channel> lnc = new ArrayList<Event.Channel>();
+	
+	Iterator<Event> it = event_list.iterator();
+	
+	while(it.hasNext()) {
+	    Event e = it.next();
+	    Event.Channel c = e.getChannel();
+	    
+	    switch(e.getFlag()){
+		case NONE:
+		    if(lnc.contains(c)) {
+			e.flag = Event.Flag.RELEASE;
+			lnc.remove(c);
+		    }
+		break;
+		case HOLD:
+		    if(lnc.contains(c)) {
+			e.flag = Event.Flag.RELEASE;
+			lnc.remove(c);
+		    }
+		    lnc.add(c);
+		break;  
+		case RELEASE:
+		    lnc.remove(c);
+		break;
+	    }
+	}
     }
 }

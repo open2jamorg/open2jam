@@ -7,7 +7,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
-import org.open2jam.parsers.utils.AudioData;
+import org.open2jam.parsers.utils.SampleDecoder;
 import org.open2jam.util.Logger;
 
 /**
@@ -106,7 +106,7 @@ public class SoundManager
         AL10.alSourceStop(source);
     }
     
-    public static int newBuffer(AudioData data)
+    public static int newBuffer(SampleDecoder data)
     {
 	IntBuffer id_buf = BufferUtils.createIntBuffer(1);
         AL10.alGenBuffers(id_buf);

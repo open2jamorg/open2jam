@@ -8,7 +8,10 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.logging.Level;
-import org.open2jam.parsers.utils.*;
+import org.open2jam.parsers.utils.ByteBufferInputStream;
+import org.open2jam.parsers.utils.ByteHelper;
+import org.open2jam.parsers.utils.Logger;
+import org.open2jam.parsers.utils.SampleData;
 
 
 class OJMParser
@@ -67,10 +70,10 @@ class OJMParser
     0x08, 0x0C, 0x09, 0x06, 0x0F, 0x10, 0x05, 0x0A,
     0x04, 0x00};
 
-    public static HashMap<Integer, AudioData> parseFile(File file)
+    public static HashMap<Integer, SampleData> parseFile(File file)
     {
         RandomAccessFile f;
-        HashMap<Integer, AudioData> ret;
+        HashMap<Integer, SampleData> ret;
         try{
             f = new RandomAccessFile(file,"r");
             ByteBuffer buffer = f.getChannel().map(java.nio.channels.FileChannel.MapMode.READ_ONLY, 0, 4);
@@ -92,17 +95,17 @@ class OJMParser
 
                 default:
                     Logger.global.warning("Unknown OJM signature !!");
-                    ret = new HashMap<Integer, AudioData>();
+                    ret = new HashMap<Integer, SampleData>();
             }
             f.close();
         }catch(IOException e) {
             Logger.global.log(Level.WARNING, "IO exception on file {0} : {1}", new Object[]{file.getName(), e.getMessage()});
-            ret = new HashMap<Integer, AudioData>();
+            ret = new HashMap<Integer, SampleData>();
         }
         return ret;
     }
 
-    private static HashMap<Integer, AudioData> parseM30(RandomAccessFile f, File file) throws IOException
+    private static HashMap<Integer, SampleData> parseM30(RandomAccessFile f, File file) throws IOException
     {
         ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 4, 28);
         buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
@@ -118,7 +121,7 @@ class OJMParser
         buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, 28, f.getChannel().size()-28);
         buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
 
-        HashMap<Integer, AudioData> samples = new HashMap<Integer, AudioData>();
+        HashMap<Integer, SampleData> samples = new HashMap<Integer, SampleData>();
 
         for(int i=0; i<sample_count; i++)
         {
@@ -153,7 +156,7 @@ class OJMParser
 		default: Logger.global.log(Level.WARNING, "Unknown encryption flag({0}) !", encryption_flag);
 	    }
 
-            AudioData audioData = AudioData.create(new OggInputStream(new ByteArrayInputStream(sample_data)), sample_name);
+            SampleData audioData = new SampleData(new ByteArrayInputStream(sample_data), SampleData.Type.OGG, sample_name);
             int value = ref;
             if(codec_code == 0){
                 value = 1000 + ref;
@@ -178,9 +181,9 @@ class OJMParser
         }
     }
 
-    private static HashMap<Integer, AudioData> parseOMC(RandomAccessFile f, boolean decrypt) throws IOException
+    private static HashMap<Integer, SampleData> parseOMC(RandomAccessFile f, boolean decrypt) throws IOException
     {
-       HashMap<Integer, AudioData> samples =  new HashMap<Integer, AudioData>();
+       HashMap<Integer, SampleData> samples =  new HashMap<Integer, SampleData>();
        
        ByteBuffer buffer = f.getChannel().map(java.nio.channels.FileChannel.MapMode.READ_ONLY, 4, 16);
        buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
@@ -219,6 +222,9 @@ class OJMParser
            int chunk_size = buffer.getInt();
 
            if(chunk_size == 0){ sample_id++; continue; }
+	   
+	   SampleData.WAVHeader header = 
+		   new SampleData.WAVHeader(audio_format, num_channels, sample_rate, bit_rate, block_align, bits_per_sample, data, chunk_size);
 
            buffer = f.getChannel().map(java.nio.channels.FileChannel.MapMode.READ_ONLY, file_offset, chunk_size);
            buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
@@ -237,7 +243,7 @@ class OJMParser
            buffer.put(buf);
            buffer.flip();
 
-           AudioData audioData = AudioData.create(buffer, bits_per_sample, num_channels, sample_rate, AudioData.Type.WAV_NO_HEADER, sample_name);
+           SampleData audioData = new SampleData(new ByteBufferInputStream(buffer), header, sample_name);
            samples.put(sample_id, audioData);
            sample_id++;
        }
@@ -261,7 +267,7 @@ class OJMParser
            buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
            file_offset += sample_size;
 
-           AudioData audioData = AudioData.create(new OggInputStream(new ByteBufferInputStream(buffer)), sample_name);
+           SampleData audioData = new SampleData(new ByteBufferInputStream(buffer), SampleData.Type.OGG, sample_name);
            samples.put(sample_id, audioData);
            sample_id++;
        }

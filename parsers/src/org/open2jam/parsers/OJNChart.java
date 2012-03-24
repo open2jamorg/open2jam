@@ -6,16 +6,13 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
-import org.open2jam.parsers.utils.AudioData;
 import org.open2jam.parsers.utils.ByteBufferInputStream;
 import org.open2jam.parsers.utils.Logger;
+import org.open2jam.parsers.utils.SampleData;
 
 public class OJNChart extends Chart {
 
@@ -57,19 +54,15 @@ public class OJNChart extends Chart {
     }
     
     File sample_file;
-    public Map<Integer, AudioData> getSamples() {
+    public Map<Integer, SampleData> getSamples() {
 	return OJMParser.parseFile(sample_file);
     }
     
     public Map<Integer, String> getSampleIndex() {
-	sample_index = new HashMap<Integer, String>();
-	Iterator<Entry<Integer, AudioData>> it = OJMParser.parseFile(sample_file).entrySet().iterator();
-	while(it.hasNext()) {
-	    Entry<Integer, AudioData> entry = it.next();
-	    sample_index.put(entry.getKey(), entry.getValue().filename);
-	}
+//	if(sample_index.isEmpty())
+//	    sample_index = OJMParser.getSampleIndex(sample_file);
 	return sample_index;
-    }   
+    }
     
     public double getBPM() {
 	return bpm;
