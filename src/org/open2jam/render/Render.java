@@ -16,6 +16,7 @@ import org.open2jam.Config;
 import org.open2jam.GameOptions;
 import org.open2jam.parsers.Chart;
 import org.open2jam.parsers.Event;
+import org.open2jam.parsers.EventList;
 import org.open2jam.parsers.utils.SampleData;
 import org.open2jam.render.entities.*;
 import org.open2jam.render.lwjgl.SoundManager;
@@ -364,19 +365,21 @@ public abstract class Render implements GameWindowCallback
         }
 
 
-        List<Event> event_list = construct_velocity_tree(chart.getEvents());
+        EventList event_list = construct_velocity_tree(chart.getEvents());
+	
+	event_list.fixEventList();
 
-	    //Let's randomize "-"
+	//Let's randomize "-"
         switch(opt.getChannelModifier())
         {
             case Mirror:
-                channelMirror(event_list.iterator());
+		event_list.channelMirror();
             break;
             case Shuffle:
-                channelShuffle(event_list.iterator());
+                event_list.channelShuffle();
             break;
             case Random:
-                channelRandom(event_list.iterator());
+                event_list.channelRandom();
             break;
         }
         
@@ -869,7 +872,7 @@ public abstract class Render implements GameWindowCallback
 
     private final IntervalTree<Double,Double> velocity_tree;
 
-    private List<Event> construct_velocity_tree(List<Event> list)
+    private EventList construct_velocity_tree(EventList list)
     {
         int measure = 0;
         double timer = DELAY_TIME;
@@ -880,7 +883,7 @@ public abstract class Render implements GameWindowCallback
         double measure_size = 0.8 * getViewport();
         double my_note_speed = (my_bpm * measure_size) / BEATS_PER_MSEC;
         
-        List<Event> new_list = new LinkedList<Event>();
+        EventList new_list = new EventList();
 
         for(Event e : list)
         {
@@ -999,147 +1002,6 @@ public abstract class Render implements GameWindowCallback
         }
 
         return velocity_integral(t0, t1) * factor;
-    }
-
-    /**
-    * This function will mirrorize the notes
-    * TODO ADD P2 SUPPORT
-    * @param buffer
-    */
-    void channelMirror(Iterator<Event> buffer)
-    {
-        while(buffer.hasNext())
-        {
-            Event e = buffer.next();
-            switch(e.getChannel())
-            {
-            case NOTE_1: e.setChannel(Event.Channel.NOTE_7); break;
-            case NOTE_2: e.setChannel(Event.Channel.NOTE_6); break;
-            case NOTE_3: e.setChannel(Event.Channel.NOTE_5); break;
-            case NOTE_5: e.setChannel(Event.Channel.NOTE_3); break;
-            case NOTE_6: e.setChannel(Event.Channel.NOTE_2); break;
-            case NOTE_7: e.setChannel(Event.Channel.NOTE_1); break;
-            }
-        }
-    }
-
-    /**
-     * This function will shuffle the note lanes
-     * TODO ADD P2 SUPPORT
-     * @param buffer
-     */
-    void channelShuffle(Iterator<Event> buffer)
-    {
-        List<Event.Channel> channelSwap = new LinkedList<Event.Channel>();
-
-        channelSwap.add(Event.Channel.NOTE_1);
-        channelSwap.add(Event.Channel.NOTE_2);
-        channelSwap.add(Event.Channel.NOTE_3);
-        channelSwap.add(Event.Channel.NOTE_4);
-        channelSwap.add(Event.Channel.NOTE_5);
-        channelSwap.add(Event.Channel.NOTE_6);
-        channelSwap.add(Event.Channel.NOTE_7);
-
-        Collections.shuffle(channelSwap);
-
-        while(buffer.hasNext())
-        {
-            Event e = buffer.next();
-            switch(e.getChannel())
-            {
-            case NOTE_1: e.setChannel(channelSwap.get(0)); break;
-            case NOTE_2: e.setChannel(channelSwap.get(1)); break;
-            case NOTE_3: e.setChannel(channelSwap.get(2)); break;
-            case NOTE_4: e.setChannel(channelSwap.get(3)); break;
-            case NOTE_5: e.setChannel(channelSwap.get(4)); break;
-            case NOTE_6: e.setChannel(channelSwap.get(5)); break;
-            case NOTE_7: e.setChannel(channelSwap.get(6)); break;
-            }
-        }
-    }
-
-    /**
-     * This function will randomize the notes
-     * o2jam randomize the pattern each measure unless a longnote is in between measures
-     * This implementation keeps the randomization of the previous measure if that happens
-     * @param buffer
-     */
-    void channelRandom(Iterator<Event> buffer)
-    {
-        List<Event.Channel> channelSwap = new LinkedList<Event.Channel>();
-
-        channelSwap.add(Event.Channel.NOTE_1);
-        channelSwap.add(Event.Channel.NOTE_2);
-        channelSwap.add(Event.Channel.NOTE_3);
-        channelSwap.add(Event.Channel.NOTE_4);
-        channelSwap.add(Event.Channel.NOTE_5);
-        channelSwap.add(Event.Channel.NOTE_6);
-        channelSwap.add(Event.Channel.NOTE_7);
-
-        Collections.shuffle(channelSwap);
-
-            EnumMap<Event.Channel, Event.Channel> lnMap = new EnumMap<Event.Channel, Event.Channel>(Event.Channel.class);
-
-            int last_measure = -1;
-        while(buffer.hasNext())
-        {
-            Event e = buffer.next();
-
-                if(e.getMeasure() > last_measure)
-                {
-                    if(lnMap.isEmpty())
-                        Collections.shuffle(channelSwap);
-                    last_measure = e.getMeasure();
-                }
-
-            switch(e.getChannel())
-            {
-            case NOTE_1:
-                        setRandomChannel(e, lnMap, channelSwap.get(0));
-                    break;
-            case NOTE_2:
-                        setRandomChannel(e, lnMap, channelSwap.get(1));
-                    break;
-            case NOTE_3:
-                        setRandomChannel(e, lnMap, channelSwap.get(2));
-                    break;
-            case NOTE_4:
-                        setRandomChannel(e, lnMap, channelSwap.get(3));
-                    break;
-            case NOTE_5:
-                        setRandomChannel(e, lnMap, channelSwap.get(4));
-                    break;
-            case NOTE_6:
-                        setRandomChannel(e, lnMap, channelSwap.get(5));
-                    break;
-            case NOTE_7:
-                        setRandomChannel(e, lnMap, channelSwap.get(6));
-                    break;
-            }
-        }
-    }
-
-    private void setRandomChannel(Event e, EnumMap<Event.Channel, Event.Channel> lnMap, Event.Channel random)
-    {
-        Event.Channel c = random;
-
-        if(e.getFlag() == Event.Flag.HOLD || e.getFlag() == Event.Flag.RELEASE)
-        {
-            if(!lnMap.containsKey(e.getChannel()))
-                lnMap.put(e.getChannel(), c);
-            else
-                c = lnMap.remove(e.getChannel());
-        }
-        else if(e.getFlag() == Event.Flag.NONE)
-            c = lnMap.containsValue(c) ? Event.Channel.NONE : c;
-
-        if(c == null)
-        {
-            Logger.global.log(Level.WARNING, "FUCK THIS RANDOMNESS! I mean... channel null :/");
-            c = random;
-        }
-
-        e.setChannel(c);
     }
 
     private void visibility(GameOptions.VisibilityMod value)

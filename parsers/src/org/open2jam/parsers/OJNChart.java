@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import org.open2jam.parsers.utils.ByteBufferInputStream;
@@ -59,8 +59,16 @@ public class OJNChart extends Chart {
     }
     
     public Map<Integer, String> getSampleIndex() {
-//	if(sample_index.isEmpty())
-//	    sample_index = OJMParser.getSampleIndex(sample_file);
+	if(sample_index.isEmpty()) {
+	    for(Entry<Integer, SampleData> entry : getSamples().entrySet()) {
+		    sample_index.put(entry.getKey(), entry.getValue().getName());
+		try {
+		    entry.getValue().dispose();
+		} catch (IOException ex) {
+		    Logger.global.log(Level.WARNING, "As if I care about it :/");
+		}
+	    }
+	}
 	return sample_index;
     }
     
@@ -92,7 +100,7 @@ public class OJNChart extends Chart {
 	return null;
     }
 
-    public List<Event> getEvents() {
+    public EventList getEvents() {
 	return OJNParser.parseChart(this);
     }
 }

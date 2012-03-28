@@ -163,9 +163,9 @@ class OJNParser
         return list;
     }
 
-    public static List<Event> parseChart(OJNChart chart)
+    public static EventList parseChart(OJNChart chart)
     {
-        ArrayList<Event> event_list = new ArrayList<Event>();
+        EventList event_list = new EventList();
         try{
 	    RandomAccessFile f = new RandomAccessFile(chart.getSource().getAbsolutePath(), "r");
 
@@ -176,8 +176,6 @@ class OJNParser
 	    buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
 	    readNoteBlock(event_list, buffer);
 	    
-	    fixLongNotes(event_list);
-	    
 	    f.close();
         }catch(java.io.FileNotFoundException e){
             Logger.global.log(Level.WARNING, "File {0} not found !!", chart.getSource().getName());
@@ -187,7 +185,7 @@ class OJNParser
         return event_list;
     }
 
-    private static void readNoteBlock(List<Event> event_list, ByteBuffer buffer) {
+    private static void readNoteBlock(EventList event_list, ByteBuffer buffer) {
         while(buffer.hasRemaining())
         {
             int measure = buffer.getInt();
@@ -240,7 +238,7 @@ class OJNParser
 		    // A lot of fixes here are done thanks to keigen shu. He's stealing my protagonism D:
 		    Event.Flag f = Event.Flag.NONE;
 
-		    if(type > 3)
+		    if(type%8 > 3)
 			value += 1000;
 		    type %= 4;
 		    
@@ -254,11 +252,9 @@ class OJNParser
 			break;
 			case 2:
 			    //fix for autoplay longnotes, convert them to normal notes (it doesn't matter but... still xD)
-			    f = channel == Event.Channel.AUTO_PLAY ? Event.Flag.NONE : Event.Flag.HOLD;
+			    f = Event.Flag.HOLD;
 			break;
 			case 3:
-			    //Skip if autoplay
-			    if(channel == Event.Channel.AUTO_PLAY) break;
 			    f = Event.Flag.RELEASE;
 			break;
 		    }
@@ -268,36 +264,5 @@ class OJNParser
             }
         }
         Collections.sort(event_list);
-    }
-    
-    private static void fixLongNotes(List<Event> event_list) {
-	
-	List<Event.Channel> lnc = new ArrayList<Event.Channel>();
-	
-	Iterator<Event> it = event_list.iterator();
-	
-	while(it.hasNext()) {
-	    Event e = it.next();
-	    Event.Channel c = e.getChannel();
-	    
-	    switch(e.getFlag()){
-		case NONE:
-		    if(lnc.contains(c)) {
-			e.flag = Event.Flag.RELEASE;
-			lnc.remove(c);
-		    }
-		break;
-		case HOLD:
-		    if(lnc.contains(c)) {
-			e.flag = Event.Flag.RELEASE;
-			lnc.remove(c);
-		    }
-		    lnc.add(c);
-		break;  
-		case RELEASE:
-		    lnc.remove(c);
-		break;
-	    }
-	}
     }
 }

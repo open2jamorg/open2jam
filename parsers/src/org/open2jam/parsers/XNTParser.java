@@ -3,10 +3,8 @@ package org.open2jam.parsers;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.logging.Level;
 import org.open2jam.parsers.SNPParser.SNPFileHeader;
 import org.open2jam.parsers.utils.ByteHelper;
@@ -21,9 +19,9 @@ public class XNTParser {
     /** The *.xnt files have "XNOT" as signature */
     private final static int XNT_SIGNATURE = 0x544F4E58;
     
-    public static List<Event> parseChart(XNTChart chart)
+    public static EventList parseChart(XNTChart chart)
     {
-	ArrayList<Event> list = new ArrayList<Event>();
+	EventList list = new EventList();
 	
 	ByteBuffer buffer;
         RandomAccessFile f;
@@ -82,7 +80,7 @@ public class XNTParser {
 	return list;
     }
     
-    private static void readNoteBlock(List<Event> list, ByteBuffer buffer, boolean bgm)
+    private static void readNoteBlock(EventList list, ByteBuffer buffer, boolean bgm)
     {
 	byte[] junk = new byte[12]; //skip this, idk what it is 
 	buffer.get(junk);
@@ -133,7 +131,7 @@ public class XNTParser {
 	}
     }
     
-    private static void readBPMChange(List<Event> list, ByteBuffer buffer)
+    private static void readBPMChange(EventList list, ByteBuffer buffer)
     {
 	byte[] junk = new byte[12]; //skip this, idk what it is 
 	buffer.get(junk);

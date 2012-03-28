@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
@@ -83,7 +82,7 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
     public abstract BufferedImage getCover();
 
     /** this should return the list of events from this chart at this rank */
-    public abstract List<Event> getEvents();
+    public abstract EventList getEvents();
            
     /** Get the sample index of the chart */
     public Map<Integer, String> getSampleIndex() {

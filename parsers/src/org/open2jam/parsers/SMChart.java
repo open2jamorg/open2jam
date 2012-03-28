@@ -3,7 +3,6 @@ package org.open2jam.parsers;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
@@ -72,7 +71,7 @@ public class SMChart extends Chart {
 	return null;
     }
 
-    public List<Event> getEvents() {
+    public EventList getEvents() {
 	return SMParser.parseChart(this);
     }
 }

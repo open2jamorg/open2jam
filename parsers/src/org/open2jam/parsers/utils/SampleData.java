@@ -39,6 +39,10 @@ public class SampleData {
 	return type;
     }
     
+    public String getName() {
+	return filename;
+    }
+    
     public WAVHeader getWAVHeader() {
 	return wavHeader;
     }
@@ -50,9 +54,8 @@ public class SampleData {
 	    case OGG:
 		return SampleDecoder.decodeOGG(this);
 	    case WAV:
-		return SampleDecoder.decodeWAV(this);
 	    case WAV_NO_HEADER:
-		return SampleDecoder.decodeRAW(this);
+		return SampleDecoder.decodeWAV(this);
 	    default:
 		return null;
 	}

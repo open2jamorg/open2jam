@@ -1,8 +1,11 @@
 package org.open2jam.parsers;
 
 import java.io.*;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.*;
+import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -215,9 +218,9 @@ class BMSParser
         return chart;
     }
 
-    public static List<Event> parseChart(BMSChart chart)
+    public static EventList parseChart(BMSChart chart)
     {
-        ArrayList<Event> event_list = new ArrayList<Event>();
+        EventList event_list = new EventList();
         BufferedReader r;
         String line;
         try{
@@ -417,7 +420,7 @@ class BMSParser
 			SampleData.Type t;
 			if      (ext.equals(".wav")) t = SampleData.Type.WAV;
 			else if (ext.equals(".ogg")) t = SampleData.Type.OGG;
-			else if (ext.equals(".mp3")) t = SampleData.Type.WAV;
+			else if (ext.equals(".mp3")) t = SampleData.Type.MP3;
 			else { //not a music file so continue
 			    continue;
 			}

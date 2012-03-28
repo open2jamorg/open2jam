@@ -96,12 +96,20 @@ public class SampleDecoder {
 	}
     }
 
+    public static SampleDecoder decodeWAV(SampleData ad)
+    {
+	if(ad.getWAVHeader() == null)
+	    return decode_wav(ad);
+	else
+	    return decode_raw(ad);
+    }
+    
     /**
      * Creates a new SampleData from an InputStream (Only PCM uncompressed WAVE files please)
      * @param wav The InputStream
      * @return a new SampleData
      */
-    public static SampleDecoder decodeWAV(SampleData ad)
+    private static SampleDecoder decode_wav(SampleData ad)
     {
 	try {
 	    AudioInputStream ais = AudioSystem.getAudioInputStream(ad.getInputStream());
@@ -124,7 +132,7 @@ public class SampleDecoder {
 	}
     }
     
-    public static SampleDecoder decodeRAW(SampleData ad)
+    private static SampleDecoder decode_raw(SampleData ad)
     {
 	try {
 	    ByteArrayOutputStream out = new ByteArrayOutputStream(SampleData.tmp_buffer.length);
@@ -145,19 +153,6 @@ public class SampleDecoder {
 	    return null;
 	}
     }
-    
-//    /**
-//     * Creates a new SampleData from a ByteBuffer and a WAVHeader
-//     * @param buffer The ByteBuffer
-//     * @param header The WAVHeader
-//     * @return a new SampleData
-//     */
-//    public static SampleDecoder create(ByteBuffer buffer, SampleData.WAVHeader header)
-//    {
-//	SampleData audioData = create(buffer, header.bits_per_sample, header.num_channels, header.sample_rate, SampleData.Type.WAV_NO_HEADER);
-//	audioData.wav_header = header;
-//	return audioData;
-//    }
     
     /**
      * Creates a new SampleData from a Bitstream (Thanks to the libgdx team for the function & library :D)

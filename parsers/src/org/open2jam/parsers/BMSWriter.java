@@ -4,11 +4,13 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Locale;
 import java.util.Map.Entry;
 import org.open2jam.parsers.Event.Channel;
+import org.open2jam.parsers.Event.Flag;
 
 /**
  *
@@ -18,10 +20,66 @@ public class BMSWriter {
     
     private static final int MAX_POSITIONS = 192;
     
-    private static List<Event> event_list;
+    private static final Locale locale = Locale.US; //TODO: any fix for this?
+    
+    private static EventList event_list;
     private static HashMap<Event, Integer> bpmChanges;
     
     private static char sampleStart = 0;
+    
+    private static class BMSLine {
+	int step;
+	int channel;
+	String[] values;
+
+	public BMSLine(int channel) {
+	    this.channel = channel;
+	    
+	    this.step = MAX_POSITIONS;
+	    this.values = new String[MAX_POSITIONS];
+	}
+	
+	public void add(Event e, int p) {
+	    double value = e.getValue() > 0 ? e.getValue() : 1; //change with an empty >0 value (if any) TODO find an empty value to use
+	    
+	    step = gcd(step, p);
+	    
+	    if(channel == getChannel(Channel.AUTO_PLAY) && e.getFlag() == Flag.RELEASE)
+		return;
+	    
+	    if(channel == getChannel(Event.Channel.BPM_CHANGE)) {
+		if(bpmChanges.containsKey(e))
+		    values[p] = toBase36(bpmChanges.get(e));
+	    }
+	    else if(channel == getChannel(Event.Channel.TIME_SIGNATURE))
+		values[p] = Double.toString(value);
+	    else
+		values[p] = toBase36((int)value + sampleStart);  
+	}
+	
+	public void write(BufferedWriter buffer, String measure_start) throws IOException {
+		String channel_start = String.format("%02d", channel);
+		
+                String line = "";
+                for(int i = 0; i < MAX_POSITIONS; i+=step) {
+                    if(values[i] == null)
+                        line += "00";
+                    else
+                        line += values[i];
+		}
+		buffer.write(measure_start+channel_start+":"+line);
+		buffer.newLine();
+	}
+	
+	public boolean isEmpty() {
+	    for(int i = 0; i < MAX_POSITIONS; i++) {
+		if(values[i] != null)
+		    return false;
+	    }
+	    return true;
+	}
+	
+    }
     
     public static void export(ChartList list, String path) throws IOException
     {
@@ -33,7 +91,7 @@ public class BMSWriter {
     public static void export(Chart chart, String path) throws IOException
     {
 	event_list = chart.getEvents();
-	
+
 	String dirName = (chart.getArtist()+" - "+chart.getTitle()).replaceAll("/", " ");
 	String name = chart.getSource().getName();
 	name = name.substring(0, name.lastIndexOf("."))+"_"+chart.hashCode()+".bms";
@@ -62,7 +120,7 @@ public class BMSWriter {
 	buffer.write(String.format("#ARTIST %s\n",chart.getArtist()));
 	buffer.write(String.format("#GENRE %s\n",chart.getGenre()));
 	buffer.write(String.format("#PLAYLEVEL %d\n",chart.getLevel()));
-	buffer.write(String.format("#BPM %.2f\n",chart.getBPM()));
+	buffer.write(String.format(locale,"#BPM %.2f\n",chart.getBPM()));
 	buffer.write(String.format("#LNTYPE 1\n"));
 	
 	buffer.newLine();
@@ -81,14 +139,14 @@ public class BMSWriter {
         
         bpmChanges = new HashMap<Event, Integer>();
         int i = 1;
-        for(Event e : EventHelper.getEventsFromThisChannel(event_list, Channel.BPM_CHANGE))
+        for(Event e : event_list.getEventsFromThisChannel(Channel.BPM_CHANGE))
             bpmChanges.put(e, i++);
 
 	if(!bpmChanges.isEmpty()) {
 	    buffer.write("*----BPM LIST----*\n");
 
 	    for(Entry<Event, Integer> entry : bpmChanges.entrySet()) {
-		buffer.write(String.format("#BPM%s %f\n", toBase36(entry.getValue()), entry.getKey().getValue()));
+		buffer.write(String.format(locale,"#BPM%s %f\n", toBase36(entry.getValue()), entry.getKey().getValue()));
 	    }    
 	}
         buffer.newLine();
@@ -98,47 +156,47 @@ public class BMSWriter {
     {
 	buffer.write("*----EVENTS----*\n");
 	
-	Iterator<Entry<Integer, List<Event>>> measure_iterator = 
-		EventHelper.getEventsPerMeasure(event_list).entrySet().iterator();
+	Iterator<Entry<Integer, EventList>> measure_iterator = 
+		event_list.getEventsPerMeasure().entrySet().iterator();
 	
 	while(measure_iterator.hasNext()) {
-	    Entry<Integer, List<Event>> measure = measure_iterator.next();
+	    Entry<Integer, EventList> measure = measure_iterator.next();
 	    String measure_start = String.format("#%03d", measure.getKey());
 	    
-	    Iterator<Entry<Channel, List<Event>>> channel_iterator =
-		    EventHelper.getEventsPerChannel(measure.getValue()).entrySet().iterator();
+	    Iterator<Entry<Channel, EventList>> channel_iterator =
+		    measure.getValue().getEventsPerChannel().entrySet().iterator();
 	    
 	    while(channel_iterator.hasNext()) {
-		Entry<Channel, List<Event>> channel = channel_iterator.next();
-		int c = getChannel(channel.getKey());
-		if(c == 0) continue;
-		String channel_start = String.format("%02d", c);
-
-		int step = MAX_POSITIONS;
-		String[] values = new String[MAX_POSITIONS];
+		Entry<Channel, EventList> channel = channel_iterator.next();
+		int chan = getChannel(channel.getKey());
+		if(chan == 0) continue;
+		
+		ArrayList<BMSLine> lines = new ArrayList<BMSLine>();
+		
+		int lastPosition = MAX_POSITIONS;
+		BMSLine line;
+		line = new BMSLine(chan);
 		for(Event e : channel.getValue()) {
-		    int p = (int) (MAX_POSITIONS * e.getPosition());
-		    step = gcd(step, p);
-                    if(channel.getKey().equals(Channel.BPM_CHANGE)) {
-                        if(bpmChanges.containsKey(e))
-                            values[p] = toBase36(bpmChanges.get(e));
-                    }
-		    else if(channel.getKey().equals(Channel.TIME_SIGNATURE))
-			values[p] = Double.toString(e.getValue());
-		    else
-                        values[p] = toBase36((int)e.getValue() + sampleStart);
+		    int c = chan;
+		    if(c > 10 && e.getFlag() != Flag.NONE)
+			c += 40;
+		    int p = (int) Math.round(MAX_POSITIONS * e.getPosition());
+		    //we need another line if the channel isn't the same or the position of 2 events overlaps
+		    if(line.channel != c || lastPosition == p) {
+			if(!line.isEmpty() && !lines.contains(line))
+			    lines.add(line);
+			line = new BMSLine(c);
+			lines.add(line);
+		    }
+		    lastPosition = p;
+		    line.add(e, p);
 		}
 		
-		String v = "";
-		for(int i = 0; i < values.length; i+=step) {
-		    if(values[i] == null)
-			v += "00";
-		    else
-			v += values[i];
-		}
+		if(!lines.contains(line))
+		    lines.add(line);
 		
-		buffer.write(measure_start+channel_start+":"+v);
-		buffer.newLine();
+		for(BMSLine bl : lines)
+		    bl.write(buffer, measure_start);
 	    }
 	    
 	    buffer.newLine();
@@ -165,11 +223,9 @@ public class BMSWriter {
 	}
     }
     
-    public static int gcd(int p, int q) {
-	if (q == 0) {
-	    return p;
-	}
-	return gcd(q, p % q);
+    public static int gcd(int x, int y) {
+	if (y == 0) return x;
+	return gcd(y, x % y);
     }
     
     private static String toBase36(int i) {

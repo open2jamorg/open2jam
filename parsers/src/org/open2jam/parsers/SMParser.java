@@ -150,7 +150,7 @@ class SMParser
         return list;
     }
 
-    public static List<Event> parseChart(SMChart chart)
+    public static EventList parseChart(SMChart chart)
     {
         BufferedReader r;
         try{
@@ -160,7 +160,7 @@ class SMParser
             return null;
         }
 
-	ArrayList<Event> event_list = new ArrayList<Event>();	
+	EventList event_list = new EventList();	
 	
 	String line;
 	StringTokenizer st;
@@ -309,7 +309,7 @@ class SMParser
 			SampleData.Type t;
 			if      (ext.equals(".wav")) t = SampleData.Type.WAV;
 			else if (ext.equals(".ogg")) t = SampleData.Type.OGG;
-			else if (ext.equals(".mp3")) t = SampleData.Type.WAV;
+			else if (ext.equals(".mp3")) t = SampleData.Type.MP3;
 			else { //not a music file so continue
 			    continue;
 			}
@@ -323,7 +323,7 @@ class SMParser
 	return samples;
     }
     
-    private static void fillEvents(List<Event> event_list, List<String> notes, int measure)
+    private static void fillEvents(EventList event_list, List<String> notes, int measure)
     {
 	int size = notes.size();
 	for(int pos=0; pos<size; pos++)
@@ -353,7 +353,7 @@ class SMParser
 	notes.clear();	
     }
     
-    private static void setStop(StringTokenizer sb, ArrayList<Event> event_list)
+    private static void setStop(StringTokenizer sb, EventList event_list)
     {
 	while(sb.hasMoreTokens())
 	{
@@ -365,7 +365,7 @@ class SMParser
 	}
     }
     
-    private static void setBPM(StringTokenizer sb, ArrayList<Event> event_list)
+    private static void setBPM(StringTokenizer sb, EventList event_list)
     {
 	while(sb.hasMoreTokens())
 	{

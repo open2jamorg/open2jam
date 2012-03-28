@@ -6,7 +6,6 @@ package org.open2jam.parsers;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.List;
 import java.util.Map;
 import org.open2jam.parsers.utils.SampleData;
 
@@ -115,7 +114,7 @@ public class XNTChart extends Chart {
 	return getNoImage();
     }
 
-    public List<Event> getEvents() {
+    public EventList getEvents() {
 	return XNTParser.parseChart(this);
     }
 }
