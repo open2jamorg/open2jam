@@ -4,10 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
+import java.util.*;
 import java.util.Map.Entry;
 import org.open2jam.parsers.Event.Channel;
 import org.open2jam.parsers.Event.Flag;
@@ -40,12 +37,14 @@ public class BMSWriter {
 	}
 	
 	public void add(Event e, int p) {
-	    double value = e.getValue() > 0 ? e.getValue() : 1; //change with an empty >0 value (if any) TODO find an empty value to use
-	    
-	    step = gcd(step, p);
-	    
+	    //We can have longnotes into the autoplay channel because bms can't have longnotes on it xD
+	    //Flags NONE and HOLD are able to make sounds so we can have these
 	    if(channel == getChannel(Channel.AUTO_PLAY) && e.getFlag() == Flag.RELEASE)
 		return;
+	    //change with an empty >0 value (if any) TODO find an empty value to use
+	    double value = e.getValue() > 0 ? e.getValue() : 1;
+	    
+	    step = gcd(step, p);
 	    
 	    if(channel == getChannel(Event.Channel.BPM_CHANGE)) {
 		if(bpmChanges.containsKey(e))
@@ -53,8 +52,13 @@ public class BMSWriter {
 	    }
 	    else if(channel == getChannel(Event.Channel.TIME_SIGNATURE))
 		values[p] = Double.toString(value);
-	    else
+	    else 
 		values[p] = toBase36((int)value + sampleStart);  
+	    
+	}
+	
+	public String get(int i) {
+	    return values[i];
 	}
 	
 	public void write(BufferedWriter buffer, String measure_start) throws IOException {
@@ -91,6 +95,7 @@ public class BMSWriter {
     public static void export(Chart chart, String path) throws IOException
     {
 	event_list = chart.getEvents();
+	Collections.sort(event_list);
 
 	String dirName = (chart.getArtist()+" - "+chart.getTitle()).replaceAll("/", " ");
 	String name = chart.getSource().getName();
@@ -156,6 +161,8 @@ public class BMSWriter {
     {
 	buffer.write("*----EVENTS----*\n");
 	
+	ArrayList<Integer> longNotes = new ArrayList<Integer>();
+	
 	Iterator<Entry<Integer, EventList>> measure_iterator = 
 		event_list.getEventsPerMeasure().entrySet().iterator();
 	
@@ -178,21 +185,33 @@ public class BMSWriter {
 		line = new BMSLine(chan);
 		for(Event e : channel.getValue()) {
 		    int c = chan;
-		    if(c > 10 && e.getFlag() != Flag.NONE)
+		    if(c > 10 && e.getFlag() != Flag.NONE) {
 			c += 40;
+		    }
 		    int p = (int) Math.round(MAX_POSITIONS * e.getPosition());
 		    //we need another line if the channel isn't the same or the position of 2 events overlaps
 		    if(line.channel != c || lastPosition == p) {
 			if(!line.isEmpty() && !lines.contains(line))
 			    lines.add(line);
-			line = new BMSLine(c);
-			lines.add(line);
+			boolean needNewLine = true;
+			//we will try to find an used line with an empty position
+			for(BMSLine l : lines) {
+			    if(l.get(p) == null && l.channel == c) {
+				line = l;
+				needNewLine = false;
+				break;
+			    }
+			}
+			if(needNewLine) {
+			    line = new BMSLine(c);
+			    lines.add(line);
+			}
 		    }
 		    lastPosition = p;
 		    line.add(e, p);
 		}
 		
-		if(!lines.contains(line))
+		if(!lines.contains(line) && !line.isEmpty())
 		    lines.add(line);
 		
 		for(BMSLine bl : lines)

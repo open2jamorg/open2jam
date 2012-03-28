@@ -15,7 +15,7 @@ public class EventList extends ArrayList<Event> {
      * Use this only if you don't want to deal with broken longnotes or longnotes in the autoplay channel
      * If you want to write a Editor with this lib, don't use it because it changes a lot of things in the events
      */
-    public void fixEventList() {
+    public void fixEventList(boolean fix_broken_longnotes, boolean fix_autoplay_longnotes) {
 	List<Event.Channel> longnote_chan = new ArrayList<Event.Channel>();
 	
 	Iterator<Event> it = this.iterator();
@@ -24,31 +24,35 @@ public class EventList extends ArrayList<Event> {
 	    Event e = it.next();
 	    Event.Channel c = e.getChannel();
 	    
-	    if(c.equals(Event.Channel.AUTO_PLAY)) {
-		if(e.getFlag().equals(Event.Flag.RELEASE)) {
-		    it.remove(); //remove the release if auto_play
-		    continue;
+	    if(fix_autoplay_longnotes) {
+		if(c == Event.Channel.AUTO_PLAY) {
+		    if(e.getFlag() == Event.Flag.RELEASE) {
+			it.remove(); //remove the release if auto_play
+			continue;
+		    }
+		    e.flag = Event.Flag.NONE;
 		}
-		e.flag = Event.Flag.NONE;
 	    }
 	    
-	    switch(e.getFlag()){
-		case NONE:
-		    if(longnote_chan.contains(c)) {
-			e.flag = Event.Flag.RELEASE;
+	    if(fix_broken_longnotes) {
+		switch(e.getFlag()){
+		    case NONE:
+			if(longnote_chan.contains(c)) {
+			    e.flag = Event.Flag.RELEASE;
+			    longnote_chan.remove(c);
+			}
+		    break;
+		    case HOLD:
+			if(longnote_chan.contains(c)) {
+			    e.flag = Event.Flag.RELEASE;
+			    longnote_chan.remove(c);
+			}
+			longnote_chan.add(c);
+		    break;  
+		    case RELEASE:
 			longnote_chan.remove(c);
-		    }
-		break;
-		case HOLD:
-		    if(longnote_chan.contains(c)) {
-			e.flag = Event.Flag.RELEASE;
-			longnote_chan.remove(c);
-		    }
-		    longnote_chan.add(c);
-		break;  
-		case RELEASE:
-		    longnote_chan.remove(c);
-		break;
+		    break;
+		}
 	    }
 	}
     }
