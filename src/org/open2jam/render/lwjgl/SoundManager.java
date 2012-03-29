@@ -7,8 +7,8 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
-import org.open2jam.parsers.utils.SampleDecoder;
 import org.open2jam.util.Logger;
+import org.open2jam.util.SampleDecoder;
 
 /**
   this class is the bridge between OpenAL and the app.

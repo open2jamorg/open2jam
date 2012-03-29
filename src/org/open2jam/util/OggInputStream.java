@@ -1,4 +1,4 @@
-package org.open2jam.parsers.utils;
+package org.open2jam.util;
 
 import com.jcraft.jogg.Packet;
 import com.jcraft.jogg.Page;
@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import org.open2jam.parsers.utils.Logger;
 
 
 

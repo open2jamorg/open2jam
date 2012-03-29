@@ -21,10 +21,7 @@ import org.open2jam.parsers.utils.SampleData;
 import org.open2jam.render.entities.*;
 import org.open2jam.render.lwjgl.SoundManager;
 import org.open2jam.render.lwjgl.TrueTypeFont;
-import org.open2jam.util.Interval;
-import org.open2jam.util.IntervalTree;
-import org.open2jam.util.Logger;
-import org.open2jam.util.SystemTimer;
+import org.open2jam.util.*;
 
 /**
  *
@@ -367,7 +364,7 @@ public abstract class Render implements GameWindowCallback
 
         EventList event_list = construct_velocity_tree(chart.getEvents());
 	
-	event_list.fixEventList(true, true);
+	event_list.fixEventList(false, true);
 
 	//Let's randomize "-"
         switch(opt.getChannelModifier())
@@ -408,7 +405,7 @@ public abstract class Render implements GameWindowCallback
 	samples = new HashMap<Integer, Integer>();
         for(Entry<Integer, SampleData> entry : chart.getSamples().entrySet())
 	{
-	    samples.put(entry.getKey(), SoundManager.newBuffer(entry.getValue().decode()));
+	    samples.put(entry.getKey(), SoundManager.newBuffer(SampleDecoder.decode(entry.getValue())));
 	    try {
 		entry.getValue().dispose();
 	    } catch (IOException ex) {

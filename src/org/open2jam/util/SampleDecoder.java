@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.open2jam.parsers.utils;
+package org.open2jam.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -12,6 +12,8 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javazoom.jl.decoder.*;
+import org.open2jam.parsers.utils.Logger;
+import org.open2jam.parsers.utils.SampleData;
 
 /**
  *
@@ -39,6 +41,23 @@ public class SampleDecoder {
     public void dispose()
     {
 	data.clear();
+    }
+    
+    /*
+     * Decode a SampleData using his type
+     */
+    public static SampleDecoder decode(SampleData data) {
+	switch(data.getType()) {
+	    case MP3:
+		return SampleDecoder.decodeMP3(data);
+	    case OGG:
+		return SampleDecoder.decodeOGG(data);
+	    case WAV:
+	    case WAV_NO_HEADER:
+		return SampleDecoder.decodeWAV(data);
+	    default:
+		return null;
+	}
     }
       
     /**

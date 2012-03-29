@@ -118,15 +118,23 @@ public class BMSWriter {
     
     private static void makeHeader(BufferedWriter buffer, Chart chart) throws IOException
     {
-	buffer.write("*----HEADER----*\n");
+	buffer.write("*----HEADER----*");
+	buffer.newLine();
 	
-	buffer.write(String.format("#PLAYER 1\n")); //TODO Add player x support
-	buffer.write(String.format("#TITLE %s\n",chart.getTitle()));
-	buffer.write(String.format("#ARTIST %s\n",chart.getArtist()));
-	buffer.write(String.format("#GENRE %s\n",chart.getGenre()));
-	buffer.write(String.format("#PLAYLEVEL %d\n",chart.getLevel()));
-	buffer.write(String.format(locale,"#BPM %.2f\n",chart.getBPM()));
-	buffer.write(String.format("#LNTYPE 1\n"));
+	buffer.write(String.format("#PLAYER 1")); //TODO Add player x support
+	buffer.newLine();
+	buffer.write(String.format("#TITLE %s",chart.getTitle()));
+	buffer.newLine();
+	buffer.write(String.format("#ARTIST %s",chart.getArtist()));
+	buffer.newLine();
+	buffer.write(String.format("#GENRE %s",chart.getGenre()));
+	buffer.newLine();
+	buffer.write(String.format("#PLAYLEVEL %d",chart.getLevel()));
+	buffer.newLine();
+	buffer.write(String.format(locale,"#BPM %.2f",chart.getBPM()));
+	buffer.newLine();
+	buffer.write(String.format("#LNTYPE 1"));
+	buffer.newLine();
 	
 	buffer.newLine();
 	
@@ -135,10 +143,12 @@ public class BMSWriter {
 	else
 	    sampleStart = 0;
 	
-	buffer.write("*----WAV LIST----*\n");
+	buffer.write("*----WAV LIST----*");
+	buffer.newLine();
 	for(Entry<Integer, String> entry : chart.getSampleIndex().entrySet())
 	{
-	    buffer.write(String.format("#WAV%s %s\n", toBase36(entry.getKey() + sampleStart), entry.getValue()));
+	    buffer.write(String.format("#WAV%s %s", toBase36(entry.getKey() + sampleStart), entry.getValue()));
+	    buffer.newLine();
 	}
 	buffer.newLine();
         
@@ -148,10 +158,12 @@ public class BMSWriter {
             bpmChanges.put(e, i++);
 
 	if(!bpmChanges.isEmpty()) {
-	    buffer.write("*----BPM LIST----*\n");
+	    buffer.write("*----BPM LIST----*");
+	    buffer.newLine();
 
 	    for(Entry<Event, Integer> entry : bpmChanges.entrySet()) {
-		buffer.write(String.format(locale,"#BPM%s %f\n", toBase36(entry.getValue()), entry.getKey().getValue()));
+		buffer.write(String.format(locale,"#BPM%s %f", toBase36(entry.getValue()), entry.getKey().getValue()));
+		buffer.newLine();
 	    }    
 	}
         buffer.newLine();
@@ -159,9 +171,8 @@ public class BMSWriter {
     
     private static void writeEvents(BufferedWriter buffer, Chart chart) throws IOException
     {
-	buffer.write("*----EVENTS----*\n");
-	
-	ArrayList<Integer> longNotes = new ArrayList<Integer>();
+	buffer.write("*----EVENTS----*");
+	buffer.newLine();
 	
 	Iterator<Entry<Integer, EventList>> measure_iterator = 
 		event_list.getEventsPerMeasure().entrySet().iterator();

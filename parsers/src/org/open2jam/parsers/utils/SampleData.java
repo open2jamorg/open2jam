@@ -46,20 +46,6 @@ public class SampleData {
     public WAVHeader getWAVHeader() {
 	return wavHeader;
     }
-    
-    public SampleDecoder decode() {
-	switch(type) {
-	    case MP3:
-		return SampleDecoder.decodeMP3(this);
-	    case OGG:
-		return SampleDecoder.decodeOGG(this);
-	    case WAV:
-	    case WAV_NO_HEADER:
-		return SampleDecoder.decodeWAV(this);
-	    default:
-		return null;
-	}
-    }
      
     public void dispose() throws IOException {
 	this.input.close();
