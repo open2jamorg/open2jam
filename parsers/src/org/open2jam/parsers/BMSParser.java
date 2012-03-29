@@ -1,11 +1,8 @@
 package org.open2jam.parsers;
 
 import java.io.*;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.NoSuchElementException;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -236,6 +233,10 @@ class BMSParser
 
         Pattern note_line = Pattern.compile("^#(\\d\\d\\d)(\\d\\d):(.+)$");
         Pattern bpm_line = Pattern.compile("^#BPM(\\w\\w)\\s+(.+)$");
+	
+	//This will help us to sort the lines by measure
+	Map<Integer, List<String>> lines = new TreeMap<Integer, List<String>>();
+	
         try {
             while ((line = r.readLine()) != null) {
                 line = line.trim().toUpperCase();
@@ -246,148 +247,164 @@ class BMSParser
                     Matcher bpm_match = bpm_line.matcher(line);
                     if (bpm_match.find()) {
                         int code = Integer.parseInt(bpm_match.group(1), 36);
-                        double value = Double.parseDouble(bpm_match.group(2));
+                        double value = Double.parseDouble(bpm_match.group(2).replace(",", "."));
                         bpm_map.put(code, value);
                     }
                     continue;
                 }
                 int measure = Integer.parseInt(matcher.group(1));
-                int channel = Integer.parseInt(matcher.group(2));
-                if (channel == 2) {
-                    // time signature
-                    double value = Double.parseDouble(matcher.group(3).replace(",", "."));
-                    event_list.add(new Event(Event.Channel.TIME_SIGNATURE, measure, 0, value, Event.Flag.NONE));
-                    continue;
-                }
-                String[] events = matcher.group(3).split("(?<=\\G.{2})");
-                if (channel == 3) {
-                    for (int i = 0; i < events.length; i++) {
-                        int value = Integer.parseInt(events[i], 16);
-                        if (value == 0) {
-                            continue;
-                        }
-                        double p = ((double) i) / events.length;
-                        event_list.add(new Event(Event.Channel.BPM_CHANGE, measure, p, value, Event.Flag.NONE));
-                    }
-                    continue;
-                } else if (channel == 8) {
-                    for (int i = 0; i < events.length; i++) {
-                        if (events[i].equals("00")) {
-                            continue;
-                        }
-                        double value = bpm_map.get(Integer.parseInt(events[i], 36));
-                        double p = ((double) i) / events.length;
-                        event_list.add(new Event(Event.Channel.BPM_CHANGE, measure, p, value, Event.Flag.NONE));
-                    }
-                    continue;
-                }
-                Event.Channel ec;
-                if (chart.o2mania_style) {
-                    switch (channel)
-                    {
-                        // normal notes
-                        case 16: channel = 11; break;
-                        case 11: channel = 12; break;
-                        case 12: channel = 13; break;
-                        case 13: channel = 14; break;
-                        case 14: channel = 15; break;
-                        case 15: channel = 18; break;
-                        case 18: channel = 19; break;
-                        // long notes
-                        case 56: channel = 51; break;
-                        case 51: channel = 52; break;
-                        case 52: channel = 53; break;
-                        case 53: channel = 54; break;
-                        case 54: channel = 55; break;
-                        case 55: channel = 58; break;
-                        case 58: channel = 59; break;
-                    }
-                }
-                switch (channel)
-                {
-                    case 1:
-                        ec = Event.Channel.AUTO_PLAY;
-                        break;
-                    case 11:
-                    case 51:
-                        ec = Event.Channel.NOTE_1;
-                        break;
-                    case 12:
-                    case 52:
-                        ec = Event.Channel.NOTE_2;
-                        break;
-                    case 13:
-                    case 53:
-                        ec = Event.Channel.NOTE_3;
-                        break;
-                    case 14:
-                    case 54:
-                        ec = Event.Channel.NOTE_4;
-                        break;
-                    case 15:
-                    case 55:
-                        ec = Event.Channel.NOTE_5;
-                        break;
-                    case 18:
-                    case 58:
-                        ec = Event.Channel.NOTE_6;
-                        break;
-                    case 19:
-                    case 59:
-                        ec = Event.Channel.NOTE_7;
-                        break;
-                    case 16:
-                    case 56:
-                        ec = Event.Channel.NOTE_SC;
-                        break;
-                    default:
-                        continue;
-                }
-                for (int i = 0; i < events.length; i++) {
-                    int value = Integer.parseInt(events[i], 36);
-                    double p = ((double) i) / events.length;
-
-                    if (channel > 50) {
-                        Boolean b = ln_buffer.get(channel);
-                        if (b != null && b) {
-                            if (chart.lntype == 2) {
-                                if (value == 0) {
-                                    event_list.add(new Event(ec, measure, p, value, Event.Flag.RELEASE));
-                                    ln_buffer.put(channel, false);
-                                }
-                            } else {
-                                if (value > 0) {
-                                    event_list.add(new Event(ec, measure, p, value, Event.Flag.RELEASE));
-                                    ln_buffer.put(channel, false);
-                                }
-                            }
-                        } else {
-                            if (value > 0) {
-                                ln_buffer.put(channel, true);
-                                event_list.add(new Event(ec, measure, p, value, Event.Flag.HOLD));
-                            }
-                        }
-                    } else {
-                        if (value == 0) {
-                            continue;
-                        }
-                        Event e = new Event(ec, measure, p, value, Event.Flag.NONE);
-                        if(chart.lnobj != 0){
-                            if(value == chart.lnobj){
-                                e.flag = Event.Flag.RELEASE;
-                                lnobj_buffer.get(channel).flag = Event.Flag.HOLD;
-                                lnobj_buffer.put(channel, null);
-                            }else{
-                                lnobj_buffer.put(channel, e);
-                            }
-                        }
-                        event_list.add(e);
-                    }
-                }
+		//Let's add the line
+		if(!lines.containsKey(measure))
+		    lines.put(measure, new ArrayList<String>());
+		lines.get(measure).add(line);
             }
         } catch (IOException ex) {
             Logger.global.log(Level.SEVERE, null, ex);
         }
+
+	Iterator<List<String>> it = lines.values().iterator();
+	//now iterate by all the lines and add the events
+	while(it.hasNext()) {
+	    List<String> lstr = it.next();
+	    for(String l : lstr) {
+		Matcher matcher = note_line.matcher(l);
+		if(!matcher.find()) continue;
+		int measure = Integer.parseInt(matcher.group(1));
+		int channel = Integer.parseInt(matcher.group(2));
+		if (channel == 2) {
+		    // time signature
+		    double value = Double.parseDouble(matcher.group(3).replace(",", "."));
+		    event_list.add(new Event(Event.Channel.TIME_SIGNATURE, measure, 0, value, Event.Flag.NONE));
+		    continue;
+		}
+		String[] events = matcher.group(3).split("(?<=\\G.{2})");
+		if (channel == 3) {
+		    for (int i = 0; i < events.length; i++) {
+			int value = Integer.parseInt(events[i], 16);
+			if (value == 0) {
+			    continue;
+			}
+			double p = ((double) i) / events.length;
+			event_list.add(new Event(Event.Channel.BPM_CHANGE, measure, p, value, Event.Flag.NONE));
+		    }
+		    continue;
+		} else if (channel == 8) {
+		    for (int i = 0; i < events.length; i++) {
+			if (events[i].equals("00")) {
+			    continue;
+			}
+			double value = bpm_map.get(Integer.parseInt(events[i], 36));
+			double p = ((double) i) / events.length;
+			event_list.add(new Event(Event.Channel.BPM_CHANGE, measure, p, value, Event.Flag.NONE));
+		    }
+		    continue;
+		}
+		Event.Channel ec;
+		if (chart.o2mania_style) {
+		    switch (channel)
+		    {
+			// normal notes
+			case 16: channel = 11; break;
+			case 11: channel = 12; break;
+			case 12: channel = 13; break;
+			case 13: channel = 14; break;
+			case 14: channel = 15; break;
+			case 15: channel = 18; break;
+			case 18: channel = 19; break;
+			// long notes
+			case 56: channel = 51; break;
+			case 51: channel = 52; break;
+			case 52: channel = 53; break;
+			case 53: channel = 54; break;
+			case 54: channel = 55; break;
+			case 55: channel = 58; break;
+			case 58: channel = 59; break;
+		    }
+		}
+		switch (channel)
+		{
+		    case 1:
+			ec = Event.Channel.AUTO_PLAY;
+			break;
+		    case 11:
+		    case 51:
+			ec = Event.Channel.NOTE_1;
+			break;
+		    case 12:
+		    case 52:
+			ec = Event.Channel.NOTE_2;
+			break;
+		    case 13:
+		    case 53:
+			ec = Event.Channel.NOTE_3;
+			break;
+		    case 14:
+		    case 54:
+			ec = Event.Channel.NOTE_4;
+			break;
+		    case 15:
+		    case 55:
+			ec = Event.Channel.NOTE_5;
+			break;
+		    case 18:
+		    case 58:
+			ec = Event.Channel.NOTE_6;
+			break;
+		    case 19:
+		    case 59:
+			ec = Event.Channel.NOTE_7;
+			break;
+		    case 16:
+		    case 56:
+			ec = Event.Channel.NOTE_SC;
+			break;
+		    default:
+			continue;
+		}
+		for (int i = 0; i < events.length; i++) {
+		    int value = Integer.parseInt(events[i], 36);
+		    double p = ((double) i) / events.length;
+
+		    if (channel > 50) {
+			Boolean b = ln_buffer.get(channel);
+			if (b != null && b) {
+			    if (chart.lntype == 2) {
+				if (value == 0) {
+				    event_list.add(new Event(ec, measure, p, value, Event.Flag.RELEASE));
+				    ln_buffer.put(channel, false);
+				}
+			    } else {
+				if (value > 0) {
+				    event_list.add(new Event(ec, measure, p, value, Event.Flag.RELEASE));
+				    ln_buffer.put(channel, false);
+				}
+			    }
+			} else {
+			    if (value > 0) {
+				ln_buffer.put(channel, true);
+				event_list.add(new Event(ec, measure, p, value, Event.Flag.HOLD));
+			    }
+			}
+		    } else {
+			if (value == 0) {
+			    continue;
+			}
+			Event e = new Event(ec, measure, p, value, Event.Flag.NONE);
+			if(chart.lnobj != 0){
+			    if(value == chart.lnobj){
+				e.flag = Event.Flag.RELEASE;
+				lnobj_buffer.get(channel).flag = Event.Flag.HOLD;
+				lnobj_buffer.put(channel, null);
+			    }else{
+				lnobj_buffer.put(channel, e);
+			    }
+			}
+			event_list.add(e);
+		    }
+		} 
+	    }
+	}
+
         Collections.sort(event_list);
         return event_list;
     }

@@ -37,6 +37,26 @@ public class Event implements Comparable<Event> {
         public void disableAutoplay() {
             this.autoplay = false;
         }
+	
+	public static Channel[] playableChannels() {
+	    Channel[] playable = {
+		NOTE_1, NOTE_2, NOTE_3, NOTE_4, NOTE_5, NOTE_6, NOTE_7
+	    };
+	    return playable;
+	}
+	
+	public static Channel mirrorChannel(Channel c) {
+	    switch(c) {
+		case NOTE_1: return NOTE_7;
+		case NOTE_2: return NOTE_6;
+		case NOTE_3: return NOTE_5;
+		case NOTE_4: return NOTE_4;
+		case NOTE_5: return NOTE_3;
+		case NOTE_6: return NOTE_2;
+		case NOTE_7: return NOTE_1;
+		default: return c;
+	    }
+	}
     }
 
     /**

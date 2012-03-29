@@ -309,7 +309,7 @@ public abstract class Render implements GameWindowCallback
         // reference to long notes being holded
         longnote_holded = new EnumMap<Event.Channel,LongNoteEntity>(Event.Channel.class);
 
-	    longflare = new EnumMap<Event.Channel, Entity> (Event.Channel.class);
+	longflare = new EnumMap<Event.Channel, Entity> (Event.Channel.class);
 
         last_sound = new EnumMap<Event.Channel,Event.SoundSample>(Event.Channel.class);
 

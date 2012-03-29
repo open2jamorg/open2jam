@@ -10,7 +10,7 @@ import org.open2jam.parsers.utils.Logger;
  * @author CdK
  */
 public class EventList extends ArrayList<Event> {
-    
+
     /*
      * Use this only if you don't want to deal with broken longnotes or longnotes in the autoplay channel
      * If you want to write a Editor with this lib, don't use it because it changes a lot of things in the events
@@ -58,11 +58,11 @@ public class EventList extends ArrayList<Event> {
     }
     
     /** 
-     * This method will return a map with measures and a list of events for each measure
-     * @return A map with measures => list of events
+     * This method will return a map ordered by measures and a list of events for each measure
+     * @return A map with ordered measures => list of events
      */
     public Map<Integer, EventList> getEventsPerMeasure() {
-	Map<Integer, EventList> epm = new HashMap<Integer, EventList>();
+	Map<Integer, EventList> epm = new TreeMap<Integer, EventList>();
 	
 	for(Event e : this) {	    
 	    if(!epm.containsKey(e.getMeasure()))
@@ -136,15 +136,7 @@ public class EventList extends ArrayList<Event> {
 	while(it.hasNext())
 	{
 	    Event e = it.next();
-	    switch(e.getChannel())
-	    {
-	    case NOTE_1: e.setChannel(Event.Channel.NOTE_7); break;
-	    case NOTE_2: e.setChannel(Event.Channel.NOTE_6); break;
-	    case NOTE_3: e.setChannel(Event.Channel.NOTE_5); break;
-	    case NOTE_5: e.setChannel(Event.Channel.NOTE_3); break;
-	    case NOTE_6: e.setChannel(Event.Channel.NOTE_2); break;
-	    case NOTE_7: e.setChannel(Event.Channel.NOTE_1); break;
-	    }
+	    e.setChannel(Event.Channel.mirrorChannel(e.getChannel()));
 	}
     }
 
@@ -155,14 +147,8 @@ public class EventList extends ArrayList<Event> {
     public void channelShuffle()
     {
         List<Event.Channel> channelSwap = new ArrayList<Event.Channel>();
-
-        channelSwap.add(Event.Channel.NOTE_1);
-        channelSwap.add(Event.Channel.NOTE_2);
-        channelSwap.add(Event.Channel.NOTE_3);
-        channelSwap.add(Event.Channel.NOTE_4);
-        channelSwap.add(Event.Channel.NOTE_5);
-        channelSwap.add(Event.Channel.NOTE_6);
-        channelSwap.add(Event.Channel.NOTE_7);
+	
+	Collections.addAll(channelSwap, Event.Channel.playableChannels());
 
         Collections.shuffle(channelSwap);
 
@@ -194,13 +180,7 @@ public class EventList extends ArrayList<Event> {
     {
         List<Event.Channel> channelSwap = new ArrayList<Event.Channel>();
 
-        channelSwap.add(Event.Channel.NOTE_1);
-        channelSwap.add(Event.Channel.NOTE_2);
-        channelSwap.add(Event.Channel.NOTE_3);
-        channelSwap.add(Event.Channel.NOTE_4);
-        channelSwap.add(Event.Channel.NOTE_5);
-        channelSwap.add(Event.Channel.NOTE_6);
-        channelSwap.add(Event.Channel.NOTE_7);
+        Collections.addAll(channelSwap, Event.Channel.playableChannels());
 
         Collections.shuffle(channelSwap);
 
