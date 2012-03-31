@@ -39,11 +39,14 @@ public class EventList extends ArrayList<Event> {
 		    break;
 		    case HOLD:
 			if(lnchan.containsKey(c)) {
-			    fixHoldNote(it, e, lnchan.get(c));
-			    lnchan.remove(c);
-			} else {
-			    lnchan.put(c, e);
+			    //it will convert the broken hold to a none
+			    Event evt = lnchan.get(c);
+			    System.out.println("Broken HOLD event! @ "+evt.getTotalPosition()+" ("+evt.getValue()+"): ");
+			    System.out.println("\tBut converted to NONE because the next event is another HOLD :/");
+			    evt.flag = Event.Flag.NONE;
 			}
+			//So we still need to add it to the lnchan because it won't do anything to this event
+			lnchan.put(c, e);
 		    break;  
 		    case RELEASE:
 			if(!lnchan.containsKey(c)) {
@@ -67,8 +70,7 @@ public class EventList extends ArrayList<Event> {
     /**
      * This method will try to fix all the broken hold events. Rules:
      * <ol>
-     * <li>If the caller is a hold note itself, the broken hold will be converted to a none event</li>
-     * <li>If not, we will iterate forward the list from the broken hold event and:
+     * <li>We will iterate forward the list from the broken hold event and:
      *	    <ol>
      *	    <li>If we found a hold value, stop and use the last iterated event.
      *		<ul>
@@ -93,13 +95,6 @@ public class EventList extends ArrayList<Event> {
 	double value = e_hold.getValue();
 	//seems that we found a broken hold event without a release
 	System.out.println("Broken HOLD event! @ "+e_hold.getTotalPosition()+" ("+value+"): ");
-	//but wait, the event who called this method is a hold itself... we apply no fix to it and convert
-	//the broken hold to a none event 
-	if(e.getFlag() == Event.Flag.HOLD) {
-	    System.out.println("\tNO FIX, it's another HOLD, the broken HOLD will be a NONE");
-	    e_hold.flag = Event.Flag.NONE;
-	    return;
-	}
 	EventList toAutoplay = new EventList();
 	toAutoplay.add(e);
 	boolean found = false;
@@ -162,7 +157,7 @@ public class EventList extends ArrayList<Event> {
 	    //not found :( we will use the caller of this method as a release event
 	    toAutoplay.clear();
 	    e.flag = Event.Flag.RELEASE;
-	}	
+	}
     }
  
     /**
@@ -177,7 +172,12 @@ public class EventList extends ArrayList<Event> {
      *		  because it would break other events</li>
      *		</ul>
      *	    </li>
-     *	    <li>If not, add the event to a possible autoplay move</li>
+     *	    <li>If not:
+     *		<ul>
+     *		<li>If the event is a hold use it, even if their values differ
+     *		<li>If not, add the event to a possible autoplay move</li>
+     *		</ul>
+     *	    </li>
      *	    </ol>
      * </li>
      * <li>Finally:
@@ -191,11 +191,9 @@ public class EventList extends ArrayList<Event> {
     private void fixReleaseNote(ListIterator<Event> it, Event e) {
 	Event.Channel c = e.getChannel();
 	double value = e.getValue();
-	EventList toAutoplay;
-	boolean found;
 	System.out.println("Broken RELEASE event! @ "+e.getTotalPosition()+" ("+value+"): ");
-	found = false;
-	toAutoplay = new EventList();
+	EventList toAutoplay = new EventList();
+	boolean found = false;
 	ListIterator<Event> it2 = this.listIterator(it.previousIndex());
 	while(it2.hasPrevious()) {
 	    Event evt = it2.previous();
@@ -214,8 +212,15 @@ public class EventList extends ArrayList<Event> {
 		
 		break;
 	    } else {
-		toAutoplay.add(evt);
-		System.out.println("\tto Autoplay ("+evt.getValue()+"): "+evt.flag+" "+evt.getTotalPosition());
+		if(evt.flag == Event.Flag.HOLD) {
+		    //we found a hold and I don't care if it has the same value or not, use it
+		    System.out.print("\tFound a HOLD with different value ");
+		    found = true;
+		    break;
+		} else {
+		    toAutoplay.add(evt);
+		    System.out.println("\tto Autoplay ("+evt.getValue()+"): "+evt.flag+" "+evt.getTotalPosition());
+		}
 	    }
     }
 
