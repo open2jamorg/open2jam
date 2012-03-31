@@ -22,6 +22,9 @@ public class BMSWriter {
     private static EventList event_list;
     private static HashMap<Event, Integer> bpmChanges;
     
+    //Empty value will be ZZ
+    private static final int emptyValue = 1295;
+    
     private static char sampleStart = 0;
     
     private static class BMSLine {
@@ -41,8 +44,8 @@ public class BMSWriter {
 	    //Flags NONE and HOLD are able to make sounds so we can have these
 	    if(channel == getChannel(Channel.AUTO_PLAY) && e.getFlag() == Flag.RELEASE)
 		return;
-	    //change with an empty >0 value (if any) TODO find an empty value to use
-	    double value = e.getValue() > 0 ? e.getValue() : 1;
+	    
+	    double value = e.getValue();
 	    
 	    step = gcd(step, p);
 	    
@@ -52,8 +55,11 @@ public class BMSWriter {
 	    }
 	    else if(channel == getChannel(Event.Channel.TIME_SIGNATURE))
 		values[p] = Double.toString(value);
-	    else 
-		values[p] = toBase36((int)value + sampleStart);  
+	    else {
+		//A 00 value is nothing in bms files, use the emptyValue (ZZ) TODO Find a better fix XD
+		value = value > 0 ? e.getValue() + sampleStart : emptyValue;
+		values[p] = toBase36((int)value);  
+	    }
 	    
 	}
 	
@@ -95,6 +101,8 @@ public class BMSWriter {
     public static void export(Chart chart, String path) throws IOException
     {
 	event_list = chart.getEvents();
+	//fix possible broken longnotes
+	event_list.fixEventList(true, false);
 	Collections.sort(event_list);
 
 	String dirName = (chart.getArtist()+" - "+chart.getTitle()).replaceAll("/", " ");
@@ -138,16 +146,18 @@ public class BMSWriter {
 	
 	buffer.newLine();
 	
-	if(chart.getSampleIndex().containsKey(0)) 
+	Map<Integer, String> sampleIndex = chart.getSampleIndex();
+	
+	//There is 00, in bms is nothing, move everything 1 step
+	if(sampleIndex.containsKey(0)) 
 	    sampleStart = 1;
-	else
-	    sampleStart = 0;
 	
 	buffer.write("*----WAV LIST----*");
 	buffer.newLine();
-	for(Entry<Integer, String> entry : chart.getSampleIndex().entrySet())
+	for(Entry<Integer, String> entry : sampleIndex.entrySet())
 	{
-	    buffer.write(String.format("#WAV%s %s", toBase36(entry.getKey() + sampleStart), entry.getValue()));
+	    int value = entry.getKey() + sampleStart;
+	    buffer.write(String.format("#WAV%s %s", toBase36(value), entry.getValue()));
 	    buffer.newLine();
 	}
 	buffer.newLine();
