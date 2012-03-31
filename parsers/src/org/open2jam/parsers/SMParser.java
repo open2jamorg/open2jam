@@ -3,6 +3,8 @@ package org.open2jam.parsers;
 import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.open2jam.parsers.utils.CharsetDetector;
 import org.open2jam.parsers.utils.Logger;
 import org.open2jam.parsers.utils.SampleData;
@@ -168,6 +170,7 @@ class SMParser
 	boolean parsed = false;
 	int startMeasure = 0;
 	double offset = 0;
+	Pattern note_line = Pattern.compile("^(,|;)?([01234ML]{"+chart.keys+"})?(,|;)?.*$", Pattern.CASE_INSENSITIVE);
         try {
             while ((line = r.readLine()) != null && !parsed) {
 		line = line.trim();
@@ -249,25 +252,45 @@ class SMParser
 			s = s.trim().toUpperCase();
 			if(s.isEmpty()) continue;
 			
-			if(!s.startsWith(",") && !parsed)
-			{
-			    if(s.contains(";")) {
-				//we have finished
-				s = s.replace(";", "").trim();
-				parsed = true;
+			Matcher match = note_line.matcher(s);
+			
+			if(match.find()) {
+			    String front = match.group(1);
+			    String nline = match.group(2);
+			    String tail = match.group(3);
+
+			    if(front != null) {
+				//It's a , or a ; dump the events
+				if(!notes.isEmpty()) {
+				    fillEvents(event_list, notes, measure);
+				}
+				measure++;
+				if(front.equals(";")) {
+				    //line start with a ; end of parsing
+				    parsed = true;
+				    break;
+				}
 			    }
-			    if(s.isEmpty()) continue;
-			    notes.add(s);
-			}
-			else
-			{ //new measure, time to fill the events
-			    fillEvents(event_list, notes, measure);
-			    measure++;
-			    continue;
+
+			    //add line if any
+			    if(nline != null) {
+				notes.add(nline);
+			    }
+
+			    if(tail != null) {
+				//It's a , or a ; dump the events
+				if(!notes.isEmpty()) {
+				    fillEvents(event_list, notes, measure);
+				}
+				measure++;
+				if(tail.equals(";")) {
+				    //line end with a ; end of parsing
+				    parsed = true;
+				    break;
+				}
+			    }
 			}
 		    }
-		    
-		    if(parsed && !notes.isEmpty()) fillEvents(event_list, notes, measure);
 		}
             }
         } catch (IOException ex) {
