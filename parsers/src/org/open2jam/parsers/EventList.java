@@ -11,49 +11,223 @@ import org.open2jam.parsers.utils.Logger;
  */
 public class EventList extends ArrayList<Event> {
 
-    /*
+    /**
+     * WARNING, USING THIS CAN CHANGE THE CHART
+     * 
      * Use this only if you don't want to deal with broken longnotes or longnotes in the autoplay channel
      * If you want to write a Editor with this lib, don't use it because it changes a lot of things in the events
      */
     public void fixEventList(boolean fix_broken_longnotes, boolean fix_autoplay_longnotes) {
-	List<Event.Channel> longnote_chan = new ArrayList<Event.Channel>();
 	
-	Iterator<Event> it = this.iterator();
+	if(!fix_autoplay_longnotes && !fix_broken_longnotes)
+	    return;
 	
+	Map<Event.Channel, Event> lnchan = new EnumMap<Event.Channel, Event>(Event.Channel.class);
+
+	ListIterator<Event> it = this.listIterator();
 	while(it.hasNext()) {
 	    Event e = it.next();
-	    Event.Channel c = e.getChannel();
-	    
-	    if(fix_autoplay_longnotes) {
-		if(c == Event.Channel.AUTO_PLAY) {
-		    if(e.getFlag() == Event.Flag.RELEASE) {
-			it.remove(); //remove the release if auto_play
-			continue;
-		    }
-		    e.flag = Event.Flag.NONE;
-		}
-	    }
 	    
 	    if(fix_broken_longnotes) {
+		Event.Channel c = e.getChannel();
 		switch(e.getFlag()){
 		    case NONE:
-			if(longnote_chan.contains(c)) {
-			    e.flag = Event.Flag.RELEASE;
-			    longnote_chan.remove(c);
+			if(lnchan.containsKey(c)) {
+			    fixHoldNote(it, e, lnchan.get(c));
+			    lnchan.remove(c);
 			}
 		    break;
 		    case HOLD:
-			if(longnote_chan.contains(c)) {
-			    e.flag = Event.Flag.RELEASE;
-			    longnote_chan.remove(c);
+			if(lnchan.containsKey(c)) {
+			    fixHoldNote(it, e, lnchan.get(c));
+			    lnchan.remove(c);
+			} else {
+			    lnchan.put(c, e);
 			}
-			longnote_chan.add(c);
 		    break;  
 		    case RELEASE:
-			longnote_chan.remove(c);
+			if(!lnchan.containsKey(c)) {
+			    fixReleaseNote(it, e);
+			}
+			lnchan.remove(c);
 		    break;
 		}
 	    }
+	    
+	    if(fix_autoplay_longnotes && e.getChannel() == Event.Channel.AUTO_PLAY) {
+		if(e.getFlag() == Event.Flag.RELEASE) {
+		    it.remove();
+		    continue;
+		}
+		e.flag = Event.Flag.NONE;
+	    }
+	}
+    }
+    
+    /**
+     * This method will try to fix all the broken hold events. Rules:
+     * <ol>
+     * <li>If the caller is a hold note itself, the broken hold will be converted to a none event</li>
+     * <li>If not, we will iterate forward the list from the broken hold event and:
+     *	    <ol>
+     *	    <li>If we found a hold value, stop and use the last iterated event.
+     *		<ul>
+     *		<li>The last event is a NONE, use it as a release event</li>
+     *		<li>The last event isn't a NONE, use the caller event</li>
+     *		</ul>
+     *	    </li>
+     *	    <li>If we found a event with the same value, use it as a release event</li>
+     *	    <li>If not, add the event to a possible autoplay move</li>
+     *	    </ol>
+     * </li>
+     * <li>Finally:
+     *	    <ol>
+     *	    <li>If it's found, move every event in the toAutoplay list to autoplay channel</li>
+     *	    <li>If it's not found, use the caller event as a release event</li>
+     *	    </ol>
+     * </li>
+     * </ol>
+     */
+    private void fixHoldNote(ListIterator<Event> it, Event e, Event e_hold) {
+	Event.Channel c = e_hold.getChannel();
+	double value = e_hold.getValue();
+	//seems that we found a broken hold event without a release
+	System.out.println("Broken HOLD event! @ "+e_hold.getTotalPosition()+" ("+value+"): ");
+	//but wait, the event who called this method is a hold itself... we apply no fix to it and convert
+	//the broken hold to a none event 
+	if(e.getFlag() == Event.Flag.HOLD) {
+	    System.out.println("\tNO FIX, it's another HOLD, the broken HOLD will be a NONE");
+	    e_hold.flag = Event.Flag.NONE;
+	    return;
+	}
+	EventList toAutoplay = new EventList();
+	toAutoplay.add(e);
+	boolean found = false;
+	//look ahead and try to get a event with the same value
+	ListIterator<Event> it2 = this.listIterator(it.nextIndex());
+	Event last_evt = e;
+	while(it2.hasNext()) {
+	    Event evt = it2.next();
+	    //not the same channel, skip it
+	    if(c != evt.getChannel())
+		continue;
+	    	
+	    //well... A hold event it's on our way... let's look the last event 
+	    if(evt.flag == Event.Flag.HOLD) {
+		System.out.print("\tThere is a HOLD in the way, converting to last known "+last_evt.flag+"... ");
+		//Ok, a none event, cool it can be fixed
+		if(last_evt.flag == Event.Flag.NONE) {
+		    System.out.println(" @ "+last_evt.getTotalPosition()+" OK");
+		    last_evt.flag = Event.Flag.RELEASE;
+		    //Need to remove it from the toAutoplay
+		    if(toAutoplay.contains(last_evt)) {
+			System.out.println("\tRemoving from autoplay "+last_evt.getTotalPosition());
+			toAutoplay.remove(last_evt);
+		    }
+		    found = true;
+		}
+		else {
+		    //Well, it wasn't a none event..
+		    System.out.println(" @ "+last_evt.getTotalPosition()+" "+last_evt.flag+" FAILED");
+		    found = false;
+		}
+
+		break;
+	    } else {
+		//So not a hold...
+		if(value == evt.getValue()) {
+		    //Fixed with the same value, cool
+		    System.out.println("\tFixed with same value @ "+evt.getTotalPosition()+" ("+value+") It's a "+evt.flag);
+		    evt.flag = Event.Flag.RELEASE;
+		    found = true;
+		    break;
+		} else {
+		    //Not the same value, add it to toAutoplay
+		    toAutoplay.add(evt);
+		    System.out.println("\tto Autoplay ("+evt.getValue()+"): "+evt.flag+" "+evt.getTotalPosition());
+		}
+	    }
+	    
+	    last_evt = evt;    
+	}
+	
+	//we found it, nice
+	if(found) {
+	    //moving all the events in the toAutoplay list to the autoplay channel
+	    for(Event evt : toAutoplay) {
+		evt.setChannel(Event.Channel.AUTO_PLAY);
+		System.out.println("\tMoving to autoplay "+evt.getTotalPosition());
+	    }
+	} else {
+	    //not found :( we will use the caller of this method as a release event
+	    toAutoplay.clear();
+	    e.flag = Event.Flag.RELEASE;
+	}	
+    }
+ 
+    /**
+     * This method will try to fix all the broken release events. Rules:
+     * <ol>
+     * <li>We'll iterate backwards the list from the broken release event, and:
+     *	    <ol>
+     *	    <li>If we find a event with the same value:
+     *		<ul>
+     *		<li>The found event isn't a release event, use it as a hold event</li>
+     *		<li>The found event is a release event, remove the broken release event form the list
+     *		  because it would break other events</li>
+     *		</ul>
+     *	    </li>
+     *	    <li>If not, add the event to a possible autoplay move</li>
+     *	    </ol>
+     * </li>
+     * <li>Finally:
+     *	    <ol>
+     *	    <li>If it's found, move every event in the toAutoplay list to autoplay channel</li>
+     *	    <li>If it's not found, remove the broken release event from the list</li>
+     *	    </ol>
+     * </li>
+     * </ol>
+     */
+    private void fixReleaseNote(ListIterator<Event> it, Event e) {
+	Event.Channel c = e.getChannel();
+	double value = e.getValue();
+	EventList toAutoplay;
+	boolean found;
+	System.out.println("Broken RELEASE event! @ "+e.getTotalPosition()+" ("+value+"): ");
+	found = false;
+	toAutoplay = new EventList();
+	ListIterator<Event> it2 = this.listIterator(it.previousIndex());
+	while(it2.hasPrevious()) {
+	    Event evt = it2.previous();
+	    //Different channels, skipping
+	    if(c != evt.getChannel())
+		continue;
+	    
+	    if(evt.getValue() == value) {
+		System.out.print("\tCandidate is a "+evt.flag+", ");
+		if(evt.flag != Event.Flag.RELEASE) {
+		    evt.flag = Event.Flag.HOLD;
+		    found = true;
+		} else {
+		    found = false;
+		}
+		
+		break;
+	    } else {
+		toAutoplay.add(evt);
+		System.out.println("\tto Autoplay ("+evt.getValue()+"): "+evt.flag+" "+evt.getTotalPosition());
+	    }
+    }
+
+	if(found) {
+	    System.out.println("fixed :D");
+	    for(Event evt : toAutoplay) {
+		evt.setChannel(Event.Channel.AUTO_PLAY);
+		System.out.println("\tMoving to autoplay "+evt.getTotalPosition());
+	    }
+	} else {
+	    System.out.println("Not fixed :(");
+	    it.remove();
 	}
     }
     
@@ -76,7 +250,6 @@ public class EventList extends ArrayList<Event> {
     
     /** 
      * This method will return a map with channels and a list of events for each channel
-     * @param event_list The list of events
      * @return A map with channels => list of events
      */
     public Map<Event.Channel, EventList> getEventsPerChannel() {
@@ -91,6 +264,10 @@ public class EventList extends ArrayList<Event> {
 	return epc;
     }
     
+    /**
+     * This method will return only the normal notes
+     * @return A list with all the normal notes
+     */
     public EventList getOnlyNormalNotes() {
 	EventList nn = new EventList();
 	
@@ -102,6 +279,10 @@ public class EventList extends ArrayList<Event> {
 	return nn;
     }
     
+    /**
+     * This method will return only the long notes
+     * @return A list with all the long notes
+     */
     public EventList getOnlyLongNotes() {
 	EventList ln = new EventList();
 	
@@ -113,6 +294,11 @@ public class EventList extends ArrayList<Event> {
 	return ln;
     }
     
+    /**
+     * This method will return all the events on the selected channel
+     * @param channel The selected channel
+     * @return A list of events in that channel
+     */
     public EventList getEventsFromThisChannel(Channel channel) {
         EventList eftc = new EventList();
         
@@ -174,7 +360,6 @@ public class EventList extends ArrayList<Event> {
      * This method will randomize the notes in the EventList
      * o2jam randomize the pattern each measure unless a longnote is in between measures
      * This implementation keeps the randomization of the previous measure if that happens
-     * @param buffer
      */
     public void channelRandom()
     {

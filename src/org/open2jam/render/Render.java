@@ -364,7 +364,7 @@ public abstract class Render implements GameWindowCallback
 
         EventList event_list = construct_velocity_tree(chart.getEvents());
 	
-	event_list.fixEventList(false, true);
+	event_list.fixEventList(true, true);
 
 	//Let's randomize "-"
         switch(opt.getChannelModifier())
@@ -770,6 +770,8 @@ public abstract class Render implements GameWindowCallback
                 case NOTE_3:case NOTE_4:
                 case NOTE_5:case NOTE_6:case NOTE_7:
                 if(e.getFlag() == Event.Flag.NONE){
+		    if(ln_buffer.containsKey(e.getChannel()))
+			Logger.global.log(Level.WARNING, "There is a none in the current long {0} @ "+e.getTotalPosition(), e.getChannel());
                     NoteEntity n = (NoteEntity) skin.getEntityMap().get(e.getChannel().toString()).copy();
                     n.setTime(e.getTime());
 		    
@@ -780,6 +782,8 @@ public abstract class Render implements GameWindowCallback
                     note_channels.get(n.getChannel()).add(n);
                 }
                 else if(e.getFlag() == Event.Flag.HOLD){
+		    if(ln_buffer.containsKey(e.getChannel()))
+			Logger.global.log(Level.WARNING, "There is a hold in the current long {0} @ "+e.getTotalPosition(), e.getChannel());
                     LongNoteEntity ln = (LongNoteEntity) skin.getEntityMap().get("LONG_"+e.getChannel()).copy();
                     ln.setTime(e.getTime());
 		    
@@ -793,7 +797,7 @@ public abstract class Render implements GameWindowCallback
                 else if(e.getFlag() == Event.Flag.RELEASE){
                     LongNoteEntity lne = ln_buffer.remove(e.getChannel());
                     if(lne == null){
-                        Logger.global.log(Level.WARNING, "Attempted to RELEASE note {0} @ "+current_measure, e.getChannel());
+                        Logger.global.log(Level.WARNING, "Attempted to RELEASE note {0} @ "+e.getTotalPosition(), e.getChannel());
                     }else{
                         lne.setEndTime(e.getTime(),velocity_integral(lne.getTime(),e.getTime(), lne.getChannel()));
                     }

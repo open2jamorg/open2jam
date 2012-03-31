@@ -164,6 +164,10 @@ public class Event implements Comparable<Event> {
     public double getPosition() {
         return position;
     }
+    
+    public double getTotalPosition() {
+	return measure+position;
+    }
 
     public Flag getFlag() {
         return flag;
