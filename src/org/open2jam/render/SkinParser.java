@@ -403,7 +403,13 @@ public class SkinParser extends DefaultHandler
             else
                 e = new BarEntity(s, 0, 0);
 	}
-        else{
+	else if(id.equals("BGA")){
+	    Sprite s = sprite_buffer.get(atts.get("sprite")).get(0);
+	    int x = 0, y = 0;
+	    if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x"));
+	    if(atts.containsKey("y"))y = Integer.parseInt(atts.get("y"));
+	    e = new BgaEntity(s, x, y);
+	}else{
             Logger.global.log(Level.WARNING, "unpromoted entity [{0}]", id);
         }
         return e;

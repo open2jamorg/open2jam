@@ -52,6 +52,10 @@ public class BMSChart extends Chart
         return BMSParser.getSamples(this);
     }
 
+    public Map<Integer, File> getImages() {
+	return BMSParser.getImages(this);
+    }
+
     public double getBPM() {
         return bpm;
     }

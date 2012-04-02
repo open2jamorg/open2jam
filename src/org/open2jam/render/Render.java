@@ -3,11 +3,13 @@ package org.open2jam.render;
 
 import java.awt.Font;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map.Entry;
 import java.util.*;
 import java.util.logging.Level;
+import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
@@ -164,6 +166,9 @@ public abstract class Render implements GameWindowCallback
     BarEntity lifebar_entity;
 
     LinkedList<Entity> pills_draw;
+    
+    Map<Integer, Sprite> bga_sprites;
+    BgaEntity bgaEntity;
 
     int consecutive_cools = 0;
 
@@ -289,11 +294,6 @@ public abstract class Render implements GameWindowCallback
 
         note_layer = skin.getEntityMap().get("NOTE_1").getLayer();
 
-        // adding static entities
-        for(Entity e : skin.getEntityList()){
-            entities_matrix.add(e);
-        }
-
         // build long note buffer
         ln_buffer = new EnumMap<Event.Channel,LongNoteEntity>(Event.Channel.class);
 
@@ -379,7 +379,31 @@ public abstract class Render implements GameWindowCallback
                 event_list.channelRandom();
             break;
         }
-        
+	
+	if(!chart.getImageIndex().isEmpty()) {
+	    // get all the bgaEntity sprites
+	    bga_sprites = new HashMap<Integer, Sprite>();
+	    for(Entry<Integer, File> entry: chart.getImages().entrySet()) {
+		BufferedImage img;
+		try {
+		    img = ImageIO.read(entry.getValue());
+		    Sprite s = ResourceFactory.get().getSprite(img);
+		    bga_sprites.put(entry.getKey(), s);
+		} catch (IOException ex) {
+		    java.util.logging.Logger.getLogger(Render.class.getName()).log(Level.SEVERE, null, ex);
+		}    
+	    }
+	}
+	
+	bgaEntity = (BgaEntity) skin.getEntityMap().get("BGA");
+	entities_matrix.add(bgaEntity);
+
+	
+        // adding static entities
+        for(Entity e : skin.getEntityList()){
+            entities_matrix.add(e);
+        }
+	
         // get a new iterator
         buffer_iterator = event_list.iterator();
 
@@ -503,7 +527,8 @@ public abstract class Render implements GameWindowCallback
                     //o2jam overlaps 1 px of the note with the measure and, because of this
                     //our skin should do it too xD
                     if(e instanceof MeasureEntity) y -= 1;
-                    e.setPos(e.getX(), y);
+		    if(!(e instanceof BgaEntity))
+			e.setPos(e.getX(), y);
 
                     if(e instanceof NoteEntity) check_judgment((NoteEntity)e, now);
                 }
@@ -803,6 +828,16 @@ public abstract class Render implements GameWindowCallback
                     }
                 }
                 break;
+		case BGA:
+		    Sprite sprite = null;
+		    if(bga_sprites.containsKey((int)e.getValue()))
+			sprite = bga_sprites.get((int)e.getValue());
+		    if(sprite == null) break;
+		    sprite.setScale(1f, 1f);
+		    bgaEntity.setSprite(sprite);
+		    bgaEntity.setTime(e.getTime());
+		break;
+		    
                 //TODO ADD SUPPORT
                 case NOTE_SC:
                 case NOTE_8:case NOTE_9:
@@ -933,6 +968,7 @@ public abstract class Render implements GameWindowCallback
                 case NOTE_12:case NOTE_13:case NOTE_14:
                 case NOTE_SC2:
                 case AUTO_PLAY:
+		case BGA:
                     e.setTime(timer + e.getOffset());
 		    if(e.getOffset() != 0) System.out.println("offset: "+e.getOffset()+" timer: "+(timer+e.getOffset()));
                 break;

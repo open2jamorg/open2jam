@@ -12,6 +12,9 @@ import org.open2jam.parsers.utils.SampleData;
 
 class SMParser
 {
+    public static Pattern key_value = Pattern.compile("(,|;)?(\\d+\\.\\d+)=(\\d+\\.\\d+)(,|;)?");
+    public static Pattern note_line = Pattern.compile("^(,|;)?([01234ML]+)?(,|;)?.*$", Pattern.CASE_INSENSITIVE);
+      
     public static boolean canRead(File f)
     {
 	return f.getName().toLowerCase().endsWith(".sm");
@@ -170,7 +173,6 @@ class SMParser
 	boolean parsed = false;
 	int startMeasure = 0;
 	double offset = 0;
-	Pattern note_line = Pattern.compile("^(,|;)?([01234ML]{"+chart.keys+"})?(,|;)?.*$", Pattern.CASE_INSENSITIVE);
         try {
             while ((line = r.readLine()) != null && !parsed) {
 		line = line.trim();

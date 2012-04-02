@@ -35,6 +35,7 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
     protected File image_cover = null;
     
     protected Map<Integer, String> sample_index = new HashMap<Integer, String>();
+    protected Map<Integer, String> image_index = new HashMap<Integer, String>();
     
     /** the File object to the source file of this header */
     public abstract File getSource();
@@ -67,6 +68,11 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
     
     /** The samples of the song */
     public abstract Map<Integer, SampleData> getSamples();
+    
+    /** The images of the song */
+    public Map<Integer, File> getImages() {
+	return null;
+    }
 
     /** a bpm representing the whole song.
     *** doesn't need to be exact, just for info */
@@ -87,6 +93,11 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
     /** Get the sample index of the chart */
     public Map<Integer, String> getSampleIndex() {
 	return sample_index;
+    }
+    
+    /** Get the image index of the chart */
+    public Map<Integer, String> getImageIndex() {
+	return image_index;
     }
     
     /** Copy the sample files to another directory */

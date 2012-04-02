@@ -380,6 +380,7 @@ Only used in JAM_COUNTER and COMBO_COUNTER . The title of the counter. It will b
             <xsd:enumeration value="LIFE_BAR"/>
             <xsd:enumeration value="JAM_BAR"/>
             <xsd:enumeration value="TIME_BAR"/>
+	    <xsd:enumeration value="BGA"/>
         </xsd:restriction>
     </xsd:simpleType>
 </xsd:schema>

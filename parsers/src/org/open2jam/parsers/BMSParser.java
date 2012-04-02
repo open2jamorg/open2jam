@@ -14,6 +14,9 @@ import org.open2jam.parsers.utils.SampleData;
 class BMSParser
 {
 
+    private static final Pattern note_line = Pattern.compile("^#(\\d\\d\\d)(\\d\\d):(.+)$");
+    private static final Pattern bpm_line = Pattern.compile("^#BPM(\\w\\w)\\s+(.+)$");
+    
     private static final FileFilter bms_filter = new FileFilter(){
         public boolean accept(File f){
             String s = f.getName().toLowerCase();
@@ -70,8 +73,6 @@ class BMSParser
         String line;
         StringTokenizer st;
         chart.sample_index = new HashMap<Integer, String>();
-
-        Pattern note_line = Pattern.compile("^#(\\d\\d\\d)(\\d\\d):(.+)$");
 
         int max_key = 0, max_measure = 0, total_notes = 0, scratch_notes = 0;
 
@@ -151,6 +152,12 @@ class BMSParser
                         chart.sample_index.put(id, name);
                         continue;
                 }
+		if(cmd.startsWith("#BMP")){
+			int id = Integer.parseInt(cmd.replaceFirst("#BMP",""), 36);
+                        String name = st.nextToken("").trim();
+                        chart.image_index.put(id, name);
+                        continue;
+		}
                 Matcher note_match = note_line.matcher(cmd);
                 if(note_match.find()){
                     int measure = Integer.parseInt(note_match.group(1));
@@ -230,9 +237,6 @@ class BMSParser
         HashMap<Integer, Double> bpm_map = new HashMap<Integer, Double>();
         HashMap<Integer, Boolean> ln_buffer = new HashMap<Integer, Boolean>();
         HashMap<Integer, Event> lnobj_buffer = new HashMap<Integer, Event>();
-
-        Pattern note_line = Pattern.compile("^#(\\d\\d\\d)(\\d\\d):(.+)$");
-        Pattern bpm_line = Pattern.compile("^#BPM(\\w\\w)\\s+(.+)$");
 	
 	//This will help us to sort the lines by measure
 	Map<Integer, List<String>> lines = new TreeMap<Integer, List<String>>();
@@ -296,6 +300,16 @@ class BMSParser
 			double value = bpm_map.get(Integer.parseInt(events[i], 36));
 			double p = ((double) i) / events.length;
 			event_list.add(new Event(Event.Channel.BPM_CHANGE, measure, p, value, Event.Flag.NONE));
+		    }
+		    continue;
+		} else if (channel == 4) {
+		    for (int i = 0; i < events.length; i++) {
+			int value = Integer.parseInt(events[i], 36);
+			if (value == 0) {
+			    continue;
+			}
+			double p = ((double) i) / events.length;
+			event_list.add(new Event(Event.Channel.BGA, measure, p, value, Event.Flag.NONE));
 		    }
 		    continue;
 		}
@@ -422,17 +436,20 @@ class BMSParser
 	    }
 	};
 	
-	File[] files = chart.source.getParentFile().listFiles(filter);
+	List<File> files = Arrays.asList(chart.source.getParentFile().listFiles(filter));
 	
-	for(Entry<Integer, String> entry : chart.sample_index.entrySet()) {
+	Iterator<Entry<Integer, String>> it_samples = chart.sample_index.entrySet().iterator();
+	while(it_samples.hasNext()) {
+	    Entry<Integer, String> entry = it_samples.next();
 	    try {
-		for(File f : files) {
+		Iterator<File> it_files = files.iterator(); 
+		while(it_files.hasNext()) {
+		    File f = it_files.next();
 		    String sn = entry.getValue().toLowerCase();
 		    String fn = f.getName().toLowerCase();
 		    String ext = fn.substring(fn.lastIndexOf("."), fn.length());
 		    sn = sn.substring(0, sn.lastIndexOf("."));
 		    fn = fn.substring(0,fn.lastIndexOf("."));
-
 		    if(sn.equals(fn)) {
 			SampleData.Type t;
 			if      (ext.equals(".wav")) t = SampleData.Type.WAV;
@@ -450,5 +467,41 @@ class BMSParser
 	    }
 	}
 	return samples;
+    }
+
+    static Map<Integer, File> getImages(BMSChart chart) {
+	HashMap<Integer, File> images = new HashMap<Integer, File>();
+	
+	FilenameFilter filter = new FilenameFilter() {
+
+	    public boolean accept(File dir, String name) {
+		String n = name.substring(name.lastIndexOf("."), name.length());
+		
+		return (n.equalsIgnoreCase(".bmp") || n.equalsIgnoreCase(".png") || n.equalsIgnoreCase(".jpg")
+			|| n.equalsIgnoreCase(".jpeg"));
+	    }
+	};
+	
+	List<File> files = Arrays.asList(chart.source.getParentFile().listFiles(filter));
+	
+	Iterator<Entry<Integer, String>> it_images = chart.image_index.entrySet().iterator();
+	while(it_images.hasNext()) {
+	    Entry<Integer, String> entry = it_images.next();
+	    
+	    Iterator<File> it_files = files.iterator(); 
+	    while(it_files.hasNext()) {
+		File f = it_files.next();
+		String in = entry.getValue().toLowerCase();
+		String fn = f.getName().toLowerCase();
+		String ext = fn.substring(fn.lastIndexOf("."), fn.length());
+		in = in.substring(0, in.lastIndexOf("."));
+		fn = fn.substring(0,fn.lastIndexOf("."));
+		if(in.equals(fn)) {
+		    images.put(entry.getKey(), f);
+		    break;
+		}
+	    }
+	}
+	return images;
     }
 }
