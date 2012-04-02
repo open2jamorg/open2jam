@@ -60,7 +60,7 @@ public class SMChart extends Chart {
     }
     
     public BufferedImage getCover() {
-	if (image_cover == null) {
+	if (!hasCover()) {
 	    return getNoImage();
 	}
 	try {

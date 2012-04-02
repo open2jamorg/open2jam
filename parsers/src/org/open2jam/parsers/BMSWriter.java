@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
+import javax.imageio.ImageIO;
 import org.open2jam.parsers.Event.Channel;
 import org.open2jam.parsers.Event.Flag;
 
@@ -55,10 +56,12 @@ public class BMSWriter {
 	    }
 	    else if(channel == getChannel(Event.Channel.TIME_SIGNATURE))
 		values[p] = Double.toString(value);
+	    else if(channel == getChannel(Event.Channel.BGA))
+		values[p] = toBase36((int)value);  
 	    else {
 		//A 00 value is nothing in bms files, use the emptyValue (ZZ) TODO Find a better fix XD
 		value = value > 0 ? e.getValue() + sampleStart : emptyValue;
-		values[p] = toBase36((int)value);  
+		values[p] = toBase36((int)value);
 	    }
 	    
 	}
@@ -121,7 +124,14 @@ public class BMSWriter {
 	
 	buffer.close();
 	
+	if(chart.hasCover()) {
+	    File image = new File(dir, "cover_image_"+chart.hashCode()+".png");
+	    if(!image.exists())
+		ImageIO.write(chart.getCover(), "png", image);
+	}
+	
 	chart.copySampleFiles(dir);
+	chart.copyImageFiles(dir);
     }
     
     private static void makeHeader(BufferedWriter buffer, Chart chart) throws IOException
@@ -141,6 +151,10 @@ public class BMSWriter {
 	buffer.newLine();
 	buffer.write(String.format(locale,"#BPM %.2f",chart.getBPM()));
 	buffer.newLine();
+	if(chart.hasCover()) {
+	    buffer.write(String.format("#STAGEFILE %s", "cover_image_"+chart.hashCode()+".png"));
+	    buffer.newLine();
+	}
 	buffer.write(String.format("#LNTYPE 1"));
 	buffer.newLine();
 	
@@ -161,6 +175,20 @@ public class BMSWriter {
 	    buffer.newLine();
 	}
 	buffer.newLine();
+	
+	Map<Integer, String> imageIndex = chart.getImageIndex();
+	
+	if(!imageIndex.isEmpty()) {
+	    buffer.write("*----BMP LIST----*");
+	    buffer.newLine();
+	    for(Entry<Integer, String> entry : imageIndex.entrySet())
+	    {
+		int value = entry.getKey();
+		buffer.write(String.format("#BMP%s %s", toBase36(value), entry.getValue()));
+		buffer.newLine();
+	    }
+	    buffer.newLine();
+	}
         
         bpmChanges = new HashMap<Event, Integer>();
         int i = 1;
@@ -247,6 +275,7 @@ public class BMSWriter {
 	switch(c) {
 	    case AUTO_PLAY: return 1;
 	    case TIME_SIGNATURE: return 2;
+	    case BGA: return 4;
 	    case BPM_CHANGE: return 8;
 		
 	    case NOTE_1: return 11;

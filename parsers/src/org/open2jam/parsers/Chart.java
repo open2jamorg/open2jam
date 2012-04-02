@@ -1,13 +1,14 @@
 package org.open2jam.parsers;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
+import org.open2jam.parsers.utils.ByteHelper;
 import org.open2jam.parsers.utils.Logger;
 import org.open2jam.parsers.utils.SampleData;
 
@@ -67,11 +68,13 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
     public abstract String getNoter();
     
     /** The samples of the song */
-    public abstract Map<Integer, SampleData> getSamples();
+    public Map<Integer, SampleData> getSamples() {
+	return new HashMap<Integer, SampleData>();
+    }
     
     /** The images of the song */
     public Map<Integer, File> getImages() {
-	return null;
+	return new HashMap<Integer, File>();
     }
 
     /** a bpm representing the whole song.
@@ -86,9 +89,14 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
 
     /** a image cover, representing the song */
     public abstract BufferedImage getCover();
-
+    
     /** this should return the list of events from this chart at this rank */
     public abstract EventList getEvents();
+    
+    /** Return true if the chart has a cover */
+    public boolean hasCover() {
+	return image_cover != null;
+    }
            
     /** Get the sample index of the chart */
     public Map<Integer, String> getSampleIndex() {
@@ -102,8 +110,21 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
     
     /** Copy the sample files to another directory */
     public void copySampleFiles(File directory) throws IOException {
-	for(SampleData ad : getSamples().values()) {
+	Collection<SampleData> samples = getSamples().values();
+	if(samples.isEmpty()) return;
+	for(SampleData ad : samples) {
 	    ad.copyToFolder(directory);
+	}
+    }
+    
+    public void copyImageFiles(File directory) throws FileNotFoundException, IOException {
+	Collection<File> images = getImages().values();
+	if(images.isEmpty()) return;
+	for(File f : images) {
+	    File out = new File(directory, f.getName());
+	    if(!out.exists()) {
+		ByteHelper.copyTo(new FileInputStream(f), new FileOutputStream(out));
+	    }
 	}
     }
 

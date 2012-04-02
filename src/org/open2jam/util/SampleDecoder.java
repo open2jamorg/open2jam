@@ -12,6 +12,7 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javazoom.jl.decoder.*;
+import org.open2jam.parsers.utils.ByteHelper;
 import org.open2jam.parsers.utils.Logger;
 import org.open2jam.parsers.utils.SampleData;
 
@@ -97,9 +98,9 @@ public class SampleDecoder {
 							    Format.MONO16 : Format.STEREO16;
 	    int samplerate = ois.getRate();
 
-	    ByteArrayOutputStream out = new ByteArrayOutputStream(SampleData.tmp_buffer.length);
+	    ByteArrayOutputStream out = new ByteArrayOutputStream(ByteHelper.tmp_buffer.length);
 
-	    SampleData.copyTo(ois, out);
+	    ByteHelper.copyTo(ois, out);
 	    
 	    ByteBuffer b = ByteBuffer.allocateDirect(out.size());
 	    b.put(out.toByteArray());
@@ -134,9 +135,9 @@ public class SampleDecoder {
 	    AudioInputStream ais = AudioSystem.getAudioInputStream(ad.getInputStream());
 	    AudioFormat audioformat = ais.getFormat();
 
-	    ByteArrayOutputStream out = new ByteArrayOutputStream(SampleData.tmp_buffer.length);
+	    ByteArrayOutputStream out = new ByteArrayOutputStream(ByteHelper.tmp_buffer.length);
 
-	    SampleData.copyTo(ais, out);
+	    ByteHelper.copyTo(ais, out);
 	    
 	    ByteBuffer b = ByteBuffer.allocateDirect(out.size());
 	    b.put(out.toByteArray());
@@ -154,9 +155,9 @@ public class SampleDecoder {
     private static SampleDecoder decode_raw(SampleData ad)
     {
 	try {
-	    ByteArrayOutputStream out = new ByteArrayOutputStream(SampleData.tmp_buffer.length);
+	    ByteArrayOutputStream out = new ByteArrayOutputStream(ByteHelper.tmp_buffer.length);
 
-	    SampleData.copyTo(ad.getInputStream(), out);
+	    ByteHelper.copyTo(ad.getInputStream(), out);
 
 	    ByteBuffer b = ByteBuffer.allocateDirect(out.size());
 	    b.put(out.toByteArray());
@@ -183,7 +184,7 @@ public class SampleDecoder {
 	try {
 	    Bitstream stream = new Bitstream(ad.getInputStream());
 	    
-	    ByteArrayOutputStream out = new ByteArrayOutputStream(SampleData.tmp_buffer.length);
+	    ByteArrayOutputStream out = new ByteArrayOutputStream(ByteHelper.tmp_buffer.length);
 
 	    MP3Decoder decoder = new MP3Decoder();
 

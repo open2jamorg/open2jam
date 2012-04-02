@@ -15,8 +15,6 @@ public class SampleData {
     private final String filename;
     
     private WAVHeader wavHeader = null;
-    
-    public static final byte[] tmp_buffer = new byte[1024];
 
     public SampleData(InputStream input, Type type, String filename) {
 	this.input = input;
@@ -52,16 +50,7 @@ public class SampleData {
     }
     
     public void copyTo(OutputStream out) throws IOException {
-	copyTo(this.input, out);
-    }
-    
-    public static void copyTo(InputStream in, OutputStream out) throws IOException {
-	int len;
-	while((len = in.read(tmp_buffer)) > 0)
-	    out.write(tmp_buffer, 0, len);
-	
-	in.close();
-	out.close();
+	ByteHelper.copyTo(this.input, out);
     }
     
     public void copyToFolder(File directory) throws IOException {

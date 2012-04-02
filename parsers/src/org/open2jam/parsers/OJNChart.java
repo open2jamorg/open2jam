@@ -83,9 +83,13 @@ public class OJNChart extends Chart {
     public int getDuration() {
 	return duration;
     }
+    
+    public boolean hasCover() {
+	return cover_size > 0;
+    }
 
     public BufferedImage getCover() {
-	if (cover_size <= 0) {
+	if (!hasCover()) {
 	    return getNoImage();
 	}
 	try {
