@@ -1,5 +1,6 @@
 package org.open2jam.gui.parts;
 
+import com.sun.jna.NativeLibrary;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ItemEvent;
@@ -994,6 +995,8 @@ public class MusicSelection extends javax.swing.JPanel
         go.setBilinear(bilinear);
         go.setVsync(vsync);
 
+	NativeLibrary.addSearchPath("libvlc", go.getVLC());
+	
         final Render r;
         if(time_judgment)
             r = new TimeRender(selected_header, go, dm);

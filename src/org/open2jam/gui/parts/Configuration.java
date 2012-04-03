@@ -1,6 +1,5 @@
 package org.open2jam.gui.parts;
 
-import com.sun.jna.NativeLibrary;
 import java.awt.Font;
 import java.io.File;
 import java.util.EnumMap;
@@ -212,7 +211,6 @@ public class Configuration extends javax.swing.JPanel {
             default: return;
         }
         Config.setKeyboardMap(kb_map, kt);
-	NativeLibrary.addSearchPath("libvlc", vlc_path);
 	GameOptions op = Config.getGameOptions();
 	op.setVLC(vlc_path);
 	Config.setGameOptions(op);

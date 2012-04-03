@@ -24,6 +24,8 @@ public class BgaEntity extends Entity implements TimeEntity, RenderCallback {
     public boolean isVideo = false;
     public File videoFile;
     boolean isPlaying = false;
+    boolean newBuffer = false;
+    
     MediaPlayerFactory playerFactory;
     DirectMediaPlayer player;
     ByteBuffer videoBuffer = null;
@@ -75,7 +77,12 @@ public class BgaEntity extends Entity implements TimeEntity, RenderCallback {
     
     public void draw() {
 	if(isVideo) {
-	  sprite.draw(x, y, WIDTH, HEIGHT, videoBuffer);  
+	    if(newBuffer) {
+		sprite.draw(x, y, WIDTH, HEIGHT, videoBuffer);
+		newBuffer = false;
+	    } else {
+		sprite.draw(x, y);
+	    }
 	} else if(sprite != null) {
 	    super.draw();
 	}
@@ -136,5 +143,6 @@ public class BgaEntity extends Entity implements TimeEntity, RenderCallback {
     public void display(Memory memory) {
 	if(BUFFER_SIZE <= 0) return;
 	videoBuffer = memory.getByteBuffer(0, BUFFER_SIZE);
+	newBuffer = true;
     }
 }
