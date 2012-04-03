@@ -17,7 +17,7 @@ import org.lwjgl.opengl.GL11;
  */
 public class Texture {
     /** The GL target type */
-    private final int target;
+    public final int target;
     /** The GL texture ID */
     private final int textureID;
 

@@ -34,9 +34,10 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
     protected int duration = 0;
     
     protected File image_cover = null;
+    protected File video = null;
     
     protected Map<Integer, String> sample_index = new HashMap<Integer, String>();
-    protected Map<Integer, String> image_index = new HashMap<Integer, String>();
+    protected Map<Integer, String> bga_index = new HashMap<Integer, String>();
     
     /** the File object to the source file of this header */
     public abstract File getSource();
@@ -97,6 +98,15 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
     public boolean hasCover() {
 	return image_cover != null;
     }
+    
+    /** Return true if the chart has a video */
+    public boolean hasVideo() {
+	return video != null;
+    }
+    
+    public File getVideo() {
+	return video;
+    }
            
     /** Get the sample index of the chart */
     public Map<Integer, String> getSampleIndex() {
@@ -105,7 +115,7 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
     
     /** Get the image index of the chart */
     public Map<Integer, String> getImageIndex() {
-	return image_index;
+	return bga_index;
     }
     
     /** Copy the sample files to another directory */

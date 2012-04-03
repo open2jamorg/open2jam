@@ -155,7 +155,7 @@ class BMSParser
 		if(cmd.startsWith("#BMP")){
 			int id = Integer.parseInt(cmd.replaceFirst("#BMP",""), 36);
                         String name = st.nextToken("").trim();
-                        chart.image_index.put(id, name);
+                        chart.bga_index.put(id, name);
                         continue;
 		}
                 Matcher note_match = note_line.matcher(cmd);
@@ -484,7 +484,7 @@ class BMSParser
 	
 	List<File> files = Arrays.asList(chart.source.getParentFile().listFiles(filter));
 	
-	Iterator<Entry<Integer, String>> it_images = chart.image_index.entrySet().iterator();
+	Iterator<Entry<Integer, String>> it_images = chart.bga_index.entrySet().iterator();
 	while(it_images.hasNext()) {
 	    Entry<Integer, String> entry = it_images.next();
 	    
@@ -503,5 +503,46 @@ class BMSParser
 	    }
 	}
 	return images;
+    }
+    
+    static boolean hasVideo(BMSChart chart) {
+	
+	FilenameFilter filter = new FilenameFilter() {
+
+	    public boolean accept(File dir, String name) {
+		String n = name.substring(name.lastIndexOf("."), name.length());
+		
+		return (n.equalsIgnoreCase(".avi") 
+			|| n.equalsIgnoreCase(".mpg")
+			|| n.equalsIgnoreCase(".mpeg")
+			|| n.equalsIgnoreCase(".mov")
+			|| n.equalsIgnoreCase(".mkv")
+			|| n.equalsIgnoreCase(".flv")
+			|| n.equalsIgnoreCase(".mp4"));
+	    }
+	};
+	
+	List<File> files = Arrays.asList(chart.source.getParentFile().listFiles(filter));
+	
+	Iterator<Entry<Integer, String>> it_images = chart.bga_index.entrySet().iterator();
+	while(it_images.hasNext()) {
+	    Entry<Integer, String> entry = it_images.next();
+	    
+	    Iterator<File> it_files = files.iterator(); 
+	    while(it_files.hasNext()) {
+		File f = it_files.next();
+		String in = entry.getValue().toLowerCase();
+		String fn = f.getName().toLowerCase();
+		String ext = fn.substring(fn.lastIndexOf("."), fn.length());
+		in = in.substring(0, in.lastIndexOf("."));
+		fn = fn.substring(0,fn.lastIndexOf("."));
+		if(in.equals(fn)) {
+		    chart.video = f;
+		    return true;
+		}
+	    }
+	}
+	
+	return false;
     }
 }

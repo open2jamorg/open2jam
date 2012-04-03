@@ -4,6 +4,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import org.lwjgl.opengl.GL11;
 import org.open2jam.GameOptions;
 import org.open2jam.render.Sprite;
@@ -166,6 +167,10 @@ public class LWJGLSprite implements Sprite {
     public double getHeight() {
         return height * scale_y;
     }
+    
+    public Texture getTexture() {
+	return texture;
+    }
 
     /** set the width and height percentage
      * to be draw of the sprite
@@ -192,7 +197,7 @@ public class LWJGLSprite implements Sprite {
      * @param sx the scale of the image width
      * @param sy the scale of the image height
      */
-    void draw(float px, float py, float sx, float sy)
+    void draw(float px, float py, float sx, float sy, int w, int h, ByteBuffer buffer)
     {
         // store the current model matrix
         GL11.glPushMatrix();
@@ -204,6 +209,15 @@ public class LWJGLSprite implements Sprite {
         GL11.glTranslatef(px, py, 0);
         
         GL11.glColor4f(1,1,1,this.alpha);
+	
+	
+	if(buffer != null) {
+	    GL11.glTexSubImage2D(
+		    texture.target, 0, 0, 0,
+		    w, h,
+		    GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE,
+		    buffer);
+	}
 
         GL11.glScalef(sx, sy, 1);
 
@@ -212,6 +226,11 @@ public class LWJGLSprite implements Sprite {
 
         // restore the model view matrix to prevent contamination
         GL11.glPopMatrix();
+    }
+    
+    public void draw(float x, float y, float scale_x, float scale_y)
+    {
+	this.draw(x, y, scale_x, scale_y, 0, 0, null);
     }
 
     public void draw(double x, double y, float scale_x, float scale_y)
@@ -235,5 +254,15 @@ public class LWJGLSprite implements Sprite {
 
     public float getScaleY() {
         return scale_y;
+    }
+
+    @Override
+    public void draw(double x, double y, int w, int h, ByteBuffer buffer) {
+	this.draw((float)x, (float)y, scale_x, scale_y, w, h, buffer);
+    }
+
+    @Override
+    public void draw(double x, double y, float scale_x, float scale_y, int w, int h, ByteBuffer buffer) {
+	this.draw((float)x, (float)y, scale_x, scale_y, w, h, buffer);
     }
 }

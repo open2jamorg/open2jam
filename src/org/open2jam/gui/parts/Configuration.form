@@ -21,6 +21,8 @@
               <Group type="103" groupAlignment="2" attributes="0">
                   <Component id="bSave" alignment="2" min="-2" max="-2" attributes="0"/>
                   <Component id="panel_keys" alignment="2" max="32767" attributes="0"/>
+                  <Component id="lbl_vlc" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="btn_vlc" alignment="2" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -32,8 +34,12 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="panel_keys" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
+              <Component id="lbl_vlc" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="btn_vlc" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
               <Component id="bSave" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="152" max="32767" attributes="0"/>
+              <EmptySpace pref="91" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -147,5 +153,18 @@
         </Container>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JLabel" name="lbl_vlc">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="VLC isn&apos;t selected"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="btn_vlc">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Select VLC path"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_vlcActionPerformed"/>
+      </Events>
+    </Component>
   </SubComponents>
 </Form>

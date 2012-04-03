@@ -61,6 +61,9 @@ public class GameOptions implements Serializable {
     private boolean vsync = true;
     
     private int width,height,bpp,freq;
+    
+    // VLC lib path
+    private String vlc = "";
 
     //public constructor. give default options
     public GameOptions() {
@@ -245,6 +248,14 @@ public class GameOptions implements Serializable {
 
     public boolean getVsync() {
         return vsync;
+    }
+    
+    public void setVLC(String path) {
+	this.vlc = path;
+    }
+    
+    public String getVLC() {
+	return vlc;
     }
 
     public void setDisplay(DisplayMode dm) {

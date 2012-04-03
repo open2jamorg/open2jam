@@ -380,9 +380,17 @@ public abstract class Render implements GameWindowCallback
             break;
         }
 	
-	if(!chart.getImageIndex().isEmpty()) {
+	bgaEntity = (BgaEntity) skin.getEntityMap().get("BGA");
+	entities_matrix.add(bgaEntity);
+	
+	bga_sprites = new HashMap<Integer, Sprite>();
+	if(chart.hasVideo()) {
+	    bgaEntity.isVideo = true;
+	    bgaEntity.videoFile = chart.getVideo();
+	    bgaEntity.initVideo();
+	} else if(!chart.getImageIndex().isEmpty()) {
 	    // get all the bgaEntity sprites
-	    bga_sprites = new HashMap<Integer, Sprite>();
+	    
 	    for(Entry<Integer, File> entry: chart.getImages().entrySet()) {
 		BufferedImage img;
 		try {
@@ -394,9 +402,6 @@ public abstract class Render implements GameWindowCallback
 		}    
 	    }
 	}
-	
-	bgaEntity = (BgaEntity) skin.getEntityMap().get("BGA");
-	entities_matrix.add(bgaEntity);
 
 	
         // adding static entities
@@ -829,12 +834,15 @@ public abstract class Render implements GameWindowCallback
                 }
                 break;
 		case BGA:
-		    Sprite sprite = null;
-		    if(bga_sprites.containsKey((int)e.getValue()))
-			sprite = bga_sprites.get((int)e.getValue());
-		    if(sprite == null) break;
-		    sprite.setScale(1f, 1f);
-		    bgaEntity.setSprite(sprite);
+		    if(!bgaEntity.isVideo) {
+			Sprite sprite = null;
+			if(bga_sprites.containsKey((int)e.getValue()))
+			    sprite = bga_sprites.get((int)e.getValue());
+			if(sprite == null) break;
+			sprite.setScale(1f, 1f);
+			bgaEntity.setSprite(sprite);
+		    }
+		    
 		    bgaEntity.setTime(e.getTime());
 		break;
 		    
@@ -1091,6 +1099,7 @@ public abstract class Render implements GameWindowCallback
      */
     @Override
     public void windowClosed() {
+	bgaEntity.release();
         SoundManager.killData();
 	System.gc();
     }

@@ -30,6 +30,9 @@ public class EventList extends ArrayList<Event> {
 	    
 	    if(fix_broken_longnotes) {
 		Event.Channel c = e.getChannel();
+		
+		if(c == Event.Channel.AUTO_PLAY) continue;
+		
 		switch(e.getFlag()){
 		    case NONE:
 			if(lnchan.containsKey(c)) {

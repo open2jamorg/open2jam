@@ -47,6 +47,10 @@ public class BMSChart extends Chart
     public String getNoter() {
 	return noter; 
     }
+    
+    public boolean hasVideo() {
+	return BMSParser.hasVideo(this);
+    }
 
     public Map<Integer,SampleData> getSamples() {
         return BMSParser.getSamples(this);
