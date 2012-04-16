@@ -69,6 +69,7 @@ public class BgaEntity extends Entity implements TimeEntity, RenderCallback {
 	try {
 	    playerFactory = new MediaPlayerFactory(new String[] {"--no-video-title-show", "--noaudio"});
 	    player = playerFactory.newDirectMediaPlayer("RGBA", WIDTH, HEIGHT, WIDTH * DEPTH, this);
+	    player.prepareMedia(videoFile.getAbsolutePath());
 	} catch(Throwable t) {
 	    isVideo = false;
 	    Logger.global.log(Level.WARNING, "VLC failed to load :(");
@@ -112,7 +113,7 @@ public class BgaEntity extends Entity implements TimeEntity, RenderCallback {
 	    float w = (float) (scale_w/WIDTH);
 	    float h = (float) (scale_h/HEIGHT);
 	    sprite.setScale(w, h);
-	    player.playMedia(videoFile.getAbsolutePath());
+	    player.play();
 	    isPlaying = true;
 	} else {
 	    if(next_sprites.isEmpty()) return;
