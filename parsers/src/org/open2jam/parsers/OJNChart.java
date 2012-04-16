@@ -84,6 +84,11 @@ public class OJNChart extends Chart {
 	return duration;
     }
     
+    public String getCoverName() {
+	if(!hasCover()) return null;
+	return "OJN_"+this.title+"_"+this.level;
+    }
+    
     public boolean hasCover() {
 	return cover_size > 0;
     }

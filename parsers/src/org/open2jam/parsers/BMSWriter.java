@@ -110,7 +110,7 @@ public class BMSWriter {
 
 	String dirName = (chart.getArtist()+" - "+chart.getTitle()).replaceAll("/", " ");
 	String name = chart.getSource().getName();
-	name = name.substring(0, name.lastIndexOf("."))+"_"+chart.hashCode()+".bms";
+	name = name.substring(0, name.lastIndexOf("."))+"_"+chart.level+".bms";
 	File dir = new File(path+File.separator+dirName);
 	File file = new File(dir, name);
 	dir.mkdirs();
@@ -125,13 +125,15 @@ public class BMSWriter {
 	buffer.close();
 	
 	if(chart.hasCover()) {
-	    File image = new File(dir, "cover_image_"+chart.hashCode()+".png");
+	    String cover_name = chart.getCoverName();
+	    if(cover_name == null) cover_name = "NAME_NOT_FOUND";
+	    File image = new File(dir, cover_name+".png");
 	    if(!image.exists())
 		ImageIO.write(chart.getCover(), "png", image);
 	}
 	
 	chart.copySampleFiles(dir);
-	chart.copyImageFiles(dir);
+	chart.copyBgaFiles(dir);
     }
     
     private static void makeHeader(BufferedWriter buffer, Chart chart) throws IOException
@@ -152,7 +154,9 @@ public class BMSWriter {
 	buffer.write(String.format(locale,"#BPM %.2f",chart.getBPM()));
 	buffer.newLine();
 	if(chart.hasCover()) {
-	    buffer.write(String.format("#STAGEFILE %s", "cover_image_"+chart.hashCode()+".png"));
+	    String cover_name = chart.getCoverName();
+	    if(cover_name == null) cover_name = "NAME_NOT_FOUND";
+	    buffer.write(String.format("#STAGEFILE %s", cover_name+".png"));
 	    buffer.newLine();
 	}
 	buffer.write(String.format("#LNTYPE 1"));
@@ -176,7 +180,7 @@ public class BMSWriter {
 	}
 	buffer.newLine();
 	
-	Map<Integer, String> imageIndex = chart.getImageIndex();
+	Map<Integer, String> imageIndex = chart.getBgaIndex();
 	
 	if(!imageIndex.isEmpty()) {
 	    buffer.write("*----BMP LIST----*");

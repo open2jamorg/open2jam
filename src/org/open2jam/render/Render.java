@@ -388,7 +388,7 @@ public abstract class Render implements GameWindowCallback
 	    bgaEntity.isVideo = true;
 	    bgaEntity.videoFile = chart.getVideo();
 	    bgaEntity.initVideo();
-	} else if(!chart.getImageIndex().isEmpty()) {
+	} else if(!chart.getBgaIndex().isEmpty()) {
 	    // get all the bgaEntity sprites
 	    
 	    for(Entry<Integer, File> entry: chart.getImages().entrySet()) {

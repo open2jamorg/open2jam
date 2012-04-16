@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.open2jam.parsers.utils.CharsetDetector;
+import org.open2jam.parsers.utils.Filters;
 import org.open2jam.parsers.utils.Logger;
 import org.open2jam.parsers.utils.SampleData;
 
@@ -127,24 +128,30 @@ class BMSParser
                         chart.lnobj = Integer.parseInt(st.nextToken(), 36);
                 }
                 if(cmd.equals("#STAGEFILE")){
-                    chart.image_cover = new File(f.getParent(),st.nextToken("").trim());
-                    if(!chart.image_cover.exists())
-                    {
-                        String target = chart.image_cover.getName();
-                        int idx = target.lastIndexOf('.');
-                        if(idx > 0)target = target.substring(0, idx);
-                        for(File ff : chart.source.getParentFile().listFiles())
-                        {
-                            String s = ff.getName();
-                            idx = s.lastIndexOf('.');
-                            if(idx > 0)s = s.substring(0, idx);
-                            if(target.equalsIgnoreCase(s)){
-                                chart.image_cover = ff;
-                                break;
-                            }
-                        }
-			if(!chart.image_cover.exists()) chart.image_cover = null;
-                    }
+		    chart.image_cover = null;
+		    File cover = new File(f.getParent(), st.nextToken("").trim());
+		    if(cover.exists()) {
+			chart.cover_name = cover.getName();
+			chart.image_cover = cover;			
+		    } else {
+			String target = cover.getName();
+			int idx = target.lastIndexOf('.');
+			if(idx > 0) {
+			    target = target.substring(0, idx);
+			}
+			for(File ff : chart.source.getParentFile().listFiles(Filters.imageFilter)) {
+			    String s = ff.getName();
+			    idx = s.lastIndexOf('.');
+			    if (idx > 0) {
+				s = s.substring(0, idx);
+			    }
+			    if (target.equalsIgnoreCase(s)) {
+				chart.cover_name = ff.getName();
+				chart.image_cover = ff;
+				break;
+			    }
+			}
+		    }
                 }
                 if(cmd.startsWith("#WAV")){
                         int id = Integer.parseInt(cmd.replaceFirst("#WAV",""), 36);
@@ -427,16 +434,7 @@ class BMSParser
     {
 	HashMap<Integer, SampleData> samples = new HashMap<Integer, SampleData>();
 	
-	FilenameFilter filter = new FilenameFilter() {
-
-	    public boolean accept(File dir, String name) {
-		String n = name.substring(name.lastIndexOf("."), name.length());
-		
-		return (n.equalsIgnoreCase(".wav") || n.equalsIgnoreCase(".ogg") || n.equalsIgnoreCase(".mp3"));
-	    }
-	};
-	
-	List<File> files = Arrays.asList(chart.source.getParentFile().listFiles(filter));
+	List<File> files = Arrays.asList(chart.source.getParentFile().listFiles(Filters.sampleFilter));
 	
 	Iterator<Entry<Integer, String>> it_samples = chart.sample_index.entrySet().iterator();
 	while(it_samples.hasNext()) {
@@ -472,17 +470,7 @@ class BMSParser
     static Map<Integer, File> getImages(BMSChart chart) {
 	HashMap<Integer, File> images = new HashMap<Integer, File>();
 	
-	FilenameFilter filter = new FilenameFilter() {
-
-	    public boolean accept(File dir, String name) {
-		String n = name.substring(name.lastIndexOf("."), name.length());
-		
-		return (n.equalsIgnoreCase(".bmp") || n.equalsIgnoreCase(".png") || n.equalsIgnoreCase(".jpg")
-			|| n.equalsIgnoreCase(".jpeg"));
-	    }
-	};
-	
-	List<File> files = Arrays.asList(chart.source.getParentFile().listFiles(filter));
+	List<File> files = Arrays.asList(chart.source.getParentFile().listFiles(Filters.imageFilter));
 	
 	Iterator<Entry<Integer, String>> it_images = chart.bga_index.entrySet().iterator();
 	while(it_images.hasNext()) {
@@ -506,23 +494,8 @@ class BMSParser
     }
     
     static boolean hasVideo(BMSChart chart) {
-	
-	FilenameFilter filter = new FilenameFilter() {
 
-	    public boolean accept(File dir, String name) {
-		String n = name.substring(name.lastIndexOf("."), name.length());
-		
-		return (n.equalsIgnoreCase(".avi") 
-			|| n.equalsIgnoreCase(".mpg")
-			|| n.equalsIgnoreCase(".mpeg")
-			|| n.equalsIgnoreCase(".mov")
-			|| n.equalsIgnoreCase(".mkv")
-			|| n.equalsIgnoreCase(".flv")
-			|| n.equalsIgnoreCase(".mp4"));
-	    }
-	};
-	
-	List<File> files = Arrays.asList(chart.source.getParentFile().listFiles(filter));
+	List<File> files = Arrays.asList(chart.source.getParentFile().listFiles(Filters.videoFilter));
 	
 	Iterator<Entry<Integer, String>> it_images = chart.bga_index.entrySet().iterator();
 	while(it_images.hasNext()) {

@@ -33,6 +33,7 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
     protected int notes = 0;
     protected int duration = 0;
     
+    protected String cover_name = null;
     protected File image_cover = null;
     protected File video = null;
     
@@ -94,6 +95,14 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
     /** this should return the list of events from this chart at this rank */
     public abstract EventList getEvents();
     
+    /** return the cover image name without extension or null if there is no cover name */
+    public String getCoverName() {
+	if(cover_name == null) return null;
+	
+	int dot = cover_name.lastIndexOf(".");
+	return cover_name.substring(0, dot);
+    }
+    
     /** Return true if the chart has a cover */
     public boolean hasCover() {
 	return image_cover != null;
@@ -114,7 +123,7 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
     }
     
     /** Get the image index of the chart */
-    public Map<Integer, String> getImageIndex() {
+    public Map<Integer, String> getBgaIndex() {
 	return bga_index;
     }
     
@@ -127,7 +136,7 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
 	}
     }
     
-    public void copyImageFiles(File directory) throws FileNotFoundException, IOException {
+    public void copyBgaFiles(File directory) throws FileNotFoundException, IOException {
 	Collection<File> images = getImages().values();
 	if(images.isEmpty()) return;
 	for(File f : images) {

@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.open2jam.parsers.utils.CharsetDetector;
+import org.open2jam.parsers.utils.Filters;
 import org.open2jam.parsers.utils.Logger;
 import org.open2jam.parsers.utils.SampleData;
 
@@ -54,6 +55,7 @@ class SMParser
 	String title = "", subtitle = "", artist = "";
 	double bpm = 130;
 	
+	String cover_name = null;
 	File image_cover = null;
 	
 	String line;
@@ -88,24 +90,29 @@ class SMParser
 		    continue;
 		}
                 if(cmd.equals("#BANNER")){
-                    image_cover = new File(file.getParent(),st.nextToken().trim());
-                    if(!image_cover.exists())
-                    {
-                        String target = image_cover.getName();
-                        int idx = target.lastIndexOf('.');
-                        if(idx > 0)target = target.substring(0, idx);
-                        for(File ff : file.getParentFile().listFiles())
-                        {
-                            String s = ff.getName();
-                            idx = s.lastIndexOf('.');
-                            if(idx > 0)s = s.substring(0, idx);
-                            if(target.equalsIgnoreCase(s)){
-                                image_cover = ff;
-                                break;
-                            }
-                        }
-			if(!image_cover.exists()) image_cover = null;
-                    }
+		    File cover = new File(file.getParent(), st.nextToken().trim());
+		    if(cover.exists()) {
+			cover_name = cover.getName();
+			image_cover = cover;			
+		    } else {
+			String target = cover.getName();
+			int idx = target.lastIndexOf('.');
+			if(idx > 0) {
+			    target = target.substring(0, idx);
+			}
+			for(File ff : file.getParentFile().listFiles(Filters.imageFilter)) {
+			    String s = ff.getName();
+			    idx = s.lastIndexOf('.');
+			    if (idx > 0) {
+				s = s.substring(0, idx);
+			    }
+			    if (target.equalsIgnoreCase(s)) {
+				cover_name = ff.getName();
+				image_cover = ff;
+				break;
+			    }
+			}
+		    }
                 }
                 if(cmd.startsWith("#MUSIC")){
 		    int id = 1;
@@ -119,6 +126,7 @@ class SMParser
 		    chart.title = title+" "+subtitle;
 		    chart.artist = artist;
 		    chart.bpm = bpm;
+		    chart.cover_name = cover_name;
 		    chart.image_cover = image_cover;
 		    chart.sample_index = sample_files;
 		    
@@ -310,16 +318,7 @@ class SMParser
     {
 	HashMap<Integer, SampleData> samples = new HashMap<Integer, SampleData>();
 	
-	FilenameFilter filter = new FilenameFilter() {
-
-	    public boolean accept(File dir, String name) {
-		String n = name.substring(name.lastIndexOf("."), name.length());
-		
-		return (n.equalsIgnoreCase(".wav") || n.equalsIgnoreCase(".ogg") || n.equalsIgnoreCase(".mp3"));
-	    }
-	};
-	
-	File[] files = chart.source.getParentFile().listFiles(filter);
+	File[] files = chart.source.getParentFile().listFiles(Filters.sampleFilter);
 	
 	for(Map.Entry<Integer, String> entry : chart.sample_index.entrySet()) {
 	    try {
