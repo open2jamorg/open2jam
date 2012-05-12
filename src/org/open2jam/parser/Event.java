@@ -134,9 +134,15 @@ public class Event implements Comparable<Event>
 	    this.offset = offset;
 	}
 
+	@Override
 	public int compareTo(Event e)
 	{
-            return ((measure+position) < (e.getMeasure()+e.getPosition())) ? -1 : 1;
+            double a = measure + position;
+            double b = e.getMeasure() + e.getPosition();
+            
+            if(a == b) return 0;
+            if(a < b)return -1;
+            else return 1;
 	}
 
 	public void setChannel(Channel chan) { this.channel = chan; }
