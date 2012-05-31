@@ -194,11 +194,13 @@ public class LWJGLSprite implements Sprite {
      */
     void draw(float px, float py, float sx, float sy)
     {
+        if(texture == null)return;
+        
         // store the current model matrix
         GL11.glPushMatrix();
 
         // bind to the appropriate texture for this sprite
-        if(texture!=null)texture.bind();
+        texture.bind();
 
         // translate to the right location and prepare to draw
         GL11.glTranslatef(px, py, 0);

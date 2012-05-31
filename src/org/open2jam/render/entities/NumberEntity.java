@@ -66,15 +66,16 @@ public class NumberEntity extends Entity
 	String numberString = String.valueOf(number);
         if(numberString.length() < show_digits)
         {
-            String zeros = "";
-            for(int i = 1; i<show_digits;i++) zeros += "0";
-            numberString = zeros+numberString;
+            StringBuilder zeros = new StringBuilder(show_digits);
+            for(int i = numberString.length(); i<show_digits;i++) 
+                zeros.append('0');
+            numberString = zeros.append(numberString).toString();
         }
         double tx = x;
         char[] chars = numberString.toCharArray();
         for(int j=chars.length-1;j>=0;j--)
         {
-            int i = Integer.parseInt(chars[j]+"");
+            int i = chars[j] - '0';
             tx -= entity_list.get(i).getWidth();
 	    entity_list.get(i).setPos(tx,y);
             entity_list.get(i).draw();

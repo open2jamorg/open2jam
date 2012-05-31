@@ -57,18 +57,22 @@ public class ChartListTableModel implements TableModel
         return items.get(row);
     }
 
+    @Override
     public int getRowCount() {
         return items.size();
     }
 
+    @Override
     public int getColumnCount() {
        return col_names.length;
     }
 
+    @Override
     public String getColumnName(int columnIndex) {
         return col_names[columnIndex];
     }
 
+    @Override
     public Class<?> getColumnClass(int columnIndex) {
        switch(columnIndex)
         {
@@ -79,12 +83,16 @@ public class ChartListTableModel implements TableModel
        return Object.class;
     }
 
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;
     }
 
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
+        
         Chart c;
+        if(items.size() <= rowIndex)return null;
         if(items.get(rowIndex).isEmpty()) return null;
         if(items.get(rowIndex).size()-1 < rank)
             c = items.get(rowIndex).get(0);
@@ -103,14 +111,17 @@ public class ChartListTableModel implements TableModel
         return null;
     }
 
+    @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         throw new UnsupportedOperationException("Can't do that cowboy");
     }
 
+    @Override
     public void addTableModelListener(TableModelListener l) {
         listeners.add(l);
     }
 
+    @Override
     public void removeTableModelListener(TableModelListener l) {
        listeners.remove(l);
     }

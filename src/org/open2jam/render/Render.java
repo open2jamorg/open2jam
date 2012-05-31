@@ -4,39 +4,22 @@ package org.open2jam.render;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.logging.Level;
-import org.open2jam.util.Logger;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
-
 import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.Config;
 import org.open2jam.GameOptions;
-import org.open2jam.parser.Event;
 import org.open2jam.parser.Chart;
-import org.open2jam.render.entities.BarEntity;
-import org.open2jam.render.entities.ComboCounterEntity;
-import org.open2jam.render.entities.CompositeEntity;
-import org.open2jam.render.entities.Entity;
-import org.open2jam.render.entities.LongNoteEntity;
-import org.open2jam.render.entities.MeasureEntity;
-import org.open2jam.render.entities.NoteEntity;
-import org.open2jam.render.entities.NumberEntity;
-import org.open2jam.render.entities.SampleEntity;
-import org.open2jam.render.entities.TimeEntity;
+import org.open2jam.parser.Event;
+import org.open2jam.render.entities.*;
 import org.open2jam.render.lwjgl.SoundManager;
 import org.open2jam.render.lwjgl.TrueTypeFont;
 import org.open2jam.util.Interval;
 import org.open2jam.util.IntervalTree;
+import org.open2jam.util.Logger;
 import org.open2jam.util.SystemTimer;
 
 /**
@@ -240,17 +223,18 @@ public abstract class Render implements GameWindowCallback
 	AUTOSOUND = opt.getAutosound();
 	
 	//TODO Should get values from gameoptions, but i'm lazy as hell
-	if(opt.getAutoplay()) 
+	if(opt.getAutoplay())
 	{
 	    for(Event.Channel c : Event.Channel.values())
 	    {
-		if(c.toString().startsWith(("NOTE_")))
-		    c.enableAutoplay();
+		if(c.toString().startsWith(("NOTE_"))) c.enableAutoplay();
 	    }
-
-//	    Event.Channel.NOTE_4.enableAutoplay();
-//	    Event.Channel.NOTE_1.enableAutoplay();
-	}
+	} else {
+	    for(Event.Channel c : Event.Channel.values())
+	    {
+		if(c.toString().startsWith(("NOTE_"))) c.disableAutoplay();
+	    }
+        }
 	
         window.setDisplay(dm,opt.getVsync(),opt.getFullScreen(),opt.getBilinear());
     }
@@ -325,7 +309,7 @@ public abstract class Render implements GameWindowCallback
         // reference to long notes being holded
         longnote_holded = new EnumMap<Event.Channel,LongNoteEntity>(Event.Channel.class);
 
-	    longflare = new EnumMap<Event.Channel, Entity> (Event.Channel.class);
+	longflare = new EnumMap<Event.Channel, Entity> (Event.Channel.class);
 
         last_sound = new EnumMap<Event.Channel,Event.SoundSample>(Event.Channel.class);
 
@@ -959,10 +943,9 @@ public abstract class Render implements GameWindowCallback
      */
     double velocity_integral(double t0, double t1)
     {
-        boolean negative = false;
-        if(t0 > t1){
+        final boolean negative = t0 > t1;
+        if(negative){
             double tmp = t1;t1 = t0;t0 = tmp; // swap
-            negative = true;
         }
         List<Interval<Double,Double>> list = velocity_tree.getIntervals(t0, t1);
         double integral = 0;
@@ -1083,9 +1066,9 @@ public abstract class Render implements GameWindowCallback
 
         Collections.shuffle(channelSwap);
 
-            EnumMap<Event.Channel, Event.Channel> lnMap = new EnumMap<Event.Channel, Event.Channel>(Event.Channel.class);
+        EnumMap<Event.Channel, Event.Channel> lnMap = new EnumMap<Event.Channel, Event.Channel>(Event.Channel.class);
 
-            int last_measure = -1;
+        int last_measure = -1;
         while(buffer.hasNext())
         {
             Event e = buffer.next();
@@ -1149,10 +1132,6 @@ public abstract class Render implements GameWindowCallback
 
     private void visibility(GameOptions.VisibilityMod value)
     {
-        int height = 0;
-        int width  = 0;
-
-        Sprite rec = null;
         // We will make a new entity with the masking rectangle for each note lane
         // because we can't know for sure where the notes will be,
         // meaning that they may not be together
@@ -1160,9 +1139,9 @@ public abstract class Render implements GameWindowCallback
         {
             if(ev.toString().startsWith("NOTE_") && skin.getEntityMap().get(ev.toString()) != null)
             {
-                height = (int)Math.round(getViewport());
-                width = (int)Math.round(skin.getEntityMap().get(ev.toString()).getWidth());
-                rec  = ResourceFactory.get().doRectangle(width, height, value);
+                int height = (int)Math.round(getViewport());
+                int width = (int)Math.round(skin.getEntityMap().get(ev.toString()).getWidth());
+                Sprite rec  = ResourceFactory.get().doRectangle(width, height, value);
                 visibility_entity.getEntityList().add(new Entity(rec, skin.getEntityMap().get(ev.toString()).getX(), 0));
             }
         }

@@ -41,8 +41,8 @@ public class MusicSelection extends javax.swing.JPanel
 
     private class RenderThread extends Thread {
 
-        Container c;
-        Render r;
+        final Container c;
+        final Render r;
         public RenderThread(Container c, Render r) {
             this.c = c;
             this.r = r;

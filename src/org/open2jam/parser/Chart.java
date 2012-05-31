@@ -1,11 +1,10 @@
 package org.open2jam.parser;
 
-import java.io.File;
-import java.util.List;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
@@ -53,6 +52,7 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
     /** this should return the list of events from this chart at this rank */
     public abstract List<Event> getEvents();
 
+    @Override
     public int compareTo(Chart c)
     {
         return getLevel() - c.getLevel();
@@ -64,10 +64,8 @@ public abstract class Chart implements Comparable<Chart>, java.io.Serializable
 	if(u == null) return null;
 	
 	try {
-	    return ImageIO.read(new File(u.toURI()));
-	} catch (URISyntaxException ex) {
-	    Logger.global.log(Level.WARNING, "Someone deleted or renamed my no_image image file :_ {0}", ex.getMessage());
-	} catch (IOException ex) {
+            return ImageIO.read(u);
+        } catch (IOException ex) {
 	    Logger.global.log(Level.WARNING, "Someone deleted or renamed my no_image image file :_ {0}", ex.getMessage());
 	}
 	return null;
