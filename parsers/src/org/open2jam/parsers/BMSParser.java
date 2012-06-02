@@ -17,6 +17,7 @@ class BMSParser
 
     private static final Pattern note_line = Pattern.compile("^#(\\d\\d\\d)(\\d\\d):(.+)$");
     private static final Pattern bpm_line = Pattern.compile("^#BPM(\\w\\w)\\s+(.+)$");
+    private static final Pattern stop_line = Pattern.compile("^#STOP(\\w\\w)\\s+(.+)$");
     
     private static final FileFilter bms_filter = new FileFilter(){
         public boolean accept(File f){
@@ -242,36 +243,51 @@ class BMSParser
         }
 
         HashMap<Integer, Double> bpm_map = new HashMap<Integer, Double>();
+	HashMap<Integer, Integer> stop_map = new HashMap<Integer, Integer>();
         HashMap<Integer, Boolean> ln_buffer = new HashMap<Integer, Boolean>();
         HashMap<Integer, Event> lnobj_buffer = new HashMap<Integer, Event>();
 	
 	//This will help us to sort the lines by measure
 	Map<Integer, List<String>> lines = new TreeMap<Integer, List<String>>();
 	
-        try {
-            while ((line = r.readLine()) != null) {
-                line = line.trim().toUpperCase();
-                if (!line.startsWith("#"))continue;
+	try {
+	    while ((line = r.readLine()) != null) {
+		line = line.trim().toUpperCase();
+		if (!line.startsWith("#")) {
+		    continue;
+		}
 
-                Matcher matcher = note_line.matcher(line);
-                if (!matcher.find()) {
-                    Matcher bpm_match = bpm_line.matcher(line);
-                    if (bpm_match.find()) {
-                        int code = Integer.parseInt(bpm_match.group(1), 36);
-                        double value = Double.parseDouble(bpm_match.group(2).replace(",", "."));
-                        bpm_map.put(code, value);
-                    }
-                    continue;
-                }
-                int measure = Integer.parseInt(matcher.group(1));
+		Matcher matcher = note_line.matcher(line);
+		if (!matcher.find()) {
+		    if (line.startsWith("#BPM")) {
+			Matcher bpm_match = bpm_line.matcher(line);
+			if (bpm_match.find()) {
+			    int code = Integer.parseInt(bpm_match.group(1), 36);
+			    double value = Double.parseDouble(bpm_match.group(2).replace(",", "."));
+			    bpm_map.put(code, value);
+			}
+		    } else if (line.startsWith(("#STOP"))) {
+			Matcher stop_match = stop_line.matcher(line);
+			if (stop_match.find()) {
+			    int code = Integer.parseInt(stop_match.group(1), 36);
+			    int value = Integer.parseInt(stop_match.group(2));
+			    stop_map.put(code, value);
+			}
+		    }
+
+		    continue;
+		}
+
+		int measure = Integer.parseInt(matcher.group(1));
 		//Let's add the line
-		if(!lines.containsKey(measure))
+		if (!lines.containsKey(measure)) {
 		    lines.put(measure, new ArrayList<String>());
+		}
 		lines.get(measure).add(line);
-            }
-        } catch (IOException ex) {
-            Logger.global.log(Level.SEVERE, null, ex);
-        }
+	    }
+	} catch (IOException ex) {
+	    Logger.global.log(Level.SEVERE, null, ex);
+	}
 
 	Iterator<List<String>> it = lines.values().iterator();
 	//now iterate by all the lines and add the events
@@ -289,7 +305,8 @@ class BMSParser
 		    continue;
 		}
 		String[] events = matcher.group(3).split("(?<=\\G.{2})");
-		if (channel == 3) {
+		
+		if (channel == 3) { //INLINE BPM CHANGE
 		    for (int i = 0; i < events.length; i++) {
 			int value = Integer.parseInt(events[i], 16);
 			if (value == 0) {
@@ -299,7 +316,7 @@ class BMSParser
 			event_list.add(new Event(Event.Channel.BPM_CHANGE, measure, p, value, Event.Flag.NONE));
 		    }
 		    continue;
-		} else if (channel == 8) {
+		} else if (channel == 8) { //BPM TAG BPM CHANGE
 		    for (int i = 0; i < events.length; i++) {
 			if (events[i].equals("00")) {
 			    continue;
@@ -309,7 +326,7 @@ class BMSParser
 			event_list.add(new Event(Event.Channel.BPM_CHANGE, measure, p, value, Event.Flag.NONE));
 		    }
 		    continue;
-		} else if (channel == 4) {
+		} else if (channel == 4) { //BGA DATA
 		    for (int i = 0; i < events.length; i++) {
 			int value = Integer.parseInt(events[i], 36);
 			if (value == 0) {
@@ -317,6 +334,16 @@ class BMSParser
 			}
 			double p = ((double) i) / events.length;
 			event_list.add(new Event(Event.Channel.BGA, measure, p, value, Event.Flag.NONE));
+		    }
+		    continue;
+		} else if (channel == 9) { //STOP DATA
+		    for (int i = 0; i < events.length; i++) {
+			if (events[i].equals("00")) {
+			    continue;
+			}
+			double value = stop_map.get(Integer.parseInt(events[i], 36));
+			double p = ((double) i) / events.length;
+			event_list.add(new Event(Event.Channel.STOP, measure, p, value, Event.Flag.NONE));
 		    }
 		    continue;
 		}

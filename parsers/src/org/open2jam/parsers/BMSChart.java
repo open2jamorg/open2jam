@@ -10,11 +10,15 @@ import org.open2jam.parsers.utils.Logger;
 import org.open2jam.parsers.utils.SampleData;
 
 public class BMSChart extends Chart
-{
+{   
     int lntype;
     int lnobj;
     
     boolean o2mania_style;
+
+    public BMSChart() {
+	type = TYPE.BMS;
+    }
     
     public File getSource() {
 	return source; 

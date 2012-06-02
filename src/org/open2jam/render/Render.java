@@ -553,7 +553,7 @@ public abstract class Render implements GameWindowCallback
                 if(SoundManager.isPlaying(source)){
                     last_sound.clear();
                     return;
-                }
+                 }
             }
             // all sources have finished playing
             window.destroy();
@@ -933,13 +933,18 @@ public abstract class Render implements GameWindowCallback
         double my_note_speed = (my_bpm * measure_size) / BEATS_PER_MSEC;
         
         EventList new_list = new EventList();
+	
+	//there is always a 1st measure
+	Event m = new Event(Event.Channel.MEASURE, measure, 0, 0, Event.Flag.NONE);
+	m.setTime(timer);
+	new_list.add(m);
 
         for(Event e : list)
         {
             while(e.getMeasure() > measure)
             {
                 timer += (BEATS_PER_MSEC * (frac_measure-measure_pointer)) / my_bpm;
-                Event m = new Event(Event.Channel.MEASURE, measure, 0, 0, Event.Flag.NONE);
+                m = new Event(Event.Channel.MEASURE, measure, 0, 0, Event.Flag.NONE);
                 m.setTime(timer);
                 new_list.add(m);
                 measure++;
@@ -954,8 +959,16 @@ public abstract class Render implements GameWindowCallback
             {
 		case STOP:
 		    velocity_tree.addInterval(last_bpm_change, timer, my_note_speed);
-		    velocity_tree.addInterval(timer, timer+e.getValue(), 0d);
-		    last_bpm_change = timer = timer + e.getValue();
+		    double stop_time = e.getValue();
+		    if(chart.type == Chart.TYPE.BMS) {
+			//convert the bms stop values to a time value
+			stop_time = (e.getValue() / 192) * BEATS_PER_MSEC / my_bpm;
+			System.out.println(stop_time);
+			velocity_tree.addInterval(timer, timer+stop_time, 0d);
+		    } else {
+			velocity_tree.addInterval(timer, timer+stop_time, 0d);
+		    }
+		    last_bpm_change = timer = timer + stop_time;
 		break;
 		case BPM_CHANGE:
                     velocity_tree.addInterval(last_bpm_change, timer, my_note_speed);

@@ -11,6 +11,10 @@ import org.open2jam.parsers.utils.SampleData;
 
 public class SMChart extends Chart {
 
+    public SMChart() {
+	type = TYPE.SM;
+    }
+
     public File getSource() {
 	return source;
     }

@@ -17,7 +17,11 @@ import org.open2jam.parsers.utils.SampleData;
 public class XNTChart extends Chart {
 
     Map<String, SNPParser.SNPFileHeader> file_index;
-    
+
+    public XNTChart() {
+	type = TYPE.XNT;
+    }
+
     String xnt_filename = "";
     public String getXNTFile() {
 	return xnt_filename;

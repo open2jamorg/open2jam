@@ -20,7 +20,11 @@ public class OJNChart extends Chart {
     int note_offset_end;
     int cover_offset;
     int cover_size;
-    
+
+    public OJNChart() {
+	type = TYPE.OJN;
+    }
+       
     public File getSource() {
 	return source;
     }
