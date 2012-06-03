@@ -364,7 +364,7 @@ public abstract class Render implements GameWindowCallback
 
         EventList event_list = construct_velocity_tree(chart.getEvents());
 	
-	event_list.fixEventList(true, true);
+	event_list.fixEventList(EventList.FixMethod.OPEN2JAM, true);
 
 	//Let's randomize "-"
         switch(opt.getChannelModifier())

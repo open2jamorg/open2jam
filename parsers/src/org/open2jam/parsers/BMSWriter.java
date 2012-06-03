@@ -105,7 +105,7 @@ public class BMSWriter {
     {
 	event_list = chart.getEvents();
 	//fix possible broken longnotes
-	event_list.fixEventList(true, false);
+	event_list.fixEventList(EventList.FixMethod.OPEN2JAM, false);
 	Collections.sort(event_list);
 
 	String dirName = (chart.getArtist()+" - "+chart.getTitle()).replaceAll("/", " ");

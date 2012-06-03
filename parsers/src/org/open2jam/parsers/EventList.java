@@ -10,17 +10,24 @@ import org.open2jam.parsers.utils.Logger;
  * @author CdK
  */
 public class EventList extends ArrayList<Event> {
+    
+    public int playableNotes = 0;
 
+    public enum FixMethod {NONE, O2JAM, OPEN2JAM};
+    
     /**
      * WARNING, USING THIS CAN CHANGE THE CHART
      * 
      * Use this only if you don't want to deal with broken longnotes or longnotes in the autoplay channel
      * If you want to write a Editor with this lib, don't use it because it changes a lot of things in the events
      */
-    public void fixEventList(boolean fix_broken_longnotes, boolean fix_autoplay_longnotes) {
+    public void fixEventList(FixMethod method, boolean fix_autoplay_longnotes) {
 	
-	if(!fix_autoplay_longnotes && !fix_broken_longnotes)
+	if(!fix_autoplay_longnotes && method == FixMethod.NONE)
 	    return;
+	
+        EnumSet<Event.Channel> note_channels_set = EnumSet.of(Event.Channel.NOTE_1, Event.Channel.NOTE_2, Event.Channel.NOTE_3,
+            Event.Channel.NOTE_4, Event.Channel.NOTE_5, Event.Channel.NOTE_6, Event.Channel.NOTE_7);
 	
 	Map<Event.Channel, Event> lnchan = new EnumMap<Event.Channel, Event>(Event.Channel.class);
 
@@ -28,35 +35,17 @@ public class EventList extends ArrayList<Event> {
 	while(it.hasNext()) {
 	    Event e = it.next();
 	    
-	    if(fix_broken_longnotes) {
-		Event.Channel c = e.getChannel();
-		
-		if(c == Event.Channel.AUTO_PLAY) continue;
-		
-		switch(e.getFlag()){
-		    case NONE:
-			if(lnchan.containsKey(c)) {
-			    fixHoldNote(it, e, lnchan.get(c));
-			    lnchan.remove(c);
-			}
+	    if(note_channels_set.contains(e.getChannel())) {
+		switch(method) {
+		    case OPEN2JAM:
+			fixOPEN2JAM(it, e, lnchan);
 		    break;
-		    case HOLD:
-			if(lnchan.containsKey(c)) {
-			    //it will convert the broken hold to a none
-			    Event evt = lnchan.get(c);
-			    System.out.println("Broken HOLD event! @ "+evt.getTotalPosition()+" ("+evt.getValue()+"): ");
-			    System.out.println("\tBut converted to NONE because the next event is another HOLD :/");
-			    evt.flag = Event.Flag.NONE;
-			}
-			//So we still need to add it to the lnchan because it won't do anything to this event
-			lnchan.put(c, e);
-		    break;  
-		    case RELEASE:
-			if(!lnchan.containsKey(c)) {
-			    fixReleaseNote(it, e);
-			}
-			lnchan.remove(c);
+		    case O2JAM:
+			fixO2JAM(it, e, lnchan);
 		    break;
+		    default:
+			playableNotes++;
+		    break;    
 		}
 	    }
 	    
@@ -68,6 +57,83 @@ public class EventList extends ArrayList<Event> {
 		e.flag = Event.Flag.NONE;
 	    }
 	}
+	
+	System.out.println(playableNotes);
+    }
+    
+    
+    private void fixOPEN2JAM(ListIterator<Event> it, Event e, Map<Event.Channel, Event> lnchan) {
+	    Event.Channel c = e.getChannel();
+	    switch(e.getFlag()){
+		case NONE:
+		    if(lnchan.containsKey(c)) {
+			fixHoldNote(it, e, lnchan.get(c));
+			lnchan.remove(c);
+		    }
+		    playableNotes++;
+		break;
+		case HOLD:
+		    if(lnchan.containsKey(c)) {
+			//it will convert the broken hold to a none
+			Event evt = lnchan.get(c);
+			System.out.println("Broken HOLD event! @ "+evt.getTotalPosition()+" ("+evt.getValue()+"): ");
+			System.out.println("\tBut converted to NONE because the next event is another HOLD :/");
+			evt.flag = Event.Flag.NONE;
+		    } 
+		    playableNotes++;
+		    //So we still need to add it to the lnchan because it won't do anything to this event
+		    lnchan.put(c, e);
+		break;  
+		case RELEASE:
+		    if(!lnchan.containsKey(c)) {
+			fixReleaseNote(it, e);
+		    } else {
+			playableNotes++;
+		    }
+		    lnchan.remove(c);
+		break;
+	    }	
+    }
+    
+    
+    /* sanity check
+    * now we need to check the events to see if its consistent,
+    * I identified 3 types of inconsistence so far:
+    *
+    * 1. tap note on top of an on-going long note
+    * 2. starting a long note on an on-going long note
+    * 3. end long note without an on-going long note
+    *
+    * as far as I have tested o2mania simply ignore these 3 cases
+    */
+    private void fixO2JAM(ListIterator<Event> it, Event e, Map<Event.Channel, Event> lnchan) {
+	Event.Channel c = e.getChannel();
+	switch(e.getFlag()) {
+	    case NONE:
+		if(lnchan.containsKey(c)) // problem 1
+		    e.setChannel(Event.Channel.AUTO_PLAY);
+		else
+		    playableNotes++;
+		break;
+
+	    case HOLD:
+		if(lnchan.containsKey(c)) // problem 2
+		    e.setChannel(Event.Channel.AUTO_PLAY);
+		else {
+		    lnchan.put(c,null);
+		    playableNotes++;
+		}
+		break;
+
+	    case RELEASE:
+		if(!lnchan.containsKey(c)) // problem 3
+		    it.remove();
+		else {
+		    lnchan.remove(c);
+		    playableNotes++;
+		}
+		break;
+	}	
     }
     
     /**
@@ -155,6 +221,7 @@ public class EventList extends ArrayList<Event> {
 	    for(Event evt : toAutoplay) {
 		evt.setChannel(Event.Channel.AUTO_PLAY);
 		System.out.println("\tMoving to autoplay "+evt.getTotalPosition());
+		playableNotes--;
 	    }
 	} else {
 	    //not found :( we will use the caller of this method as a release event
@@ -225,17 +292,20 @@ public class EventList extends ArrayList<Event> {
 		    System.out.println("\tto Autoplay ("+evt.getValue()+"): "+evt.flag+" "+evt.getTotalPosition());
 		}
 	    }
-    }
+	}
 
 	if(found) {
 	    System.out.println("fixed :D");
+	    playableNotes++;
 	    for(Event evt : toAutoplay) {
 		evt.setChannel(Event.Channel.AUTO_PLAY);
 		System.out.println("\tMoving to autoplay "+evt.getTotalPosition());
+		playableNotes--;
 	    }
 	} else {
 	    System.out.println("Not fixed :(");
 	    it.remove();
+	    playableNotes--;
 	}
     }
     
@@ -373,9 +443,9 @@ public class EventList extends ArrayList<Event> {
     {
         List<Event.Channel> channelSwap = new ArrayList<Event.Channel>();
 
-        Collections.addAll(channelSwap, Event.Channel.playableChannels());
+	Collections.addAll(channelSwap, Event.Channel.playableChannels());
 
-        Collections.shuffle(channelSwap);
+	Collections.shuffle(channelSwap);
 
 	EnumMap<Event.Channel, Event.Channel> lnMap = new EnumMap<Event.Channel, Event.Channel>(Event.Channel.class);
 
