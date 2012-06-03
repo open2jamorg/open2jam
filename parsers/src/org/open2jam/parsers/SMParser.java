@@ -13,7 +13,7 @@ import org.open2jam.parsers.utils.SampleData;
 
 class SMParser
 {
-    public static Pattern key_value = Pattern.compile("(,|;)?(\\d+\\.\\d+)=(\\d+\\.\\d+)(,|;)?");
+    public static Pattern key_value = Pattern.compile("(,|;)?( *(\\d+\\.\\d+) *= *(\\d+\\.\\d+) *)?(,|;)?");
     public static Pattern note_line = Pattern.compile("^(,|;)?([01234ML]+)?(,|;)?.*$", Pattern.CASE_INSENSITIVE);
       
     public static boolean canRead(File f)
@@ -358,20 +358,25 @@ class SMParser
 	    {
 		if(n[i].equals("0")) continue;
 
+		Event.Flag flag;
 		if(n[i].equals("1")) 
-		    event_list.add(new Event(getChannel(i), measure, position, 0, Event.Flag.NONE));
+		    flag = Event.Flag.NONE;
 		else if(n[i].equals("2"))
-		    event_list.add(new Event(getChannel(i), measure, position, 0, Event.Flag.HOLD));
+		    flag = Event.Flag.HOLD;
 		else if(n[i].equals("3"))
-		    event_list.add(new Event(getChannel(i), measure, position, 0, Event.Flag.RELEASE));
+		    flag = Event.Flag.RELEASE;
 		else if(n[i].equals("4"))
-		    Logger.global.log(Level.WARNING, "Roll not supported :/");
+		    flag = Event.Flag.ROLL;
 		else if(n[i].equals("M"))
-		    Logger.global.log(Level.WARNING, "Mines not supported :/");
+		    flag = Event.Flag.MINE;
 		else if(n[i].equals("L"))
-		    Logger.global.log(Level.WARNING, "Lift not supported :/");
-		else
+		    flag = Event.Flag.LIFT;
+		else {
 		    Logger.global.log(Level.WARNING, "{0} not supported :/", n[i]);
+		    continue;
+		}
+		
+		event_list.add(new Event(getChannel(i), measure, position, 0, flag));
 	    }
 	}
 	notes.clear();	

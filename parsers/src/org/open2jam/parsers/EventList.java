@@ -58,7 +58,7 @@ public class EventList extends ArrayList<Event> {
 	    }
 	}
 	
-	System.out.println(playableNotes);
+	Logger.global.log(Level.INFO, "Total playable notes: {0}", playableNotes);
     }
     
     
