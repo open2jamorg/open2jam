@@ -5,7 +5,7 @@
 
 package org.open2jam.render.entities;
 
-import org.open2jam.parser.Event;
+import org.open2jam.parsers.Event;
 import org.open2jam.render.Render;
 
 /**

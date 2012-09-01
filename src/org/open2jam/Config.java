@@ -5,9 +5,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import org.lwjgl.input.Keyboard;
-import org.open2jam.parser.ChartList;
-import org.open2jam.parser.Event;
-import org.open2jam.parser.Event.Channel;
+import org.open2jam.parsers.ChartList;
+import org.open2jam.parsers.Event;
+import org.open2jam.parsers.Event.Channel;
 import org.voile.VoileMap;
 
 /**

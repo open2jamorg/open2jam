@@ -1,11 +1,5 @@
 package org.open2jam.util;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.io.FilterInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import com.jcraft.jogg.Packet;
 import com.jcraft.jogg.Page;
 import com.jcraft.jogg.StreamState;
@@ -14,6 +8,12 @@ import com.jcraft.jorbis.Block;
 import com.jcraft.jorbis.Comment;
 import com.jcraft.jorbis.DspState;
 import com.jcraft.jorbis.Info;
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import org.open2jam.parsers.utils.Logger;
 
 
 

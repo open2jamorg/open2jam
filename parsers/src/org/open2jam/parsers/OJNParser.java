@@ -1,17 +1,14 @@
-package org.open2jam.parser;
+package org.open2jam.parsers;
 
-import java.io.RandomAccessFile;
-import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.Collections;
-import java.util.List;
 import java.util.logging.Level;
-import org.open2jam.util.Logger;
-import org.open2jam.util.CharsetDetector;
+import org.open2jam.parsers.utils.ByteHelper;
+import org.open2jam.parsers.utils.Logger;
 
 class OJNParser
 {
@@ -74,9 +71,9 @@ class OJNParser
         event_count[1] = buffer.getInt();
         event_count[2] = buffer.getInt();
 
-        easy.note_count = buffer.getInt();
-        normal.note_count = buffer.getInt();
-        hard.note_count = buffer.getInt();
+        easy.notes = buffer.getInt();
+        normal.notes = buffer.getInt();
+        hard.notes = buffer.getInt();
 
         int measure_count[] = new int[3];
         measure_count[0] = buffer.getInt();
@@ -95,28 +92,28 @@ class OJNParser
 
         byte title[] = new byte[64];
         buffer.get(title);
-        String str_title = bytes2string(title);
+        String str_title = ByteHelper.toString(title);
         easy.title = str_title;
         normal.title = str_title;
         hard.title = str_title;
 
         byte artist[] = new byte[32];
         buffer.get(artist);
-        String str_artist = bytes2string(artist);
+        String str_artist = ByteHelper.toString(artist);
         easy.artist = str_artist;
         normal.artist = str_artist;
         hard.artist = str_artist;
 
         byte noter[] = new byte[32];
         buffer.get(noter);
-        String str_noter = bytes2string(noter);
+        String str_noter = ByteHelper.toString(noter);
         easy.noter = str_noter;
         normal.noter = str_noter;
         hard.noter = str_noter;
 
         byte ojm_file[] = new byte[32];
         buffer.get(ojm_file);
-        File sample_file = new File(file.getParent(), bytes2string(ojm_file));
+        File sample_file = new File(file.getParent(), ByteHelper.toString(ojm_file));
         easy.sample_file = sample_file;
         normal.sample_file = sample_file;
         hard.sample_file = sample_file;
@@ -153,7 +150,7 @@ class OJNParser
         list.add(hard);
 
         list.source_file = file;
-        buffer = null;
+	buffer.clear();
 
         try {
             f.close();
@@ -163,19 +160,20 @@ class OJNParser
         return list;
     }
 
-    public static List<Event> parseChart(OJNChart chart)
+    public static EventList parseChart(OJNChart chart)
     {
-        ArrayList<Event> event_list = new ArrayList<Event>();
+        EventList event_list = new EventList();
         try{
-                RandomAccessFile f = new RandomAccessFile(chart.getSource().getAbsolutePath(), "r");
+	    RandomAccessFile f = new RandomAccessFile(chart.getSource().getAbsolutePath(), "r");
 
-                int start = chart.note_offset;
-                int end = chart.note_offset_end;
+	    int start = chart.note_offset;
+	    int end = chart.note_offset_end;
 
-                ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, start, end - start);
-                buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
-                readNoteBlock(event_list, buffer);
-                f.close();
+	    ByteBuffer buffer = f.getChannel().map(FileChannel.MapMode.READ_ONLY, start, end - start);
+	    buffer.order(java.nio.ByteOrder.LITTLE_ENDIAN);
+	    readNoteBlock(event_list, buffer);
+	    
+	    f.close();
         }catch(java.io.FileNotFoundException e){
             Logger.global.log(Level.WARNING, "File {0} not found !!", chart.getSource().getName());
         } catch (IOException e){
@@ -184,7 +182,7 @@ class OJNParser
         return event_list;
     }
 
-    private static void readNoteBlock(List<Event> event_list, ByteBuffer buffer) {
+    private static void readNoteBlock(EventList event_list, ByteBuffer buffer) {
         while(buffer.hasRemaining())
         {
             int measure = buffer.getInt();
@@ -235,59 +233,33 @@ class OJNParser
                     value--; // make zero-based ( zero was the "ignore" value )
 		    	    
 		    // A lot of fixes here are done thanks to keigen shu. He's stealing my protagonism D:
-		    Event.Flag f;
-		    type %= 8;
+		    Event.Flag f = Event.Flag.NONE;
+
+		    if(type%8 > 3)
+			value += 1000;
+		    type %= 4;
+		    
 		    switch(type)
 		    {
 			case 0:
-			    event_list.add(new Event(channel,measure,position,value,Event.Flag.NONE,volume, pan));
+			    f = Event.Flag.NONE;
 			break;
 			case 1:
 			    //Unused (#W Normal displayed in NoteTool)
 			break;
 			case 2:
 			    //fix for autoplay longnotes, convert them to normal notes (it doesn't matter but... still xD)
-			    f = channel == Event.Channel.AUTO_PLAY ? Event.Flag.NONE : Event.Flag.HOLD;
-			    event_list.add(new Event(channel,measure,position,value,f,volume, pan));
+			    f = Event.Flag.HOLD;
 			break;
 			case 3:
-			    //Skip if autoplay
-			    if(channel == Event.Channel.AUTO_PLAY) break;
-			    event_list.add(new Event(channel,measure,position,value,Event.Flag.RELEASE,volume, pan));
-			break;
-			case 4:
-			    event_list.add(new Event(channel,measure,position,1000+value,Event.Flag.NONE,volume, pan));
-			break;
-			case 5:
-			    //Unused (#M Hold displayed in NoteTool. Does not link with 0x06.)
-			break;
-			case 6:
-			    //fix for autoplay longnotes, convert them to normal notes (it doesn't matter but... still xD)
-			    f = channel == Event.Channel.AUTO_PLAY ? Event.Flag.NONE : Event.Flag.HOLD;
-			    event_list.add(new Event(channel,measure,position,1000+value,f,volume, pan));
-			break;
-			case 7:
-			    //Skip if autoplay
-			    if(channel == Event.Channel.AUTO_PLAY) break;
-			    event_list.add(new Event(channel,measure,position,1000+value,Event.Flag.RELEASE,volume, pan));
+			    f = Event.Flag.RELEASE;
 			break;
 		    }
+		    
+		    event_list.add(new Event(channel,measure,position,value,f,volume, pan));
                 }
             }
         }
         Collections.sort(event_list);
-    }
-
-    private static String bytes2string(byte[] ch)
-    {
-        int i = 0;
-        while(i<ch.length && ch[i]!=0)i++; // find \0 terminator
-        String charset = CharsetDetector.analyze(ch);
-        try {
-            return new String(ch,0,i,charset);
-        } catch (UnsupportedEncodingException ex) {
-            Logger.global.log(Level.WARNING, "Encoding [{0}] not supported !", charset);
-            return new String(ch,0,i);
-        }
     }
 }

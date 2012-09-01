@@ -390,18 +390,11 @@
     <skin name="o2jam" keys="7" scratch="false" width="800" height="600" judgment_line="480">
     <!-- background -->
         <layer>
-            <styles id="BACKGROUND">
-                <style id="Default">
-                    <entity x="204" y="0"   sprite="background"  />
-                    <entity x="204" y="0"   sprite="background4" />
-                    <entity x="204" y="213" sprite="background5" />
-                    <entity x="204" y="509" sprite="background2" />
-                    <entity x="488" y="509" sprite="background3" />
-                </style>
-<!--        <style id="bg2"> commented because it was causing a blank line on the screen
-                <entity x="204" y="0"   sprite="bg" />
-            </style>-->
-            </styles>
+	    <entity id="BGA" x="204" y="0"   sprite="background"  />
+	    <entity x="204" y="0"   sprite="background4" />
+	    <entity x="204" y="213" sprite="background5" />
+	    <entity x="204" y="509" sprite="background2" />
+	    <entity x="488" y="509" sprite="background3" />
         </layer>
 
     <!-- borders for the note area -->
@@ -505,7 +498,7 @@
 
             <entity y="460" id="EFFECT_LONGFLARE" sprite="longflare" />
         </layer>
-
+	
     <!-- counters and judgment sprites -->
         <layer>
             <entity id="COMBO_COUNTER" x="99" y="210" sprite="combo_number_0,

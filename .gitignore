@@ -1,7 +1,8 @@
 *.class
 *~
 *.obj
-dist
-build
-nbproject
-
+dist/
+build/
+nbproject/private
+nbproject/genfiles.properties
+nbproject/build-impl.xml

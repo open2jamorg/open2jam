@@ -5,8 +5,8 @@ import java.util.List;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
-import org.open2jam.parser.Chart;
-import org.open2jam.parser.ChartList;
+import org.open2jam.parsers.Chart;
+import org.open2jam.parsers.ChartList;
 
 /**
  *

@@ -1,11 +1,16 @@
 package org.open2jam.render;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.logging.Level;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.*;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 import org.open2jam.util.Logger;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;

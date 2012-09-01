@@ -94,7 +94,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="btn_delete" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="table_scroll" alignment="2" max="32767" attributes="1"/>
+                      <Component id="table_scroll" alignment="2" pref="472" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -102,7 +102,7 @@
                   <EmptySpace min="10" pref="10" max="10" attributes="0"/>
                   <Component id="lbl_search" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="txt_filter" max="32767" attributes="1"/>
+                  <Component id="txt_filter" pref="452" max="32767" attributes="1"/>
                   <EmptySpace min="10" pref="10" max="10" attributes="0"/>
               </Group>
           </Group>
@@ -120,7 +120,7 @@
                       <Component id="load_progress" alignment="3" min="-2" pref="27" max="-2" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="table_scroll" pref="506" max="32767" attributes="1"/>
+                  <Component id="table_scroll" pref="508" max="32767" attributes="1"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="txt_filter" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -195,10 +195,6 @@
           <Events>
             <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="combo_dirsItemStateChanged"/>
           </Events>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JComboBox&lt;MusicSelection.FileItem&gt;();"/>
-            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;MusicSelection.FileItem&gt;"/>
-          </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="btn_reload">
           <Properties>
@@ -259,7 +255,7 @@
               </Border>
             </Property>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-              <Color id="Default Cursor"/>
+              <Color id="Cursor predeterminado"/>
             </Property>
           </Properties>
 
@@ -273,7 +269,7 @@
                               <Component id="lbl_channelModifier" min="-2" max="-2" attributes="1"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="combo_channelModifier" min="-2" max="-2" attributes="1"/>
-                              <EmptySpace pref="98" max="32767" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                               <Component id="lbl_visibilityModifier" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="combo_visibilityModifier" min="-2" max="-2" attributes="0"/>
@@ -288,7 +284,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="slider_key_vol" alignment="1" min="0" pref="0" max="32767" attributes="0"/>
                                   <Component id="slider_bgm_vol" alignment="1" min="0" pref="0" max="32767" attributes="0"/>
-                                  <Component id="slider_main_vol" alignment="0" pref="93" max="32767" attributes="1"/>
+                                  <Component id="slider_main_vol" alignment="0" pref="0" max="32767" attributes="1"/>
                               </Group>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
@@ -444,7 +440,7 @@
                   <Connection code="new javax.swing.SpinnerNumberModel(1.0d, 0.5d, 10.0d, 0.5d)" type="code"/>
                 </Property>
                 <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-                  <Color id="Default Cursor"/>
+                  <Color id="Cursor predeterminado"/>
                 </Property>
               </Properties>
             </Component>
@@ -545,7 +541,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="291" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
@@ -831,7 +827,7 @@
                           <Component id="txt_res_height" min="-2" pref="39" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="9" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

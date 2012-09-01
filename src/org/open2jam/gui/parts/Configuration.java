@@ -1,11 +1,12 @@
 package org.open2jam.gui.parts;
 
-import java.awt.Container;
 import java.awt.Font;
+import java.io.File;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.JOptionPane;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -13,7 +14,8 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.open2jam.Config;
-import org.open2jam.parser.Event;
+import org.open2jam.GameOptions;
+import org.open2jam.parsers.Event;
 import org.open2jam.render.lwjgl.TrueTypeFont;
 
 /**
@@ -26,35 +28,39 @@ public class Configuration extends javax.swing.JPanel {
 
     private HashMap<Integer, Event.Channel> table_map = new HashMap<Integer,Event.Channel>();
     
-    private class RenderThread extends Thread {
-	Container c;
-	private int lastKey;
-	public int key;
-	
-	public RenderThread(Container c, int lastKey) {
-	    this.c = c;
-	    this.lastKey = lastKey;
+    private String vlc_path;
+    
+    private static FileFilter vlc_filter = new FileFilter() {
+
+	@Override
+	public boolean accept(File file) {
+	    if(file.isDirectory()) return true;
+	    
+	    String name = file.getName().toLowerCase();
+	    if(name.startsWith("libvlc")) return true;
+	    
+	    return false;
 	}
 
 	@Override
-	public void run() {
-	    c.setEnabled(false);
-	    try {
-		key = read_keyboard_key(lastKey);
-	    } catch (LWJGLException ex) {
-		// FML
-		key = lastKey;
-		return;
-	    }
-	    c.setEnabled(true);
+	public String getDescription() {
+	    return "libvlc file";
 	}
-    }
+    };
     
     /** Creates new form Configuration */
     public Configuration() {
         initComponents();
         
         loadTableKeys(Config.KeyboardType.K7);
+	
+	vlc_path = Config.getGameOptions().getVLC();
+	if(vlc_path.isEmpty()) {
+	    lbl_vlc.setText("Select the VLC path");
+	} else {
+	    lbl_vlc.setText("VLC Path: "+vlc_path);
+	}
+
     }
 
     /** This method is called from within the constructor to
@@ -72,6 +78,8 @@ public class Configuration extends javax.swing.JPanel {
         combo_keyboardConfig = new javax.swing.JComboBox();
         tKeys_scroll = new javax.swing.JScrollPane();
         tKeys = new javax.swing.JTable();
+        lbl_vlc = new javax.swing.JLabel();
+        btn_vlc = new javax.swing.JButton();
 
         bSave.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         bSave.setText("Save");
@@ -155,6 +163,15 @@ public class Configuration extends javax.swing.JPanel {
                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
+        lbl_vlc.setText("VLC isn't selected");
+
+        btn_vlc.setText("Select VLC path");
+        btn_vlc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_vlcActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -163,7 +180,9 @@ public class Configuration extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(panel_keys, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(panel_keys, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lbl_vlc)
+                    .addComponent(btn_vlc))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -172,8 +191,12 @@ public class Configuration extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(panel_keys, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbl_vlc)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_vlc)
+                .addGap(18, 18, 18)
                 .addComponent(bSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(152, Short.MAX_VALUE))
+                .addContainerGap(91, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -188,6 +211,9 @@ public class Configuration extends javax.swing.JPanel {
             default: return;
         }
         Config.setKeyboardMap(kb_map, kt);
+	GameOptions op = Config.getGameOptions();
+	op.setVLC(vlc_path);
+	Config.setGameOptions(op);
 }//GEN-LAST:event_bSaveActionPerformed
 
     private void tKeysMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tKeysMouseClicked
@@ -196,14 +222,13 @@ public class Configuration extends javax.swing.JPanel {
         
         int code;
         int lastkey = Keyboard.getKeyIndex(tKeys.getValueAt(row, 1).toString());
-        RenderThread r = new RenderThread(this.getTopLevelAncestor(), lastkey);
-	r.start();
-	while(r.isAlive()) {}
-	code = r.key;
-        if(kb_map.containsValue(code)) { //check for duplicates, TODO something informing about the duplicate
-	    JOptionPane.showMessageDialog(this, "The "+Keyboard.getKeyName(code)+" key is already blinded :(", "Well... that sucks", JOptionPane.WARNING_MESSAGE);
-	    return;
-	} 
+        try {
+            code = read_keyboard_key(lastkey);
+        } catch(LWJGLException e) {
+            // FML
+            return;
+        }
+        if(kb_map.containsValue(code)) return; //check for duplicates, TODO something informing about the duplicate
         Event.Channel c = table_map.get(row);
         kb_map.put(c, code);
         tKeys.setValueAt(Keyboard.getKeyName(code), row, 1);
@@ -222,10 +247,28 @@ public class Configuration extends javax.swing.JPanel {
         }
 }//GEN-LAST:event_combo_keyboardConfigActionPerformed
 
+    private void btn_vlcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_vlcActionPerformed
+	JFileChooser jfc = new JFileChooser();
+	if(!vlc_path.isEmpty())
+	    jfc.setCurrentDirectory(new File(vlc_path));
+	
+        jfc.setDialogTitle("Choose the libvlc file");
+	
+	jfc.addChoosableFileFilter(vlc_filter);
+        
+        jfc.setAcceptAllFileFilterUsed(false);
+        if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            vlc_path = jfc.getSelectedFile().getParent();
+	    lbl_vlc.setText("VLC Path: "+vlc_path);
+        }
+    }//GEN-LAST:event_btn_vlcActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bSave;
+    private javax.swing.JButton btn_vlc;
     private javax.swing.JComboBox combo_keyboardConfig;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel lbl_vlc;
     private javax.swing.JPanel panel_keys;
     private javax.swing.JTable tKeys;
     private javax.swing.JScrollPane tKeys_scroll;

@@ -1,34 +1,21 @@
-package org.open2jam.parser;
+package org.open2jam.parsers;
 
+import java.io.*;
+import java.util.*;
 import java.util.logging.Level;
-import org.open2jam.util.OggInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileReader;
-import java.util.StringTokenizer;
-import java.util.NoSuchElementException;
-import java.io.FileNotFoundException;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import org.open2jam.util.Logger;
-import org.open2jam.render.lwjgl.SoundManager;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.open2jam.parsers.utils.CharsetDetector;
+import org.open2jam.parsers.utils.Filters;
+import org.open2jam.parsers.utils.Logger;
+import org.open2jam.parsers.utils.SampleData;
+
 
 class SMParser
 {
-
-    private static final FileFilter sm_filter = new FileFilter(){
-        public boolean accept(File f){
-            String s = f.getName().toLowerCase();
-            return (!f.isDirectory()) && (s.endsWith(".sm"));
-        }
-    };
-
+    public static Pattern key_value = Pattern.compile("(,|;)?( *(\\d+\\.\\d+) *= *(\\d+\\.\\d+) *)?(,|;)?");
+    public static Pattern note_line = Pattern.compile("^(,|;)?([01234ML]+)?(,|;)?.*$", Pattern.CASE_INSENSITIVE);
+      
     public static boolean canRead(File f)
     {
 	return f.getName().toLowerCase().endsWith(".sm");
@@ -54,19 +41,21 @@ class SMParser
         ChartList list = new ChartList();
         list.source_file = file;
 
+	String charset = CharsetDetector.analyze(file);
         BufferedReader r;
         try{
-            r = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+            r = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));
         }catch(FileNotFoundException e){
             Logger.global.log(Level.WARNING, "File {0} not found !!", file.getName());
             return null;
         }
 	
-        HashMap<String, Integer> sample_files = new HashMap<String, Integer>();
+        HashMap<Integer, String> sample_files = new HashMap<Integer, String>();
 
 	String title = "", subtitle = "", artist = "";
 	double bpm = 130;
 	
+	String cover_name = null;
 	File image_cover = null;
 	
 	String line;
@@ -101,31 +90,34 @@ class SMParser
 		    continue;
 		}
                 if(cmd.equals("#BANNER")){
-                    image_cover = new File(file.getParent(),st.nextToken().trim());
-                    if(!image_cover.exists())
-                    {
-                        String target = image_cover.getName();
-                        int idx = target.lastIndexOf('.');
-                        if(idx > 0)target = target.substring(0, idx);
-                        for(File ff : file.getParentFile().listFiles())
-                        {
-                            String s = ff.getName();
-                            idx = s.lastIndexOf('.');
-                            if(idx > 0)s = s.substring(0, idx);
-                            if(target.equalsIgnoreCase(s)){
-                                image_cover = ff;
-                                break;
-                            }
-                        }
-			if(!image_cover.exists()) image_cover = null;
-                    }
+		    File cover = new File(file.getParent(), st.nextToken().trim());
+		    if(cover.exists()) {
+			cover_name = cover.getName();
+			image_cover = cover;			
+		    } else {
+			String target = cover.getName();
+			int idx = target.lastIndexOf('.');
+			if(idx > 0) {
+			    target = target.substring(0, idx);
+			}
+			for(File ff : file.getParentFile().listFiles(Filters.imageFilter)) {
+			    String s = ff.getName();
+			    idx = s.lastIndexOf('.');
+			    if (idx > 0) {
+				s = s.substring(0, idx);
+			    }
+			    if (target.equalsIgnoreCase(s)) {
+				cover_name = ff.getName();
+				image_cover = ff;
+				break;
+			    }
+			}
+		    }
                 }
                 if(cmd.startsWith("#MUSIC")){
 		    int id = 1;
 		    String name = st.nextToken().trim();
-		    int idx = name.lastIndexOf('.');
-		    if(idx > 0)name = name.substring(0, idx);
-		    sample_files.put(name, id);
+		    sample_files.put(id, name);
 		    continue;
                 }
 		if(cmd.startsWith("#NOTES")){
@@ -134,8 +126,9 @@ class SMParser
 		    chart.title = title+" "+subtitle;
 		    chart.artist = artist;
 		    chart.bpm = bpm;
+		    chart.cover_name = cover_name;
 		    chart.image_cover = image_cover;
-		    chart.sample_files = sample_files;
+		    chart.sample_index = sample_files;
 		    
 		    for(int i = 0; i<5;i++)
 		    {
@@ -170,7 +163,7 @@ class SMParser
         return list;
     }
 
-    public static List<Event> parseChart(SMChart chart)
+    public static EventList parseChart(SMChart chart)
     {
         BufferedReader r;
         try{
@@ -180,7 +173,7 @@ class SMParser
             return null;
         }
 
-	ArrayList<Event> event_list = new ArrayList<Event>();	
+	EventList event_list = new EventList();	
 	
 	String line;
 	StringTokenizer st;
@@ -269,25 +262,45 @@ class SMParser
 			s = s.trim().toUpperCase();
 			if(s.isEmpty()) continue;
 			
-			if(!s.startsWith(",") && !parsed)
-			{
-			    if(s.contains(";")) {
-				//we have finished
-				s = s.replace(";", "").trim();
-				parsed = true;
+			Matcher match = note_line.matcher(s);
+			
+			if(match.find()) {
+			    String front = match.group(1);
+			    String nline = match.group(2);
+			    String tail = match.group(3);
+
+			    if(front != null) {
+				//It's a , or a ; dump the events
+				if(!notes.isEmpty()) {
+				    fillEvents(event_list, notes, measure);
+				}
+				measure++;
+				if(front.equals(";")) {
+				    //line start with a ; end of parsing
+				    parsed = true;
+				    break;
+				}
 			    }
-			    if(s.isEmpty()) continue;
-			    notes.add(s);
-			}
-			else
-			{ //new measure, time to fill the events
-			    fillEvents(event_list, notes, measure);
-			    measure++;
-			    continue;
+
+			    //add line if any
+			    if(nline != null) {
+				notes.add(nline);
+			    }
+
+			    if(tail != null) {
+				//It's a , or a ; dump the events
+				if(!notes.isEmpty()) {
+				    fillEvents(event_list, notes, measure);
+				}
+				measure++;
+				if(tail.equals(";")) {
+				    //line end with a ; end of parsing
+				    parsed = true;
+				    break;
+				}
+			    }
 			}
 		    }
-		    
-		    if(parsed && !notes.isEmpty()) fillEvents(event_list, notes, measure);
 		}
             }
         } catch (IOException ex) {
@@ -301,42 +314,40 @@ class SMParser
         return event_list;
     }
 
-    public static HashMap<Integer,Integer> loadSamples(SMChart h)
+    public static HashMap<Integer, SampleData> getSamples(SMChart chart)
     {
-        HashMap<Integer,Integer> samples = new HashMap<Integer,Integer>();
-        for(File f : h.source.getParentFile().listFiles())
-        {
-            try {
-                String s = f.getName();
-                String st = s;
-                int idx = s.lastIndexOf('.');
-                if (idx > 0) {
-                    s = s.substring(0, idx);
-                    st = st.substring(idx).toLowerCase();
-                }
-                Integer id = h.sample_files.get(s);
-                if (id == null) {
-                    continue;
-                }
-                int buffer = 0;
-                if      (st.equals(".wav")) buffer = SoundManager.newBuffer(f.toURI().toURL());
-                else if (st.equals(".ogg")) buffer = SoundManager.newBuffer(new OggInputStream(new FileInputStream(f)));
-                else if (st.equals(".mp3")) {
-		    Logger.global.log(Level.WARNING, "MP3 files [{0}] aren't supported", f.getName());
-		    continue;
+	HashMap<Integer, SampleData> samples = new HashMap<Integer, SampleData>();
+	
+	File[] files = chart.source.getParentFile().listFiles(Filters.sampleFilter);
+	
+	for(Map.Entry<Integer, String> entry : chart.sample_index.entrySet()) {
+	    try {
+		for(File f : files) {
+		    String sn = entry.getValue().toLowerCase();
+		    String fn = f.getName().toLowerCase();
+		    String ext = fn.substring(fn.lastIndexOf("."), fn.length());
+		    sn = sn.substring(0, sn.lastIndexOf("."));
+		    fn = fn.substring(0,fn.lastIndexOf("."));
+
+		    if(sn.equals(fn)) {
+			SampleData.Type t;
+			if      (ext.equals(".wav")) t = SampleData.Type.WAV;
+			else if (ext.equals(".ogg")) t = SampleData.Type.OGG;
+			else if (ext.equals(".mp3")) t = SampleData.Type.MP3;
+			else { //not a music file so continue
+			    continue;
+			}
+			samples.put(entry.getKey(), new SampleData(new FileInputStream(f), t, f.getName()));
+		    }
 		}
-		else { //not a music file so continue
-		    continue;
-		} 
-                samples.put(id, buffer);
-            } catch (IOException ex) {
-                Logger.global.log(Level.SEVERE, null, ex);
-            }
-        }
-        return samples;
+	    } catch (IOException ex) {
+		Logger.global.log(Level.SEVERE, null, ex);
+	    }
+	}
+	return samples;
     }
     
-    private static void fillEvents(List<Event> event_list, List<String> notes, int measure)
+    private static void fillEvents(EventList event_list, List<String> notes, int measure)
     {
 	int size = notes.size();
 	for(int pos=0; pos<size; pos++)
@@ -347,26 +358,31 @@ class SMParser
 	    {
 		if(n[i].equals("0")) continue;
 
+		Event.Flag flag;
 		if(n[i].equals("1")) 
-		    event_list.add(new Event(getChannel(i), measure, position, 0, Event.Flag.NONE));
+		    flag = Event.Flag.NONE;
 		else if(n[i].equals("2"))
-		    event_list.add(new Event(getChannel(i), measure, position, 0, Event.Flag.HOLD));
+		    flag = Event.Flag.HOLD;
 		else if(n[i].equals("3"))
-		    event_list.add(new Event(getChannel(i), measure, position, 0, Event.Flag.RELEASE));
+		    flag = Event.Flag.RELEASE;
 		else if(n[i].equals("4"))
-		    Logger.global.log(Level.WARNING, "Roll not supported :/");
+		    flag = Event.Flag.ROLL;
 		else if(n[i].equals("M"))
-		    Logger.global.log(Level.WARNING, "Mines not supported :/");
+		    flag = Event.Flag.MINE;
 		else if(n[i].equals("L"))
-		    Logger.global.log(Level.WARNING, "Lift not supported :/");
-		else
+		    flag = Event.Flag.LIFT;
+		else {
 		    Logger.global.log(Level.WARNING, "{0} not supported :/", n[i]);
+		    continue;
+		}
+		
+		event_list.add(new Event(getChannel(i), measure, position, 0, flag));
 	    }
 	}
 	notes.clear();	
     }
     
-    private static void setStop(StringTokenizer sb, ArrayList<Event> event_list)
+    private static void setStop(StringTokenizer sb, EventList event_list)
     {
 	while(sb.hasMoreTokens())
 	{
@@ -378,7 +394,7 @@ class SMParser
 	}
     }
     
-    private static void setBPM(StringTokenizer sb, ArrayList<Event> event_list)
+    private static void setBPM(StringTokenizer sb, EventList event_list)
     {
 	while(sb.hasMoreTokens())
 	{

@@ -1,5 +1,5 @@
 
-package org.open2jam.util;
+package org.open2jam.parsers.utils;
 
 import java.io.BufferedInputStream;
 import java.io.File;

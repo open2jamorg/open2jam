@@ -3,24 +3,27 @@ package org.open2jam.render;
 
 import java.awt.Font;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.util.Map.Entry;
 import java.util.*;
 import java.util.logging.Level;
+import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.Config;
 import org.open2jam.GameOptions;
-import org.open2jam.parser.Chart;
-import org.open2jam.parser.Event;
+import org.open2jam.parsers.Chart;
+import org.open2jam.parsers.Event;
+import org.open2jam.parsers.EventList;
+import org.open2jam.parsers.utils.SampleData;
 import org.open2jam.render.entities.*;
 import org.open2jam.render.lwjgl.SoundManager;
 import org.open2jam.render.lwjgl.TrueTypeFont;
-import org.open2jam.util.Interval;
-import org.open2jam.util.IntervalTree;
-import org.open2jam.util.Logger;
-import org.open2jam.util.SystemTimer;
+import org.open2jam.util.*;
 
 /**
  *
@@ -163,6 +166,9 @@ public abstract class Render implements GameWindowCallback
     BarEntity lifebar_entity;
 
     LinkedList<Entity> pills_draw;
+    
+    Map<Integer, Sprite> bga_sprites;
+    BgaEntity bgaEntity;
 
     int consecutive_cools = 0;
 
@@ -223,18 +229,17 @@ public abstract class Render implements GameWindowCallback
 	AUTOSOUND = opt.getAutosound();
 	
 	//TODO Should get values from gameoptions, but i'm lazy as hell
-	if(opt.getAutoplay())
+	if(opt.getAutoplay()) 
 	{
 	    for(Event.Channel c : Event.Channel.values())
 	    {
-		if(c.toString().startsWith(("NOTE_"))) c.enableAutoplay();
+		if(c.toString().startsWith(("NOTE_")))
+		    c.enableAutoplay();
 	    }
-	} else {
-	    for(Event.Channel c : Event.Channel.values())
-	    {
-		if(c.toString().startsWith(("NOTE_"))) c.disableAutoplay();
-	    }
-        }
+
+//	    Event.Channel.NOTE_4.enableAutoplay();
+//	    Event.Channel.NOTE_1.enableAutoplay();
+	}
 	
         window.setDisplay(dm,opt.getVsync(),opt.getFullScreen(),opt.getBilinear());
     }
@@ -288,11 +293,6 @@ public abstract class Render implements GameWindowCallback
         bpm = chart.getBPM();
 
         note_layer = skin.getEntityMap().get("NOTE_1").getLayer();
-
-        // adding static entities
-        for(Entity e : skin.getEntityList()){
-            entities_matrix.add(e);
-        }
 
         // build long note buffer
         ln_buffer = new EnumMap<Event.Channel,LongNoteEntity>(Event.Channel.class);
@@ -362,22 +362,53 @@ public abstract class Render implements GameWindowCallback
         }
 
 
-        List<Event> event_list = construct_velocity_tree(chart.getEvents());
+        EventList event_list = construct_velocity_tree(chart.getEvents());
+	
+	event_list.fixEventList(EventList.FixMethod.OPEN2JAM, true);
 
-	    //Let's randomize "-"
+	//Let's randomize "-"
         switch(opt.getChannelModifier())
         {
             case Mirror:
-                channelMirror(event_list.iterator());
+		event_list.channelMirror();
             break;
             case Shuffle:
-                channelShuffle(event_list.iterator());
+                event_list.channelShuffle();
             break;
             case Random:
-                channelRandom(event_list.iterator());
+                event_list.channelRandom();
             break;
         }
-        
+	
+	bgaEntity = (BgaEntity) skin.getEntityMap().get("BGA");
+	entities_matrix.add(bgaEntity);
+	
+	bga_sprites = new HashMap<Integer, Sprite>();
+	if(chart.hasVideo()) {
+	    bgaEntity.isVideo = true;
+	    bgaEntity.videoFile = chart.getVideo();
+	    bgaEntity.initVideo();
+	} else if(!chart.getBgaIndex().isEmpty()) {
+	    // get all the bgaEntity sprites
+	    
+	    for(Entry<Integer, File> entry: chart.getImages().entrySet()) {
+		BufferedImage img;
+		try {
+		    img = ImageIO.read(entry.getValue());
+		    Sprite s = ResourceFactory.get().getSprite(img);
+		    bga_sprites.put(entry.getKey(), s);
+		} catch (IOException ex) {
+		    java.util.logging.Logger.getLogger(Render.class.getName()).log(Level.SEVERE, null, ex);
+		}    
+	    }
+	}
+
+	
+        // adding static entities
+        for(Entity e : skin.getEntityList()){
+            entities_matrix.add(e);
+        }
+	
         // get a new iterator
         buffer_iterator = event_list.iterator();
 
@@ -400,8 +431,17 @@ public abstract class Render implements GameWindowCallback
         source_queue_iterator = source_queue.iterator();
 
         // get the chart sound samples
-        samples = chart.getSamples();
-
+	samples = new HashMap<Integer, Integer>();
+        for(Entry<Integer, SampleData> entry : chart.getSamples().entrySet())
+	{
+	    samples.put(entry.getKey(), SoundManager.newBuffer(SampleDecoder.decode(entry.getValue())));
+	    try {
+		entry.getValue().dispose();
+	    } catch (IOException ex) {
+		java.util.logging.Logger.getLogger(Render.class.getName()).log(Level.SEVERE, null, ex);
+	    }
+	}
+	
         trueTypeFont = new TrueTypeFont(new Font("Tahoma", Font.BOLD, 14), false);
         
         //clean up
@@ -492,7 +532,8 @@ public abstract class Render implements GameWindowCallback
                     //o2jam overlaps 1 px of the note with the measure and, because of this
                     //our skin should do it too xD
                     if(e instanceof MeasureEntity) y -= 1;
-                    e.setPos(e.getX(), y);
+		    if(!(e instanceof BgaEntity))
+			e.setPos(e.getX(), y);
 
                     if(e instanceof NoteEntity) check_judgment((NoteEntity)e, now);
                 }
@@ -503,6 +544,7 @@ public abstract class Render implements GameWindowCallback
         }
 
         if(!w_speed) trueTypeFont.drawString(780, 300, "HI-SPEED: "+next_speed, 1, -1, TrueTypeFont.ALIGN_RIGHT);
+	trueTypeFont.drawString(780, 330, "Current Measure: "+current_measure, 1, -1, TrueTypeFont.ALIGN_RIGHT);
         
         if(!buffer_iterator.hasNext() && entities_matrix.isEmpty(note_layer)){
             for(Integer source : source_queue)
@@ -511,7 +553,7 @@ public abstract class Render implements GameWindowCallback
                 if(SoundManager.isPlaying(source)){
                     last_sound.clear();
                     return;
-                }
+                 }
             }
             // all sources have finished playing
             window.destroy();
@@ -730,6 +772,8 @@ public abstract class Render implements GameWindowCallback
     }
 
     private double buffer_timer = 0;
+    
+    private int current_measure = 0;
 
     /* update the note layer of the entities_matrix.
     *** note buffering is equally distributed between the frames
@@ -748,12 +792,16 @@ public abstract class Render implements GameWindowCallback
                     MeasureEntity m = (MeasureEntity) skin.getEntityMap().get("MEASURE_MARK").copy();
                     m.setTime(e.getTime());
                     entities_matrix.add(m);
+		    
+		    current_measure = e.getMeasure();
                 break;
                     
                 case NOTE_1:case NOTE_2:
                 case NOTE_3:case NOTE_4:
                 case NOTE_5:case NOTE_6:case NOTE_7:
                 if(e.getFlag() == Event.Flag.NONE){
+		    if(ln_buffer.containsKey(e.getChannel()))
+			Logger.global.log(Level.WARNING, "There is a none in the current long {0} @ "+e.getTotalPosition(), e.getChannel());
                     NoteEntity n = (NoteEntity) skin.getEntityMap().get(e.getChannel().toString()).copy();
                     n.setTime(e.getTime());
 		    
@@ -764,6 +812,8 @@ public abstract class Render implements GameWindowCallback
                     note_channels.get(n.getChannel()).add(n);
                 }
                 else if(e.getFlag() == Event.Flag.HOLD){
+		    if(ln_buffer.containsKey(e.getChannel()))
+			Logger.global.log(Level.WARNING, "There is a hold in the current long {0} @ "+e.getTotalPosition(), e.getChannel());
                     LongNoteEntity ln = (LongNoteEntity) skin.getEntityMap().get("LONG_"+e.getChannel()).copy();
                     ln.setTime(e.getTime());
 		    
@@ -777,12 +827,25 @@ public abstract class Render implements GameWindowCallback
                 else if(e.getFlag() == Event.Flag.RELEASE){
                     LongNoteEntity lne = ln_buffer.remove(e.getChannel());
                     if(lne == null){
-                        Logger.global.log(Level.WARNING, "Attempted to RELEASE note {0}", e.getChannel());
+                        Logger.global.log(Level.WARNING, "Attempted to RELEASE note {0} @ "+e.getTotalPosition(), e.getChannel());
                     }else{
                         lne.setEndTime(e.getTime(),velocity_integral(lne.getTime(),e.getTime(), lne.getChannel()));
                     }
                 }
                 break;
+		case BGA:
+		    if(!bgaEntity.isVideo) {
+			Sprite sprite = null;
+			if(bga_sprites.containsKey((int)e.getValue()))
+			    sprite = bga_sprites.get((int)e.getValue());
+			if(sprite == null) break;
+			sprite.setScale(1f, 1f);
+			bgaEntity.setSprite(sprite);
+		    }
+		    
+		    bgaEntity.setTime(e.getTime());
+		break;
+		    
                 //TODO ADD SUPPORT
                 case NOTE_SC:
                 case NOTE_8:case NOTE_9:
@@ -858,7 +921,7 @@ public abstract class Render implements GameWindowCallback
 
     private final IntervalTree<Double,Double> velocity_tree;
 
-    private List<Event> construct_velocity_tree(List<Event> list)
+    private EventList construct_velocity_tree(EventList list)
     {
         int measure = 0;
         double timer = DELAY_TIME;
@@ -869,14 +932,19 @@ public abstract class Render implements GameWindowCallback
         double measure_size = 0.8 * getViewport();
         double my_note_speed = (my_bpm * measure_size) / BEATS_PER_MSEC;
         
-        List<Event> new_list = new LinkedList<Event>();
+        EventList new_list = new EventList();
+	
+	//there is always a 1st measure
+	Event m = new Event(Event.Channel.MEASURE, measure, 0, 0, Event.Flag.NONE);
+	m.setTime(timer);
+	new_list.add(m);
 
         for(Event e : list)
         {
             while(e.getMeasure() > measure)
             {
                 timer += (BEATS_PER_MSEC * (frac_measure-measure_pointer)) / my_bpm;
-                Event m = new Event(Event.Channel.MEASURE, measure, 0, 0, Event.Flag.NONE);
+                m = new Event(Event.Channel.MEASURE, measure, 0, 0, Event.Flag.NONE);
                 m.setTime(timer);
                 new_list.add(m);
                 measure++;
@@ -891,8 +959,16 @@ public abstract class Render implements GameWindowCallback
             {
 		case STOP:
 		    velocity_tree.addInterval(last_bpm_change, timer, my_note_speed);
-		    velocity_tree.addInterval(timer, timer+e.getValue(), 0d);
-		    last_bpm_change = timer = timer + e.getValue();
+		    double stop_time = e.getValue();
+		    if(chart.type == Chart.TYPE.BMS) {
+			//convert the bms stop values to a time value
+			stop_time = (e.getValue() / 192) * BEATS_PER_MSEC / my_bpm;
+			System.out.println(stop_time);
+			velocity_tree.addInterval(timer, timer+stop_time, 0d);
+		    } else {
+			velocity_tree.addInterval(timer, timer+stop_time, 0d);
+		    }
+		    last_bpm_change = timer = timer + stop_time;
 		break;
 		case BPM_CHANGE:
                     velocity_tree.addInterval(last_bpm_change, timer, my_note_speed);
@@ -913,6 +989,7 @@ public abstract class Render implements GameWindowCallback
                 case NOTE_12:case NOTE_13:case NOTE_14:
                 case NOTE_SC2:
                 case AUTO_PLAY:
+		case BGA:
                     e.setTime(timer + e.getOffset());
 		    if(e.getOffset() != 0) System.out.println("offset: "+e.getOffset()+" timer: "+(timer+e.getOffset()));
                 break;
@@ -943,9 +1020,10 @@ public abstract class Render implements GameWindowCallback
      */
     double velocity_integral(double t0, double t1)
     {
-        final boolean negative = t0 > t1;
-        if(negative){
+        boolean negative = false;
+        if(t0 > t1){
             double tmp = t1;t1 = t0;t0 = tmp; // swap
+            negative = true;
         }
         List<Interval<Double,Double>> list = velocity_tree.getIntervals(t0, t1);
         double integral = 0;
@@ -989,149 +1067,12 @@ public abstract class Render implements GameWindowCallback
         return velocity_integral(t0, t1) * factor;
     }
 
-    /**
-    * This function will mirrorize the notes
-    * TODO ADD P2 SUPPORT
-    * @param buffer
-    */
-    void channelMirror(Iterator<Event> buffer)
-    {
-        while(buffer.hasNext())
-        {
-            Event e = buffer.next();
-            switch(e.getChannel())
-            {
-            case NOTE_1: e.setChannel(Event.Channel.NOTE_7); break;
-            case NOTE_2: e.setChannel(Event.Channel.NOTE_6); break;
-            case NOTE_3: e.setChannel(Event.Channel.NOTE_5); break;
-            case NOTE_5: e.setChannel(Event.Channel.NOTE_3); break;
-            case NOTE_6: e.setChannel(Event.Channel.NOTE_2); break;
-            case NOTE_7: e.setChannel(Event.Channel.NOTE_1); break;
-            }
-        }
-    }
-
-    /**
-     * This function will shuffle the note lanes
-     * TODO ADD P2 SUPPORT
-     * @param buffer
-     */
-    void channelShuffle(Iterator<Event> buffer)
-    {
-        List<Event.Channel> channelSwap = new LinkedList<Event.Channel>();
-
-        channelSwap.add(Event.Channel.NOTE_1);
-        channelSwap.add(Event.Channel.NOTE_2);
-        channelSwap.add(Event.Channel.NOTE_3);
-        channelSwap.add(Event.Channel.NOTE_4);
-        channelSwap.add(Event.Channel.NOTE_5);
-        channelSwap.add(Event.Channel.NOTE_6);
-        channelSwap.add(Event.Channel.NOTE_7);
-
-        Collections.shuffle(channelSwap);
-
-        while(buffer.hasNext())
-        {
-            Event e = buffer.next();
-            switch(e.getChannel())
-            {
-            case NOTE_1: e.setChannel(channelSwap.get(0)); break;
-            case NOTE_2: e.setChannel(channelSwap.get(1)); break;
-            case NOTE_3: e.setChannel(channelSwap.get(2)); break;
-            case NOTE_4: e.setChannel(channelSwap.get(3)); break;
-            case NOTE_5: e.setChannel(channelSwap.get(4)); break;
-            case NOTE_6: e.setChannel(channelSwap.get(5)); break;
-            case NOTE_7: e.setChannel(channelSwap.get(6)); break;
-            }
-        }
-    }
-
-    /**
-     * This function will randomize the notes
-     * o2jam randomize the pattern each measure unless a longnote is in between measures
-     * This implementation keeps the randomization of the previous measure if that happens
-     * @param buffer
-     */
-    void channelRandom(Iterator<Event> buffer)
-    {
-        List<Event.Channel> channelSwap = new LinkedList<Event.Channel>();
-
-        channelSwap.add(Event.Channel.NOTE_1);
-        channelSwap.add(Event.Channel.NOTE_2);
-        channelSwap.add(Event.Channel.NOTE_3);
-        channelSwap.add(Event.Channel.NOTE_4);
-        channelSwap.add(Event.Channel.NOTE_5);
-        channelSwap.add(Event.Channel.NOTE_6);
-        channelSwap.add(Event.Channel.NOTE_7);
-
-        Collections.shuffle(channelSwap);
-
-        EnumMap<Event.Channel, Event.Channel> lnMap = new EnumMap<Event.Channel, Event.Channel>(Event.Channel.class);
-
-        int last_measure = -1;
-        while(buffer.hasNext())
-        {
-            Event e = buffer.next();
-
-                if(e.getMeasure() > last_measure)
-                {
-                    if(lnMap.isEmpty())
-                        Collections.shuffle(channelSwap);
-                    last_measure = e.getMeasure();
-                }
-
-            switch(e.getChannel())
-            {
-            case NOTE_1:
-                        setRandomChannel(e, lnMap, channelSwap.get(0));
-                    break;
-            case NOTE_2:
-                        setRandomChannel(e, lnMap, channelSwap.get(1));
-                    break;
-            case NOTE_3:
-                        setRandomChannel(e, lnMap, channelSwap.get(2));
-                    break;
-            case NOTE_4:
-                        setRandomChannel(e, lnMap, channelSwap.get(3));
-                    break;
-            case NOTE_5:
-                        setRandomChannel(e, lnMap, channelSwap.get(4));
-                    break;
-            case NOTE_6:
-                        setRandomChannel(e, lnMap, channelSwap.get(5));
-                    break;
-            case NOTE_7:
-                        setRandomChannel(e, lnMap, channelSwap.get(6));
-                    break;
-            }
-        }
-    }
-
-    private void setRandomChannel(Event e, EnumMap<Event.Channel, Event.Channel> lnMap, Event.Channel random)
-    {
-        Event.Channel c = random;
-
-        if(e.getFlag() == Event.Flag.HOLD || e.getFlag() == Event.Flag.RELEASE)
-        {
-            if(!lnMap.containsKey(e.getChannel()))
-                lnMap.put(e.getChannel(), c);
-            else
-                c = lnMap.remove(e.getChannel());
-        }
-        else if(e.getFlag() == Event.Flag.NONE)
-            c = lnMap.containsValue(c) ? Event.Channel.NONE : c;
-
-        if(c == null)
-        {
-            Logger.global.log(Level.WARNING, "FUCK THIS RANDOMNESS! I mean... channel null :/");
-            c = random;
-        }
-
-        e.setChannel(c);
-    }
-
     private void visibility(GameOptions.VisibilityMod value)
     {
+        int height = 0;
+        int width  = 0;
+
+        Sprite rec = null;
         // We will make a new entity with the masking rectangle for each note lane
         // because we can't know for sure where the notes will be,
         // meaning that they may not be together
@@ -1139,9 +1080,9 @@ public abstract class Render implements GameWindowCallback
         {
             if(ev.toString().startsWith("NOTE_") && skin.getEntityMap().get(ev.toString()) != null)
             {
-                int height = (int)Math.round(getViewport());
-                int width = (int)Math.round(skin.getEntityMap().get(ev.toString()).getWidth());
-                Sprite rec  = ResourceFactory.get().doRectangle(width, height, value);
+                height = (int)Math.round(getViewport());
+                width = (int)Math.round(skin.getEntityMap().get(ev.toString()).getWidth());
+                rec  = ResourceFactory.get().doRectangle(width, height, value);
                 visibility_entity.getEntityList().add(new Entity(rec, skin.getEntityMap().get(ev.toString()).getX(), 0));
             }
         }
@@ -1171,7 +1112,9 @@ public abstract class Render implements GameWindowCallback
      */
     @Override
     public void windowClosed() {
+	bgaEntity.release();
         SoundManager.killData();
+	System.gc();
     }
     
     private double clamp(double value, double min, double max)

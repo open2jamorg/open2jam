@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
-import org.open2jam.util.Logger;
 import javax.swing.SwingWorker;
 import org.open2jam.Config;
-import org.open2jam.parser.ChartList;
-import org.open2jam.parser.ChartParser;
+import org.open2jam.parsers.ChartList;
+import org.open2jam.parsers.ChartParser;
+import org.open2jam.util.Logger;
 
 /**
  *

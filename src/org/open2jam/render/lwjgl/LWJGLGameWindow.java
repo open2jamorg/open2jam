@@ -4,8 +4,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.logging.Level;
-import org.open2jam.util.Logger;
-
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -15,6 +13,7 @@ import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.open2jam.render.GameWindow;
 import org.open2jam.render.GameWindowCallback;
+import org.open2jam.util.Logger;
 
 /**
  * An implementation of GameWindow that will use OPENGL (JOGL) to 
@@ -139,6 +138,10 @@ public class LWJGLGameWindow implements GameWindow {
             // enable apha blending
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             GL11.glEnable(GL11.GL_BLEND);
+	    
+	    //Enable scissor test
+	    GL11.glEnable(GL11.GL_SCISSOR_TEST);
+	    GL11.glScissor(0, 0, width, height);
 
             GL11.glMatrixMode(GL11.GL_PROJECTION);
             GL11.glLoadIdentity();
@@ -204,7 +207,6 @@ public class LWJGLGameWindow implements GameWindow {
                     // clear screen
                     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
                     GL11.glLoadIdentity();
-
                     if(bilinear)
                     {
                         //first we draw everything in the fbo

@@ -2,26 +2,17 @@ package org.open2jam.render;
 
 import java.awt.Rectangle;
 import java.io.IOException;
-import java.util.Map;
 import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
+import org.open2jam.parsers.Event;
+import org.open2jam.render.entities.*;
 import org.open2jam.util.Logger;
-import org.open2jam.parser.Event;
-import org.open2jam.render.entities.AnimatedEntity;
-import org.open2jam.render.entities.ComboCounterEntity;
-import org.open2jam.render.entities.CompositeEntity;
-import org.open2jam.render.entities.Entity;
-import org.open2jam.render.entities.BarEntity;
-import org.open2jam.render.entities.JudgmentEntity;
-import org.open2jam.render.entities.LongNoteEntity;
-import org.open2jam.render.entities.MeasureEntity;
-import org.open2jam.render.entities.NoteEntity;
-import org.open2jam.render.entities.NumberEntity;
-import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.Attributes;
+import org.xml.sax.helpers.DefaultHandler;
 
 public class SkinParser extends DefaultHandler
 {
@@ -412,7 +403,13 @@ public class SkinParser extends DefaultHandler
             else
                 e = new BarEntity(s, 0, 0);
 	}
-        else{
+	else if(id.equals("BGA")){
+	    Sprite s = sprite_buffer.get(atts.get("sprite")).get(0);
+	    int x = 0, y = 0;
+	    if(atts.containsKey("x"))x = Integer.parseInt(atts.get("x"));
+	    if(atts.containsKey("y"))y = Integer.parseInt(atts.get("y"));
+	    e = new BgaEntity(s, x, y);
+	}else{
             Logger.global.log(Level.WARNING, "unpromoted entity [{0}]", id);
         }
         return e;
