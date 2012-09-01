@@ -701,7 +701,7 @@ public abstract class Render implements GameWindowCallback
         }
         else
         {
-            if(speed == next_speed) return;
+            if(speed == next_speed && delta != 0) return;
             
             if(last_speed > next_speed)
             {
