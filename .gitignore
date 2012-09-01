@@ -6,3 +6,4 @@ build/
 nbproject/private
 nbproject/genfiles.properties
 nbproject/build-impl.xml
+/config.vl
