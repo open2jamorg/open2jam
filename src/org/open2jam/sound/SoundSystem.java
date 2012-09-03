@@ -4,13 +4,19 @@
  */
 package org.open2jam.sound;
 
+import org.open2jam.parsers.utils.SampleData;
+
 /**
  *
  * @author dttvb
  */
 public interface SoundSystem {
     
-    void load(Sample sample) throws SoundSystemException;
-    void play(Sample sample, float volume, float pan) throws SoundSystemException;
+    Sound load(SampleData sample) throws SoundSystemException;
+    void release();
+    
+    void setBGMVolume(float factor);
+    void setKeyVolume(float factor);
+    void setMasterVolume(float factor);
     
 }

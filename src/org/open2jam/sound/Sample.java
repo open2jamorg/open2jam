@@ -23,7 +23,7 @@ import org.open2jam.util.OggInputStream;
  */
 public class Sample {
 
-    public enum Format { MONO8, STEREO8, MONO16, STEREO16 };
+    public enum Format { MONO8, STEREO8, MONO16, STEREO16, FLOAT32 };
     public enum Method { STREAM_FROM_FILE, COPY_TO_MEMORY }; //TODO do this D:
     
     public final ByteBuffer data;

@@ -37,6 +37,7 @@ import org.open2jam.parsers.ChartList;
 import org.open2jam.render.DistanceRender;
 import org.open2jam.render.Render;
 import org.open2jam.render.TimeRender;
+import org.open2jam.sound.SoundSystemException;
 import org.open2jam.util.Logger;
 
 public class MusicSelection extends javax.swing.JPanel
@@ -933,77 +934,81 @@ public class MusicSelection extends javax.swing.JPanel
 }//GEN-LAST:event_jc_custom_size_clicked
 
     private void bt_playActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_playActionPerformed
-        if(selected_header == null) return;
-        
-        
-        final double hispeed = (Double) js_hispeed.getValue();
+        try {
+            if(selected_header == null) return;
+            
+            
+            final double hispeed = (Double) js_hispeed.getValue();
 
-        final DisplayMode dm;
-        if(jc_custom_size.isSelected()){ // custom size selected
-            int w,h;
-            try{
-                w = Integer.parseInt(txt_res_width.getText());
-                h = Integer.parseInt(txt_res_height.getText());
-            }catch(Exception e){
-                JOptionPane.showMessageDialog(this, "Invalid value on custom size", "Error", JOptionPane.WARNING_MESSAGE);
-                return;
+            final DisplayMode dm;
+            if(jc_custom_size.isSelected()){ // custom size selected
+                int w,h;
+                try{
+                    w = Integer.parseInt(txt_res_width.getText());
+                    h = Integer.parseInt(txt_res_height.getText());
+                }catch(Exception e){
+                    JOptionPane.showMessageDialog(this, "Invalid value on custom size", "Error", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                dm = new DisplayMode(w,h);
+            }else{
+                dm = (DisplayMode) combo_displays.getSelectedItem();
             }
-            dm = new DisplayMode(w,h);
-        }else{
-            dm = (DisplayMode) combo_displays.getSelectedItem();
+            
+            final boolean vsync = jc_vsync.isSelected();
+            boolean fs = jc_full_screen.isSelected();
+
+            final boolean autoplay = jc_autoplay.isSelected();
+            final boolean autosound = jc_autosound.isSelected();
+
+            final boolean time_judgment = jc_timed_judgment.isSelected();
+
+            final SpeedType speed_type =(SpeedType) combo_speedType.getSelectedItem();
+
+            final ChannelMod channelModifier = (ChannelMod) combo_channelModifier.getSelectedItem();
+            final VisibilityMod visibilityModifier = (VisibilityMod) combo_visibilityModifier.getSelectedItem();
+
+            final float mainVol = slider_main_vol.getValue() / 100f;
+            final float keyVol = slider_key_vol.getValue() / 100f;
+            final float bgmVol = slider_bgm_vol.getValue() / 100f;
+
+            final boolean bilinear = jc_bilinear.isSelected();
+
+            if(!dm.isFullscreenCapable() && fs) {
+                String str = "This monitor can't support the selected resolution.\n"
+                        + "Do you want to play it in windowed mode?";
+                if(JOptionPane.showConfirmDialog(this, str, "Warning",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE)
+                        == JOptionPane.YES_OPTION)
+                    fs = false;
+            }
+
+            GameOptions go = Config.getGameOptions();
+            go.setAutoplay(autoplay);
+            go.setAutosound(autosound);
+            go.setChannelModifier(channelModifier);
+            go.setVisibilityModifier(visibilityModifier);
+            go.setMasterVolume(mainVol);
+            go.setKeyVolume(keyVol);
+            go.setBGMVolume(bgmVol);
+            go.setHispeed(hispeed);
+            go.setSpeedType(speed_type);
+            go.setFullScreen(fs);
+            go.setBilinear(bilinear);
+            go.setVsync(vsync);
+
+            NativeLibrary.addSearchPath("vlc", go.getVLC());
+            
+            final Render r;
+            if(time_judgment)
+                r = new TimeRender(selected_header, go, dm);
+            else
+                r = new DistanceRender(selected_header, go, dm);
+
+            new RenderThread(this.getTopLevelAncestor(), r).start();
+        } catch (SoundSystemException ex) {
+            java.util.logging.Logger.getLogger(MusicSelection.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        final boolean vsync = jc_vsync.isSelected();
-        boolean fs = jc_full_screen.isSelected();
-
-        final boolean autoplay = jc_autoplay.isSelected();
-	final boolean autosound = jc_autosound.isSelected();
-
-        final boolean time_judgment = jc_timed_judgment.isSelected();
-
-        final SpeedType speed_type =(SpeedType) combo_speedType.getSelectedItem();
-
-        final ChannelMod channelModifier = (ChannelMod) combo_channelModifier.getSelectedItem();
-        final VisibilityMod visibilityModifier = (VisibilityMod) combo_visibilityModifier.getSelectedItem();
-
-        final float mainVol = slider_main_vol.getValue() / 100f;
-        final float keyVol = slider_key_vol.getValue() / 100f;
-        final float bgmVol = slider_bgm_vol.getValue() / 100f;
-
-        final boolean bilinear = jc_bilinear.isSelected();
-
-        if(!dm.isFullscreenCapable() && fs) {
-            String str = "This monitor can't support the selected resolution.\n"
-                    + "Do you want to play it in windowed mode?";
-            if(JOptionPane.showConfirmDialog(this, str, "Warning",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE)
-                    == JOptionPane.YES_OPTION)
-                fs = false;
-        }
-
-        GameOptions go = Config.getGameOptions();
-        go.setAutoplay(autoplay);
-	go.setAutosound(autosound);
-        go.setChannelModifier(channelModifier);
-        go.setVisibilityModifier(visibilityModifier);
-        go.setMasterVolume(mainVol);
-        go.setKeyVolume(keyVol);
-        go.setBGMVolume(bgmVol);
-        go.setHispeed(hispeed);
-        go.setSpeedType(speed_type);
-        go.setFullScreen(fs);
-        go.setBilinear(bilinear);
-        go.setVsync(vsync);
-
-	NativeLibrary.addSearchPath("vlc", go.getVLC());
-	
-        final Render r;
-        if(time_judgment)
-            r = new TimeRender(selected_header, go, dm);
-        else
-            r = new DistanceRender(selected_header, go, dm);
-
-        new RenderThread(this.getTopLevelAncestor(), r).start();
 }//GEN-LAST:event_bt_playActionPerformed
 
     private void jr_rank_easyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jr_rank_easyActionPerformed
