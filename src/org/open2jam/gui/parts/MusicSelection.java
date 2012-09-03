@@ -995,7 +995,7 @@ public class MusicSelection extends javax.swing.JPanel
         go.setBilinear(bilinear);
         go.setVsync(vsync);
 
-	NativeLibrary.addSearchPath("libvlc", go.getVLC());
+	NativeLibrary.addSearchPath("vlc", go.getVLC());
 	
         final Render r;
         if(time_judgment)

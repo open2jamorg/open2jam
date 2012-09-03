@@ -72,6 +72,7 @@ public class BgaEntity extends Entity implements TimeEntity, RenderCallback {
 	    player.prepareMedia(videoFile.getAbsolutePath());
 	} catch(Throwable t) {
 	    isVideo = false;
+            t.printStackTrace();
 	    Logger.global.log(Level.WARNING, "VLC failed to load :(");
 	}
     }
