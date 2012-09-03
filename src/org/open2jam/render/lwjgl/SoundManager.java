@@ -8,7 +8,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
 import org.open2jam.util.Logger;
-import org.open2jam.util.SampleDecoder;
+import org.open2jam.sound.Sample;
 
 /**
   this class is the bridge between OpenAL and the app.
@@ -106,7 +106,7 @@ public class SoundManager
         AL10.alSourceStop(source);
     }
     
-    public static int newBuffer(SampleDecoder data)
+    public static int newBuffer(Sample data)
     {
 	IntBuffer id_buf = BufferUtils.createIntBuffer(1);
         AL10.alGenBuffers(id_buf);

@@ -1,6 +1,7 @@
 
 package org.open2jam.render;
 
+import org.open2jam.sound.FmodExSoundSystem;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -13,6 +14,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.Config;
 import org.open2jam.GameOptions;
@@ -21,9 +23,15 @@ import org.open2jam.parsers.Event;
 import org.open2jam.parsers.EventList;
 import org.open2jam.parsers.utils.SampleData;
 import org.open2jam.render.entities.*;
-import org.open2jam.render.lwjgl.SoundManager;
 import org.open2jam.render.lwjgl.TrueTypeFont;
+import org.open2jam.sound.Sample;
+import org.open2jam.sound.Sound;
+import org.open2jam.sound.SoundChannel;
+import org.open2jam.sound.SoundSystem;
+import org.open2jam.sound.SoundSystemException;
+import org.open2jam.sound.SoundSystemInitException;
 import org.open2jam.util.*;
+
 
 /**
  *
@@ -64,6 +72,9 @@ public abstract class Render implements GameWindowCallback
 
     /** The window that is being used to render the game */
     final GameWindow window;
+    
+    /** The sound system to use */
+    final SoundSystem soundSystem;
 
     /** the chart being rendered */
     private final Chart chart;
@@ -101,7 +112,7 @@ public abstract class Render implements GameWindowCallback
     private Iterator<Integer> source_queue_iterator;
 
     /** maps the Event value to OpenGL sample ID's */
-    private Map<Integer, Integer> samples;
+    private Map<Integer, Sound> sounds;
 
     /** The time at which the last rendering looped started from the point of view of the game logic */
     double lastLoopTime;
@@ -191,6 +202,9 @@ public abstract class Render implements GameWindowCallback
     double hit_sum = 0;
     double hit_count = 0;
     double total_notes = 0;
+    
+    /** song finish time [leave 10 seconds] */
+    long finish_time = -1;
 
     protected CompositeEntity visibility_entity;
 
@@ -202,11 +216,17 @@ public abstract class Render implements GameWindowCallback
     
     protected final boolean AUTOSOUND;
     
-    Render(Chart chart, GameOptions opt, DisplayMode dm)
+    Render(Chart chart, GameOptions opt, DisplayMode dm) throws SoundSystemException
     {
         keyboard_map = Config.getKeyboardMap(Config.KeyboardType.K7);
         keyboard_misc = Config.getKeyboardMisc();
         window = ResourceFactory.get().getGameWindow();
+        
+        soundSystem = new FmodExSoundSystem();
+        soundSystem.setMasterVolume(opt.getMasterVolume());
+        soundSystem.setBGMVolume(opt.getBGMVolume());
+        soundSystem.setKeyVolume(opt.getKeyVolume());
+        
         entities_matrix = new EntityMatrix();
         this.chart = chart;
         this.opt = opt;
@@ -418,23 +438,19 @@ public abstract class Render implements GameWindowCallback
         // create sound sources
         source_queue = new LinkedList<Integer>();
 
-        //set main Volume
-        SoundManager.mainVolume(opt.getMasterVolume());
-
-        try{
-            for(int i=0;i<MAX_SOURCES;i++)
-                source_queue.push(SoundManager.newSource()); // creates sources
-        }catch(org.lwjgl.openal.OpenALException e){
-            Logger.global.log(Level.WARNING, "Couldn''t create enough sources({0})", MAX_SOURCES);
-        }
-
         source_queue_iterator = source_queue.iterator();
 
         // get the chart sound samples
-	samples = new HashMap<Integer, Integer>();
+	sounds = new HashMap<Integer, Sound>();
         for(Entry<Integer, SampleData> entry : chart.getSamples().entrySet())
-	{
-	    samples.put(entry.getKey(), SoundManager.newBuffer(SampleDecoder.decode(entry.getValue())));
+        {
+            SampleData sampleData = entry.getValue();
+            try {
+                Sound sound = soundSystem.load(sampleData);
+                sounds.put(entry.getKey(), sound);
+            } catch (SoundSystemException ex) {
+                java.util.logging.Logger.getLogger(Render.class.getName()).log(Level.SEVERE, null, ex);
+            }
 	    try {
 		entry.getValue().dispose();
 	    } catch (IOException ex) {
@@ -503,7 +519,9 @@ public abstract class Render implements GameWindowCallback
 
         now = SystemTimer.getTime() - start_time;
 
+        soundSystem.update();
 	do_autoplay(now);
+        Keyboard.poll();
         check_keyboard(now);
 
         for(LinkedList<Entity> layer : entities_matrix) // loop over layers
@@ -547,16 +565,12 @@ public abstract class Render implements GameWindowCallback
 	trueTypeFont.drawString(780, 330, "Current Measure: "+current_measure, 1, -1, TrueTypeFont.ALIGN_RIGHT);
         
         if(!buffer_iterator.hasNext() && entities_matrix.isEmpty(note_layer)){
-            for(Integer source : source_queue)
-            {
-                // this source is still playing, remove the sounds from the player
-                if(SoundManager.isPlaying(source)){
-                    last_sound.clear();
-                    return;
-                 }
+            if (finish_time == -1) {
+                finish_time = System.currentTimeMillis() + 10000;
+            } else if (System.currentTimeMillis() > finish_time) {
+                soundSystem.release();
+                window.destroy();
             }
-            // all sources have finished playing
-            window.destroy();
         }
     }
 
@@ -624,63 +638,31 @@ public abstract class Render implements GameWindowCallback
     abstract void check_judgment(NoteEntity noteEntity, double now);
 
     /* play a sample */
-    public void queueSample(Event.SoundSample sample)
+    public void queueSample(Event.SoundSample soundSample)
     {
-        if(sample == null) return;
+        if(soundSample == null) return;
 	
-	Integer buffer = samples.get(sample.sample_id);
-        if(buffer == null)return;
-
-        if(!source_queue_iterator.hasNext())
-            source_queue_iterator = source_queue.iterator();
-        Integer head = source_queue_iterator.next();
-
-        Integer source = head;
-
-        while(SoundManager.isPlaying(source)){
-            if(!source_queue_iterator.hasNext())
-                source_queue_iterator = source_queue.iterator();
-            source = source_queue_iterator.next();
-
-            if(source.equals(head)){
-                Logger.global.warning("Source queue exausted !");
-                return;
-            }
-        }
-        float vol = opt.getKeyVolume();
-        if(sample.isBGM()) vol = opt.getBGMVolume();
-        vol = sample.volume*vol;
-        vol = (float) clamp(vol, 0f, 1f);
-        SoundManager.setGain(source, vol);
-        SoundManager.setPan(source, sample.pan);
-        SoundManager.play(source, buffer);
+	Sound sound = sounds.get(soundSample.sample_id);
+        if(sound == null)return;
         
-        if(sample.isBGM())  bgm_sources.add(source);
-        else                key_sources.add(source);
-    }
-    
-    final List<Integer> bgm_sources = new LinkedList<Integer>();
-    final List<Integer> key_sources = new LinkedList<Integer>();
-    
-    private void change_volume(boolean isBGM, float factor) {
-        for(int source : isBGM ? bgm_sources : key_sources)
-        {
-            float vol = SoundManager.getGain(source) + factor;
-            vol = (float) clamp(vol, 0f, 1f);
-            SoundManager.setGain(source, vol);
+        try {
+            sound.play(soundSample.isBGM() ? SoundChannel.BGM : SoundChannel.KEY,
+                    1.0f, soundSample.pan);
+        } catch (SoundSystemException ex) {
+            java.util.logging.Logger.getLogger(Render.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     private void change_bgm_volume(float factor)
     {
         opt.setBGMVolume(opt.getBGMVolume() + factor);
-        change_volume(true , factor);
+        soundSystem.setBGMVolume(opt.getBGMVolume());
     }
     
     private void change_key_volume(float factor)
     {
         opt.setKeyVolume(opt.getKeyVolume() + factor);
-        change_volume(false , factor);
+        soundSystem.setKeyVolume(opt.getKeyVolume());
     }
             
     private void changeSpeed(double delta)
@@ -891,11 +873,11 @@ public abstract class Render implements GameWindowCallback
                     break;
                     case MAIN_VOL_UP:
                         opt.setMasterVolume(opt.getMasterVolume() + VOLUME_FACTOR);
-                        SoundManager.mainVolume(opt.getMasterVolume());
+                        soundSystem.setMasterVolume(opt.getMasterVolume());
                     break;
                     case MAIN_VOL_DOWN:
                         opt.setMasterVolume(opt.getMasterVolume() - VOLUME_FACTOR);
-                        SoundManager.mainVolume(opt.getMasterVolume());
+                        soundSystem.setMasterVolume(opt.getMasterVolume());
                     break;
                     case KEY_VOL_UP:
                         change_key_volume(VOLUME_FACTOR);
@@ -1113,7 +1095,7 @@ public abstract class Render implements GameWindowCallback
     @Override
     public void windowClosed() {
 	bgaEntity.release();
-        SoundManager.killData();
+        soundSystem.release();
 	System.gc();
     }
     
