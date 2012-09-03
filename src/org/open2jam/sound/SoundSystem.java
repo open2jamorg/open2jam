@@ -14,6 +14,7 @@ public interface SoundSystem {
     
     Sound load(SampleData sample) throws SoundSystemException;
     void release();
+    void update();
     
     void setBGMVolume(float factor);
     void setKeyVolume(float factor);

@@ -32,6 +32,7 @@ import org.open2jam.sound.SoundSystemException;
 import org.open2jam.sound.SoundSystemInitException;
 import org.open2jam.util.*;
 
+
 /**
  *
  * @author fox
@@ -518,6 +519,7 @@ public abstract class Render implements GameWindowCallback
 
         now = SystemTimer.getTime() - start_time;
 
+        soundSystem.update();
 	do_autoplay(now);
         Keyboard.poll();
         check_keyboard(now);

@@ -103,6 +103,11 @@ public class FmodExSoundSystem implements SoundSystem {
         masterGroup.setVolume(factor);
     }
     
+    @Override
+    public void update() {
+        system.update();
+    }
+    
     class FmodSound implements org.open2jam.sound.Sound {
     
         private Sound sound;
@@ -115,7 +120,6 @@ public class FmodExSoundSystem implements SoundSystem {
         }
         
         public void play(SoundChannel soundChannel, float volume, float pan) throws SoundSystemException {
-            system.update();
             Channel channel = new Channel();
             errorCheck(system.playSound(FMOD_CHANNELINDEX.FMOD_CHANNEL_FREE, sound, true, channel));
             errorCheck(channel.setVolume(Math.min(1, volume)));
