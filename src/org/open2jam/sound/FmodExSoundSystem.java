@@ -118,7 +118,6 @@ public class FmodExSoundSystem implements SoundSystem {
             system.update();
             Channel channel = new Channel();
             errorCheck(system.playSound(FMOD_CHANNELINDEX.FMOD_CHANNEL_FREE, sound, true, channel));
-            System.out.println("sample:" + volume + " pan " + pan);
             errorCheck(channel.setVolume(Math.min(1, volume)));
             errorCheck(channel.setPan(pan));
             errorCheck(channel.setPaused(false));
