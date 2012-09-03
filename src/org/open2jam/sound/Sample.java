@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.open2jam.util;
+package org.open2jam.sound;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -15,12 +15,13 @@ import javazoom.jl.decoder.*;
 import org.open2jam.parsers.utils.ByteHelper;
 import org.open2jam.parsers.utils.Logger;
 import org.open2jam.parsers.utils.SampleData;
+import org.open2jam.util.OggInputStream;
 
 /**
  *
  * @author CdK
  */
-public class SampleDecoder {
+public class Sample {
 
     public enum Format { MONO8, STEREO8, MONO16, STEREO16 };
     public enum Method { STREAM_FROM_FILE, COPY_TO_MEMORY }; //TODO do this D:
@@ -29,7 +30,7 @@ public class SampleDecoder {
     public final Format format;
     public final int samplerate;
     
-    private SampleDecoder(ByteBuffer data, Format format, int samplerate)
+    private Sample(ByteBuffer data, Format format, int samplerate)
     {
 	this.data = data;
 	this.format = format;
@@ -47,15 +48,15 @@ public class SampleDecoder {
     /*
      * Decode a SampleData using his type
      */
-    public static SampleDecoder decode(SampleData data) {
+    public static Sample decode(SampleData data) {
 	switch(data.getType()) {
 	    case MP3:
-		return SampleDecoder.decodeMP3(data);
+		return Sample.decodeMP3(data);
 	    case OGG:
-		return SampleDecoder.decodeOGG(data);
+		return Sample.decodeOGG(data);
 	    case WAV:
 	    case WAV_NO_HEADER:
-		return SampleDecoder.decodeWAV(data);
+		return Sample.decodeWAV(data);
 	    default:
 		return null;
 	}
@@ -70,7 +71,7 @@ public class SampleDecoder {
      * @param type The type of the sampled data
      * @return A new SampleData
      */
-    public static SampleDecoder create(ByteBuffer data, int bits, int channels, int samplerate)
+    public static Sample create(ByteBuffer data, int bits, int channels, int samplerate)
     {
 	Format format;
 	if(channels == 1){
@@ -80,7 +81,7 @@ public class SampleDecoder {
 	}
 	
 	
-	return new SampleDecoder(data, format, samplerate);
+	return new Sample(data, format, samplerate);
     }
     
     /**
@@ -88,7 +89,7 @@ public class SampleDecoder {
      * @param ois The OggInputStream
      * @return a new SampleData
      */
-    public static SampleDecoder decodeOGG(SampleData ad)
+    public static Sample decodeOGG(SampleData ad)
     {
 	try
 	{
@@ -108,7 +109,7 @@ public class SampleDecoder {
 	    
 	    ois.close();
 	    
-	    return new SampleDecoder(b, format, samplerate);
+	    return new Sample(b, format, samplerate);
 	    
 	} catch(IOException e) {
 	    Logger.global.log(Level.SEVERE, "Exception creating AudioData(OGG) : {0}", e.getMessage());
@@ -116,7 +117,7 @@ public class SampleDecoder {
 	}
     }
 
-    public static SampleDecoder decodeWAV(SampleData ad)
+    public static Sample decodeWAV(SampleData ad)
     {
 	if(ad.getWAVHeader() == null)
 	    return decode_wav(ad);
@@ -129,7 +130,7 @@ public class SampleDecoder {
      * @param wav The InputStream
      * @return a new SampleData
      */
-    private static SampleDecoder decode_wav(SampleData ad)
+    private static Sample decode_wav(SampleData ad)
     {
 	try {
 	    AudioInputStream ais = AudioSystem.getAudioInputStream(ad.getInputStream());
@@ -152,7 +153,7 @@ public class SampleDecoder {
 	}
     }
     
-    private static SampleDecoder decode_raw(SampleData ad)
+    private static Sample decode_raw(SampleData ad)
     {
 	try {
 	    ByteArrayOutputStream out = new ByteArrayOutputStream(ByteHelper.tmp_buffer.length);
@@ -179,7 +180,7 @@ public class SampleDecoder {
      * @param stream The Bitstream
      * @return a new SampleData
      */
-    public static SampleDecoder decodeMP3(SampleData ad)
+    public static Sample decodeMP3(SampleData ad)
     {
 	try {
 	    Bitstream stream = new Bitstream(ad.getInputStream());

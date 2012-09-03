@@ -15,10 +15,15 @@ public class Main implements Runnable
         "lib" + File.separator +
         "native" + File.separator +
         getOS();
+    private static final String FMODEX_PATH =
+        System.getProperty("user.dir") + File.separator +
+        "lib" + File.separator +
+        "fmodex";
 
     public static void main(String []args)
     {
         System.setProperty("org.lwjgl.librarypath", LIB_PATH);
+        System.setProperty("java.library.path", FMODEX_PATH);
         
         Config.openDB();
         

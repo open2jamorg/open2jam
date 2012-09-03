@@ -10,6 +10,7 @@ import org.open2jam.render.entities.Entity;
 import org.open2jam.render.entities.LongNoteEntity;
 import org.open2jam.render.entities.NoteEntity;
 import org.open2jam.render.entities.NumberEntity;
+import org.open2jam.sound.SoundSystemException;
 import org.open2jam.util.SystemTimer;
 
 
@@ -32,7 +33,7 @@ public class DistanceRender extends Render
 
     private EnumMap<JUDGE,NumberEntity> note_counter;
 
-    public DistanceRender(Chart c, GameOptions opt, DisplayMode dm)
+    public DistanceRender(Chart c, GameOptions opt, DisplayMode dm) throws SoundSystemException
     {
         super(c,opt,dm);
     }
