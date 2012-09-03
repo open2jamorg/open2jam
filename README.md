@@ -3,7 +3,7 @@ open2jam
 ========
 open source emulator of [O2Jam](http://o2jam.wikia.com/wiki/O2Jam).
 
-It is written in a combination of java,OpenGL and OpenAL, with the objective of being able to play in whatever platform you are.
+It is written in a combination of java, OpenGL and FMOD Ex, with the objective of being able to play in whatever platform you are.
 
 We don't have an official roadmap, but we aim to:
 
@@ -11,7 +11,8 @@ We don't have an official roadmap, but we aim to:
 *   Being able to play any OJN/OJM and BMS files.
 *   Skinnable game interface
 *   Multiplayer similar to o2jam.
-  
+
+FMOD Sound System, copyright © Firelight Technologies Pty, Ltd., 1994-2012.
 
 License
 -------

@@ -54,6 +54,8 @@ public class FmodExSoundSystem implements SoundSystem {
         errorCheck(system.getMasterChannelGroup(masterGroup));
         errorCheck(system.createChannelGroup("BGM", bgmGroup));
         errorCheck(system.createChannelGroup("KEY", keyGroup));
+        
+        System.out.println("Audio engine : FMOD Sound System by Firelight Technologies");
     }
     
     private void errorCheck(FMOD_RESULT result) throws SoundSystemException {
