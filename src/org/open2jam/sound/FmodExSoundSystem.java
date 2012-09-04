@@ -125,6 +125,7 @@ public class FmodExSoundSystem implements SoundSystem {
             errorCheck(channel.setVolume(Math.min(1, volume)));
             errorCheck(channel.setPan(pan));
             errorCheck(channel.setPaused(false));
+            errorCheck(channel.setLoopCount(0));
             errorCheck(channel.setChannelGroup(soundChannel == SoundChannel.BGM ? bgmGroup : keyGroup));
         }
         
