@@ -111,6 +111,7 @@ public class FmodExSoundSystem implements SoundSystem {
     class FmodSound implements org.open2jam.sound.Sound {
     
         private Sound sound;
+        private Channel useChannel;
         
         public FmodSound(ByteBuffer buffer) throws SoundSystemException {
             sound = new Sound();
@@ -120,8 +121,15 @@ public class FmodExSoundSystem implements SoundSystem {
         }
         
         public void play(SoundChannel soundChannel, float volume, float pan) throws SoundSystemException {
-            Channel channel = new Channel();
-            errorCheck(system.playSound(FMOD_CHANNELINDEX.FMOD_CHANNEL_FREE, sound, true, channel));
+            Channel channel;
+            if (useChannel != null) {
+                channel = useChannel;
+                errorCheck(system.playSound(FMOD_CHANNELINDEX.FMOD_CHANNEL_REUSE, sound, true, channel));
+            } else {
+                channel = new Channel();
+                errorCheck(system.playSound(FMOD_CHANNELINDEX.FMOD_CHANNEL_FREE, sound, true, channel));
+            }
+            useChannel = channel;
             errorCheck(channel.setVolume(Math.min(1, volume)));
             errorCheck(channel.setPan(pan));
             errorCheck(channel.setPaused(false));
