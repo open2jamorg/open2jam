@@ -34,9 +34,7 @@ import org.open2jam.gui.ChartTableModel;
 import org.open2jam.parsers.BMSWriter;
 import org.open2jam.parsers.Chart;
 import org.open2jam.parsers.ChartList;
-import org.open2jam.render.DistanceRender;
 import org.open2jam.render.Render;
-import org.open2jam.render.TimeRender;
 import org.open2jam.sound.SoundSystemException;
 import org.open2jam.util.Logger;
 
@@ -1000,11 +998,8 @@ public class MusicSelection extends javax.swing.JPanel
             NativeLibrary.addSearchPath("vlc", go.getVLC());
             
             final Render r;
-            if(time_judgment)
-                r = new TimeRender(selected_header, go, dm);
-            else
-                r = new DistanceRender(selected_header, go, dm);
-
+            r = new Render(selected_header, go, dm);
+            
             new RenderThread(this.getTopLevelAncestor(), r).start();
         } catch (SoundSystemException ex) {
             java.util.logging.Logger.getLogger(MusicSelection.class.getName()).log(Level.SEVERE, null, ex);

@@ -86,8 +86,8 @@ public class LongNoteEntity extends NoteEntity
     @Override
     public double testTimeHit(double now)
     {
-        if(state == State.NOT_JUDGED)return Math.abs(time_to_hit-now);
-        else if(end_time != null)return Math.abs(end_time-now);
+        if(state == State.NOT_JUDGED)return (time_to_hit-now);
+        else if(end_time != null)return (end_time-now);
         return 1000;
     }
 
