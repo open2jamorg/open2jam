@@ -15,6 +15,7 @@ import org.jouvieje.fmodex.ChannelGroup;
 import org.jouvieje.fmodex.FmodEx;
 import org.jouvieje.fmodex.Init;
 import org.jouvieje.fmodex.Sound;
+import org.jouvieje.fmodex.SoundGroup;
 import org.jouvieje.fmodex.defines.FMOD_INITFLAGS;
 import org.jouvieje.fmodex.defines.FMOD_MODE;
 import org.jouvieje.fmodex.enumerations.FMOD_CHANNELINDEX;
@@ -37,6 +38,8 @@ public class FmodExSoundSystem implements SoundSystem {
     private ChannelGroup bgmGroup = new ChannelGroup();
     private ChannelGroup keyGroup = new ChannelGroup();
     
+    private int nextChannelID = 0;
+    
     public FmodExSoundSystem() throws SoundSystemException {
         try
         {
@@ -50,10 +53,15 @@ public class FmodExSoundSystem implements SoundSystem {
         system = new org.jouvieje.fmodex.System();
         errorCheck(FmodEx.System_Create(system));
         errorCheck(system.setDSPBufferSize(1024, 2));
-        errorCheck(system.init(1296, FMOD_INITFLAGS.FMOD_INIT_NORMAL, null));
+        errorCheck(system.init(4093, FMOD_INITFLAGS.FMOD_INIT_NORMAL, null));
         errorCheck(system.getMasterChannelGroup(masterGroup));
         errorCheck(system.createChannelGroup("BGM", bgmGroup));
         errorCheck(system.createChannelGroup("KEY", keyGroup));
+        
+        
+        SoundGroup soundGroup = new SoundGroup();
+        errorCheck(system.getMasterSoundGroup(soundGroup));
+        errorCheck(soundGroup.setMaxAudible(-1));
         
         System.out.println("Audio engine : FMOD Sound System by Firelight Technologies");
     }
@@ -111,7 +119,6 @@ public class FmodExSoundSystem implements SoundSystem {
     class FmodSound implements org.open2jam.sound.Sound {
     
         private Sound sound;
-        private Channel useChannel;
         
         public FmodSound(ByteBuffer buffer) throws SoundSystemException {
             sound = new Sound();
@@ -121,20 +128,14 @@ public class FmodExSoundSystem implements SoundSystem {
         }
         
         public void play(SoundChannel soundChannel, float volume, float pan) throws SoundSystemException {
-            Channel channel;
-            if (useChannel != null) {
-                channel = useChannel;
-                errorCheck(system.playSound(FMOD_CHANNELINDEX.FMOD_CHANNEL_REUSE, sound, true, channel));
-            } else {
-                channel = new Channel();
-                errorCheck(system.playSound(FMOD_CHANNELINDEX.FMOD_CHANNEL_FREE, sound, true, channel));
-            }
-            useChannel = channel;
+            Channel channel = new Channel();
+            errorCheck(system.playSound(FMOD_CHANNELINDEX.FMOD_CHANNEL_FREE, sound, true, channel));
             errorCheck(channel.setVolume(Math.min(1, volume)));
             errorCheck(channel.setPan(pan));
             errorCheck(channel.setPaused(false));
             errorCheck(channel.setLoopCount(0));
             errorCheck(channel.setChannelGroup(soundChannel == SoundChannel.BGM ? bgmGroup : keyGroup));
+            system.update();
         }
         
     }
