@@ -207,10 +207,18 @@ public class Render implements GameWindowCallback
     
     TrueTypeFont trueTypeFont;
 
-    /** statistics variables */
+    /** statistics variables (delete this soon) */
     double hit_sum = 0;
     double hit_count = 0;
     double total_notes = 0;
+    
+    /** statistics variables (new version) */
+    List<Double> hits = new LinkedList<Double>();
+    List<Double> lags = new LinkedList<Double>();
+    
+    /** display lag */
+    boolean is_autosyncing = false;
+    double display_lag = 0;
     
     /** song finish time [leave 10 seconds] */
     long finish_time = -1;
@@ -451,7 +459,7 @@ public class Render implements GameWindowCallback
         buffer_iterator = event_list.iterator();
 
         // load up initial buffer
-        update_note_buffer(0);
+        update_note_buffer(0, 0);
 
         // create sound sources
         source_queue = new LinkedList<Integer>();
@@ -533,7 +541,9 @@ public class Render implements GameWindowCallback
         changeSpeed(delta); // TODO: is everything here really needed every frame ?
 
         now = SystemTimer.getTime() - start_time;
-        update_note_buffer(now);
+        double now_display = now - display_lag;
+        
+        update_note_buffer(now, now_display);
 
         now = SystemTimer.getTime() - start_time;
 
@@ -542,6 +552,7 @@ public class Render implements GameWindowCallback
         Keyboard.poll();
         check_keyboard(now);
 
+        
         for(LinkedList<Entity> layer : entities_matrix) // loop over layers
         {
             // get entity iterator from layer
@@ -562,7 +573,7 @@ public class Render implements GameWindowCallback
                     Event.Channel channel = Event.Channel.NONE;
                     if(e instanceof NoteEntity) channel = ((NoteEntity)e).getChannel();
 
-                    double y = getViewport() - velocity_integral(now,te.getTime(), channel);
+                    double y = getViewport() - velocity_integral(now_display,te.getTime(), channel);
 
                     //TODO Fix this, maybe an option in the skin
                     //o2jam overlaps 1 px of the note with the measure and, because of this
@@ -711,7 +722,30 @@ public class Render implements GameWindowCallback
         }
         
     }
-
+    
+    // display hits
+    private void display_hits() {
+        if (hits.isEmpty()) return;
+        double sum = 0;
+        for (double hit : hits) {
+            sum += hit;
+        }
+        double average = sum / hits.size();
+        System.out.printf("%d %f %f\n", hits.size(), average);
+    }
+    
+    private void autosync() {
+        if (!is_autosyncing) return;
+        if (lags.size() < 24) return;
+        double sum = 0;
+        for (double lag : lags) {
+            sum += lag;
+        }
+        double average = sum / lags.size();
+        display_lag = average;
+        System.out.printf("%d %f\n", lags.size(), average);
+    }
+    
     public void check_judgment(NoteEntity ne, double now)
     {
         JudgmentResult result;
@@ -726,6 +760,13 @@ public class Render implements GameWindowCallback
             case JUDGE: //LN & normal ones: has finished with good result
                 result = judge.judge(ne);
                 setNoteJudgment(ne, result);
+                
+                if (!(ne instanceof LongNoteEntity)) {
+                    hits.add(ne.getHitTime());
+                    lags.add(ne.getHitTime() + display_lag);
+                    //display_hits();
+                    autosync();
+                }
                 break;
                 
             case LN_HOLD:    // You kept too much time the note held that it misses
@@ -1018,9 +1059,9 @@ public class Render implements GameWindowCallback
     /* update the note layer of the entities_matrix.
     *** note buffering is equally distributed between the frames
     **/
-    void update_note_buffer(double now)
+    void update_note_buffer(double now, double now_display)
     {
-        while(buffer_iterator.hasNext() && getViewport() - velocity_integral(now,buffer_timer) > -10)
+        while(buffer_iterator.hasNext() && getViewport() - velocity_integral(now_display,buffer_timer) > -10)
         {
             Event e = buffer_iterator.next();
 
