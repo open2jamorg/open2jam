@@ -1046,6 +1046,7 @@ public class MusicSelection extends javax.swing.JPanel
                                 "Save Display Latency", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                             go.setDisplayLag(displayLag);
                             txt_displayLag.setText(displayLag + "");
+                            cb_autoSync.setSelected(false);
                         }
                     }
                 });
