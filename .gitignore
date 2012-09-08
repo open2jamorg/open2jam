@@ -8,3 +8,4 @@ nbproject/genfiles.properties
 nbproject/build-impl.xml
 /config.vl
 .DS_Store
+game_options.properties
