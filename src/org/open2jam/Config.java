@@ -19,6 +19,7 @@ public abstract class Config
     private static final File CONFIG_FILE = new File("config.vl");
     
     private static VoileMap<String, Serializable> VMap;
+    private static GameOptions options;
 
     public enum KeyboardType {K4, K5, K6, K7, K8, /*K9*/}
     
@@ -33,6 +34,8 @@ public abstract class Config
     
     public static void openDB() {
         
+        options = new GameOptions();
+        
         if(!CONFIG_FILE.exists()) { // create now
             
             VMap = new VoileMap<String, Serializable>(CONFIG_FILE);
@@ -40,8 +43,6 @@ public abstract class Config
             setCwd(null);
             
             setDirsList(new ArrayList<File>());
-            
-            setGameOptions(new GameOptions());
 
             EnumMap<MiscEvent, Integer> keyboard_misc = new EnumMap<MiscEvent, Integer>(MiscEvent.class);
             keyboard_misc.put(MiscEvent.SPEED_DOWN,   Keyboard.KEY_DOWN);
@@ -145,12 +146,11 @@ public abstract class Config
     }
     
     public static void setGameOptions(GameOptions go) {
-        put("gameoptions", go);
+        options.save();
     }
     
-    @SuppressWarnings("unchecked")
     public static GameOptions getGameOptions() {
-        return (GameOptions) get("gameoptions");
+        return options;
     }
     
     @SuppressWarnings("unchecked")
