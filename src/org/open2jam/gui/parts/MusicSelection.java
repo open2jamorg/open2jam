@@ -228,6 +228,7 @@ public class MusicSelection extends javax.swing.JPanel
         slider_bgm_vol.setValue(Math.round(go.getBGMVolume()*100));
         js_hispeed.setValue(go.getHiSpeed());
         combo_speedType.setSelectedItem(go.getSpeedType());
+        txt_displayLag.setText(go.getDisplayLag() + "");
         
         for(DisplayMode dm : display_modes)
         {
@@ -1043,7 +1044,8 @@ public class MusicSelection extends javax.swing.JPanel
                         if (JOptionPane.showConfirmDialog(MusicSelection.this, "This display latency has changed from\n"
                                 + go.getDisplayLag() + "\nto\n" + displayLag + "\n\nSave this change?",
                                 "Save Display Latency", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                            
+                            go.setDisplayLag(displayLag);
+                            txt_displayLag.setText(displayLag + "");
                         }
                     }
                 });
