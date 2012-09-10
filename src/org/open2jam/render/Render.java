@@ -43,6 +43,10 @@ import org.open2jam.util.*;
 public class Render implements GameWindowCallback
 {
     
+    public interface AutosyncDelegate {
+        void autosyncFinished(double displayLag);
+    }
+    
     /** the config xml */
     private static final URL resources_xml = Render.class.getResource("/resources/resources.xml");
 
@@ -219,6 +223,8 @@ public class Render implements GameWindowCallback
     /** display lag */
     boolean is_autosyncing = false;
     double display_lag = 0;
+    double original_display_lag = 0;
+    AutosyncDelegate autosyncDelegate;
     
     /** song finish time [leave 10 seconds] */
     long finish_time = -1;
@@ -279,8 +285,22 @@ public class Render implements GameWindowCallback
 //	    Event.Channel.NOTE_4.enableAutoplay();
 //	    Event.Channel.NOTE_1.enableAutoplay();
 	}
+        
+        display_lag = original_display_lag = opt.getDisplayLag();
 	
         window.setDisplay(dm,opt.getVsync(),opt.getFullScreen(),opt.getBilinear());
+    }
+
+    public void setAutosync(boolean is_autosyncing) {
+        this.is_autosyncing = is_autosyncing;
+    }
+
+    public void setAutosyncDelegate(AutosyncDelegate autosyncDelegate) {
+        this.autosyncDelegate = autosyncDelegate;
+    }
+
+    public boolean isAutosync() {
+        return is_autosyncing;
     }
 
     /**
@@ -736,14 +756,19 @@ public class Render implements GameWindowCallback
     
     private void autosync() {
         if (!is_autosyncing) return;
-        if (lags.size() < 24) return;
+        if (lags.size() < 1) return;
         double sum = 0;
+        int count = 0;
         for (double lag : lags) {
             sum += lag;
+            count ++;
         }
-        double average = sum / lags.size();
+        for (; count < 64; count ++) {
+            sum += original_display_lag;
+        }
+        double average = sum / count;
         display_lag = average;
-        System.out.printf("%d %f\n", lags.size(), average);
+        System.out.printf("new display lag : %d %f\n", lags.size(), average);
     }
     
     public void check_judgment(NoteEntity ne, double now)
@@ -1395,7 +1420,10 @@ public class Render implements GameWindowCallback
     public void windowClosed() {
 	bgaEntity.release();
         soundSystem.release();
-	System.gc();
+	System.gc();        
+        if (is_autosyncing && autosyncDelegate != null) {
+            autosyncDelegate.autosyncFinished(display_lag);
+        }
     }
     
     private double clamp(double value, double min, double max)

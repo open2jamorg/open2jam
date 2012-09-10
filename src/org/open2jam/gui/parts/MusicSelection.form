@@ -50,12 +50,12 @@
                   <Component id="panel_list" alignment="1" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="panel_setting" alignment="1" min="-2" max="-2" attributes="1"/>
-                  <Group type="102" alignment="1" attributes="0">
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Group type="102" attributes="0">
                       <Component id="bt_play" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="11" pref="11" max="11" attributes="0"/>
+                      <EmptySpace min="46" pref="46" max="46" attributes="0"/>
                   </Group>
+                  <Component id="panel_setting" min="-2" max="-2" attributes="1"/>
               </Group>
           </Group>
       </Group>
@@ -94,7 +94,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="btn_delete" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="table_scroll" alignment="2" pref="544" max="32767" attributes="1"/>
+                      <Component id="table_scroll" alignment="2" pref="591" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -102,7 +102,7 @@
                   <EmptySpace min="10" pref="10" max="10" attributes="0"/>
                   <Component id="lbl_search" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="txt_filter" pref="509" max="32767" attributes="1"/>
+                  <Component id="txt_filter" pref="556" max="32767" attributes="1"/>
                   <EmptySpace min="10" pref="10" max="10" attributes="0"/>
               </Group>
           </Group>
@@ -120,7 +120,7 @@
                       <Component id="load_progress" alignment="3" min="-2" pref="27" max="-2" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="table_scroll" pref="462" max="32767" attributes="1"/>
+                  <Component id="table_scroll" pref="446" max="32767" attributes="1"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="txt_filter" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -583,7 +583,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="360" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="344" max="32767" attributes="0"/>
                   <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
@@ -628,7 +628,7 @@
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Component id="lbl_artist" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Component id="table_scroll2" pref="77" max="32767" attributes="0"/>
+                          <Component id="table_scroll2" pref="61" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -804,15 +804,8 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
+              <Group type="102" attributes="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="jc_vsync" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jc_full_screen" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jc_bilinear" min="-2" max="-2" attributes="0"/>
-                      </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="lbl_display" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -825,6 +818,27 @@
                           <Component id="lbl_res_x" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="txt_res_height" min="-2" pref="39" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jc_vsync" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="-2" pref="58" max="-2" attributes="0"/>
+                                  <Component id="jc_full_screen" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="jc_bilinear" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="1" attributes="1">
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="txt_displayLag" max="32767" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="cb_autoSync" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
                       </Group>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
@@ -849,6 +863,11 @@
                       <Component id="jc_bilinear" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="txt_displayLag" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="cb_autoSync" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
               </Group>
           </Group>
         </DimensionLayout>
@@ -910,6 +929,27 @@
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Bilinear filter"/>
           </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel1">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Display Lag:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="txt_displayLag">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="0"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_displayLagActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="cb_autoSync">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="autosync"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cb_autoSyncActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

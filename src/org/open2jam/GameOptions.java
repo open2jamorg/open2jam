@@ -149,7 +149,8 @@ public class GameOptions {
         height("display.height", "0", new IntegerBinding("height")),
         bpp("display.bpp", "0", new IntegerBinding("bpp")),
         freq("display.freq", "0", new IntegerBinding("freq")),
-        vlcPath("vlc.library_path", "", new Binding("vlc"));
+        vlcPath("vlc.library_path", "", new Binding("vlc")),
+        displayLag("latency.display", "0.0", new DoubleBinding("displayLag"));
         
         final String name;
         final String defaultValue;
@@ -221,6 +222,7 @@ public class GameOptions {
     
     // VLC lib path
     String vlc = "";
+    double displayLag = 0;
 
     //public constructor. give default options
     public GameOptions() {
@@ -440,6 +442,14 @@ public class GameOptions {
         this.height = dm.getHeight();
         this.bpp = dm.getBitsPerPixel();
         this.freq = dm.getFrequency();
+    }
+
+    public double getDisplayLag() {
+        return displayLag;
+    }
+
+    public void setDisplayLag(double displayLag) {
+        this.displayLag = displayLag;
     }
     
     public boolean isDisplaySaved(DisplayMode dm)
