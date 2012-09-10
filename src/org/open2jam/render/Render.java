@@ -657,8 +657,8 @@ public class Render implements GameWindowCallback
             if(ne == null)continue;
 
             double hit = ne.testTimeHit(now);
-            if(hit > AUTOPLAY_THRESHOLD)continue;
-            ne.setHitDistance(hit);
+            if(hit < AUTOPLAY_THRESHOLD)continue;
+            ne.updateHit(now);
             
             if(ne instanceof LongNoteEntity)
             {
@@ -715,7 +715,7 @@ public class Render implements GameWindowCallback
 
                 queueSample(e.getSample());
 
-                e.updateHit(judgment_line_y1, judgment_line_y2, now);
+                e.updateHit(now);
 
                 // don't continue if the note is too far
                 if(judge.accept(e)) {
@@ -739,7 +739,7 @@ public class Render implements GameWindowCallback
                 LongNoteEntity e = longnote_holded.remove(c);
                 if(e == null || e.getState() != NoteEntity.State.LN_HOLD)continue;
 
-                e.updateHit(judgment_line_y1, judgment_line_y2, now);
+                e.updateHit(now);
                 e.setState(NoteEntity.State.JUDGE);
                 
             }
@@ -782,7 +782,7 @@ public class Render implements GameWindowCallback
         switch (ne.getState())
         {
             case NOT_JUDGED: // you missed it (no keyboard input)
-                ne.updateHit(judgment_line_y1, judgment_line_y2, now);
+                ne.updateHit(now);
                 if (judge.missed(ne)) setNoteJudgment(ne, JudgmentResult.MISS);
                 break;
                 
@@ -799,7 +799,7 @@ public class Render implements GameWindowCallback
                 break;
                 
             case LN_HOLD:    // You kept too much time the note held that it misses
-                ne.updateHit(judgment_line_y1, judgment_line_y2, now);
+                ne.updateHit(now);
                 if (judge.missed(ne)) {
                     setNoteJudgment(ne, JudgmentResult.MISS);
                     
@@ -845,7 +845,7 @@ public class Render implements GameWindowCallback
     public void setNoteJudgment(NoteEntity ne, JudgmentResult result) {
         
         // statistics
-        hit_sum += ne.getHitDistance();
+        hit_sum += Math.abs(ne.getHitTime());
         if(result != JudgmentResult.MISS) hit_count++;
         total_notes++;
         
