@@ -7,7 +7,7 @@ import org.open2jam.render.entities.NoteEntity;
  * Judge hits by time.
  * @author dttvb
  */
-public class TimeJudgment implements JudgmentStrategy {
+public class TimeJudgment extends AbstractJudgmentStrategy {
 
     private static final double BAD_THRESHOULD = 173;
     private static final double GOOD_THRESHOULD = 125;

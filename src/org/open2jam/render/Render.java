@@ -23,17 +23,13 @@ import org.open2jam.parsers.Event;
 import org.open2jam.parsers.EventList;
 import org.open2jam.parsers.utils.SampleData;
 import org.open2jam.render.entities.*;
-import org.open2jam.render.judgment.BeatJudgment;
 import org.open2jam.render.judgment.JudgmentResult;
 import org.open2jam.render.judgment.JudgmentStrategy;
-import org.open2jam.render.judgment.TimeJudgment;
 import org.open2jam.render.lwjgl.TrueTypeFont;
-import org.open2jam.sound.Sample;
 import org.open2jam.sound.Sound;
 import org.open2jam.sound.SoundChannel;
 import org.open2jam.sound.SoundSystem;
 import org.open2jam.sound.SoundSystemException;
-import org.open2jam.sound.SoundSystemInitException;
 import org.open2jam.util.*;
 
 
@@ -298,6 +294,10 @@ public class Render implements GameWindowCallback
         return is_autosyncing;
     }
 
+    public void setJudge(JudgmentStrategy judge) {
+        this.judge = judge;
+    }
+
     /**
     * initialize the common elements for the game.
     * this is called by the window render
@@ -422,11 +422,9 @@ public class Render implements GameWindowCallback
         start_time = lastLoopTime = SystemTimer.getTime();
 
         EventList event_list = construct_velocity_tree(chart.getEvents());
-        
-        judge = new TimeJudgment();
-        judge = new BeatJudgment(timing);
-        
 	event_list.fixEventList(EventList.FixMethod.OPEN2JAM, true);
+        
+        judge.setTiming(timing);
 
 	//Let's randomize "-"
         switch(opt.getChannelModifier())

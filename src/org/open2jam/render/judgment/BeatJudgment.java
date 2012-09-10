@@ -8,17 +8,11 @@ import org.open2jam.util.TimingData;
  * Judge hits by distance.
  * @author dtinth
  */
-public class BeatJudgment implements JudgmentStrategy {
+public class BeatJudgment extends AbstractJudgmentStrategy {
 
     private static final double BAD_THRESHOULD = 0.8;
     private static final double GOOD_THRESHOULD = 0.5;
     private static final double COOL_THRESHOULD = 0.2;
-
-    private TimingData timing;
-
-    public BeatJudgment(TimingData timing) {
-        this.timing = timing;
-    }
     
     private double calculateHit(NoteEntity note) {
         double noteTime = note.getTimeToJudge();

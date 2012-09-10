@@ -35,6 +35,8 @@ import org.open2jam.parsers.BMSWriter;
 import org.open2jam.parsers.Chart;
 import org.open2jam.parsers.ChartList;
 import org.open2jam.render.Render;
+import org.open2jam.render.judgment.BeatJudgment;
+import org.open2jam.render.judgment.TimeJudgment;
 import org.open2jam.sound.SoundSystemException;
 import org.open2jam.util.Logger;
 
@@ -1040,6 +1042,7 @@ public class MusicSelection extends javax.swing.JPanel
             
             final Render r;
             r = new Render(selected_header, go, dm);
+            
             if (cb_autoSync.isSelected()) {
                 r.setAutosync(true);
                 r.setAutosyncDelegate(new Render.AutosyncDelegate() {
@@ -1056,6 +1059,10 @@ public class MusicSelection extends javax.swing.JPanel
                     }
                 });
             }
+            
+            r.setJudge(jc_timed_judgment.isSelected()
+                    ? new TimeJudgment()
+                    : new BeatJudgment());
             
             new RenderThread(this.getTopLevelAncestor(), r).start();
         } catch (SoundSystemException ex) {
