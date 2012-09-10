@@ -90,6 +90,8 @@ public class Render implements GameWindowCallback
     private double next_speed;
     private static final double SPEED_STEP = 0.5d;
     
+    private boolean gameStarted = false;
+    
     boolean xr_speed = false;
     boolean w_speed = false;
     private final List<Double> speed_xR_values = new ArrayList<Double>();
@@ -554,7 +556,9 @@ public class Render implements GameWindowCallback
         
         changeSpeed(delta); // TODO: is everything here really needed every frame ?
 
+        if (!gameStarted) start_time = SystemTimer.getTime();
         now = SystemTimer.getTime() - start_time;
+        
         double now_display = now - display_lag;
         
         update_note_buffer(now, now_display);
@@ -688,6 +692,8 @@ public class Render implements GameWindowCallback
             boolean keyWasDown = keyboard_key_pressed.get(c);
             
             if(keyDown && !keyWasDown){ // started holding now
+                
+                if (!gameStarted) gameStarted = true;
                 
                 keyboard_key_pressed.put(c, true);
 
