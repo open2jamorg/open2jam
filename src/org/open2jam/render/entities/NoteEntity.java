@@ -13,7 +13,7 @@ public class NoteEntity extends AnimatedEntity implements TimeEntity
 
     State state = State.NOT_JUDGED;
 
-    private double hit = 0;
+    private double hitTime = 0;
 
     double time_to_hit;
 
@@ -44,31 +44,26 @@ public class NoteEntity extends AnimatedEntity implements TimeEntity
 
     public Event.SoundSample getSample(){ return sample_value; }
 
-    public void setHit(double hit) { this.hit = hit; }
-    public double getHit() { return hit; }
+    public void setHitTime(double hit) { this.hitTime = hit; }
+    public double getHitTime() { return hitTime; }
 
     public void setState(State value) { state = value; }
     public State getState() { return state; }
 
-    public double testHit(double jy1, double jy2)
+    public double getTimeToJudge() {
+        return time_to_hit;
+    }
+    
+    public void updateHit(double now)
     {
-        return testHit(y, y + height, jy1, jy2);
+        setHitTime(testTimeHit(now));
     }
 
     public double testTimeHit(double now)
     {
-        return Math.abs(time_to_hit-now);
+        return getTimeToJudge() - now;
     }
 
-    static double testHit(double y1, double y2, double jy1, double jy2)
-    {
-        if(y2 < jy1)return 0;
-        double p = (y2 - jy1)/(jy2 - jy1);
-        if(p > 2)return 0;
-        else if(p > 1)p = Math.max(0, 2 - p);
-        return p;
-    }
-    
     @Override
     public void setPos(double x, double y)
     {

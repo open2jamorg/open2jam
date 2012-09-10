@@ -70,25 +70,10 @@ public class LongNoteEntity extends NoteEntity
     }
 
     @Override
-    public double testHit(double jy1, double jy2)
-    {
-        double y1, y2;
-        if(state == State.NOT_JUDGED){
-            y1 = y;
-        }else{
-            if(end_time == null)return 0;
-            y1 = y - end_dist;
-        }
-        y2 = y1 + sprite.getHeight();
-        return testHit(y1, y2, jy1, jy2);
-    }
-
-    @Override
-    public double testTimeHit(double now)
-    {
-        if(state == State.NOT_JUDGED)return Math.abs(time_to_hit-now);
-        else if(end_time != null)return Math.abs(end_time-now);
-        return 1000;
+    public double getTimeToJudge() {
+        if (state == State.NOT_JUDGED || state == State.LN_HEAD_JUDGE) return time_to_hit;
+        if (end_time != null) return end_time;
+        return Double.MAX_VALUE;
     }
 
     @Override

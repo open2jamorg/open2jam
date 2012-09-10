@@ -23,13 +23,13 @@ import org.open2jam.parsers.Event;
 import org.open2jam.parsers.EventList;
 import org.open2jam.parsers.utils.SampleData;
 import org.open2jam.render.entities.*;
+import org.open2jam.render.judgment.JudgmentResult;
+import org.open2jam.render.judgment.JudgmentStrategy;
 import org.open2jam.render.lwjgl.TrueTypeFont;
-import org.open2jam.sound.Sample;
 import org.open2jam.sound.Sound;
 import org.open2jam.sound.SoundChannel;
 import org.open2jam.sound.SoundSystem;
 import org.open2jam.sound.SoundSystemException;
-import org.open2jam.sound.SoundSystemInitException;
 import org.open2jam.util.*;
 
 
@@ -37,12 +37,15 @@ import org.open2jam.util.*;
  *
  * @author fox
  */
-public abstract class Render implements GameWindowCallback
+public class Render implements GameWindowCallback
 {
+    
+    public interface AutosyncDelegate {
+        void autosyncFinished(double displayLag);
+    }
+    
     /** the config xml */
     private static final URL resources_xml = Render.class.getResource("/resources/resources.xml");
-
-    private static final int JUDGMENT_SIZE = 64;
 
     /** 4 beats per minute, 4 * 60 beats per second, 4*60*1000 per millisecond */
     private static final int BEATS_PER_MSEC = 4 * 60 * 1000;
@@ -56,10 +59,6 @@ public abstract class Render implements GameWindowCallback
 
     /** skin info and entities */
     Skin skin;
-
-    /** defines the judgment space */
-    double judgment_line_y1;
-    double judgment_line_y2;
 
     /** store the sound sources being played */
     private static final int MAX_SOURCES = 64;
@@ -75,6 +74,9 @@ public abstract class Render implements GameWindowCallback
     
     /** The sound system to use */
     final SoundSystem soundSystem;
+    
+    /** The judge to judge the notes */
+    private JudgmentStrategy judge;
 
     /** the chart being rendered */
     private final Chart chart;
@@ -143,6 +145,8 @@ public abstract class Render implements GameWindowCallback
 
     EnumMap<Event.Channel,Entity> longflare;
 
+    EnumMap<JudgmentResult,NumberEntity> note_counter;
+    
     /** these are the same notes from the entity_matrix
      * but divided in channels for ease to pull */
     private EnumMap<Event.Channel,LinkedList<NoteEntity>> note_channels;
@@ -198,10 +202,20 @@ public abstract class Render implements GameWindowCallback
     
     TrueTypeFont trueTypeFont;
 
-    /** statistics variables */
+    /** statistics variables (delete this soon) */
     double hit_sum = 0;
     double hit_count = 0;
     double total_notes = 0;
+    
+    /** statistics variables (new version) */
+    List<Double> hits = new LinkedList<Double>();
+    List<Double> lags = new LinkedList<Double>();
+    
+    /** display lag */
+    boolean is_autosyncing = false;
+    double display_lag = 0;
+    double original_display_lag = 0;
+    AutosyncDelegate autosyncDelegate;
     
     /** song finish time [leave 10 seconds] */
     long finish_time = -1;
@@ -209,6 +223,9 @@ public abstract class Render implements GameWindowCallback
     protected CompositeEntity visibility_entity;
 
     private final static float VOLUME_FACTOR = 0.05f;
+    
+    /** timing data */
+    private TimingData timing = new TimingData(); 
 
     static {
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
@@ -216,7 +233,7 @@ public abstract class Render implements GameWindowCallback
     
     protected final boolean AUTOSOUND;
     
-    Render(Chart chart, GameOptions opt, DisplayMode dm) throws SoundSystemException
+    public Render(Chart chart, GameOptions opt, DisplayMode dm) throws SoundSystemException
     {
         keyboard_map = Config.getKeyboardMap(Config.KeyboardType.K7);
         keyboard_misc = Config.getKeyboardMisc();
@@ -230,7 +247,6 @@ public abstract class Render implements GameWindowCallback
         entities_matrix = new EntityMatrix();
         this.chart = chart;
         this.opt = opt;
-        velocity_tree = new IntervalTree<Double,Double>();
 
         this.next_speed = this.last_speed = speed = opt.getHiSpeed();
         switch(opt.getSpeedType())
@@ -260,8 +276,26 @@ public abstract class Render implements GameWindowCallback
 //	    Event.Channel.NOTE_4.enableAutoplay();
 //	    Event.Channel.NOTE_1.enableAutoplay();
 	}
+        
+        display_lag = original_display_lag = opt.getDisplayLag();
 	
         window.setDisplay(dm,opt.getVsync(),opt.getFullScreen(),opt.getBilinear());
+    }
+
+    public void setAutosync(boolean is_autosyncing) {
+        this.is_autosyncing = is_autosyncing;
+    }
+
+    public void setAutosyncDelegate(AutosyncDelegate autosyncDelegate) {
+        this.autosyncDelegate = autosyncDelegate;
+    }
+
+    public boolean isAutosync() {
+        return is_autosyncing;
+    }
+
+    public void setJudge(JudgmentStrategy judge) {
+        this.judge = judge;
     }
 
     /**
@@ -299,9 +333,7 @@ public abstract class Render implements GameWindowCallback
             Logger.global.log(Level.INFO, "No cover image on file: {0}", chart.getSource().getName());
         }
 
-        judgment_line_y2 = skin.getJudgmentLine();
-
-	    changeSpeed(0);
+	changeSpeed(0);
 
         Random rnd = new Random();
 
@@ -380,11 +412,19 @@ public abstract class Render implements GameWindowCallback
             keyboard_key_pressed.put(c, Boolean.FALSE);
             note_channels.put(c, new LinkedList<NoteEntity>());
         }
-
+        
+        note_counter = new EnumMap<JudgmentResult,NumberEntity>(JudgmentResult.class);
+        for(JudgmentResult s : JudgmentResult.values()){
+            NumberEntity e = (NumberEntity)skin.getEntityMap().get("COUNTER_"+s).copy();
+            note_counter.put(s, e);
+	    entities_matrix.add(note_counter.get(s));
+        }
+        start_time = lastLoopTime = SystemTimer.getTime();
 
         EventList event_list = construct_velocity_tree(chart.getEvents());
-	
 	event_list.fixEventList(EventList.FixMethod.OPEN2JAM, true);
+        
+        judge.setTiming(timing);
 
 	//Let's randomize "-"
         switch(opt.getChannelModifier())
@@ -433,7 +473,7 @@ public abstract class Render implements GameWindowCallback
         buffer_iterator = event_list.iterator();
 
         // load up initial buffer
-        update_note_buffer(0);
+        update_note_buffer(0, 0);
 
         // create sound sources
         source_queue = new LinkedList<Integer>();
@@ -515,7 +555,9 @@ public abstract class Render implements GameWindowCallback
         changeSpeed(delta); // TODO: is everything here really needed every frame ?
 
         now = SystemTimer.getTime() - start_time;
-        update_note_buffer(now);
+        double now_display = now - display_lag;
+        
+        update_note_buffer(now, now_display);
 
         now = SystemTimer.getTime() - start_time;
 
@@ -524,6 +566,7 @@ public abstract class Render implements GameWindowCallback
         Keyboard.poll();
         check_keyboard(now);
 
+        
         for(LinkedList<Entity> layer : entities_matrix) // loop over layers
         {
             // get entity iterator from layer
@@ -544,7 +587,7 @@ public abstract class Render implements GameWindowCallback
                     Event.Channel channel = Event.Channel.NONE;
                     if(e instanceof NoteEntity) channel = ((NoteEntity)e).getChannel();
 
-                    double y = getViewport() - velocity_integral(now,te.getTime(), channel);
+                    double y = getViewport() - calculateNoteDistance(now_display,te.getTime(), channel);
 
                     //TODO Fix this, maybe an option in the skin
                     //o2jam overlaps 1 px of the note with the measure and, because of this
@@ -604,8 +647,8 @@ public abstract class Render implements GameWindowCallback
             if(ne == null)continue;
 
             double hit = ne.testTimeHit(now);
-            if(hit > AUTOPLAY_THRESHOLD)continue;
-            ne.setHit(hit);
+            if(hit < AUTOPLAY_THRESHOLD)continue;
+            ne.updateHit(now);
             
             if(ne instanceof LongNoteEntity)
             {
@@ -633,10 +676,287 @@ public abstract class Render implements GameWindowCallback
         }
     }
 
-    abstract void check_keyboard(double now);
+    public void check_keyboard(double now)
+    {
+        
+	for(Map.Entry<Event.Channel,Integer> entry : keyboard_map.entrySet())
+        {
+            Event.Channel c = entry.getKey();
+	    if(c.isAutoplay()) continue;
+            
+            boolean keyDown = window.isKeyDown(entry.getValue());
+            boolean keyWasDown = keyboard_key_pressed.get(c);
+            
+            if(keyDown && !keyWasDown){ // started holding now
+                
+                keyboard_key_pressed.put(c, true);
 
-    abstract void check_judgment(NoteEntity noteEntity, double now);
+                Entity ee = skin.getEntityMap().get("PRESSED_"+c).copy();
+                entities_matrix.add(ee);
+                Entity to_kill = key_pressed_entity.put(c, ee);
+                if(to_kill != null)to_kill.setDead(true);
 
+                NoteEntity e = nextNoteKey(c);
+                if(e == null){
+                    Event.SoundSample i = last_sound.get(c);
+                    if(i != null)queueSample(i);
+                    continue;
+                }
+
+                queueSample(e.getSample());
+
+                e.updateHit(now);
+
+                // don't continue if the note is too far
+                if(judge.accept(e)) {
+                    if(e instanceof LongNoteEntity) {
+                        longnote_holded.put(c, (LongNoteEntity) e);
+                        if(e.getState() == NoteEntity.State.NOT_JUDGED)
+                            e.setState(NoteEntity.State.LN_HEAD_JUDGE);
+                    } else {
+                        e.setState(NoteEntity.State.JUDGE);
+                    }
+                }
+                
+            }else if(!keyDown && keyWasDown) { // key released now
+
+                keyboard_key_pressed.put(c, false);
+                key_pressed_entity.get(c).setDead(true);
+
+                Entity lf = longflare.remove(c);
+                if(lf !=null)lf.setDead(true);
+                
+                LongNoteEntity e = longnote_holded.remove(c);
+                if(e == null || e.getState() != NoteEntity.State.LN_HOLD)continue;
+
+                e.updateHit(now);
+                e.setState(NoteEntity.State.JUDGE);
+                
+            }
+        }
+        
+    }
+    
+    // display hits
+    private void display_hits() {
+        if (hits.isEmpty()) return;
+        double sum = 0;
+        for (double hit : hits) {
+            sum += hit;
+        }
+        double average = sum / hits.size();
+        System.out.printf("%d %f %f\n", hits.size(), average);
+    }
+    
+    private void autosync() {
+        if (!is_autosyncing) return;
+        if (lags.size() < 1) return;
+        double sum = 0;
+        int count = 0;
+        for (double lag : lags) {
+            sum += lag;
+            count ++;
+        }
+        for (; count < 64; count ++) {
+            sum += original_display_lag;
+        }
+        double average = sum / count;
+        display_lag = average;
+        System.out.printf("new display lag : %d %f\n", lags.size(), average);
+    }
+    
+    public void check_judgment(NoteEntity ne, double now)
+    {
+        JudgmentResult result;
+        
+        switch (ne.getState())
+        {
+            case NOT_JUDGED: // you missed it (no keyboard input)
+                ne.updateHit(now);
+                if (judge.missed(ne)) setNoteJudgment(ne, JudgmentResult.MISS);
+                break;
+                
+            case JUDGE: //LN & normal ones: has finished with good result
+                result = judge.judge(ne);
+                setNoteJudgment(ne, result);
+                
+                if (!(ne instanceof LongNoteEntity)) {
+                    hits.add(ne.getHitTime());
+                    lags.add(ne.getHitTime() + display_lag);
+                    //display_hits();
+                    autosync();
+                }
+                break;
+                
+            case LN_HOLD:    // You kept too much time the note held that it misses
+                ne.updateHit(now);
+                if (judge.missed(ne)) {
+                    setNoteJudgment(ne, JudgmentResult.MISS);
+                    
+                    // kill the long flare
+                    Entity lf = longflare.remove(ne.getChannel());
+                    if(lf !=null)lf.setDead(true);
+                }
+                break;
+
+            case LN_HEAD_JUDGE: //LN: Head has been played
+  
+                result = judge.judge(ne);
+                setNoteJudgment(ne, result);
+                    
+                // display the long flare and kill the old one
+                if (result != JudgmentResult.MISS) {
+                    Entity ee = skin.getEntityMap().get("EFFECT_LONGFLARE").copy();
+                    ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,ee.getY());
+                    entities_matrix.add(ee);
+                    Entity to_kill = longflare.put(ne.getChannel(),ee);
+                    if(to_kill != null)to_kill.setDead(true);
+
+                    ne.setState(NoteEntity.State.LN_HOLD);
+                } else {
+                    System.out.println(ne.getTimeToJudge() + " - " + now);
+                }
+                break;
+                
+            case TO_KILL: // this is the "garbage collector", it just removes the notes off window
+                
+                if(ne.getY() >= window.getResolutionHeight())
+                {
+                    // kill it
+                    ne.setDead(true);
+                }
+                
+            break;
+                
+        }
+        
+    }
+    
+    public void setNoteJudgment(NoteEntity ne, JudgmentResult result) {
+        
+        // statistics
+        hit_sum += Math.abs(ne.getHitTime());
+        if(result != JudgmentResult.MISS) hit_count++;
+        total_notes++;
+        
+        result = handleJudgment(result);
+        // display the judgment
+        if(judgment_entity != null)judgment_entity.setDead(true);
+        judgment_entity = skin.getEntityMap().get("EFFECT_"+result).copy();
+        entities_matrix.add(judgment_entity);
+
+        // add to the statistics
+        note_counter.get(result).incNumber();
+        
+        // for cool: display the effect
+        if (result == JudgmentResult.COOL) {
+            Entity ee = skin.getEntityMap().get("EFFECT_CLICK").copy();
+            ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
+            getViewport()-ee.getHeight()/2);
+            entities_matrix.add(ee);
+        }
+        
+        // delete the note
+        if (result == JudgmentResult.MISS || (ne instanceof LongNoteEntity)) {
+            ne.setState(NoteEntity.State.TO_KILL);
+        } else {
+            ne.setDead(true);
+        }
+        
+        // update combo
+        if (shouldIncreaseCombo(result)) {
+            combo_entity.incNumber();
+        } else {
+            combo_entity.resetNumber();
+        }
+        
+
+    }
+
+    public boolean shouldIncreaseCombo(JudgmentResult result) {
+        if (result == null) return false;
+        switch (result) {
+            case BAD: case MISS: return false;
+        }
+        return true;
+    }
+    
+    public JudgmentResult handleJudgment(JudgmentResult result) {
+
+        int score_value = 0;
+        
+        switch(result)
+        {
+            case COOL:
+                jambar_entity.addNumber(2);
+                consecutive_cools++;
+                lifebar_entity.addNumber(2);
+                score_value = 200 + (jamcombo_entity.getNumber()*10);
+                break;
+
+            case GOOD:
+                jambar_entity.addNumber(1);
+                consecutive_cools = 0;
+                score_value = 100;
+                break;
+
+            case BAD:
+                if(pills_draw.size() > 0)
+                {
+                    result = JudgmentResult.GOOD;
+                    jambar_entity.addNumber(1);
+                    pills_draw.removeLast().setDead(true);
+
+                    score_value = 100; // TODO: not sure
+                }
+                else
+                {
+                    jambar_entity.setNumber(0);
+                    jamcombo_entity.resetNumber();
+
+                    score_value = 4;
+                }
+                consecutive_cools = 0;
+            break;
+
+            case MISS:
+                jambar_entity.setNumber(0);
+                jamcombo_entity.resetNumber();
+                consecutive_cools = 0;
+
+                if(lifebar_entity.getNumber() >= 30)lifebar_entity.addNumber(-30);
+                else lifebar_entity.setNumber(0);
+
+                if(score_entity.getNumber() >= 10)score_value = -10;
+                else score_value = -score_entity.getNumber();
+            break;
+        }
+        
+        score_entity.addNumber(score_value);
+
+        if(jambar_entity.getNumber() >= jambar_entity.getLimit())
+        {
+            jambar_entity.setNumber(0); //reset
+            jamcombo_entity.incNumber();
+        }
+        
+        if(consecutive_cools >= 15 && pills_draw.size() < 5)
+        {
+            consecutive_cools -= 15;
+            Entity ee = skin.getEntityMap().get("PILL_"+(pills_draw.size()+1)).copy();
+            entities_matrix.add(ee);
+            pills_draw.add(ee);
+        }
+
+        if(maxcombo_entity.getNumber()<(combo_entity.getNumber()))
+        {
+            maxcombo_entity.incNumber();
+        }
+        
+        return result;
+
+    }
+    
     /* play a sample */
     public void queueSample(Event.SoundSample soundSample)
     {
@@ -702,38 +1022,20 @@ public abstract class Render implements GameWindowCallback
                 speed = next_speed;
             }
         }
-        
-        judgment_line_y1 = skin.getJudgmentLine() - JUDGMENT_SIZE;
-        
-        //only change the offset if the speed is > 1
-        //because lowers get a very tiny reaction window then...
-        if(speed > 1){
-            double off = JUDGMENT_SIZE * (speed-1);
-            judgment_line_y1 -= off;
-        }
-        
+                
         //update the longnotes end time
         for(LinkedList<Entity> layer : entities_matrix) // loop over layers
         {
             for (Entity e : layer) {
                 if (e instanceof LongNoteEntity) {
                     LongNoteEntity le = (LongNoteEntity) e;
-                    le.setEndDistance(velocity_integral(le.getTime(), le.getEndTime(), le.getChannel()));
+                    le.setEndDistance(calculateNoteDistance(le.getTime(), le.getEndTime(), le.getChannel()));
                 }
             }
         }
     }
 
-    double getViewport() { return judgment_line_y2; }
-
-    double judgmentArea()
-    {
-        // y2-y1 is the the upper half of the judgment area
-        // 2*(y2-y1) is the total area
-        // y1 + 2*(y2-y1) is the end line of the area
-        // simplifying: y1 + 2*y2 - 2*y1 == 2*y2 - y1
-        return 2 * judgment_line_y2 - judgment_line_y1;
-    }
+    double getViewport() { return skin.getJudgmentLine(); }
 
     /* this returns the next note that needs to be played
      ** of the defined channel or NULL if there's
@@ -760,9 +1062,9 @@ public abstract class Render implements GameWindowCallback
     /* update the note layer of the entities_matrix.
     *** note buffering is equally distributed between the frames
     **/
-    void update_note_buffer(double now)
+    void update_note_buffer(double now, double now_display)
     {
-        while(buffer_iterator.hasNext() && getViewport() - velocity_integral(now,buffer_timer) > -10)
+        while(buffer_iterator.hasNext() && getViewport() - calculateNoteDistance(now_display,buffer_timer) > -10)
         {
             Event e = buffer_iterator.next();
 
@@ -811,7 +1113,7 @@ public abstract class Render implements GameWindowCallback
                     if(lne == null){
                         Logger.global.log(Level.WARNING, "Attempted to RELEASE note {0} @ "+e.getTotalPosition(), e.getChannel());
                     }else{
-                        lne.setEndTime(e.getTime(),velocity_integral(lne.getTime(),e.getTime(), lne.getChannel()));
+                        lne.setEndTime(e.getTime(),calculateNoteDistance(lne.getTime(),e.getTime(), lne.getChannel()));
                     }
                 }
                 break;
@@ -900,14 +1202,10 @@ public abstract class Render implements GameWindowCallback
         }
     }
 
-
-    private final IntervalTree<Double,Double> velocity_tree;
-
     private EventList construct_velocity_tree(EventList list)
     {
         int measure = 0;
         double timer = DELAY_TIME;
-        double last_bpm_change = 0;
         double my_bpm = this.bpm;
         double frac_measure = 1;
         double measure_pointer = 0;
@@ -916,6 +1214,8 @@ public abstract class Render implements GameWindowCallback
         
         EventList new_list = new EventList();
 	
+        timing.add(timer, bpm);
+        
 	//there is always a 1st measure
 	Event m = new Event(Event.Channel.MEASURE, measure, 0, 0, Event.Flag.NONE);
 	m.setTime(timer);
@@ -940,23 +1240,17 @@ public abstract class Render implements GameWindowCallback
             switch(e.getChannel())
             {
 		case STOP:
-		    velocity_tree.addInterval(last_bpm_change, timer, my_note_speed);
+                    timing.add(timer, 0);
 		    double stop_time = e.getValue();
 		    if(chart.type == Chart.TYPE.BMS) {
-			//convert the bms stop values to a time value
 			stop_time = (e.getValue() / 192) * BEATS_PER_MSEC / my_bpm;
-			System.out.println(stop_time);
-			velocity_tree.addInterval(timer, timer+stop_time, 0d);
-		    } else {
-			velocity_tree.addInterval(timer, timer+stop_time, 0d);
 		    }
-		    last_bpm_change = timer = timer + stop_time;
+                    timing.add(timer + stop_time, my_bpm);
+		    timer += stop_time;
 		break;
 		case BPM_CHANGE:
-                    velocity_tree.addInterval(last_bpm_change, timer, my_note_speed);
                     my_bpm = e.getValue();
-                    my_note_speed = (my_bpm * measure_size) / BEATS_PER_MSEC;
-                    last_bpm_change = timer;
+                    timing.add(timer, my_bpm);
                 break;
                 case TIME_SIGNATURE:
                     frac_measure = e.getValue();
@@ -983,54 +1277,21 @@ public abstract class Render implements GameWindowCallback
             
             new_list.add(e);
         }
-        // pad 10s to make sure the song ends
-        velocity_tree.addInterval(last_bpm_change, timer+10000, my_note_speed);
-        velocity_tree.build();
+        
+        timing.finish();
         
         return new_list;
     }
 
-    /*
-     * given a time segment, returns the distance, in pixels,
-     * from each segment based on the bpm.
-     *
-     * segment types returned by velocity_tree:
-     *  a    t0    b   t1  ->  b - t0
-     * t0     a   t1    b  -> t1 -  a
-     * t0     a    b   t1  ->  b -  a
-     *  a    t0   t1    b  -> t1 - t0
-     */
-    double velocity_integral(double t0, double t1)
+    double calculateNoteDistance(double now, double target)
     {
-        boolean negative = false;
-        if(t0 > t1){
-            double tmp = t1;t1 = t0;t0 = tmp; // swap
-            negative = true;
-        }
-        List<Interval<Double,Double>> list = velocity_tree.getIntervals(t0, t1);
-        double integral = 0;
-        for(Interval<Double,Double> i : list)
-        {
-            if(i.getStart() < t0) // 1st or 4th case
-            {
-                if(i.getEnd() < t1) // 1st case
-                    integral += i.getData() * (i.getEnd() - t0);
-                else // 4th case
-                    integral += i.getData() * (t1 - t0);
-            }
-            else { // 2nd or 3rd case
-                if(t1 < i.getEnd()) // 2nd case
-                    integral += i.getData() * (t1 - i.getStart());
-                else // 3rd case
-                    integral += i.getData() * (i.getEnd() - i.getStart());
-            }
-        }
-        return (negative ? -integral : integral) * speed;
+        double measure_size = 0.8 * getViewport();
+        return speed * (timing.getBeat(target) - timing.getBeat(now)) * measure_size / 4;
     }
 
-    double velocity_integral(double t0, double t1, Event.Channel chan)
+    double calculateNoteDistance(double now, double target, Event.Channel chan)
     {
-        if(!xr_speed) return velocity_integral(t0, t1);
+        if(!xr_speed) return calculateNoteDistance(now, target);
 
 
         double factor = 1;
@@ -1046,7 +1307,7 @@ public abstract class Render implements GameWindowCallback
             case NOTE_7: factor += speed_xR_values.get(6); break;
         }
 
-        return velocity_integral(t0, t1) * factor;
+        return calculateNoteDistance(now, target) * factor;
     }
 
     private void visibility(GameOptions.VisibilityMod value)
@@ -1096,7 +1357,10 @@ public abstract class Render implements GameWindowCallback
     public void windowClosed() {
 	bgaEntity.release();
         soundSystem.release();
-	System.gc();
+	System.gc();        
+        if (is_autosyncing && autosyncDelegate != null) {
+            autosyncDelegate.autosyncFinished(display_lag);
+        }
     }
     
     private double clamp(double value, double min, double max)
