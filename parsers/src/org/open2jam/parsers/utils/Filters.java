@@ -12,6 +12,7 @@ public class Filters {
     public static final FilenameFilter sampleFilter = new FilenameFilter() {
 
 	public boolean accept(File dir, String name) {
+            if (name.lastIndexOf(".") == -1) return false;
 	    String n = name.substring(name.lastIndexOf("."), name.length());
 
 	    return (n.equalsIgnoreCase(".wav")
@@ -23,6 +24,7 @@ public class Filters {
     public static final FilenameFilter videoFilter = new FilenameFilter() {
 
 	    public boolean accept(File dir, String name) {
+                if (name.lastIndexOf(".") == -1) return false;
 		String n = name.substring(name.lastIndexOf("."), name.length());
 		
 		return (n.equalsIgnoreCase(".avi") 
@@ -38,6 +40,7 @@ public class Filters {
     public static final FilenameFilter imageFilter = new FilenameFilter() {
 
 	public boolean accept(File dir, String name) {
+            if (name.lastIndexOf(".") == -1) return false;
 	    String n = name.substring(name.lastIndexOf("."), name.length());
 
 	    return (n.equalsIgnoreCase(".bmp")
