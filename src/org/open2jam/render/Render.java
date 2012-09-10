@@ -595,7 +595,7 @@ public class Render implements GameWindowCallback
                     Event.Channel channel = Event.Channel.NONE;
                     if(e instanceof NoteEntity) channel = ((NoteEntity)e).getChannel();
 
-                    double y = getViewport() - velocity_integral(now_display,te.getTime(), channel);
+                    double y = getViewport() - calculateNoteDistance(now_display,te.getTime(), channel);
 
                     //TODO Fix this, maybe an option in the skin
                     //o2jam overlaps 1 px of the note with the measure and, because of this
@@ -1044,7 +1044,7 @@ public class Render implements GameWindowCallback
             for (Entity e : layer) {
                 if (e instanceof LongNoteEntity) {
                     LongNoteEntity le = (LongNoteEntity) e;
-                    le.setEndDistance(velocity_integral(le.getTime(), le.getEndTime(), le.getChannel()));
+                    le.setEndDistance(calculateNoteDistance(le.getTime(), le.getEndTime(), le.getChannel()));
                 }
             }
         }
@@ -1088,7 +1088,7 @@ public class Render implements GameWindowCallback
     **/
     void update_note_buffer(double now, double now_display)
     {
-        while(buffer_iterator.hasNext() && getViewport() - velocity_integral(now_display,buffer_timer) > -10)
+        while(buffer_iterator.hasNext() && getViewport() - calculateNoteDistance(now_display,buffer_timer) > -10)
         {
             Event e = buffer_iterator.next();
 
@@ -1137,7 +1137,7 @@ public class Render implements GameWindowCallback
                     if(lne == null){
                         Logger.global.log(Level.WARNING, "Attempted to RELEASE note {0} @ "+e.getTotalPosition(), e.getChannel());
                     }else{
-                        lne.setEndTime(e.getTime(),velocity_integral(lne.getTime(),e.getTime(), lne.getChannel()));
+                        lne.setEndTime(e.getTime(),calculateNoteDistance(lne.getTime(),e.getTime(), lne.getChannel()));
                     }
                 }
                 break;
@@ -1307,25 +1307,15 @@ public class Render implements GameWindowCallback
         return new_list;
     }
 
-    /*
-     * given a time segment, returns the distance, in pixels,
-     * from each segment based on the bpm.
-     *
-     * segment types returned by velocity_tree:
-     *  a    t0    b   t1  ->  b - t0
-     * t0     a   t1    b  -> t1 -  a
-     * t0     a    b   t1  ->  b -  a
-     *  a    t0   t1    b  -> t1 - t0
-     */
-    double velocity_integral(double t0, double t1)
+    double calculateNoteDistance(double now, double target)
     {
         double measure_size = 0.8 * getViewport();
-        return speed * (timing.getBeat(t1) - timing.getBeat(t0)) * measure_size / 4;
+        return speed * (timing.getBeat(target) - timing.getBeat(now)) * measure_size / 4;
     }
 
-    double velocity_integral(double t0, double t1, Event.Channel chan)
+    double calculateNoteDistance(double now, double target, Event.Channel chan)
     {
-        if(!xr_speed) return velocity_integral(t0, t1);
+        if(!xr_speed) return calculateNoteDistance(now, target);
 
 
         double factor = 1;
@@ -1341,7 +1331,7 @@ public class Render implements GameWindowCallback
             case NOTE_7: factor += speed_xR_values.get(6); break;
         }
 
-        return velocity_integral(t0, t1) * factor;
+        return calculateNoteDistance(now, target) * factor;
     }
 
     private void visibility(GameOptions.VisibilityMod value)
