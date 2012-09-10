@@ -51,8 +51,6 @@ public class Render implements GameWindowCallback
     /** the config xml */
     private static final URL resources_xml = Render.class.getResource("/resources/resources.xml");
 
-    private static final int JUDGMENT_SIZE = 64;
-
     /** 4 beats per minute, 4 * 60 beats per second, 4*60*1000 per millisecond */
     private static final int BEATS_PER_MSEC = 4 * 60 * 1000;
     
@@ -65,10 +63,6 @@ public class Render implements GameWindowCallback
 
     /** skin info and entities */
     Skin skin;
-
-    /** defines the judgment space */
-    double judgment_line_y1;
-    double judgment_line_y2;
 
     /** store the sound sources being played */
     private static final int MAX_SOURCES = 64;
@@ -339,9 +333,7 @@ public class Render implements GameWindowCallback
             Logger.global.log(Level.INFO, "No cover image on file: {0}", chart.getSource().getName());
         }
 
-        judgment_line_y2 = skin.getJudgmentLine();
-
-	    changeSpeed(0);
+	changeSpeed(0);
 
         Random rnd = new Random();
 
@@ -1032,16 +1024,7 @@ public class Render implements GameWindowCallback
                 speed = next_speed;
             }
         }
-        
-        judgment_line_y1 = skin.getJudgmentLine() - JUDGMENT_SIZE;
-        
-        //only change the offset if the speed is > 1
-        //because lowers get a very tiny reaction window then...
-        if(speed > 1){
-            double off = JUDGMENT_SIZE * (speed-1);
-            judgment_line_y1 -= off;
-        }
-        
+                
         //update the longnotes end time
         for(LinkedList<Entity> layer : entities_matrix) // loop over layers
         {
@@ -1054,16 +1037,7 @@ public class Render implements GameWindowCallback
         }
     }
 
-    double getViewport() { return judgment_line_y2; }
-
-    double judgmentArea()
-    {
-        // y2-y1 is the the upper half of the judgment area
-        // 2*(y2-y1) is the total area
-        // y1 + 2*(y2-y1) is the end line of the area
-        // simplifying: y1 + 2*y2 - 2*y1 == 2*y2 - y1
-        return 2 * judgment_line_y2 - judgment_line_y1;
-    }
+    double getViewport() { return skin.getJudgmentLine(); }
 
     /* this returns the next note that needs to be played
      ** of the defined channel or NULL if there's
