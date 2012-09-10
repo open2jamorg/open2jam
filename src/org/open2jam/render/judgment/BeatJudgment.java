@@ -7,7 +7,7 @@ import org.open2jam.render.entities.NoteEntity;
  * Judge hits by distance.
  * @author dtinth
  */
-public class DistanceJudgment implements JudgmentStrategy {
+public class BeatJudgment implements JudgmentStrategy {
 
     @Override
     public boolean accept(NoteEntity note) {
