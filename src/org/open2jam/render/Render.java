@@ -23,6 +23,7 @@ import org.open2jam.parsers.Event;
 import org.open2jam.parsers.EventList;
 import org.open2jam.parsers.utils.SampleData;
 import org.open2jam.render.entities.*;
+import org.open2jam.render.judgment.BeatJudgment;
 import org.open2jam.render.judgment.JudgmentResult;
 import org.open2jam.render.judgment.JudgmentStrategy;
 import org.open2jam.render.judgment.TimeJudgment;
@@ -85,7 +86,7 @@ public class Render implements GameWindowCallback
     final SoundSystem soundSystem;
     
     /** The judge to judge the notes */
-    final JudgmentStrategy judge;
+    private JudgmentStrategy judge;
 
     /** the chart being rendered */
     private final Chart chart;
@@ -252,8 +253,6 @@ public class Render implements GameWindowCallback
         soundSystem.setMasterVolume(opt.getMasterVolume());
         soundSystem.setBGMVolume(opt.getBGMVolume());
         soundSystem.setKeyVolume(opt.getKeyVolume());
-        
-        judge = new TimeJudgment();
         
         entities_matrix = new EntityMatrix();
         this.chart = chart;
@@ -431,7 +430,10 @@ public class Render implements GameWindowCallback
         start_time = lastLoopTime = SystemTimer.getTime();
 
         EventList event_list = construct_velocity_tree(chart.getEvents());
-	
+        
+        judge = new TimeJudgment();
+        judge = new BeatJudgment(timing);
+        
 	event_list.fixEventList(EventList.FixMethod.OPEN2JAM, true);
 
 	//Let's randomize "-"
@@ -821,6 +823,8 @@ public class Render implements GameWindowCallback
                     if(to_kill != null)to_kill.setDead(true);
 
                     ne.setState(NoteEntity.State.LN_HOLD);
+                } else {
+                    System.out.println(ne.getTimeToJudge() + " - " + now);
                 }
                 break;
                 

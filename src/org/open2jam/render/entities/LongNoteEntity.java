@@ -82,13 +82,12 @@ public class LongNoteEntity extends NoteEntity
         y2 = y1 + sprite.getHeight();
         return testHit(y1, y2, jy1, jy2);
     }
-
+    
     @Override
-    public double testTimeHit(double now)
-    {
-        if(state == State.NOT_JUDGED)return (time_to_hit-now);
-        else if(end_time != null)return (end_time-now);
-        return 1000;
+    public double getTimeToJudge() {
+        if (state == State.NOT_JUDGED || state == State.LN_HEAD_JUDGE) return time_to_hit;
+        if (end_time != null) return end_time;
+        return Double.MAX_VALUE;
     }
 
     @Override

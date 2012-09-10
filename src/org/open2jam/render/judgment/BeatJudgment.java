@@ -2,6 +2,7 @@
 package org.open2jam.render.judgment;
 
 import org.open2jam.render.entities.NoteEntity;
+import org.open2jam.util.TimingData;
 
 /**
  * Judge hits by distance.
@@ -9,19 +10,41 @@ import org.open2jam.render.entities.NoteEntity;
  */
 public class BeatJudgment implements JudgmentStrategy {
 
+    private static final double BAD_THRESHOULD = 0.8;
+    private static final double GOOD_THRESHOULD = 0.5;
+    private static final double COOL_THRESHOULD = 0.2;
+
+    private TimingData timing;
+
+    public BeatJudgment(TimingData timing) {
+        this.timing = timing;
+    }
+    
+    private double calculateHit(NoteEntity note) {
+        double noteTime = note.getTimeToJudge();
+        double hitTime = note.getTimeToJudge() - note.getHitTime();
+        double noteBeat = timing.getBeat(noteTime);
+        double hitBeat = timing.getBeat(hitTime);
+        return (noteBeat - hitBeat) / 0.664;
+    }
+    
     @Override
     public boolean accept(NoteEntity note) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return calculateHit(note) <= BAD_THRESHOULD;
     }
 
     @Override
     public boolean missed(NoteEntity note) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return calculateHit(note) < -BAD_THRESHOULD;
     }
 
     @Override
     public JudgmentResult judge(NoteEntity note) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        double hit = Math.abs(calculateHit(note));
+        if (hit <= COOL_THRESHOULD) return JudgmentResult.COOL;
+        if (hit <= GOOD_THRESHOULD) return JudgmentResult.GOOD;
+        if (hit <= BAD_THRESHOULD) return JudgmentResult.BAD;
+        return JudgmentResult.MISS;
     }
     
 }
