@@ -1,8 +1,15 @@
 package org.open2jam;
 
-import java.io.Serializable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.parsers.Event;
 
@@ -10,14 +17,170 @@ import org.open2jam.parsers.Event;
  * This class will store game options such as hi-speed and autoplay.
  * @author SilverHx
  */
-public class GameOptions implements Serializable {
+public class GameOptions {
     
-    // Hi-speed
-    private double hispeed = 1.0;
+    private static final File OPTIONS_FILE = new File("game_options.properties");
+    
+    public static final Properties DEFAULT_PROPERTIES = new Properties();
+    
+    interface PropertyBinding {
+        public void load(GameOptions options, String value);
+        public String save(GameOptions options);
+    }
+    
+    static class Binding implements PropertyBinding {
+        
+        final String fieldName;
+        
+        public Binding(String fieldName) {
+            this.fieldName = fieldName;
+        }
+        
+        @Override
+        public void load(GameOptions options, String value) {
+            try {
+                GameOptions.class.getDeclaredField(fieldName).set(options, parse(value));
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        
+        public Object parse(String value) { return value; }
+        public String stringify(Object value) { return value.toString(); }
+
+        @Override
+        public String save(GameOptions opts) {
+            try {
+                return stringify(GameOptions.class.getDeclaredField(fieldName).get(opts));
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        
+    }
+    
+    static class DoubleBinding extends Binding {
+        public DoubleBinding(String fieldName) { super(fieldName); }
+        @Override
+        public Object parse(String value) { return Double.parseDouble(value); }
+    }
+    static class FloatBinding extends Binding {
+        public FloatBinding(String fieldName) { super(fieldName); }
+        @Override
+        public Object parse(String value) { return Float.parseFloat(value); }
+    }
+    static class BooleanBinding extends Binding {
+        public BooleanBinding(String fieldName) { super(fieldName); }
+        @Override
+        public Object parse(String value) { return Boolean.parseBoolean(value); }
+    }
+    static class IntegerBinding extends Binding {
+        public IntegerBinding(String fieldName) { super(fieldName); }
+        @Override
+        public Object parse(String value) { return Integer.parseInt(value); }
+    }
+    
+    static class EnumBinding extends Binding {
+        
+        public Class enumClass;
+        
+        public EnumBinding(Class enumClass, String fieldName) {
+            super(fieldName);
+            this.enumClass = enumClass;
+        }
+
+        @Override
+        public Object parse(String value) {
+            for (Object o : enumClass.getEnumConstants()) {
+                if (((Enum)o).name().equals(value)) return o;
+            }
+            return null;
+        }
+
+        @Override
+        public String stringify(Object value) {
+            return ((Enum)value).name();
+        }
+        
+    }
+    
+    static enum Property {
+        speedMultiplier("mods.speed.multiplier", "1.0", new DoubleBinding("hispeed")),
+        speedType("mods.speed.type", "HiSpeed", new EnumBinding(SpeedType.class, "speed_type")),
+        visibility("mods.visibility", "None", new EnumBinding(VisibilityMod.class, "visibilityModifier")),
+        channel("mods.channel", "None", new EnumBinding(ChannelMod.class, "channelModifier")),
+        keyVolume("volume.key", "1.0", new FloatBinding("keyVolume")),
+        bgmVolume("volume.bgm", "1.0", new FloatBinding("BGMVolume")),
+        masterVolume("volume.master", "1.0", new FloatBinding("masterVolume")),
+        autoplayEnabled("autoplay.enabled", "false", new BooleanBinding("autoplay")),
+        autoplayChannels("autoplay.channels", "", new Binding("autoplay_channels") {
+
+            @Override
+            public Object parse(String value) {
+                ArrayList<Boolean> out = new ArrayList<Boolean>();
+                if (value.isEmpty()) {
+                    for(Event.Channel c : Event.Channel.values())
+                    {
+                        if(c.toString().startsWith("NOTE_"))
+                            out.add(c.isAutoplay());
+                    }
+                } else for (String s : value.split(",")) {
+                    out.add(Boolean.parseBoolean(s));
+                }
+                return out;
+            }
+
+            @Override
+            public String stringify(Object value) {
+                StringBuilder builder = new StringBuilder();
+                for (boolean c : (ArrayList<Boolean>)value) {
+                    if (builder.length() > 0) builder.append(",");
+                    builder.append(Boolean.toString(c));
+                }
+                return builder.toString();
+            }
+            
+        }),
+        autosoundEnabled("autosound.enabled", "false", new BooleanBinding("autosound")),
+        fullScreen("display.full_screen", "false", new BooleanBinding("fullscreen")),
+        bilinear("display.bilinear", "true", new BooleanBinding("bilinear")),
+        vsync("display.vsync", "true", new BooleanBinding("vsync")),
+        width("display.width", "0", new IntegerBinding("width")),
+        height("display.height", "0", new IntegerBinding("height")),
+        bpp("display.bpp", "0", new IntegerBinding("bpp")),
+        freq("display.freq", "0", new IntegerBinding("freq")),
+        vlcPath("vlc.library_path", "", new Binding("vlc"));
+        
+        final String name;
+        final String defaultValue;
+        final PropertyBinding binding;
+
+        private Property(String name, String defaultValue, PropertyBinding binding) {
+            this.name = name;
+            this.defaultValue = defaultValue;
+            this.binding = binding;
+        }
+        
+        public void load(Properties props, GameOptions opts) {
+            binding.load(opts, props.getProperty(name));
+        }
+        
+        public void save(Properties props, GameOptions opts) {
+            props.setProperty(name, binding.save(opts));
+        }
+        
+    }
+    
+    static {
+        for (Property property : Property.values()) {
+            DEFAULT_PROPERTIES.setProperty(property.name, property.defaultValue);
+        }
+    }
+    
     /*
      * "Hi-Speed"=>0, "xR-Speed"=>1, "W-Speed"=>2
      */
-    public enum SpeedType implements Serializable {
+    public enum SpeedType {
         HiSpeed, xRSpeed, WSpeed;
         
         @Override
@@ -25,53 +188,67 @@ public class GameOptions implements Serializable {
             return super.toString().replace("Speed", "-Speed:");
         }
     }
-    private SpeedType speed_type = SpeedType.HiSpeed;
+    
     /*
      * "None"=>0, "Hidden"=>1, "Sudden"=>2, "Dark"=>3
      */
-    public enum VisibilityMod implements Serializable {
+    public enum VisibilityMod {
         None, Hidden, Sudden, Dark;
     }
-    private VisibilityMod visibilityModifier = VisibilityMod.None;
+    
     /*
      * "None"=>0, "Mirror"=>1, "Shuffle"=>2, "Random"=>3
      */
-    public enum ChannelMod implements Serializable {
+    public enum ChannelMod {
         None, Mirror, Shuffle, Random;
     }
-    private ChannelMod channelModifier = ChannelMod.None;
-    // Key volume
-    private float keyVolume = 1f;
-    // BGM volume
-    private float BGMVolume = 1f;
-    // Master volume
-    private float masterVolume = 0.5f;
-    // Autoplay?
-    private boolean autoplay = false;
-    // autoplay channels
-    private ArrayList<Boolean> autoplay_channels = new ArrayList<Boolean>();
-    // autosound?
-    private boolean autosound = false;
-
-    // full screen
-    private boolean fullscreen = false;
-    // bilinear option
-    private boolean bilinear = true;
-    // vsync 
-    private boolean vsync = true;
     
-    private int width,height,bpp,freq;
+    // fields
+    double hispeed;
+    SpeedType speed_type;
+    VisibilityMod visibilityModifier;
+    ChannelMod channelModifier;
+    
+    float keyVolume, BGMVolume, masterVolume;
+    
+    boolean autoplay;
+    ArrayList<Boolean> autoplay_channels;
+    boolean autosound;
+
+    // display options
+    boolean fullscreen, bilinear, vsync;
+    int width,height,bpp,freq;
     
     // VLC lib path
-    private String vlc = "";
+    String vlc = "";
 
     //public constructor. give default options
     public GameOptions() {
-	for(Event.Channel c : Event.Channel.values())
-	{
-	    if(c.toString().startsWith("NOTE_"))
-		autoplay_channels.add(c.isAutoplay());
-	}
+        load();
+    }
+    
+    public void load() {
+        Properties properties = new Properties(DEFAULT_PROPERTIES);
+        try {
+            properties.load(new FileInputStream(OPTIONS_FILE));
+        } catch (IOException ex) {
+            Logger.getLogger(GameOptions.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        for (Property property : Property.values()) {
+            property.load(properties, this);
+        }
+    }
+    
+    public void save() {
+        Properties properties = new Properties();
+        for (Property property : Property.values()) {
+            property.save(properties, this);
+        }
+        try {
+            properties.store(new FileOutputStream(OPTIONS_FILE), "save the settings");
+        } catch (IOException ex) {
+            Logger.getLogger(GameOptions.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
