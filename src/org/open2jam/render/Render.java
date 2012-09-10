@@ -232,6 +232,9 @@ public class Render implements GameWindowCallback
     protected CompositeEntity visibility_entity;
 
     private final static float VOLUME_FACTOR = 0.05f;
+    
+    /** timing data */
+    private TimingData timing = new TimingData(); 
 
     static {
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
@@ -255,7 +258,6 @@ public class Render implements GameWindowCallback
         entities_matrix = new EntityMatrix();
         this.chart = chart;
         this.opt = opt;
-        velocity_tree = new IntervalTree<Double,Double>();
 
         this.next_speed = this.last_speed = speed = opt.getHiSpeed();
         switch(opt.getSpeedType())
@@ -593,7 +595,7 @@ public class Render implements GameWindowCallback
                     Event.Channel channel = Event.Channel.NONE;
                     if(e instanceof NoteEntity) channel = ((NoteEntity)e).getChannel();
 
-                    double y = getViewport() - velocity_integral(now_display,te.getTime(), channel);
+                    double y = getViewport() - calculateNoteDistance(now_display,te.getTime(), channel);
 
                     //TODO Fix this, maybe an option in the skin
                     //o2jam overlaps 1 px of the note with the measure and, because of this
@@ -1042,7 +1044,7 @@ public class Render implements GameWindowCallback
             for (Entity e : layer) {
                 if (e instanceof LongNoteEntity) {
                     LongNoteEntity le = (LongNoteEntity) e;
-                    le.setEndDistance(velocity_integral(le.getTime(), le.getEndTime(), le.getChannel()));
+                    le.setEndDistance(calculateNoteDistance(le.getTime(), le.getEndTime(), le.getChannel()));
                 }
             }
         }
@@ -1086,7 +1088,7 @@ public class Render implements GameWindowCallback
     **/
     void update_note_buffer(double now, double now_display)
     {
-        while(buffer_iterator.hasNext() && getViewport() - velocity_integral(now_display,buffer_timer) > -10)
+        while(buffer_iterator.hasNext() && getViewport() - calculateNoteDistance(now_display,buffer_timer) > -10)
         {
             Event e = buffer_iterator.next();
 
@@ -1135,7 +1137,7 @@ public class Render implements GameWindowCallback
                     if(lne == null){
                         Logger.global.log(Level.WARNING, "Attempted to RELEASE note {0} @ "+e.getTotalPosition(), e.getChannel());
                     }else{
-                        lne.setEndTime(e.getTime(),velocity_integral(lne.getTime(),e.getTime(), lne.getChannel()));
+                        lne.setEndTime(e.getTime(),calculateNoteDistance(lne.getTime(),e.getTime(), lne.getChannel()));
                     }
                 }
                 break;
@@ -1224,14 +1226,10 @@ public class Render implements GameWindowCallback
         }
     }
 
-
-    private final IntervalTree<Double,Double> velocity_tree;
-
     private EventList construct_velocity_tree(EventList list)
     {
         int measure = 0;
         double timer = DELAY_TIME;
-        double last_bpm_change = 0;
         double my_bpm = this.bpm;
         double frac_measure = 1;
         double measure_pointer = 0;
@@ -1240,6 +1238,8 @@ public class Render implements GameWindowCallback
         
         EventList new_list = new EventList();
 	
+        timing.add(timer, bpm);
+        
 	//there is always a 1st measure
 	Event m = new Event(Event.Channel.MEASURE, measure, 0, 0, Event.Flag.NONE);
 	m.setTime(timer);
@@ -1264,23 +1264,17 @@ public class Render implements GameWindowCallback
             switch(e.getChannel())
             {
 		case STOP:
-		    velocity_tree.addInterval(last_bpm_change, timer, my_note_speed);
+                    timing.add(timer, 0);
 		    double stop_time = e.getValue();
 		    if(chart.type == Chart.TYPE.BMS) {
-			//convert the bms stop values to a time value
 			stop_time = (e.getValue() / 192) * BEATS_PER_MSEC / my_bpm;
-			System.out.println(stop_time);
-			velocity_tree.addInterval(timer, timer+stop_time, 0d);
-		    } else {
-			velocity_tree.addInterval(timer, timer+stop_time, 0d);
 		    }
-		    last_bpm_change = timer = timer + stop_time;
+                    timing.add(timer + stop_time, my_bpm);
+		    timer += stop_time;
 		break;
 		case BPM_CHANGE:
-                    velocity_tree.addInterval(last_bpm_change, timer, my_note_speed);
                     my_bpm = e.getValue();
-                    my_note_speed = (my_bpm * measure_size) / BEATS_PER_MSEC;
-                    last_bpm_change = timer;
+                    timing.add(timer, my_bpm);
                 break;
                 case TIME_SIGNATURE:
                     frac_measure = e.getValue();
@@ -1307,54 +1301,21 @@ public class Render implements GameWindowCallback
             
             new_list.add(e);
         }
-        // pad 10s to make sure the song ends
-        velocity_tree.addInterval(last_bpm_change, timer+10000, my_note_speed);
-        velocity_tree.build();
+        
+        timing.finish();
         
         return new_list;
     }
 
-    /*
-     * given a time segment, returns the distance, in pixels,
-     * from each segment based on the bpm.
-     *
-     * segment types returned by velocity_tree:
-     *  a    t0    b   t1  ->  b - t0
-     * t0     a   t1    b  -> t1 -  a
-     * t0     a    b   t1  ->  b -  a
-     *  a    t0   t1    b  -> t1 - t0
-     */
-    double velocity_integral(double t0, double t1)
+    double calculateNoteDistance(double now, double target)
     {
-        boolean negative = false;
-        if(t0 > t1){
-            double tmp = t1;t1 = t0;t0 = tmp; // swap
-            negative = true;
-        }
-        List<Interval<Double,Double>> list = velocity_tree.getIntervals(t0, t1);
-        double integral = 0;
-        for(Interval<Double,Double> i : list)
-        {
-            if(i.getStart() < t0) // 1st or 4th case
-            {
-                if(i.getEnd() < t1) // 1st case
-                    integral += i.getData() * (i.getEnd() - t0);
-                else // 4th case
-                    integral += i.getData() * (t1 - t0);
-            }
-            else { // 2nd or 3rd case
-                if(t1 < i.getEnd()) // 2nd case
-                    integral += i.getData() * (t1 - i.getStart());
-                else // 3rd case
-                    integral += i.getData() * (i.getEnd() - i.getStart());
-            }
-        }
-        return (negative ? -integral : integral) * speed;
+        double measure_size = 0.8 * getViewport();
+        return speed * (timing.getBeat(target) - timing.getBeat(now)) * measure_size / 4;
     }
 
-    double velocity_integral(double t0, double t1, Event.Channel chan)
+    double calculateNoteDistance(double now, double target, Event.Channel chan)
     {
-        if(!xr_speed) return velocity_integral(t0, t1);
+        if(!xr_speed) return calculateNoteDistance(now, target);
 
 
         double factor = 1;
@@ -1370,7 +1331,7 @@ public class Render implements GameWindowCallback
             case NOTE_7: factor += speed_xR_values.get(6); break;
         }
 
-        return velocity_integral(t0, t1) * factor;
+        return calculateNoteDistance(now, target) * factor;
     }
 
     private void visibility(GameOptions.VisibilityMod value)
