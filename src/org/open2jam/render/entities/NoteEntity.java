@@ -54,6 +54,10 @@ public class NoteEntity extends AnimatedEntity implements TimeEntity
     public void setState(State value) { state = value; }
     public State getState() { return state; }
 
+    public double getTimeToJudge() {
+        return time_to_hit;
+    }
+    
     public void updateHit(double jy1, double jy2, double now)
     {
         setHitDistance(testHit(jy1, jy2));
@@ -67,7 +71,7 @@ public class NoteEntity extends AnimatedEntity implements TimeEntity
 
     public double testTimeHit(double now)
     {
-        return time_to_hit - now;
+        return getTimeToJudge() - now;
     }
 
     static double testHit(double y1, double y2, double jy1, double jy2)
