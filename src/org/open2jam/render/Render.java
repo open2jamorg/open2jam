@@ -203,23 +203,16 @@ public class Render implements GameWindowCallback
     
     TrueTypeFont trueTypeFont;
 
-    /** statistics variables (delete this soon) */
-    double hit_sum = 0;
-    double hit_count = 0;
+    /** statistics variable */
     double total_notes = 0;
     
-    /** statistics variables (new version) */
-    List<Double> hits = new LinkedList<Double>();
-    List<Double> lags = new LinkedList<Double>();
+    /** display and audio latency */
+    private Latency displayLatency;
+    private Latency audioLatency;
     
-    /** display lag */
-    boolean is_autosyncing = false;
-    double display_lag = 0;
-    double original_display_lag = 0;
+    private Latency syncingLatency;
+    
     AutosyncDelegate autosyncDelegate;
-
-    /** sound delay */
-    double sound_delay = 1024 * 1000 / 44100;
     
     /** song finish time [leave 10 seconds] */
     long finish_time = -1;
@@ -282,27 +275,25 @@ public class Render implements GameWindowCallback
 //	    Event.Channel.NOTE_1.enableAutoplay();
 	}
         
-        display_lag = original_display_lag = opt.getDisplayLag();
+        displayLatency = new Latency(opt.getDisplayLag());
+        audioLatency = new Latency(0);
 	
         window.setDisplay(dm,opt.getVsync(),opt.getFullScreen(),opt.getBilinear());
-    }
-
-    public void setAutosync(boolean is_autosyncing) {
-        this.is_autosyncing = is_autosyncing;
     }
 
     public void setAutosyncDelegate(AutosyncDelegate autosyncDelegate) {
         this.autosyncDelegate = autosyncDelegate;
     }
-
-    public boolean isAutosync() {
-        return is_autosyncing;
-    }
-
+    
     public void setJudge(JudgmentStrategy judge) {
         this.judge = judge;
     }
 
+    public void setAutosyncDisplay() {
+        this.syncingLatency = displayLatency;
+    }
+
+    
     /**
     * initialize the common elements for the game.
     * this is called by the window render
@@ -529,11 +520,7 @@ public class Render implements GameWindowCallback
             JOptionPane.showMessageDialog(null, "Fatal Error", "System out of memory ! baillin out !!",JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
-        // at this point the game window has gone away
 
-        double precision = (hit_count / total_notes) * 100;
-        double accuracy = (hit_sum / total_notes) * 100;
-        Logger.global.log(Level.INFO,String.format("Precision : %.3f, Accuracy : %.3f", precision, accuracy));
     }
 
 
@@ -560,9 +547,9 @@ public class Render implements GameWindowCallback
         changeSpeed(delta); // TODO: is everything here really needed every frame ?
 
         now = SystemTimer.getTime() - start_time;
-        if (AUTOSOUND) now -= sound_delay;
+        if (AUTOSOUND) now -= audioLatency.getLatency();
         
-        double now_display = now - display_lag;
+        double now_display = now + displayLatency.getLatency();
         
         update_note_buffer(now, now_display);
 
@@ -590,7 +577,7 @@ public class Render implements GameWindowCallback
                     double timeToJudge = now;
                     
                     if (e instanceof SoundEntity && AUTOSOUND) {
-                        timeToJudge += sound_delay;
+                        timeToJudge += audioLatency.getLatency();
                     }
                     
                     if(te.getTime() - timeToJudge <= 0) te.judgment();
@@ -757,32 +744,9 @@ public class Render implements GameWindowCallback
         
     }
     
-    // display hits
-    private void display_hits() {
-        if (hits.isEmpty()) return;
-        double sum = 0;
-        for (double hit : hits) {
-            sum += hit;
-        }
-        double average = sum / hits.size();
-        System.out.printf("%d %f %f\n", hits.size(), average);
-    }
-    
-    private void autosync() {
-        if (!is_autosyncing) return;
-        if (lags.size() < 1) return;
-        double sum = 0;
-        int count = 0;
-        for (double lag : lags) {
-            sum += lag;
-            count ++;
-        }
-        for (; count < 64; count ++) {
-            sum += original_display_lag;
-        }
-        double average = sum / count;
-        display_lag = average;
-        System.out.printf("new display lag : %d %f\n", lags.size(), average);
+    private void autosync(double hit) {
+        if (syncingLatency == null) return;
+        syncingLatency.autosync(hit);
     }
     
     public void check_judgment(NoteEntity ne, double now)
@@ -804,10 +768,7 @@ public class Render implements GameWindowCallback
                 setNoteJudgment(ne, result);
                 
                 if (!(ne instanceof LongNoteEntity)) {
-                    hits.add(ne.getHitTime());
-                    lags.add(ne.getHitTime() + display_lag);
-                    //display_hits();
-                    autosync();
+                    autosync(ne.getHitTime());
                 }
                 break;
                 
@@ -857,12 +818,8 @@ public class Render implements GameWindowCallback
     
     public void setNoteJudgment(NoteEntity ne, JudgmentResult result) {
         
-        // statistics
-        hit_sum += Math.abs(ne.getHitTime());
-        if(result != JudgmentResult.MISS) hit_count++;
-        total_notes++;
-        
         result = handleJudgment(result);
+        
         // display the judgment
         if(judgment_entity != null)judgment_entity.setDead(true);
         judgment_entity = skin.getEntityMap().get("EFFECT_"+result).copy();
@@ -1402,8 +1359,8 @@ public class Render implements GameWindowCallback
 	bgaEntity.release();
         soundSystem.release();
 	System.gc();        
-        if (is_autosyncing && autosyncDelegate != null) {
-            autosyncDelegate.autosyncFinished(display_lag);
+        if (syncingLatency != null && autosyncDelegate != null) {
+            autosyncDelegate.autosyncFinished(syncingLatency.getLatency());
         }
     }
     

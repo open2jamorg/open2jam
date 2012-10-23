@@ -1044,7 +1044,7 @@ public class MusicSelection extends javax.swing.JPanel
             r = new Render(selected_header, go, dm);
             
             if (cb_autoSync.isSelected()) {
-                r.setAutosync(true);
+                r.setAutosyncDisplay();
                 r.setAutosyncDelegate(new Render.AutosyncDelegate() {
 
                     @Override
