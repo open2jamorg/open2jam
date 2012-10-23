@@ -45,6 +45,8 @@ public class Latency {
         
         latency = sum / count;
         
+        System.out.println("Latency : " + latency);
+        
     }
     
 }

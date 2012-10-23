@@ -39,7 +39,6 @@ import org.open2jam.util.*;
  */
 public class Render implements GameWindowCallback
 {
-
     
     public interface AutosyncDelegate {
         void autosyncFinished(double displayLag);
@@ -276,7 +275,7 @@ public class Render implements GameWindowCallback
 	}
         
         displayLatency = new Latency(opt.getDisplayLag());
-        audioLatency = new Latency(0);
+        audioLatency = new Latency(opt.getAudioLatency());
 	
         window.setDisplay(dm,opt.getVsync(),opt.getFullScreen(),opt.getBilinear());
     }
@@ -292,7 +291,10 @@ public class Render implements GameWindowCallback
     public void setAutosyncDisplay() {
         this.syncingLatency = displayLatency;
     }
-
+    
+    public void setAutosyncAudio() {
+        this.syncingLatency = audioLatency;
+    }
     
     /**
     * initialize the common elements for the game.

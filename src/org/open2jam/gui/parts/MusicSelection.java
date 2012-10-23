@@ -343,7 +343,7 @@ public class MusicSelection extends javax.swing.JPanel
         jc_bilinear = new javax.swing.JCheckBox();
         jLabel1 = new javax.swing.JLabel();
         txt_displayLag = new javax.swing.JTextField();
-        cb_autoSync = new javax.swing.JCheckBox();
+        cb_autoSyncDisplay = new javax.swing.JCheckBox();
         bt_play = new javax.swing.JButton();
 
         setPreferredSize(new java.awt.Dimension(900, 673));
@@ -409,13 +409,13 @@ public class MusicSelection extends javax.swing.JPanel
                         .addComponent(btn_reload, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_delete))
-                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 591, Short.MAX_VALUE))
+                    .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 544, Short.MAX_VALUE))
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.CENTER, panel_listLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addComponent(lbl_search)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 556, Short.MAX_VALUE)
+                .addComponent(txt_filter, javax.swing.GroupLayout.DEFAULT_SIZE, 509, Short.MAX_VALUE)
                 .addGap(10, 10, 10))
         );
         panel_listLayout.setVerticalGroup(
@@ -430,7 +430,7 @@ public class MusicSelection extends javax.swing.JPanel
                     .addComponent(btn_delete)
                     .addComponent(load_progress, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE)
+                .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 439, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_listLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txt_filter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -709,7 +709,7 @@ public class MusicSelection extends javax.swing.JPanel
         );
         panel_infoLayout.setVerticalGroup(
             panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 344, Short.MAX_VALUE)
+            .addGap(0, 337, Short.MAX_VALUE)
             .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(panel_infoLayout.createSequentialGroup()
                     .addContainerGap()
@@ -746,7 +746,7 @@ public class MusicSelection extends javax.swing.JPanel
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(lbl_artist)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
+                    .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 54, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -806,10 +806,10 @@ public class MusicSelection extends javax.swing.JPanel
             }
         });
 
-        cb_autoSync.setText("autosync");
-        cb_autoSync.addActionListener(new java.awt.event.ActionListener() {
+        cb_autoSyncDisplay.setText("autosync");
+        cb_autoSyncDisplay.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cb_autoSyncActionPerformed(evt);
+                cb_autoSyncDisplayActionPerformed(evt);
             }
         });
 
@@ -845,7 +845,7 @@ public class MusicSelection extends javax.swing.JPanel
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txt_displayLag)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cb_autoSync)
+                                .addComponent(cb_autoSyncDisplay)
                                 .addGap(4, 4, 4)))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -868,7 +868,7 @@ public class MusicSelection extends javax.swing.JPanel
                 .addGroup(panel_settingLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(txt_displayLag, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cb_autoSync)))
+                    .addComponent(cb_autoSyncDisplay)))
         );
 
         bt_play.setFont(new java.awt.Font("Tahoma", 1, 24));
@@ -1043,7 +1043,7 @@ public class MusicSelection extends javax.swing.JPanel
             final Render r;
             r = new Render(selected_header, go, dm);
             
-            if (cb_autoSync.isSelected()) {
+            if (cb_autoSyncDisplay.isSelected()) {
                 r.setAutosyncDisplay();
                 r.setAutosyncDelegate(new Render.AutosyncDelegate() {
 
@@ -1054,7 +1054,7 @@ public class MusicSelection extends javax.swing.JPanel
                                 "Save Display Latency", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                             go.setDisplayLag(displayLag);
                             txt_displayLag.setText(displayLag + "");
-                            cb_autoSync.setSelected(false);
+                            cb_autoSyncDisplay.setSelected(false);
                         }
                     }
                 });
@@ -1110,9 +1110,9 @@ public class MusicSelection extends javax.swing.JPanel
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_displayLagActionPerformed
 
-    private void cb_autoSyncActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_autoSyncActionPerformed
+    private void cb_autoSyncDisplayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_autoSyncDisplayActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_cb_autoSyncActionPerformed
+    }//GEN-LAST:event_cb_autoSyncDisplayActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bt_choose_dir;
@@ -1120,7 +1120,7 @@ public class MusicSelection extends javax.swing.JPanel
     private javax.swing.JButton btn_autoplay_keys;
     private javax.swing.JButton btn_delete;
     private javax.swing.JButton btn_reload;
-    private javax.swing.JCheckBox cb_autoSync;
+    private javax.swing.JCheckBox cb_autoSyncDisplay;
     private javax.swing.JComboBox combo_channelModifier;
     private javax.swing.JComboBox combo_dirs;
     private javax.swing.JComboBox combo_displays;

@@ -835,7 +835,7 @@
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="txt_displayLag" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="cb_autoSync" min="-2" max="-2" attributes="0"/>
+                                  <Component id="cb_autoSyncDisplay" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -866,7 +866,7 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="txt_displayLag" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="cb_autoSync" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="cb_autoSyncDisplay" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -943,12 +943,12 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_displayLagActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JCheckBox" name="cb_autoSync">
+        <Component class="javax.swing.JCheckBox" name="cb_autoSyncDisplay">
           <Properties>
             <Property name="text" type="java.lang.String" value="autosync"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cb_autoSyncActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cb_autoSyncDisplayActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
