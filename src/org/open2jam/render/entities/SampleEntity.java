@@ -6,19 +6,22 @@
 package org.open2jam.render.entities;
 
 import org.open2jam.parsers.Event;
+import org.open2jam.parsers.Event.SoundSample;
 import org.open2jam.render.Render;
 
 /**
  *
  * @author fox
  */
-public class SampleEntity extends Entity implements TimeEntity
+public class SampleEntity extends Entity implements TimeEntity, SoundEntity
 {
     private final Event.SoundSample value;
     private final Render render;
 
     private double time_to_hit;
-
+    private boolean note = false;
+    private boolean played = false;
+    
     public SampleEntity(Render r, Event.SoundSample value, double y)
     {
         this.render = r;
@@ -35,16 +38,36 @@ public class SampleEntity extends Entity implements TimeEntity
         this.render = org.render;
     }
 
+    public void setNote(boolean note) {
+        this.note = note;
+    }
+
     @Override
     public void move(double delta) {}
 
     @Override
-    public void judgment()
+    public void judgment() {
+        judgment(true);
+    }
+    
+    public void judgment(boolean auto)
     {
-         render.queueSample(value);
-         dead = true;
+        boolean play = !auto;
+        if (!dead && (!note || !render.isDisableAutoSound())) {
+            play = true;
+        }
+        if (play && !played) {
+            this.play();
+            played = true;
+        }
+        if (!dead) {
+            dead = true;
+        }
     }
 
+    public void play() {
+        render.queueSample(value);
+    }
     
     @Override
     public void draw() {}
@@ -63,4 +86,6 @@ public class SampleEntity extends Entity implements TimeEntity
     public double getTime() {
         return time_to_hit;
     }
+
+    
 }

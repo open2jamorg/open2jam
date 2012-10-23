@@ -162,7 +162,7 @@ public class Render implements GameWindowCallback
 
     /** keep trap of the last sound of each channel
      * so that the player can re-play the sound when the key is pressed */
-    EnumMap<Event.Channel,Event.SoundSample> last_sound;
+    EnumMap<Event.Channel,SampleEntity> last_sound;
 
     /** number to display the fps, and note counters on the screen */
     NumberEntity fps_entity;
@@ -202,19 +202,15 @@ public class Render implements GameWindowCallback
     
     TrueTypeFont trueTypeFont;
 
-    /** statistics variables (delete this soon) */
-    double hit_sum = 0;
-    double hit_count = 0;
+    /** statistics variable */
     double total_notes = 0;
     
-    /** statistics variables (new version) */
-    List<Double> hits = new LinkedList<Double>();
-    List<Double> lags = new LinkedList<Double>();
+    /** display and audio latency */
+    private Latency displayLatency;
+    private Latency audioLatency;
     
-    /** display lag */
-    boolean is_autosyncing = false;
-    double display_lag = 0;
-    double original_display_lag = 0;
+    private Latency syncingLatency;
+    
     AutosyncDelegate autosyncDelegate;
     
     /** song finish time [leave 10 seconds] */
@@ -232,6 +228,7 @@ public class Render implements GameWindowCallback
     }
     
     protected final boolean AUTOSOUND;
+    boolean disableAutoSound = false;
     
     public Render(Chart chart, GameOptions opt, DisplayMode dm) throws SoundSystemException
     {
@@ -277,27 +274,28 @@ public class Render implements GameWindowCallback
 //	    Event.Channel.NOTE_1.enableAutoplay();
 	}
         
-        display_lag = original_display_lag = opt.getDisplayLag();
+        displayLatency = new Latency(opt.getDisplayLag());
+        audioLatency = new Latency(opt.getAudioLatency());
 	
         window.setDisplay(dm,opt.getVsync(),opt.getFullScreen(),opt.getBilinear());
-    }
-
-    public void setAutosync(boolean is_autosyncing) {
-        this.is_autosyncing = is_autosyncing;
     }
 
     public void setAutosyncDelegate(AutosyncDelegate autosyncDelegate) {
         this.autosyncDelegate = autosyncDelegate;
     }
-
-    public boolean isAutosync() {
-        return is_autosyncing;
-    }
-
+    
     public void setJudge(JudgmentStrategy judge) {
         this.judge = judge;
     }
 
+    public void setAutosyncDisplay() {
+        this.syncingLatency = displayLatency;
+    }
+    
+    public void setAutosyncAudio() {
+        this.syncingLatency = audioLatency;
+    }
+    
     /**
     * initialize the common elements for the game.
     * this is called by the window render
@@ -363,7 +361,7 @@ public class Render implements GameWindowCallback
 
 	longflare = new EnumMap<Event.Channel, Entity> (Event.Channel.class);
 
-        last_sound = new EnumMap<Event.Channel,Event.SoundSample>(Event.Channel.class);
+        last_sound = new EnumMap<Event.Channel,SampleEntity>(Event.Channel.class);
 
         fps_entity = (NumberEntity) skin.getEntityMap().get("FPS_COUNTER");
         entities_matrix.add(fps_entity);
@@ -524,11 +522,7 @@ public class Render implements GameWindowCallback
             JOptionPane.showMessageDialog(null, "Fatal Error", "System out of memory ! baillin out !!",JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
-        // at this point the game window has gone away
 
-        double precision = (hit_count / total_notes) * 100;
-        double accuracy = (hit_sum / total_notes) * 100;
-        Logger.global.log(Level.INFO,String.format("Precision : %.3f, Accuracy : %.3f", precision, accuracy));
     }
 
 
@@ -555,11 +549,11 @@ public class Render implements GameWindowCallback
         changeSpeed(delta); // TODO: is everything here really needed every frame ?
 
         now = SystemTimer.getTime() - start_time;
-        double now_display = now - display_lag;
+        if (AUTOSOUND) now -= audioLatency.getLatency();
+        
+        double now_display = now + displayLatency.getLatency();
         
         update_note_buffer(now, now_display);
-
-        now = SystemTimer.getTime() - start_time;
 
         soundSystem.update();
 	do_autoplay(now);
@@ -581,7 +575,14 @@ public class Render implements GameWindowCallback
                 {
                     TimeEntity te = (TimeEntity) e;
                     //autoplays sounds play
-                    if(te.getTime() - now <= 0) te.judgment();
+                    
+                    double timeToJudge = now;
+                    
+                    if (e instanceof SoundEntity && AUTOSOUND) {
+                        timeToJudge += audioLatency.getLatency();
+                    }
+                    
+                    if(te.getTime() - timeToJudge <= 0) te.judgment();
 
                     //channel needed by the xR speed
                     Event.Channel channel = Event.Channel.NONE;
@@ -654,7 +655,8 @@ public class Render implements GameWindowCallback
             {
                 if(ne.getState() == NoteEntity.State.NOT_JUDGED)
                 {
-                    queueSample(ne.getSample());
+                    disableAutoSound = false;
+                    ne.emitSound();
                     ne.setState(NoteEntity.State.LN_HEAD_JUDGE);
                     Entity ee = skin.getEntityMap().get("PRESSED_"+ne.getChannel()).copy();
                     entities_matrix.add(ee);
@@ -670,10 +672,15 @@ public class Render implements GameWindowCallback
             }
             else
             {
-                queueSample(ne.getSample());
+                disableAutoSound = false;
+                ne.emitSound();
                 ne.setState(NoteEntity.State.JUDGE);
             }
         }
+    }
+
+    public boolean isDisableAutoSound() {
+        return disableAutoSound;
     }
 
     public void check_keyboard(double now)
@@ -698,17 +705,17 @@ public class Render implements GameWindowCallback
 
                 NoteEntity e = nextNoteKey(c);
                 if(e == null){
-                    Event.SoundSample i = last_sound.get(c);
-                    if(i != null)queueSample(i);
+                    SampleEntity i = last_sound.get(c);
+                    if(i != null) i.play();
                     continue;
                 }
-
-                queueSample(e.getSample());
 
                 e.updateHit(now);
 
                 // don't continue if the note is too far
                 if(judge.accept(e)) {
+                    disableAutoSound = false;
+                    e.emitSound();
                     if(e instanceof LongNoteEntity) {
                         longnote_holded.put(c, (LongNoteEntity) e);
                         if(e.getState() == NoteEntity.State.NOT_JUDGED)
@@ -716,6 +723,8 @@ public class Render implements GameWindowCallback
                     } else {
                         e.setState(NoteEntity.State.JUDGE);
                     }
+                } else {
+                    e.getSampleEntity().play();
                 }
                 
             }else if(!keyDown && keyWasDown) { // key released now
@@ -737,32 +746,9 @@ public class Render implements GameWindowCallback
         
     }
     
-    // display hits
-    private void display_hits() {
-        if (hits.isEmpty()) return;
-        double sum = 0;
-        for (double hit : hits) {
-            sum += hit;
-        }
-        double average = sum / hits.size();
-        System.out.printf("%d %f %f\n", hits.size(), average);
-    }
-    
-    private void autosync() {
-        if (!is_autosyncing) return;
-        if (lags.size() < 1) return;
-        double sum = 0;
-        int count = 0;
-        for (double lag : lags) {
-            sum += lag;
-            count ++;
-        }
-        for (; count < 64; count ++) {
-            sum += original_display_lag;
-        }
-        double average = sum / count;
-        display_lag = average;
-        System.out.printf("new display lag : %d %f\n", lags.size(), average);
+    private void autosync(double hit) {
+        if (syncingLatency == null) return;
+        syncingLatency.autosync(hit);
     }
     
     public void check_judgment(NoteEntity ne, double now)
@@ -773,7 +759,10 @@ public class Render implements GameWindowCallback
         {
             case NOT_JUDGED: // you missed it (no keyboard input)
                 ne.updateHit(now);
-                if (judge.missed(ne)) setNoteJudgment(ne, JudgmentResult.MISS);
+                if (judge.missed(ne)) {
+                    disableAutoSound = true;
+                    setNoteJudgment(ne, JudgmentResult.MISS);
+                }
                 break;
                 
             case JUDGE: //LN & normal ones: has finished with good result
@@ -781,10 +770,7 @@ public class Render implements GameWindowCallback
                 setNoteJudgment(ne, result);
                 
                 if (!(ne instanceof LongNoteEntity)) {
-                    hits.add(ne.getHitTime());
-                    lags.add(ne.getHitTime() + display_lag);
-                    //display_hits();
-                    autosync();
+                    autosync(ne.getHitTime());
                 }
                 break;
                 
@@ -834,12 +820,8 @@ public class Render implements GameWindowCallback
     
     public void setNoteJudgment(NoteEntity ne, JudgmentResult result) {
         
-        // statistics
-        hit_sum += Math.abs(ne.getHitTime());
-        if(result != JudgmentResult.MISS) hit_count++;
-        total_notes++;
-        
         result = handleJudgment(result);
+        
         // display the judgment
         if(judgment_entity != null)judgment_entity.setDead(true);
         judgment_entity = skin.getEntityMap().get("EFFECT_"+result).copy();
@@ -1051,7 +1033,7 @@ public class Render implements GameWindowCallback
             if(note_channels.get(c).isEmpty())return null;
             ne = note_channels.get(c).getFirst();
         }
-        last_sound.put(c, ne.getSample());
+        last_sound.put(c, ne.getSampleEntity());
         return ne;
     }
 
@@ -1089,8 +1071,7 @@ public class Render implements GameWindowCallback
                     NoteEntity n = (NoteEntity) skin.getEntityMap().get(e.getChannel().toString()).copy();
                     n.setTime(e.getTime());
 		    
-                    if(AUTOSOUND) auto_sound(e, false);
-		    n.setSample(AUTOSOUND ? null : e.getSample());
+                    assignSample(n, e);
 		    
 		    entities_matrix.add(n);
                     note_channels.get(n.getChannel()).add(n);
@@ -1101,8 +1082,7 @@ public class Render implements GameWindowCallback
                     LongNoteEntity ln = (LongNoteEntity) skin.getEntityMap().get("LONG_"+e.getChannel()).copy();
                     ln.setTime(e.getTime());
 		    
-                    if(AUTOSOUND) auto_sound(e, false);
-		    ln.setSample(AUTOSOUND ? null : e.getSample());
+                    assignSample(ln, e);
 		    
 		    entities_matrix.add(ln);
 		    ln_buffer.put(e.getChannel(),ln);
@@ -1138,18 +1118,36 @@ public class Render implements GameWindowCallback
                 case NOTE_SC2:
 
                 case AUTO_PLAY:
-                    auto_sound(e, true);
+                    autoSound(e, true);
                 break;
             }
         }
     }
     
-    private void auto_sound(Event e, boolean bgm)
+    private void assignSample(NoteEntity n, Event e) {
+        SampleEntity sampleEntity = createSampleEntity(e, false);
+        if(AUTOSOUND) {
+            autoSound(sampleEntity);
+            sampleEntity.setNote(true);
+        }
+        n.setSampleEntity(sampleEntity);
+    }
+    
+    private SampleEntity autoSound(Event e, boolean bgm)
     {
+        return autoSound(createSampleEntity(e, bgm));
+    }
+    
+    private SampleEntity autoSound(SampleEntity se) {
+        entities_matrix.add(se);
+        return se;
+    }
+    
+    private SampleEntity createSampleEntity(Event e, boolean bgm) {
 	if(bgm) e.getSample().toBGM();
-	SampleEntity s = new SampleEntity(this,e.getSample(),0);
-	s.setTime(e.getTime());
-	entities_matrix.add(s);	
+        SampleEntity s = new SampleEntity(this,e.getSample(),0);
+        s.setTime(e.getTime());
+        return s;
     }
 
     private final List<Integer> misc_keys = new LinkedList<Integer>();
@@ -1266,6 +1264,11 @@ public class Render implements GameWindowCallback
                 case NOTE_SC2:
                 case AUTO_PLAY:
 		case BGA:
+                    
+                    if (!last_sound.containsKey(e.getChannel()) && e.getSample() != null) {
+                        last_sound.put(e.getChannel(), createSampleEntity(e, false));
+                    }
+                    
                     e.setTime(timer + e.getOffset());
 		    if(e.getOffset() != 0) System.out.println("offset: "+e.getOffset()+" timer: "+(timer+e.getOffset()));
                 break;
@@ -1358,8 +1361,8 @@ public class Render implements GameWindowCallback
 	bgaEntity.release();
         soundSystem.release();
 	System.gc();        
-        if (is_autosyncing && autosyncDelegate != null) {
-            autosyncDelegate.autosyncFinished(display_lag);
+        if (syncingLatency != null && autosyncDelegate != null) {
+            autosyncDelegate.autosyncFinished(syncingLatency.getLatency());
         }
     }
     
