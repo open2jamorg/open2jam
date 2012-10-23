@@ -1170,7 +1170,10 @@ public class MusicSelection extends javax.swing.JPanel
     }//GEN-LAST:event_txt_audioLatencyActionPerformed
 
     private void cb_autoSyncAudioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_autoSyncAudioActionPerformed
-        if (cb_autoSyncAudio.isSelected()) cb_autoSyncDisplay.setSelected(false);
+        if (cb_autoSyncAudio.isSelected()) {
+            cb_autoSyncDisplay.setSelected(false);
+            jc_autosound.setSelected(true);
+        }
     }//GEN-LAST:event_cb_autoSyncAudioActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
