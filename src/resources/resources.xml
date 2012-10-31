@@ -224,36 +224,36 @@
             <frame x="0" y="0" w="128" h="128" file="note_miss_1.png" />
         </sprite>
 
-
+        <!-- Score numbers are from PointNum.ojs, resized and then nicely positioned --> 
         <sprite id="score_number_0">
-            <frame x="126" y="1" w="23" h="18" file="font1.png" />
+            <frame x="0" y="0" w="24" h="18" file="Numbers.png" />
         </sprite>
         <sprite id="score_number_1">
-            <frame x="150" y="1" w="12" h="18" file="font1.png" />
+            <frame x="0" y="18" w="24" h="18" file="Numbers.png" />
         </sprite>
         <sprite id="score_number_2">
-            <frame x="163" y="1" w="23" h="18" file="font1.png" />
+            <frame x="0" y="36" w="24" h="18" file="Numbers.png" />
         </sprite>
         <sprite id="score_number_3">
-            <frame x="187" y="1" w="23" h="18" file="font1.png" />
+            <frame x="0" y="54" w="24" h="18" file="Numbers.png" />
         </sprite>
         <sprite id="score_number_4">
-            <frame x="211" y="1" w="24" h="18" file="font1.png" />
+            <frame x="0" y="72" w="24" h="18" file="Numbers.png" />
         </sprite>
         <sprite id="score_number_5">
-            <frame x="126" y="20" w="24" h="18" file="font1.png" />
+            <frame x="0" y="90" w="24" h="18" file="Numbers.png" />
         </sprite>
         <sprite id="score_number_6">
-            <frame x="151" y="20" w="24" h="18" file="font1.png" />
+            <frame x="0" y="108" w="24" h="18" file="Numbers.png" />
         </sprite>
         <sprite id="score_number_7">
-            <frame x="176" y="20" w="23" h="18" file="font1.png" />
+            <frame x="0" y="126" w="24" h="18" file="Numbers.png" />
         </sprite>
         <sprite id="score_number_8">
-            <frame x="200" y="20" w="24" h="18" file="font1.png" />
+            <frame x="0" y="144" w="24" h="18" file="Numbers.png" />
         </sprite>
         <sprite id="score_number_9">
-            <frame x="225" y="20" w="24" h="18" file="font1.png" />
+            <frame x="0" y="162" w="24" h="18" file="Numbers.png" />
         </sprite>
 
 
@@ -323,67 +323,67 @@
             <frame x="229" y="81" w="27" h="21" file="font1.png" />
         </sprite>
 
-
+        <!-- Max Combo is the same as Counter, except slightly enlarged -->
         <sprite id="maxcombo_number_0">
-            <frame x="126" y="106" w="11" h="11" file="font1.png" />
+            <frame x="32" y="0" w="9" h="9" file="Numbers.png" />
         </sprite>
         <sprite id="maxcombo_number_1">
-            <frame x="137" y="106" w="11" h="11" file="font1.png" />
+            <frame x="32" y="9" w="9" h="9" file="Numbers.png" />
         </sprite>
         <sprite id="maxcombo_number_2">
-            <frame x="148" y="106" w="11" h="11" file="font1.png" />
+            <frame x="32" y="18" w="9" h="9" file="Numbers.png" />
         </sprite>
         <sprite id="maxcombo_number_3">
-            <frame x="159" y="106" w="11" h="11" file="font1.png" />
+            <frame x="32" y="27" w="9" h="9" file="Numbers.png" />
         </sprite>
         <sprite id="maxcombo_number_4">
-            <frame x="170" y="106" w="11" h="11" file="font1.png" />
+            <frame x="32" y="36" w="9" h="9" file="Numbers.png" />
         </sprite>
         <sprite id="maxcombo_number_5">
-            <frame x="181" y="106" w="11" h="11" file="font1.png" />
+            <frame x="32" y="45" w="9" h="9" file="Numbers.png" />
         </sprite>
         <sprite id="maxcombo_number_6">
-            <frame x="192" y="106" w="11" h="11" file="font1.png" />
+            <frame x="32" y="54" w="9" h="9" file="Numbers.png" />
         </sprite>
         <sprite id="maxcombo_number_7">
-            <frame x="203" y="106" w="11" h="11" file="font1.png" />
+            <frame x="32" y="63" w="9" h="9" file="Numbers.png" />
         </sprite>
         <sprite id="maxcombo_number_8">
-            <frame x="214" y="106" w="11" h="11" file="font1.png" />
+            <frame x="32" y="72" w="9" h="9" file="Numbers.png" />
         </sprite>
         <sprite id="maxcombo_number_9">
-            <frame x="225" y="106" w="11" h="11" file="font1.png" />
+            <frame x="32" y="81" w="9" h="9" file="Numbers.png" />
         </sprite>
 
         <sprite id="counter_number_0">
-            <frame x="126" y="39" w="9" h="9" file="font1.png" />
+            <frame x="32" y="0" w="9" h="9" file="Numbers.png" />
         </sprite>
         <sprite id="counter_number_1">
-            <frame x="135" y="39" w="9" h="9" file="font1.png" />
+            <frame x="32" y="9" w="9" h="9" file="Numbers.png" />
         </sprite>
         <sprite id="counter_number_2">
-            <frame x="144" y="39" w="9" h="9" file="font1.png" />
+            <frame x="32" y="18" w="9" h="9" file="Numbers.png" />
         </sprite>
         <sprite id="counter_number_3">
-            <frame x="153" y="39" w="9" h="9" file="font1.png" />
+            <frame x="32" y="27" w="9" h="9" file="Numbers.png" />
         </sprite>
         <sprite id="counter_number_4">
-            <frame x="162" y="39" w="9" h="9" file="font1.png" />
+            <frame x="32" y="36" w="9" h="9" file="Numbers.png" />
         </sprite>
         <sprite id="counter_number_5">
-            <frame x="171" y="39" w="9" h="9" file="font1.png" />
+            <frame x="32" y="45" w="9" h="9" file="Numbers.png" />
         </sprite>
         <sprite id="counter_number_6">
-            <frame x="180" y="39" w="9" h="9" file="font1.png" />
+            <frame x="32" y="54" w="9" h="9" file="Numbers.png" />
         </sprite>
         <sprite id="counter_number_7">
-            <frame x="189" y="39" w="9" h="9" file="font1.png" />
+            <frame x="32" y="63" w="9" h="9" file="Numbers.png" />
         </sprite>
         <sprite id="counter_number_8">
-            <frame x="198" y="39" w="9" h="9" file="font1.png" />
+            <frame x="32" y="72" w="9" h="9" file="Numbers.png" />
         </sprite>
         <sprite id="counter_number_9">
-            <frame x="207" y="39" w="9" h="9" file="font1.png" />
+            <frame x="32" y="81" w="9" h="9" file="Numbers.png" />
         </sprite>
     </spriteset>
 

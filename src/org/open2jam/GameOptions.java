@@ -109,8 +109,8 @@ public class GameOptions {
         speedType("mods.speed.type", "HiSpeed", new EnumBinding(SpeedType.class, "speed_type")),
         visibility("mods.visibility", "None", new EnumBinding(VisibilityMod.class, "visibilityModifier")),
         channel("mods.channel", "None", new EnumBinding(ChannelMod.class, "channelModifier")),
-        keyVolume("volume.key", "1.0", new FloatBinding("keyVolume")),
-        bgmVolume("volume.bgm", "1.0", new FloatBinding("BGMVolume")),
+        keyVolume("volume.key", "0.5", new FloatBinding("keyVolume")),
+        bgmVolume("volume.bgm", "0.5", new FloatBinding("BGMVolume")),
         masterVolume("volume.master", "1.0", new FloatBinding("masterVolume")),
         autoplayEnabled("autoplay.enabled", "false", new BooleanBinding("autoplay")),
         autoplayChannels("autoplay.channels", "", new Binding("autoplay_channels") {
