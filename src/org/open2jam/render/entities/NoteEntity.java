@@ -7,7 +7,7 @@ import org.open2jam.render.SpriteList;
 **/
 public class NoteEntity extends AnimatedEntity implements TimeEntity
 {
-    private Event.SoundSample sample_value;
+    private SampleEntity sampleEntity;
 
     private Event.Channel channel = Event.Channel.NONE;
 
@@ -34,15 +34,21 @@ public class NoteEntity extends AnimatedEntity implements TimeEntity
     NoteEntity(NoteEntity org) {
         super(org);
         this.channel = org.channel;
-        this.sample_value = org.sample_value;
+        this.sampleEntity = org.sampleEntity;
         this.state = org.state;
     }
-    
-    public void setSample(Event.SoundSample sample){
-        this.sample_value = sample;
+
+    public void setSampleEntity(SampleEntity sampleEntity) {
+        this.sampleEntity = sampleEntity;
     }
 
-    public Event.SoundSample getSample(){ return sample_value; }
+    public SampleEntity getSampleEntity() {
+        return sampleEntity;
+    }
+    
+    public void emitSound() {
+        if (sampleEntity != null) sampleEntity.judgment(false);
+    }
 
     public void setHitTime(double hit) { this.hitTime = hit; }
     public double getHitTime() { return hitTime; }
