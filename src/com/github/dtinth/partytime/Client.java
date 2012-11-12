@@ -23,9 +23,9 @@ public class Client implements Runnable {
     private String status;
     
     private boolean ready = false;
-    private final int ownLatency;
+    private long ownLatency;
     
-    public Client(String host, int port, int ownLatency) {
+    public Client(String host, int port, long ownLatency) {
         this.host = host;
         this.port = port;
         this.ownLatency = ownLatency;

@@ -283,7 +283,7 @@ public class Render implements GameWindowCallback
         displayLatency = new Latency(opt.getDisplayLag());
         audioLatency = new Latency(opt.getAudioLatency());
         
-        localMatching = new Client("192.168.43.166", 7273, audioLatency.getLatency());
+        localMatching = new Client("192.168.43.166", 7273, (long)audioLatency.getLatency());
 	
         window.setDisplay(dm,opt.getVsync(),opt.getFullScreen(),opt.getBilinear());
     }
