@@ -5,7 +5,10 @@ import com.github.dtinth.partytime.Client;
 import org.open2jam.sound.FmodExSoundSystem;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map.Entry;
@@ -283,7 +286,19 @@ public class Render implements GameWindowCallback
         displayLatency = new Latency(opt.getDisplayLag());
         audioLatency = new Latency(opt.getAudioLatency());
         
-        localMatching = new Client("192.168.43.166", 7273, (long)audioLatency.getLatency());
+        File file = new File("local.txt");
+        if (file.exists()) {
+            try {
+                String[] data = new BufferedReader(new FileReader(file)).readLine().trim().split(":");
+                if (data.length == 2) {
+                    String host = data[0];
+                    int port = Integer.parseInt(data[1]);
+                    localMatching = new Client(host, port, (long)audioLatency.getLatency());
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
 	
         window.setDisplay(dm,opt.getVsync(),opt.getFullScreen(),opt.getBilinear());
     }
