@@ -1,6 +1,7 @@
 
 package org.open2jam.render;
 
+import com.github.dtinth.partytime.Client;
 import org.open2jam.sound.FmodExSoundSystem;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
@@ -215,6 +216,9 @@ public class Render implements GameWindowCallback
     
     AutosyncDelegate autosyncDelegate;
     
+    /** local matching */
+    private Client localMatching;
+    
     /** song finish time [leave 10 seconds] */
     long finish_time = -1;
 
@@ -278,6 +282,8 @@ public class Render implements GameWindowCallback
         
         displayLatency = new Latency(opt.getDisplayLag());
         audioLatency = new Latency(opt.getAudioLatency());
+        
+        localMatching = new Client("localhost", 7273);
 	
         window.setDisplay(dm,opt.getVsync(),opt.getFullScreen(),opt.getBilinear());
     }
@@ -513,6 +519,11 @@ public class Render implements GameWindowCallback
 
         lastLoopTime = SystemTimer.getTime();
         start_time = lastLoopTime + DELAY_TIME;
+        
+        if (localMatching != null) {
+            new Thread(localMatching).start();
+        }
+        
     }
 
     /* make the rendering start */
@@ -555,7 +566,14 @@ public class Render implements GameWindowCallback
         
         changeSpeed(delta); // TODO: is everything here really needed every frame ?
 
-        if (!gameStarted) start_time = SystemTimer.getTime();
+        if (!gameStarted && localMatching != null) {
+            if (localMatching.isReady()) gameStarted = true;
+        }
+        
+        if (!gameStarted) {
+            start_time = SystemTimer.getTime();
+        }
+        
         now = SystemTimer.getTime() - start_time;
 
         if (AUTOSOUND) now -= audioLatency.getLatency();
@@ -616,6 +634,10 @@ public class Render implements GameWindowCallback
 
         if(!w_speed) trueTypeFont.drawString(780, 300, "HI-SPEED: "+next_speed, 1, -1, TrueTypeFont.ALIGN_RIGHT);
 	trueTypeFont.drawString(780, 330, "Current Measure: "+current_measure, 1, -1, TrueTypeFont.ALIGN_RIGHT);
+        
+        if (localMatching != null) {
+            trueTypeFont.drawString(780, 360, "LOCAL: "+localMatching.getStatus(), 1, -1, TrueTypeFont.ALIGN_RIGHT);
+        }
         
         if(!buffer_iterator.hasNext() && entities_matrix.isEmpty(note_layer)){
             if (finish_time == -1) {
