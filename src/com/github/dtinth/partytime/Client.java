@@ -23,10 +23,12 @@ public class Client implements Runnable {
     private String status;
     
     private boolean ready = false;
+    private final int ownLatency;
     
-    public Client(String host, int port) {
+    public Client(String host, int port, int ownLatency) {
         this.host = host;
         this.port = port;
+        this.ownLatency = ownLatency;
     }
 
     @Override
@@ -89,7 +91,7 @@ public class Client implements Runnable {
             if (line.startsWith("play:")) {
                 long time = Long.parseLong(line.substring(5));
                 try {
-                    Thread.sleep(Math.max(0, time - System.currentTimeMillis()));
+                    Thread.sleep(Math.max(0, time - System.currentTimeMillis() - ownLatency));
                     setStatus("Game start!");
                 } catch (InterruptedException ex) {
                     setStatus("Interrupted!");
