@@ -221,14 +221,14 @@ public class MusicSelection extends javax.swing.JPanel
         // TODO: read Config gameOptions and set them on the GUI
         GameOptions go = Config.getGameOptions();
         
-        jc_autoplay.setSelected(go.getAutoplay());
-	jc_autosound.setSelected(go.getAutosound());
+        jc_autoplay.setSelected(go.isAutoplay());
+	jc_autosound.setSelected(go.isAutosound());
         combo_channelModifier.setSelectedItem(go.getChannelModifier());
         combo_visibilityModifier.setSelectedItem(go.getVisibilityModifier());
         slider_main_vol.setValue(Math.round(go.getMasterVolume()*100));
         slider_key_vol.setValue(Math.round(go.getKeyVolume()*100));
         slider_bgm_vol.setValue(Math.round(go.getBGMVolume()*100));
-        js_hispeed.setValue(go.getHiSpeed());
+        js_hispeed.setValue(go.getSpeedMultiplier());
         combo_speedType.setSelectedItem(go.getSpeedType());
         txt_displayLag.setText(go.getDisplayLag() + "");
         txt_audioLatency.setText(go.getAudioLatency() + "");
@@ -239,9 +239,9 @@ public class MusicSelection extends javax.swing.JPanel
                 combo_displays.setSelectedItem(dm);
         }
 
-        jc_full_screen.setSelected(go.getFullScreen());
-        jc_bilinear.setSelected(go.getBilinear());
-        jc_vsync.setSelected(go.getVsync());
+        jc_full_screen.setSelected(go.isDisplayFullscreen());
+        jc_bilinear.setSelected(go.isDisplayBilinear());
+        jc_vsync.setSelected(go.isDisplayVsync());
         
     }
     
@@ -259,11 +259,11 @@ public class MusicSelection extends javax.swing.JPanel
         go.setMasterVolume(slider_main_vol.getValue()/100f);
         go.setKeyVolume(slider_key_vol.getValue()/100f);
         go.setBGMVolume(slider_bgm_vol.getValue()/100f);
-        go.setHispeed((Double)js_hispeed.getValue());
+        go.setSpeedMultiplier((Double)js_hispeed.getValue());
         go.setSpeedType((SpeedType)combo_speedType.getSelectedItem());
-        go.setFullScreen(jc_full_screen.isSelected());
-        go.setBilinear(jc_bilinear.isSelected());
-        go.setVsync(jc_vsync.isSelected());
+        go.setDisplayFullscreen(jc_full_screen.isSelected());
+        go.setDisplayBilinear(jc_bilinear.isSelected());
+        go.setDisplayVsync(jc_vsync.isSelected());
         
         go.setDisplay((DisplayMode)combo_displays.getSelectedItem());
         
@@ -1065,11 +1065,11 @@ public class MusicSelection extends javax.swing.JPanel
             go.setMasterVolume(mainVol);
             go.setKeyVolume(keyVol);
             go.setBGMVolume(bgmVol);
-            go.setHispeed(hispeed);
+            go.setSpeedMultiplier(hispeed);
             go.setSpeedType(speed_type);
-            go.setFullScreen(fs);
-            go.setBilinear(bilinear);
-            go.setVsync(vsync);
+            go.setDisplayFullscreen(fs);
+            go.setDisplayBilinear(bilinear);
+            go.setDisplayVsync(vsync);
             
             try{
                 go.setDisplayLag(Double.parseDouble(txt_displayLag.getText()));
@@ -1085,7 +1085,7 @@ public class MusicSelection extends javax.swing.JPanel
                 return;
             }
 
-            NativeLibrary.addSearchPath("vlc", go.getVLC());
+            NativeLibrary.addSearchPath("vlc", go.getVLCLibraryPath());
             
             final Render r;
             r = new Render(selected_header, go, dm);
