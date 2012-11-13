@@ -245,7 +245,7 @@ public class Render implements GameWindowCallback
         this.chart = chart;
         this.opt = opt;
 
-        this.next_speed = this.last_speed = speed = opt.getHiSpeed();
+        this.next_speed = this.last_speed = speed = opt.getSpeedMultiplier();
         switch(opt.getSpeedType())
         {
             case xRSpeed:
@@ -259,10 +259,10 @@ public class Render implements GameWindowCallback
             break;
         }
 	
-	AUTOSOUND = opt.getAutosound();
+	AUTOSOUND = opt.isAutosound();
 	
 	//TODO Should get values from gameoptions, but i'm lazy as hell
-	if(opt.getAutoplay()) 
+	if(opt.isAutoplay()) 
 	{
 	    for(Event.Channel c : Event.Channel.values())
 	    {
@@ -277,7 +277,7 @@ public class Render implements GameWindowCallback
         displayLatency = new Latency(opt.getDisplayLag());
         audioLatency = new Latency(opt.getAudioLatency());
 	
-        window.setDisplay(dm,opt.getVsync(),opt.getFullScreen(),opt.getBilinear());
+        window.setDisplay(dm,opt.isDisplayVsync(),opt.isDisplayFullscreen(),opt.isDisplayBilinear());
     }
 
     public void setAutosyncDelegate(AutosyncDelegate autosyncDelegate) {
