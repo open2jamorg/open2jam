@@ -54,7 +54,7 @@ public class Configuration extends javax.swing.JPanel {
         
         loadTableKeys(Config.KeyboardType.K7);
 	
-	vlc_path = Config.getGameOptions().getVLC();
+	vlc_path = Config.getGameOptions().getVLCLibraryPath();
 	if(vlc_path.isEmpty()) {
 	    lbl_vlc.setText("Select the VLC path");
 	} else {
@@ -212,7 +212,7 @@ public class Configuration extends javax.swing.JPanel {
         }
         Config.setKeyboardMap(kb_map, kt);
 	GameOptions op = Config.getGameOptions();
-	op.setVLC(vlc_path);
+	op.setVLCLibraryPath(vlc_path);
 	Config.setGameOptions(op);
 }//GEN-LAST:event_bSaveActionPerformed
 
