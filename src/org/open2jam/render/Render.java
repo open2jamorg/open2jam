@@ -43,6 +43,7 @@ import org.open2jam.util.*;
  */
 public class Render implements GameWindowCallback
 {
+    private String localMatchingServer = "";
 
     public interface AutosyncDelegate {
         void autosyncFinished(double displayLag);
@@ -59,7 +60,7 @@ public class Render implements GameWindowCallback
     /** player options */
     private final GameOptions opt;
     
-    private static final double AUTOPLAY_THRESHOLD = 40;
+    private static final double AUTOPLAY_THRESHOLD = 0;
 
     /** skin info and entities */
     Skin skin;
@@ -281,7 +282,14 @@ public class Render implements GameWindowCallback
 
 //	    Event.Channel.NOTE_4.enableAutoplay();
 //	    Event.Channel.NOTE_1.enableAutoplay();
-	}
+	} else {
+            
+	    for(Event.Channel c : Event.Channel.values())
+	    {
+		if(c.toString().startsWith(("NOTE_")))
+		    c.disableAutoplay();
+	    }
+        }
         
         displayLatency = new Latency(opt.getDisplayLag());
         audioLatency = new Latency(opt.getAudioLatency());
@@ -308,6 +316,11 @@ public class Render implements GameWindowCallback
     public void setStartPaused() {
         this.gameStarted = false;
     }
+    
+    public void setLocalMatchingServer(String text) {
+        this.localMatchingServer = text;
+    }
+
     
     
     /**
@@ -521,21 +534,19 @@ public class Render implements GameWindowCallback
         lastLoopTime = SystemTimer.getTime();
         start_time = lastLoopTime + DELAY_TIME;
         
-        File file = new File("local.txt");
-        if (file.exists() && !gameStarted) {
-            try {
-                String[] data = new BufferedReader(new FileReader(file)).readLine().trim().split(":");
-                if (data.length == 2) {
-                    String host = data[0];
-                    int port = Integer.parseInt(data[1]);
-                    localMatching = new Client(host, port, (long)audioLatency.getLatency());
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
+        try {
+            String[] data = localMatchingServer.trim().split(":");
+            if (data.length == 2) {
+                String host = data[0];
+                int port = Integer.parseInt(data[1]);
+                localMatching = new Client(host, port, (long)audioLatency.getLatency());
             }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
         
         if (localMatching != null) {
+            gameStarted = false;
             new Thread(localMatching).start();
         }
         
@@ -652,6 +663,8 @@ public class Render implements GameWindowCallback
         
         if (localMatching != null) {
             trueTypeFont.drawString(780, 360, "LOCAL: "+localMatching.getStatus(), 1, -1, TrueTypeFont.ALIGN_RIGHT);
+        } else if (!gameStarted) {
+            trueTypeFont.drawString(780, 360, "Press any note button to start the game.", 1, -1, TrueTypeFont.ALIGN_RIGHT);
         }
         
         if(!buffer_iterator.hasNext() && entities_matrix.isEmpty(note_layer)){
@@ -694,7 +707,7 @@ public class Render implements GameWindowCallback
             if(ne == null)continue;
 
             double hit = ne.testTimeHit(now);
-            if(hit < AUTOPLAY_THRESHOLD)continue;
+            if(hit > AUTOPLAY_THRESHOLD)continue;
             ne.updateHit(now);
             
             if(ne instanceof LongNoteEntity)
@@ -742,7 +755,7 @@ public class Render implements GameWindowCallback
             
             if(keyDown && !keyWasDown){ // started holding now
                 
-                if (!gameStarted) gameStarted = true;
+                if (!gameStarted && localMatching == null) gameStarted = true;  
                 
                 keyboard_key_pressed.put(c, true);
 
