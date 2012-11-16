@@ -13,6 +13,7 @@ public class BarEntity extends AnimatedEntity
     private int limit = 1;
     private int number = 0;
 
+
     public enum FillDirection {
         LEFT_TO_RIGHT,
         RIGHT_TO_LEFT,
@@ -46,6 +47,11 @@ public class BarEntity extends AnimatedEntity
     {
         if(number + add <= limit) number += add;
         else number = limit;
+    }
+    
+    public void subtractNumber(int sub) {
+        if(number - sub >= 0) number -= sub;
+        else number = 0;
     }
 
     public void setLimit(int limit){ this.limit = limit; }

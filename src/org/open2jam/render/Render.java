@@ -405,8 +405,6 @@ public class Render implements GameWindowCallback
         entities_matrix.add(jambar_entity);
 
         lifebar_entity = (BarEntity) skin.getEntityMap().get("LIFE_BAR");
-        lifebar_entity.setLimit(1000);
-        lifebar_entity.setNumber(1000);
         entities_matrix.add(lifebar_entity);
 
         combo_entity = (ComboCounterEntity) skin.getEntityMap().get("COMBO_COUNTER");
@@ -432,6 +430,8 @@ public class Render implements GameWindowCallback
         judgment_line = skin.getEntityMap().get("JUDGMENT_LINE");
         entities_matrix.add(judgment_line);
 
+        initLifeBar();
+        
         for(Event.Channel c : keyboard_map.keySet())
         {
             keyboard_key_pressed.put(c, Boolean.FALSE);
@@ -545,6 +545,24 @@ public class Render implements GameWindowCallback
             new Thread(localMatching).start();
         }
         
+    }
+    
+    /**
+     * Initializes the life bar based on rank
+     */
+    private void initLifeBar() {
+        int base = 12000; // base health bar size
+        int multiplier;
+        if (rank >= 2) {
+            multiplier = 4; // hard coefficient
+        } else if (rank >= 1) {
+            multiplier = 3; // normal coefficient
+        } else {
+            multiplier = 2; // easy coefficient
+        }
+        int maxLife = base * multiplier;
+        lifebar_entity.setLimit(maxLife);
+        lifebar_entity.setNumber(maxLife);
     }
 
     /* make the rendering start */
@@ -928,7 +946,7 @@ public class Render implements GameWindowCallback
             case COOL:
                 jambar_entity.addNumber(2);
                 consecutive_cools++;
-                lifebar_entity.addNumber(2);
+                lifebar_entity.addNumber(rank >= 2 ? 24 : 48);
                 score_value = 200 + (jamcombo_entity.getNumber()*10);
                 break;
 
@@ -951,6 +969,7 @@ public class Render implements GameWindowCallback
                 {
                     jambar_entity.setNumber(0);
                     jamcombo_entity.resetNumber();
+                    lifebar_entity.subtractNumber(120);
 
                     score_value = 4;
                 }
@@ -962,8 +981,7 @@ public class Render implements GameWindowCallback
                 jamcombo_entity.resetNumber();
                 consecutive_cools = 0;
 
-                if(lifebar_entity.getNumber() >= 30)lifebar_entity.addNumber(-30);
-                else lifebar_entity.setNumber(0);
+                lifebar_entity.subtractNumber(720);
 
                 if(score_entity.getNumber() >= 10)score_value = -10;
                 else score_value = -score_entity.getNumber();
