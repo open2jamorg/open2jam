@@ -27,3 +27,24 @@ Hard Difficulty
 * Miss : -3%
 * Bad : -0.5%
 * Cool : 0.1%
+
+
+Generalization
+==============
+
+Therefore, if the health are only integers, the above could be generalized like this:
+
+Maximum health:
+
+* Easy: 12000 * 2 = 24000 points
+* Normal: 12000 * 3 = 36000 points
+* Hard: 12000 * 4 = 48000 points
+
+Health gaining and draining:
+
+* Miss: -720 points
+* Bad: -120 points
+* Cool: 48 points for easy and normal, 24 points for hard
+
+
+
