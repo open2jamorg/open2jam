@@ -662,7 +662,7 @@ public class Render implements GameWindowCallback
 	trueTypeFont.drawString(780, 330, "Current Measure: "+current_measure, 1, -1, TrueTypeFont.ALIGN_RIGHT);
         
         if (localMatching != null) {
-            trueTypeFont.drawString(780, 360, localMatching.getStatus(), 1, -1, TrueTypeFont.ALIGN_RIGHT);
+            trueTypeFont.drawString(780, 360, "" + localMatching.getStatus(), 1, -1, TrueTypeFont.ALIGN_RIGHT);
         } else if (!gameStarted) {
             trueTypeFont.drawString(780, 360, "Press any note button to start the game.", 1, -1, TrueTypeFont.ALIGN_RIGHT);
         }
