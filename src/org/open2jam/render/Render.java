@@ -115,12 +115,7 @@ public class Render implements GameWindowCallback
     /** the bpm at which the entities are falling */
     private double bpm;
 
-    /** this queue hold the available sources
-     * that may be used to play sounds */
-    LinkedList<Integer> source_queue;
-    private Iterator<Integer> source_queue_iterator;
-
-    /** maps the Event value to OpenGL sample ID's */
+    /** maps the Event value to Sound objects */
     private Map<Integer, Sound> sounds;
 
     /** The time at which the last rendering looped started from the point of view of the game logic */
@@ -499,11 +494,6 @@ public class Render implements GameWindowCallback
 
         // load up initial buffer
         update_note_buffer(0, 0);
-
-        // create sound sources
-        source_queue = new LinkedList<Integer>();
-
-        source_queue_iterator = source_queue.iterator();
 
         // get the chart sound samples
 	sounds = new HashMap<Integer, Sound>();
