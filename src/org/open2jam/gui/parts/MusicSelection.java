@@ -188,6 +188,7 @@ public class MusicSelection extends javax.swing.JPanel
                 selected_header = selected_chart.get(selectedRow);
 
                 updateInfo();
+                updateRankFromChartSelection();
             }
         });
         
@@ -1165,6 +1166,8 @@ public class MusicSelection extends javax.swing.JPanel
             
             r.setLocalMatchingServer(txtLocalMatchingServer.getText());
             
+            r.setRank(rank);
+            
             r.setJudge(jc_timed_judgment.isSelected()
                     ? new TimeJudgment()
                     : new BeatJudgment());
@@ -1175,25 +1178,28 @@ public class MusicSelection extends javax.swing.JPanel
         }
 }//GEN-LAST:event_bt_playActionPerformed
 
-    private void jr_rank_easyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jr_rank_easyActionPerformed
-        rank = 0;
+    public void setRank(int rank) {
+        this.rank = rank;
+        
+        if (rank == 0) jr_rank_easy.setSelected(true);
+        if (rank == 1) jr_rank_normal.setSelected(true);
+        if (rank == 2) jr_rank_hard.setSelected(true);
+        
         int sel_row = table_songlist.getSelectedRow();
         if(sel_row >= 0)last_model_idx = table_songlist.convertRowIndexToModel(sel_row);
         model_songlist.setRank(rank);
+    }
+    
+    private void jr_rank_easyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jr_rank_easyActionPerformed
+        setRank(0);
 }//GEN-LAST:event_jr_rank_easyActionPerformed
 
     private void jr_rank_normalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jr_rank_normalActionPerformed
-        rank = 1;
-        int sel_row = table_songlist.getSelectedRow();
-        if(sel_row >= 0)last_model_idx = table_songlist.convertRowIndexToModel(sel_row);
-        model_songlist.setRank(rank);
+        setRank(1);
 }//GEN-LAST:event_jr_rank_normalActionPerformed
 
     private void jr_rank_hardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jr_rank_hardActionPerformed
-        rank = 2;
-        int sel_row = table_songlist.getSelectedRow();
-        if(sel_row >= 0)last_model_idx = table_songlist.convertRowIndexToModel(sel_row);
-        model_songlist.setRank(rank);
+        setRank(2);
 }//GEN-LAST:event_jr_rank_hardActionPerformed
 
     private void combo_dirsItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_combo_dirsItemStateChanged
@@ -1485,12 +1491,22 @@ public class MusicSelection extends javax.swing.JPanel
             model_chartlist.clear();
             model_chartlist.setChartList(selected_chart);
         }
-        if(selected_chart.size()-1 < rank)
+        updateChartSelectionFromRank();
+        updateInfo();
+    }
+    
+    private void updateChartSelectionFromRank() {
+        if (selected_chart == null) return;
+        if (rank >= selected_chart.size())
             table_chartlist.getSelectionModel().setSelectionInterval(0, 0);
         else
             table_chartlist.getSelectionModel().setSelectionInterval(0, rank);
-        
-        updateInfo();
+    }
+    
+    private void updateRankFromChartSelection() {
+        if (selected_chart == null) return;
+        int selectedIndex = table_chartlist.getSelectedRow();
+        if (0 <= selectedIndex && selectedIndex < 3) setRank(selectedIndex);
     }
 
     private DecimalFormat bpm_format = new DecimalFormat(".##");

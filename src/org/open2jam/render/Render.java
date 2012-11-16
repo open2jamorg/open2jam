@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import org.lwjgl.input.Keyboard;
@@ -44,7 +45,8 @@ import org.open2jam.util.*;
 public class Render implements GameWindowCallback
 {
     private String localMatchingServer = "";
-
+    private int rank;
+    
     public interface AutosyncDelegate {
         void autosyncFinished(double displayLag);
     }
@@ -316,7 +318,10 @@ public class Render implements GameWindowCallback
         this.localMatchingServer = text;
     }
 
-    
+    public void setRank(int rank) {
+        this.rank = rank;
+    }
+
     
     /**
     * initialize the common elements for the game.
@@ -1413,7 +1418,12 @@ public class Render implements GameWindowCallback
         soundSystem.release();
 	System.gc();        
         if (syncingLatency != null && autosyncDelegate != null) {
-            autosyncDelegate.autosyncFinished(syncingLatency.getLatency());
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    autosyncDelegate.autosyncFinished(syncingLatency.getLatency());
+                }
+            });
         }
     }
     
