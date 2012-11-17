@@ -25,6 +25,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.Config;
 import org.open2jam.GameOptions;
+import org.open2jam.game.SpeedMultiplier;
 import org.open2jam.parsers.Chart;
 import org.open2jam.parsers.Event;
 import org.open2jam.parsers.EventList;
@@ -93,19 +94,17 @@ public class Render implements GameWindowCallback
     /** The recorded fps */
     int fps;
 
-    /** the hispeed values*/
-    private double last_speed;
-    private double speed;
-    private double next_speed;
-    private static final double SPEED_STEP = 0.5d;
+    /** the current "calculated" speed */
+    double speed;
+    
+    /** the base speed multiplier */
+    private SpeedMultiplier baseSpeedMultiplier;
     
     private boolean gameStarted = true;
     
     boolean xr_speed = false;
     boolean w_speed = false;
     private final List<Double> speed_xR_values = new ArrayList<Double>();
-
-    private static final double SPEED_FACTOR = 0.005d;
     
     //TODO make it changeable in options... maybe?
     private static final double W_SPEED_FACTOR = 0.0005d;
@@ -174,8 +173,10 @@ public class Render implements GameWindowCallback
     NumberEntity fps_entity;
 
     NumberEntity score_entity;
+    
     /** JamCombo variables */
     ComboCounterEntity jamcombo_entity;
+    
     /**
      * Cools: +2
      * Goods: +1
@@ -257,8 +258,12 @@ public class Render implements GameWindowCallback
         entities_matrix = new EntityMatrix();
         this.chart = chart;
         this.opt = opt;
-
-        this.next_speed = this.last_speed = speed = opt.getSpeedMultiplier();
+        
+        // speed multiplier
+        speed = opt.getSpeedMultiplier();
+        baseSpeedMultiplier = new SpeedMultiplier(speed);
+        
+        // TODO: refactor this
         switch(opt.getSpeedType())
         {
             case xRSpeed:
@@ -268,7 +273,7 @@ public class Render implements GameWindowCallback
             w_speed = true;
             //we use the speed as a multiply to get the time
             w_speed_time = speed * 1000; 
-            this.speed = this.next_speed = this.last_speed = 0;
+            this.speed = 0;
             break;
         }
 	
@@ -677,7 +682,7 @@ public class Render implements GameWindowCallback
             }
         }
 
-        if(!w_speed) trueTypeFont.drawString(780, 300, "HI-SPEED: "+next_speed, 1, -1, TrueTypeFont.ALIGN_RIGHT);
+        if(!w_speed) trueTypeFont.drawString(780, 300, "HI-SPEED: "+baseSpeedMultiplier.getSpeed(), 1, -1, TrueTypeFont.ALIGN_RIGHT);
 	trueTypeFont.drawString(780, 330, "Current Measure: "+current_measure, 1, -1, TrueTypeFont.ALIGN_RIGHT);
         
         if (localMatching != null) {
@@ -1065,24 +1070,8 @@ public class Render implements GameWindowCallback
         }
         else
         {
-            if(speed == next_speed && delta != 0) return;
-            
-            if(last_speed > next_speed)
-            {
-                speed -= SPEED_FACTOR * delta;
-
-                if(speed < next_speed) speed = next_speed;
-            }
-            else if (last_speed < next_speed)
-            {
-                speed += SPEED_FACTOR * delta;
-
-                if(speed > next_speed) speed = next_speed;    
-            }
-            else
-            {
-                speed = next_speed;
-            }
+            baseSpeedMultiplier.update(delta);
+            speed = baseSpeedMultiplier.getCurrentSpeed();
         }
                 
         //update the longnotes end time
@@ -1244,12 +1233,10 @@ public class Render implements GameWindowCallback
                 switch(event)
                 {
                     case SPEED_UP:
-                        last_speed = next_speed;
-                        next_speed = clamp(next_speed+SPEED_STEP, 0.5, 10);
+                        baseSpeedMultiplier.increase();
                     break;
                     case SPEED_DOWN:
-                        last_speed = next_speed;
-                        next_speed = clamp(next_speed-SPEED_STEP, 0.5, 10);
+                        baseSpeedMultiplier.decrease();
                     break;
                     case MAIN_VOL_UP:
                         opt.setMasterVolume(opt.getMasterVolume() + VOLUME_FACTOR);
