@@ -25,9 +25,9 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.Config;
 import org.open2jam.GameOptions;
-import org.open2jam.game.speed.HiSpeed;
+import org.open2jam.game.speed.SpeedMultiplier;
 import org.open2jam.game.speed.Speed;
-import org.open2jam.game.speed.WSpeed;
+import org.open2jam.game.position.WSpeed;
 import org.open2jam.parsers.Chart;
 import org.open2jam.parsers.Event;
 import org.open2jam.parsers.EventList;
@@ -35,9 +35,10 @@ import org.open2jam.parsers.utils.SampleData;
 import org.open2jam.render.entities.*;
 import org.open2jam.game.judgment.JudgmentResult;
 import org.open2jam.game.judgment.JudgmentStrategy;
-import org.open2jam.game.position.BaseNoteDistanceCalculator;
+import org.open2jam.game.position.HiSpeed;
 import org.open2jam.game.position.NoteDistanceCalculator;
-import org.open2jam.game.position.XRNoteDistanceCalculator;
+import org.open2jam.game.position.RegulSpeed;
+import org.open2jam.game.position.XRSpeed;
 import org.open2jam.render.lwjgl.TrueTypeFont;
 import org.open2jam.sound.Sound;
 import org.open2jam.sound.SoundChannel;
@@ -259,18 +260,21 @@ public class Render implements GameWindowCallback
         
         // speed multiplier
         speed = opt.getSpeedMultiplier();
-        speedObj = new HiSpeed(speed);
+        speedObj = new SpeedMultiplier(speed);
         
-        distance = new BaseNoteDistanceCalculator(timing, 385);
+        distance = new HiSpeed(timing, 385);
         
         // TODO: refactor this
         switch(opt.getSpeedType())
         {
             case xRSpeed:
-                distance = new XRNoteDistanceCalculator(distance);
+                distance = new XRSpeed(distance);
                 break;
             case WSpeed:
-                speedObj = new WSpeed(speedObj);
+                distance = new WSpeed(distance, speedObj);
+                break;
+            case RegulSpeed:
+                distance = new RegulSpeed(385);
                 break;
         }
 	
@@ -677,7 +681,7 @@ public class Render implements GameWindowCallback
             }
         }
 
-        trueTypeFont.drawString(780, 300, speedObj.toString(), 1, -1, TrueTypeFont.ALIGN_RIGHT);
+        trueTypeFont.drawString(780, 300, distance + ": " + speedObj, 1, -1, TrueTypeFont.ALIGN_RIGHT);
 	trueTypeFont.drawString(780, 330, "Current Measure: "+current_measure, 1, -1, TrueTypeFont.ALIGN_RIGHT);
         
         if (localMatching != null) {

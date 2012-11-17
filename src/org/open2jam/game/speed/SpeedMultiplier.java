@@ -6,7 +6,7 @@ import org.open2jam.game.speed.Speed;
  *
  * @author Thai Pangsakulyanont
  */
-public class HiSpeed implements Speed {
+public class SpeedMultiplier implements Speed {
     
     private double speed = 1;
     private double currentSpeed = 1;
@@ -17,7 +17,7 @@ public class HiSpeed implements Speed {
     private static final double SPEED_STEP = 0.5d;
     private static final double SPEED_FACTOR = 0.005d;
 
-    public HiSpeed(double speed) {
+    public SpeedMultiplier(double speed) {
         this.speed = currentSpeed = speed;
     }
     
@@ -62,7 +62,7 @@ public class HiSpeed implements Speed {
 
     @Override
     public String toString() {
-        return "HI-SPEED : x" + speed;
+        return "x" + speed;
     }
     
 }

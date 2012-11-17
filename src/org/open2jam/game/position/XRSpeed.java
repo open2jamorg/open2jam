@@ -8,11 +8,11 @@ import org.open2jam.render.entities.NoteEntity;
  *
  * @author Thai Pangsakulyanont
  */
-public class XRNoteDistanceCalculator implements NoteDistanceCalculator {
+public class XRSpeed implements NoteDistanceCalculator {
     private final NoteDistanceCalculator base;
     private double[] values = new double[7];
     
-    public XRNoteDistanceCalculator(NoteDistanceCalculator base) {
+    public XRSpeed(NoteDistanceCalculator base) {
         this.base = base;
         
         Random rnd = new Random();
@@ -46,6 +46,11 @@ public class XRNoteDistanceCalculator implements NoteDistanceCalculator {
 
         return base.calculate(now, target, speed, noteEntity) * factor;
         
+    }
+    
+    @Override
+    public String toString() {
+        return "xR-SPEED";
     }
     
 }

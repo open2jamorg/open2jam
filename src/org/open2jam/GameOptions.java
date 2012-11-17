@@ -27,7 +27,7 @@ public class GameOptions {
      * "Hi-Speed"=>0, "xR-Speed"=>1, "W-Speed"=>2
      */
     public enum SpeedType {
-        HiSpeed, xRSpeed, WSpeed;
+        HiSpeed, xRSpeed, WSpeed, RegulSpeed;
         
         @Override
         public String toString() {

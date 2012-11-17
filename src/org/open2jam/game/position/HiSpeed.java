@@ -8,11 +8,11 @@ import org.open2jam.render.entities.NoteEntity;
  *
  * @author Thai Pangsakulyanont
  */
-public class BaseNoteDistanceCalculator implements NoteDistanceCalculator {
+public class HiSpeed implements NoteDistanceCalculator {
     private final TimingData timing;
     private final double measureSize;
 
-    public BaseNoteDistanceCalculator(TimingData timingData, double measureSize) {
+    public HiSpeed(TimingData timingData, double measureSize) {
         this.timing = timingData;
         this.measureSize = measureSize;
     }
@@ -24,6 +24,11 @@ public class BaseNoteDistanceCalculator implements NoteDistanceCalculator {
 
     @Override
     public void update(double now, double delta) {
+    }
+
+    @Override
+    public String toString() {
+        return "HI-SPEED";
     }
     
 }
