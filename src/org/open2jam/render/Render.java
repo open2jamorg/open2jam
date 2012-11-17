@@ -25,7 +25,9 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.Config;
 import org.open2jam.GameOptions;
-import org.open2jam.game.SpeedMultiplier;
+import org.open2jam.game.speed.HiSpeed;
+import org.open2jam.game.speed.Speed;
+import org.open2jam.game.speed.WSpeed;
 import org.open2jam.parsers.Chart;
 import org.open2jam.parsers.Event;
 import org.open2jam.parsers.EventList;
@@ -98,19 +100,12 @@ public class Render implements GameWindowCallback
     double speed;
     
     /** the base speed multiplier */
-    private SpeedMultiplier baseSpeedMultiplier;
+    private Speed speedObj;
     
     private boolean gameStarted = true;
     
     boolean xr_speed = false;
-    boolean w_speed = false;
     private final List<Double> speed_xR_values = new ArrayList<Double>();
-    
-    //TODO make it changeable in options... maybe?
-    private static final double W_SPEED_FACTOR = 0.0005d;
-    private double w_speed_time = 3000d;
-    double w_time = 0;
-    boolean w_positive = true;
 
     /** the layer of the notes */
     private int note_layer;
@@ -261,19 +256,16 @@ public class Render implements GameWindowCallback
         
         // speed multiplier
         speed = opt.getSpeedMultiplier();
-        baseSpeedMultiplier = new SpeedMultiplier(speed);
+        speedObj = new HiSpeed(speed);
         
         // TODO: refactor this
         switch(opt.getSpeedType())
         {
             case xRSpeed:
-            xr_speed = true;
-            break;
+                xr_speed = true;
+                break;
             case WSpeed:
-            w_speed = true;
-            //we use the speed as a multiply to get the time
-            w_speed_time = speed * 1000; 
-            this.speed = 0;
+                speedObj = new WSpeed(speedObj);
             break;
         }
 	
@@ -682,7 +674,7 @@ public class Render implements GameWindowCallback
             }
         }
 
-        if(!w_speed) trueTypeFont.drawString(780, 300, "HI-SPEED: "+baseSpeedMultiplier.getSpeed(), 1, -1, TrueTypeFont.ALIGN_RIGHT);
+        trueTypeFont.drawString(780, 300, speedObj.toString(), 1, -1, TrueTypeFont.ALIGN_RIGHT);
 	trueTypeFont.drawString(780, 330, "Current Measure: "+current_measure, 1, -1, TrueTypeFont.ALIGN_RIGHT);
         
         if (localMatching != null) {
@@ -1054,25 +1046,8 @@ public class Render implements GameWindowCallback
             
     private void changeSpeed(double delta)
     {
-        if(w_speed)
-        {
-            w_time += delta;
-            if(w_time < w_speed_time)
-            {
-                speed += (w_positive ? 1 : -1) * W_SPEED_FACTOR * delta;                
-                speed = clamp(speed, 0.5, 10);
-            }
-            else
-            {
-                w_time = 0;
-                w_positive = !w_positive;
-            }
-        }
-        else
-        {
-            baseSpeedMultiplier.update(delta);
-            speed = baseSpeedMultiplier.getCurrentSpeed();
-        }
+        speedObj.update(delta);
+        speed = speedObj.getCurrentSpeed();
                 
         //update the longnotes end time
         for(LinkedList<Entity> layer : entities_matrix) // loop over layers
@@ -1233,10 +1208,10 @@ public class Render implements GameWindowCallback
                 switch(event)
                 {
                     case SPEED_UP:
-                        baseSpeedMultiplier.increase();
+                        speedObj.increase();
                     break;
                     case SPEED_DOWN:
-                        baseSpeedMultiplier.decrease();
+                        speedObj.decrease();
                     break;
                     case MAIN_VOL_UP:
                         opt.setMasterVolume(opt.getMasterVolume() + VOLUME_FACTOR);

@@ -1,10 +1,12 @@
-package org.open2jam.game;
+package org.open2jam.game.speed;
+
+import org.open2jam.game.speed.Speed;
 
 /**
  *
  * @author Thai Pangsakulyanont
  */
-public class SpeedMultiplier {
+public class HiSpeed implements Speed {
     
     private double speed = 1;
     private double currentSpeed = 1;
@@ -15,22 +17,26 @@ public class SpeedMultiplier {
     private static final double SPEED_STEP = 0.5d;
     private static final double SPEED_FACTOR = 0.005d;
 
-    public SpeedMultiplier(double speed) {
+    public HiSpeed(double speed) {
         this.speed = currentSpeed = speed;
     }
     
+    @Override
     public double getSpeed() {
         return speed;
     }
 
+    @Override
     public void setSpeed(double speed) {
         this.speed = speed;
     }
 
+    @Override
     public double getCurrentSpeed() {
         return currentSpeed;
     }
     
+    @Override
     public void update(double delta) {
         
         if (currentSpeed < speed) {
@@ -44,12 +50,19 @@ public class SpeedMultiplier {
 
     }
     
+    @Override
     public void increase() {
         setSpeed(speed + SPEED_STEP > MAX_SPEED ? MAX_SPEED : speed + SPEED_STEP);
     }
     
+    @Override
     public void decrease() {
         setSpeed(speed - SPEED_STEP < MIN_SPEED ? MIN_SPEED : speed - SPEED_STEP);
+    }
+
+    @Override
+    public String toString() {
+        return "HI-SPEED : x" + speed;
     }
     
 }
