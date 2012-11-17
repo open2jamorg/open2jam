@@ -47,7 +47,7 @@ public class ByteHelper {
 	    (byte) (i),
 	    (byte) (i >> 8),
 	    (byte) (i >> 16),
-	    (byte) (i >> 24)
+	    (byte) (i >>> 24)
 	};
     }
     
