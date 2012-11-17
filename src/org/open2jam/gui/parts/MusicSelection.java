@@ -37,8 +37,8 @@ import org.open2jam.parsers.BMSWriter;
 import org.open2jam.parsers.Chart;
 import org.open2jam.parsers.ChartList;
 import org.open2jam.render.Render;
-import org.open2jam.render.judgment.BeatJudgment;
-import org.open2jam.render.judgment.TimeJudgment;
+import org.open2jam.game.judgment.BeatJudgment;
+import org.open2jam.game.judgment.TimeJudgment;
 import org.open2jam.sound.SoundSystemException;
 import org.open2jam.util.Logger;
 
@@ -1132,7 +1132,7 @@ public class MusicSelection extends javax.swing.JPanel
             
             if (cb_autoSyncDisplay.isSelected()) {
                 r.setAutosyncDisplay();
-                r.setAutosyncDelegate(new Render.AutosyncDelegate() {
+                r.setAutosyncCallback(new Render.AutosyncCallback() {
 
                     @Override
                     public void autosyncFinished(double displayLag) {
@@ -1149,7 +1149,7 @@ public class MusicSelection extends javax.swing.JPanel
             
             else if (cb_autoSyncAudio.isSelected()) {
                 r.setAutosyncAudio();
-                r.setAutosyncDelegate(new Render.AutosyncDelegate() {
+                r.setAutosyncCallback(new Render.AutosyncCallback() {
 
                     @Override
                     public void autosyncFinished(double audioLatency) {

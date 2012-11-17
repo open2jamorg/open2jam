@@ -1,6 +1,8 @@
 
 package org.open2jam.render;
 
+import org.open2jam.game.TimingData;
+import org.open2jam.game.Latency;
 import com.github.dtinth.partytime.Client;
 import org.open2jam.sound.FmodExSoundSystem;
 import java.awt.Font;
@@ -28,8 +30,8 @@ import org.open2jam.parsers.Event;
 import org.open2jam.parsers.EventList;
 import org.open2jam.parsers.utils.SampleData;
 import org.open2jam.render.entities.*;
-import org.open2jam.render.judgment.JudgmentResult;
-import org.open2jam.render.judgment.JudgmentStrategy;
+import org.open2jam.game.judgment.JudgmentResult;
+import org.open2jam.game.judgment.JudgmentStrategy;
 import org.open2jam.render.lwjgl.TrueTypeFont;
 import org.open2jam.sound.Sound;
 import org.open2jam.sound.SoundChannel;
@@ -47,7 +49,7 @@ public class Render implements GameWindowCallback
     private String localMatchingServer = "";
     private int rank;
     
-    public interface AutosyncDelegate {
+    public interface AutosyncCallback {
         void autosyncFinished(double displayLag);
     }
     
@@ -213,9 +215,13 @@ public class Render implements GameWindowCallback
     private Latency displayLatency;
     private Latency audioLatency;
     
+    /** points to a latency that's currenly syncing:
+     * either displayLatency, audioLatency, or null.
+     */
     private Latency syncingLatency;
     
-    AutosyncDelegate autosyncDelegate;
+    /** what to do after autosync? */
+    AutosyncCallback autosyncCallback;
     
     /** local matching */
     private Client localMatching;
@@ -294,8 +300,8 @@ public class Render implements GameWindowCallback
         window.setDisplay(dm,opt.isDisplayVsync(),opt.isDisplayFullscreen(),opt.isDisplayBilinear());
     }
 
-    public void setAutosyncDelegate(AutosyncDelegate autosyncDelegate) {
-        this.autosyncDelegate = autosyncDelegate;
+    public void setAutosyncCallback(AutosyncCallback autosyncDelegate) {
+        this.autosyncCallback = autosyncDelegate;
     }
     
     public void setJudge(JudgmentStrategy judge) {
@@ -1435,11 +1441,11 @@ public class Render implements GameWindowCallback
 	bgaEntity.release();
         soundSystem.release();
 	System.gc();        
-        if (syncingLatency != null && autosyncDelegate != null) {
+        if (syncingLatency != null && autosyncCallback != null) {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    autosyncDelegate.autosyncFinished(syncingLatency.getLatency());
+                    autosyncCallback.autosyncFinished(syncingLatency.getLatency());
                 }
             });
         }

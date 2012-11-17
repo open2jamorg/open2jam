@@ -1,7 +1,7 @@
-package org.open2jam.render.judgment;
+package org.open2jam.game.judgment;
 
 import org.open2jam.render.entities.NoteEntity;
-import org.open2jam.util.TimingData;
+import org.open2jam.game.TimingData;
 
 /**
  * A hit judgment strategy.
