@@ -5,13 +5,19 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 /**
- *
+ * The StatusList class represents a list of text to display at the right
+ * hand side of the game window.
+ * 
  * @author Thai Pangsakulyanont
  */
 public class StatusList implements Iterable<String> {
     
     private LinkedList<StatusItem> items = new LinkedList<StatusItem>();
 
+    /**
+     * Adds a StatusItem to this StatusList
+     * @param item a status item.
+     */
     public void add(StatusItem item) {
         items.add(item);
     }
