@@ -35,6 +35,9 @@ import org.open2jam.parsers.utils.SampleData;
 import org.open2jam.render.entities.*;
 import org.open2jam.game.judgment.JudgmentResult;
 import org.open2jam.game.judgment.JudgmentStrategy;
+import org.open2jam.game.position.BaseNoteDistanceCalculator;
+import org.open2jam.game.position.NoteDistanceCalculator;
+import org.open2jam.game.position.XRNoteDistanceCalculator;
 import org.open2jam.render.lwjgl.TrueTypeFont;
 import org.open2jam.sound.Sound;
 import org.open2jam.sound.SoundChannel;
@@ -102,10 +105,10 @@ public class Render implements GameWindowCallback
     /** the base speed multiplier */
     private Speed speedObj;
     
-    private boolean gameStarted = true;
+    /** the note distance calculator */
+    private NoteDistanceCalculator distance;
     
-    boolean xr_speed = false;
-    private final List<Double> speed_xR_values = new ArrayList<Double>();
+    private boolean gameStarted = true;
 
     /** the layer of the notes */
     private int note_layer;
@@ -258,15 +261,17 @@ public class Render implements GameWindowCallback
         speed = opt.getSpeedMultiplier();
         speedObj = new HiSpeed(speed);
         
+        distance = new BaseNoteDistanceCalculator(timing, 385);
+        
         // TODO: refactor this
         switch(opt.getSpeedType())
         {
             case xRSpeed:
-                xr_speed = true;
+                distance = new XRNoteDistanceCalculator(distance);
                 break;
             case WSpeed:
                 speedObj = new WSpeed(speedObj);
-            break;
+                break;
         }
 	
 	AUTOSOUND = opt.isAutosound();
@@ -362,13 +367,6 @@ public class Render implements GameWindowCallback
         }
 
 	changeSpeed(0);
-
-        Random rnd = new Random();
-
-        for(int i = 0;i<chart.getKeys(); i++)
-        {
-            speed_xR_values.add(i, rnd.nextDouble());
-        }
 
         bpm = chart.getBPM();
 
@@ -623,12 +621,12 @@ public class Render implements GameWindowCallback
         double now_display = now + displayLatency.getLatency();
         
         update_note_buffer(now, now_display);
+        distance.update(now_display, delta);
 
         soundSystem.update();
 	do_autoplay(now);
         Keyboard.poll();
         check_keyboard(now);
-
         
         for(LinkedList<Entity> layer : entities_matrix) // loop over layers
         {
@@ -653,18 +651,23 @@ public class Render implements GameWindowCallback
                     
                     if(te.getTime() - timeToJudge <= 0) te.judgment();
 
-                    //channel needed by the xR speed
-                    Event.Channel channel = Event.Channel.NONE;
-                    if(e instanceof NoteEntity) channel = ((NoteEntity)e).getChannel();
-
-                    double y = getViewport() - calculateNoteDistance(now_display,te.getTime(), channel);
+                    NoteEntity ne = e instanceof NoteEntity ? (NoteEntity)e : null;
+                    
+                    double y = getViewport() - distance.calculate(now_display, te.getTime(), speed, ne);
 
                     //TODO Fix this, maybe an option in the skin
                     //o2jam overlaps 1 px of the note with the measure and, because of this
                     //our skin should do it too xD
                     if(e instanceof MeasureEntity) y -= 1;
+                    
 		    if(!(e instanceof BgaEntity))
 			e.setPos(e.getX(), y);
+                    
+                    if(e instanceof LongNoteEntity) {
+                        LongNoteEntity lne = (LongNoteEntity)e;
+                        double ey = getViewport() - distance.calculate(now_display, lne.getEndTime(), speed, ne);
+                        lne.setEndDistance(Math.abs(ey - y));
+                    }
 
                     if(e instanceof NoteEntity) check_judgment((NoteEntity)e, now);
                 }
@@ -1048,17 +1051,6 @@ public class Render implements GameWindowCallback
     {
         speedObj.update(delta);
         speed = speedObj.getCurrentSpeed();
-                
-        //update the longnotes end time
-        for(LinkedList<Entity> layer : entities_matrix) // loop over layers
-        {
-            for (Entity e : layer) {
-                if (e instanceof LongNoteEntity) {
-                    LongNoteEntity le = (LongNoteEntity) e;
-                    le.setEndDistance(calculateNoteDistance(le.getTime(), le.getEndTime(), le.getChannel()));
-                }
-            }
-        }
     }
 
     double getViewport() { return skin.getJudgmentLine(); }
@@ -1090,7 +1082,7 @@ public class Render implements GameWindowCallback
     **/
     void update_note_buffer(double now, double now_display)
     {
-        while(buffer_iterator.hasNext() && getViewport() - calculateNoteDistance(now_display,buffer_timer) > -10)
+        while(buffer_iterator.hasNext() && getViewport() - distance.calculate(now_display, buffer_timer, speed, null) > -10)
         {
             Event e = buffer_iterator.next();
 
@@ -1137,7 +1129,7 @@ public class Render implements GameWindowCallback
                     if(lne == null){
                         Logger.global.log(Level.WARNING, "Attempted to RELEASE note {0} @ "+e.getTotalPosition(), e.getChannel());
                     }else{
-                        lne.setEndTime(e.getTime(),calculateNoteDistance(lne.getTime(),e.getTime(), lne.getChannel()));
+                        lne.setEndTime(e.getTime());
                     }
                 }
                 break;
@@ -1326,33 +1318,6 @@ public class Render implements GameWindowCallback
         timing.finish();
         
         return new_list;
-    }
-
-    double calculateNoteDistance(double now, double target)
-    {
-        double measure_size = 0.8 * getViewport();
-        return speed * (timing.getBeat(target) - timing.getBeat(now)) * measure_size / 4;
-    }
-
-    double calculateNoteDistance(double now, double target, Event.Channel chan)
-    {
-        if(!xr_speed) return calculateNoteDistance(now, target);
-
-
-        double factor = 1;
-
-        switch(chan)
-        {
-            case NOTE_1: factor += speed_xR_values.get(0); break;
-            case NOTE_2: factor += speed_xR_values.get(1); break;
-            case NOTE_3: factor += speed_xR_values.get(2); break;
-            case NOTE_4: factor += speed_xR_values.get(3); break;
-            case NOTE_5: factor += speed_xR_values.get(4); break;
-            case NOTE_6: factor += speed_xR_values.get(5); break;
-            case NOTE_7: factor += speed_xR_values.get(6); break;
-        }
-
-        return calculateNoteDistance(now, target) * factor;
     }
 
     private void visibility(GameOptions.VisibilityMod value)

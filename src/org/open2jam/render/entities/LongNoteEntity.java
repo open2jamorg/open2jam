@@ -41,9 +41,8 @@ public class LongNoteEntity extends NoteEntity
         this.end_time = org.end_time;
     }
 
-    public void setEndTime(double time, double note_size){
+    public void setEndTime(double time){
         this.end_time = time;
-        setEndDistance(note_size);
     }
 
     public void setEndDistance(double note_size){
