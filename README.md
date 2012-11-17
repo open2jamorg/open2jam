@@ -34,6 +34,7 @@ Current Features
         * [Display lag and audio latency - Some information and problems](https://github.com/open2jamorg/open2jam/issues/8)
 * Optional, configurable alternative judgment method: "Timed Judgment," which judges notes by milliseconds rather than beats.
 * Local matching - play with friends (powered by [partytime](https://github.com/dtinth/partytime)). [Demo Video](http://www.youtube.com/watch?v=UaZu2jVOdS8)
+* Speed type: Hi-Speed, xR-Speed, W-Speed, Regul-Speed
 
 
 License
