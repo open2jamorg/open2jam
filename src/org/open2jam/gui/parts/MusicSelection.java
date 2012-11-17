@@ -245,6 +245,7 @@ public class MusicSelection extends javax.swing.JPanel
         jc_full_screen.setSelected(go.isDisplayFullscreen());
         jc_bilinear.setSelected(go.isDisplayBilinear());
         jc_vsync.setSelected(go.isDisplayVsync());
+        jc_timed_judgment.setSelected(go.getJudgmentType() == GameOptions.JudgmentType.TimeJudgment);
         
     }
     
@@ -267,6 +268,7 @@ public class MusicSelection extends javax.swing.JPanel
         go.setDisplayFullscreen(jc_full_screen.isSelected());
         go.setDisplayBilinear(jc_bilinear.isSelected());
         go.setDisplayVsync(jc_vsync.isSelected());
+        go.setJudgmentType(jc_timed_judgment.isSelected() ? GameOptions.JudgmentType.TimeJudgment : GameOptions.JudgmentType.BeatJudgment);
         
         go.setDisplay((DisplayMode)combo_displays.getSelectedItem());
         
@@ -1104,6 +1106,7 @@ public class MusicSelection extends javax.swing.JPanel
             go.setDisplayFullscreen(fs);
             go.setDisplayBilinear(bilinear);
             go.setDisplayVsync(vsync);
+            go.setJudgmentType(jc_timed_judgment.isSelected() ? GameOptions.JudgmentType.TimeJudgment : GameOptions.JudgmentType.BeatJudgment);
             
             System.out.println(go.isAutoplay());
             

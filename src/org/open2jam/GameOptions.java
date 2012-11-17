@@ -24,7 +24,7 @@ public class GameOptions {
     
     
     /*
-     * "Hi-Speed"=>0, "xR-Speed"=>1, "W-Speed"=>2
+     * "Hi-Speed"=>0, "xR-Speed"=>1, "W-Speed"=>2, "Regul-Speed"=>3
      */
     public enum SpeedType {
         HiSpeed, xRSpeed, WSpeed, RegulSpeed;
@@ -33,6 +33,13 @@ public class GameOptions {
         public String toString() {
             return super.toString().replace("Speed", "-Speed:");
         }
+    }
+    
+    /**
+     * Judgment type
+     */
+    public enum JudgmentType {
+        BeatJudgment, TimeJudgment;
     }
     
     /*
@@ -54,6 +61,7 @@ public class GameOptions {
     private SpeedType speedType = SpeedType.HiSpeed;
     private VisibilityMod visibilityModifier = VisibilityMod.None;
     private ChannelMod channelModifier = ChannelMod.None;
+    private JudgmentType judgmentType = JudgmentType.BeatJudgment;
     
     float keyVolume = 1.0f;
     float bgmVolume = 1.0f;
@@ -341,6 +349,14 @@ public class GameOptions {
 
     public void setVLCLibraryPath(String vlc) {
         this.vlc = vlc;
+    }
+
+    public JudgmentType getJudgmentType() {
+        return judgmentType;
+    }
+
+    public void setJudgmentType(JudgmentType judgmentType) {
+        this.judgmentType = judgmentType;
     }
     
 }
