@@ -234,7 +234,10 @@ public class Render implements GameWindowCallback
     private final static float VOLUME_FACTOR = 0.05f;
     
     /** timing data */
-    private TimingData timing = new TimingData(); 
+    private TimingData timing = new TimingData();
+    
+    /** status list */
+    private StatusList statusList = new StatusList();
 
     static {
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
@@ -302,7 +305,29 @@ public class Render implements GameWindowCallback
         
         displayLatency = new Latency(opt.getDisplayLag());
         audioLatency = new Latency(opt.getAudioLatency());
-	
+        
+        statusList.add(new StatusItem() {
+
+            @Override
+            public String getText() {
+                return distance + ": " + speedObj;
+            }
+
+            @Override
+            public boolean isVisible() { return true; }
+        });
+        
+        statusList.add(new StatusItem() {
+
+            @Override
+            public String getText() {
+                return "Current Measure: " + current_measure;
+            }
+
+            @Override
+            public boolean isVisible() { return true; }
+        });
+        
         window.setDisplay(dm,opt.isDisplayVsync(),opt.isDisplayFullscreen(),opt.isDisplayBilinear());
     }
 
@@ -492,7 +517,6 @@ public class Render implements GameWindowCallback
 		}    
 	    }
 	}
-
 	
         // adding static entities
         for(Entity e : skin.getEntityList()){
@@ -546,8 +570,33 @@ public class Render implements GameWindowCallback
         }
         
         if (localMatching != null) {
+            
             gameStarted = false;
             new Thread(localMatching).start();
+            statusList.add(new StatusItem() {
+
+                @Override
+                public String getText() {
+                    return "" + localMatching.getStatus();
+                }
+
+                @Override
+                public boolean isVisible() { return true; }
+            });
+	
+        } else if (!gameStarted) {
+            
+            statusList.add(new StatusItem() {
+
+                @Override
+                public String getText() {
+                    return "Press any note button to start the game.";
+                }
+
+                @Override
+                public boolean isVisible() { return !gameStarted; }
+            });
+            
         }
         
     }
@@ -681,13 +730,11 @@ public class Render implements GameWindowCallback
             }
         }
 
-        trueTypeFont.drawString(780, 300, distance + ": " + speedObj, 1, -1, TrueTypeFont.ALIGN_RIGHT);
-	trueTypeFont.drawString(780, 330, "Current Measure: "+current_measure, 1, -1, TrueTypeFont.ALIGN_RIGHT);
+        int y = 300;
         
-        if (localMatching != null) {
-            trueTypeFont.drawString(780, 360, "" + localMatching.getStatus(), 1, -1, TrueTypeFont.ALIGN_RIGHT);
-        } else if (!gameStarted) {
-            trueTypeFont.drawString(780, 360, "Press any note button to start the game.", 1, -1, TrueTypeFont.ALIGN_RIGHT);
+        for (String s : statusList) {
+            trueTypeFont.drawString(780, y, s, 1, -1, TrueTypeFont.ALIGN_RIGHT);
+            y += 30;
         }
         
         if(!buffer_iterator.hasNext() && entities_matrix.isEmpty(note_layer)){
