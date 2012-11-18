@@ -8,6 +8,7 @@ package org.open2jam.render.entities;
 import org.open2jam.parsers.Event;
 import org.open2jam.parsers.Event.SoundSample;
 import org.open2jam.render.Render;
+import org.open2jam.sound.SoundInstance;
 
 /**
  *
@@ -21,6 +22,7 @@ public class SampleEntity extends Entity implements TimeEntity, SoundEntity
     private double time_to_hit;
     private boolean note = false;
     private boolean played = false;
+    private SoundInstance instance;
     
     public SampleEntity(Render r, Event.SoundSample value, double y)
     {
@@ -47,26 +49,31 @@ public class SampleEntity extends Entity implements TimeEntity, SoundEntity
 
     @Override
     public void judgment() {
-        judgment(true);
+        autosound();
     }
     
-    public void judgment(boolean auto)
-    {
-        boolean play = !auto;
-        if (!dead && (!note || !render.isDisableAutoSound())) {
-            play = true;
-        }
-        if (play && !played) {
-            this.play();
+    public void autosound() {
+        if (!render.isDisableAutoSound()) keysound();
+    }
+    
+    public void keysound() {
+        if (!played) {
             played = true;
-        }
-        if (!dead) {
-            dead = true;
+            instance = play();
         }
     }
-
-    public void play() {
-        render.queueSample(value);
+    
+    public void extrasound() {
+        play();
+    }
+    
+    public void missed() {
+        if (instance == null) return;
+        instance.stop();
+    }
+    
+    private SoundInstance play() {
+        return render.queueSample(value);
     }
     
     @Override

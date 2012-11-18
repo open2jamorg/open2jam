@@ -46,8 +46,12 @@ public class NoteEntity extends AnimatedEntity implements TimeEntity
         return sampleEntity;
     }
     
-    public void emitSound() {
-        if (sampleEntity != null) sampleEntity.judgment(false);
+    public void keysound() {
+        if (sampleEntity != null) sampleEntity.keysound();
+    }
+    
+    public void missed() {
+        if (sampleEntity != null) sampleEntity.missed();
     }
 
     public void setHitTime(double hit) { this.hitTime = hit; }
