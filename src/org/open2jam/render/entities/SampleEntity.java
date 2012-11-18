@@ -8,6 +8,7 @@ package org.open2jam.render.entities;
 import org.open2jam.parsers.Event;
 import org.open2jam.parsers.Event.SoundSample;
 import org.open2jam.render.Render;
+import org.open2jam.sound.SoundInstance;
 
 /**
  *
@@ -21,6 +22,7 @@ public class SampleEntity extends Entity implements TimeEntity, SoundEntity
     private double time_to_hit;
     private boolean note = false;
     private boolean played = false;
+    private SoundInstance instance;
     
     public SampleEntity(Render r, Event.SoundSample value, double y)
     {
@@ -38,6 +40,10 @@ public class SampleEntity extends Entity implements TimeEntity, SoundEntity
         this.render = org.render;
     }
 
+    /**
+     * Sets the "belongs to a note" flag.
+     * @param note true if this SampleEntity belongs to a note, false otherwise.
+     */
     public void setNote(boolean note) {
         this.note = note;
     }
@@ -47,26 +53,49 @@ public class SampleEntity extends Entity implements TimeEntity, SoundEntity
 
     @Override
     public void judgment() {
-        judgment(true);
+        autosound();
     }
     
-    public void judgment(boolean auto)
-    {
-        boolean play = !auto;
-        if (!dead && (!note || !render.isDisableAutoSound())) {
-            play = true;
+    /**
+     * Invoked when the sound is played automatically (either by autosound or
+     * that the note is an autokeysound).
+     */
+    public void autosound() {
+        if (!note || !render.isDisableAutoSound()) {
+            keysound();
         }
-        if (play && !played) {
-            this.play();
+        setDead(true);
+    }
+    
+    /**
+     * Invoked when the sound is triggered by the player when it's time to hit
+     * the note.
+     */
+    public void keysound() {
+        if (!played) {
             played = true;
-        }
-        if (!dead) {
-            dead = true;
+            instance = play();
         }
     }
-
-    public void play() {
-        render.queueSample(value);
+    
+    /**
+     * Invoked when the sound is triggered by the player when it's not the time
+     * to hit the note.
+     */
+    public void extrasound() {
+        play();
+    }
+    
+    /**
+     * Invoked when the note was missed and the sound should stop.
+     */
+    public void missed() {
+        if (instance == null) return;
+        instance.stop();
+    }
+    
+    private SoundInstance play() {
+        return render.queueSample(value);
     }
     
     @Override

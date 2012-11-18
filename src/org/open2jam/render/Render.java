@@ -1,6 +1,7 @@
 
 package org.open2jam.render;
 
+import org.open2jam.sound.SoundInstance;
 import org.open2jam.game.TimingData;
 import org.open2jam.game.Latency;
 import com.github.dtinth.partytime.Client;
@@ -785,7 +786,7 @@ public class Render implements GameWindowCallback
                 if(ne.getState() == NoteEntity.State.NOT_JUDGED)
                 {
                     disableAutoSound = false;
-                    ne.emitSound();
+                    ne.keysound();
                     ne.setState(NoteEntity.State.LN_HEAD_JUDGE);
                     Entity ee = skin.getEntityMap().get("PRESSED_"+ne.getChannel()).copy();
                     entities_matrix.add(ee);
@@ -802,7 +803,7 @@ public class Render implements GameWindowCallback
             else
             {
                 disableAutoSound = false;
-                ne.emitSound();
+                ne.keysound();
                 ne.setState(NoteEntity.State.JUDGE);
             }
         }
@@ -837,7 +838,7 @@ public class Render implements GameWindowCallback
                 NoteEntity e = nextNoteKey(c);
                 if(e == null){
                     SampleEntity i = last_sound.get(c);
-                    if(i != null) i.play();
+                    if(i != null) i.extrasound();
                     continue;
                 }
 
@@ -846,7 +847,7 @@ public class Render implements GameWindowCallback
                 // don't continue if the note is too far
                 if(judge.accept(e)) {
                     disableAutoSound = false;
-                    e.emitSound();
+                    e.keysound();
                     if(e instanceof LongNoteEntity) {
                         longnote_holded.put(c, (LongNoteEntity) e);
                         if(e.getState() == NoteEntity.State.NOT_JUDGED)
@@ -855,7 +856,7 @@ public class Render implements GameWindowCallback
                         e.setState(NoteEntity.State.JUDGE);
                     }
                 } else {
-                    e.getSampleEntity().play();
+                    e.getSampleEntity().extrasound();
                 }
                 
             }else if(!keyDown && keyWasDown) { // key released now
@@ -952,6 +953,11 @@ public class Render implements GameWindowCallback
     public void setNoteJudgment(NoteEntity ne, JudgmentResult result) {
         
         result = handleJudgment(result);
+        
+        // stop the sound if missed
+        if (result == JudgmentResult.MISS) {
+            ne.missed();
+        }
         
         // display the judgment
         if(judgment_entity != null)judgment_entity.setDead(true);
@@ -1071,18 +1077,19 @@ public class Render implements GameWindowCallback
     }
     
     /* play a sample */
-    public void queueSample(Event.SoundSample soundSample)
+    public SoundInstance queueSample(Event.SoundSample soundSample)
     {
-        if(soundSample == null) return;
+        if(soundSample == null) return null;
 	
 	Sound sound = sounds.get(soundSample.sample_id);
-        if(sound == null)return;
+        if(sound == null)return null;
         
         try {
-            sound.play(soundSample.isBGM() ? SoundChannel.BGM : SoundChannel.KEY,
+            return sound.play(soundSample.isBGM() ? SoundChannel.BGM : SoundChannel.KEY,
                     1.0f, soundSample.pan);
         } catch (SoundSystemException ex) {
             java.util.logging.Logger.getLogger(Render.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
     }
     
