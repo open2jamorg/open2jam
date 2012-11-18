@@ -50,6 +50,9 @@ public class SampleData {
     }
     
     public void copyTo(OutputStream out) throws IOException {
+        if(this.type == Type.WAV_NO_HEADER) {
+            out.write(WAVHeader.writeHeader(this.wavHeader));
+        }
 	ByteHelper.copyTo(this.input, out);
     }
     

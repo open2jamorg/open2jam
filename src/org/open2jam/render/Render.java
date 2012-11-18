@@ -962,7 +962,7 @@ public class Render implements GameWindowCallback
         note_counter.get(result).incNumber();
         
         // for cool: display the effect
-        if (result == JudgmentResult.COOL) {
+        if (result == JudgmentResult.COOL || result == JudgmentResult.GOOD) {
             Entity ee = skin.getEntityMap().get("EFFECT_CLICK").copy();
             ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
             getViewport()-ee.getHeight()/2);
