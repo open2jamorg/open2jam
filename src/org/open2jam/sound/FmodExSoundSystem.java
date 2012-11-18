@@ -85,7 +85,7 @@ public class FmodExSoundSystem implements SoundSystem {
         try {
             data.copyTo(out);
         } catch (IOException ex) {
-            Logger.getLogger(FmodExSoundSystem.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FmodExSoundSystem.class.getName()).log(Level.SEVERE, "{0}", ex);
             return null;
         }
 
