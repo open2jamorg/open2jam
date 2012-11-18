@@ -39,8 +39,10 @@ public abstract class Config
             Object result = decoder.readObject();
             decoder.close();
             if (result instanceof GameOptions) return (GameOptions)result;
+        } catch(FileNotFoundException fnf) {
+            return null; // thats ok a new file will be created
         } catch (IOException ex) {
-            Logger.getLogger(Config.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Config.class.getName()).log(Level.SEVERE, "{0}", ex);
         }
         return null;
     }
@@ -51,7 +53,7 @@ public abstract class Config
             encoder.writeObject(options);
             encoder.close();
         } catch (IOException ex) {
-            Logger.getLogger(GameOptions.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GameOptions.class.getName()).log(Level.SEVERE, "{0}", ex);
         }
     }
 

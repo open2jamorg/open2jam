@@ -286,7 +286,7 @@ class BMSParser
 		lines.get(measure).add(line);
 	    }
 	} catch (IOException ex) {
-	    Logger.global.log(Level.SEVERE, null, ex);
+	    Logger.global.log(Level.SEVERE, "{0}", ex);
 	}
 
 	Iterator<List<String>> it = lines.values().iterator();
@@ -488,7 +488,7 @@ class BMSParser
 		    }
 		}
 	    } catch (IOException ex) {
-		Logger.global.log(Level.SEVERE, null, ex);
+		Logger.global.log(Level.SEVERE, "{0}", ex);
 	    }
 	}
 	return samples;
