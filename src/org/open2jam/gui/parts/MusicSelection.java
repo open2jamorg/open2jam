@@ -293,7 +293,7 @@ public class MusicSelection extends javax.swing.JPanel
         bt_choose_dir = new javax.swing.JButton();
         load_progress = new javax.swing.JProgressBar();
         jLabel2 = new javax.swing.JLabel();
-        combo_dirs = new javax.swing.JComboBox<FileItem>();
+        combo_dirs = new javax.swing.JComboBox();
         btn_reload = new javax.swing.JButton();
         btn_delete = new javax.swing.JButton();
         panel_setting = new javax.swing.JPanel();
@@ -574,7 +574,7 @@ public class MusicSelection extends javax.swing.JPanel
                     .addComponent(btn_delete)
                     .addComponent(load_progress, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE)
+                .addComponent(table_scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_listLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txt_filter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -854,7 +854,7 @@ public class MusicSelection extends javax.swing.JPanel
         );
         panel_infoLayout.setVerticalGroup(
             panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 356, Short.MAX_VALUE)
+            .addGap(0, 352, Short.MAX_VALUE)
             .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(panel_infoLayout.createSequentialGroup()
                     .addContainerGap()
@@ -891,7 +891,7 @@ public class MusicSelection extends javax.swing.JPanel
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(lbl_artist)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE)
+                    .addComponent(table_scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1285,7 +1285,7 @@ public class MusicSelection extends javax.swing.JPanel
     private javax.swing.JCheckBox cb_autoSyncDisplay;
     private javax.swing.JCheckBox cb_startPaused;
     private javax.swing.JComboBox combo_channelModifier;
-    private javax.swing.JComboBox<FileItem> combo_dirs;
+    private javax.swing.JComboBox combo_dirs;
     private javax.swing.JComboBox combo_displays;
     private javax.swing.JComboBox combo_speedType;
     private javax.swing.JComboBox combo_visibilityModifier;
