@@ -27,6 +27,11 @@ public interface Sprite {
 	 * @return The height in pixels of this sprite
 	 */
 	public double getHeight();
+        
+        /**
+         *  Set the Blend alpha opengl effect on the sprite
+         */
+        public void setBlendAlpha(boolean b);
 
         /**
          * set the scale of the image
