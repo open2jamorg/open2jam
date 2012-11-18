@@ -53,6 +53,7 @@ public class FmodExSoundSystem implements SoundSystem {
         system = new org.jouvieje.fmodex.System();
         errorCheck(FmodEx.System_Create(system));
         errorCheck(system.setDSPBufferSize(1024, 2));
+        errorCheck(system.setSoftwareChannels(512));
         errorCheck(system.init(4093, FMOD_INITFLAGS.FMOD_INIT_NORMAL, null));
         errorCheck(system.getMasterChannelGroup(masterGroup));
         errorCheck(system.createChannelGroup("BGM", bgmGroup));
@@ -84,7 +85,7 @@ public class FmodExSoundSystem implements SoundSystem {
         try {
             data.copyTo(out);
         } catch (IOException ex) {
-            Logger.getLogger(FmodExSoundSystem.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FmodExSoundSystem.class.getName()).log(Level.SEVERE, "{0}", ex);
             return null;
         }
 
@@ -127,7 +128,8 @@ public class FmodExSoundSystem implements SoundSystem {
             errorCheck(system.createSound(buffer, FMOD_MODE.FMOD_SOFTWARE | FMOD_MODE.FMOD_OPENMEMORY, exinfo, sound));
         }
         
-        public void play(SoundChannel soundChannel, float volume, float pan) throws SoundSystemException {
+        @Override
+        public SoundInstance play(SoundChannel soundChannel, float volume, float pan) throws SoundSystemException {
             Channel channel = new Channel();
             errorCheck(system.playSound(FMOD_CHANNELINDEX.FMOD_CHANNEL_FREE, sound, true, channel));
             errorCheck(channel.setVolume(Math.min(1, volume)));
@@ -136,6 +138,22 @@ public class FmodExSoundSystem implements SoundSystem {
             errorCheck(channel.setLoopCount(0));
             errorCheck(channel.setChannelGroup(soundChannel == SoundChannel.BGM ? bgmGroup : keyGroup));
             system.update();
+            if (channel.isNull()) return null;
+            return new FmodSoundInstance(channel);
+        }
+        
+    }
+    
+    class FmodSoundInstance implements SoundInstance {
+        private final Channel channel;
+
+        private FmodSoundInstance(Channel channel) {
+            this.channel = channel;
+        }
+
+        @Override
+        public void stop() {
+            channel.stop();
         }
         
     }

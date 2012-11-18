@@ -1,10 +1,17 @@
 
 package org.open2jam.render;
 
+import org.open2jam.sound.SoundInstance;
+import org.open2jam.game.TimingData;
+import org.open2jam.game.Latency;
+import com.github.dtinth.partytime.Client;
 import org.open2jam.sound.FmodExSoundSystem;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map.Entry;
@@ -12,19 +19,27 @@ import java.util.*;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.Config;
 import org.open2jam.GameOptions;
+import org.open2jam.game.speed.SpeedMultiplier;
+import org.open2jam.game.speed.Speed;
+import org.open2jam.game.position.WSpeed;
 import org.open2jam.parsers.Chart;
 import org.open2jam.parsers.Event;
 import org.open2jam.parsers.EventList;
 import org.open2jam.parsers.utils.SampleData;
 import org.open2jam.render.entities.*;
-import org.open2jam.render.judgment.JudgmentResult;
-import org.open2jam.render.judgment.JudgmentStrategy;
+import org.open2jam.game.judgment.JudgmentResult;
+import org.open2jam.game.judgment.JudgmentStrategy;
+import org.open2jam.game.position.HiSpeed;
+import org.open2jam.game.position.NoteDistanceCalculator;
+import org.open2jam.game.position.RegulSpeed;
+import org.open2jam.game.position.XRSpeed;
 import org.open2jam.render.lwjgl.TrueTypeFont;
 import org.open2jam.sound.Sound;
 import org.open2jam.sound.SoundChannel;
@@ -39,8 +54,10 @@ import org.open2jam.util.*;
  */
 public class Render implements GameWindowCallback
 {
+    private String localMatchingServer = "";
+    private int rank;
     
-    public interface AutosyncDelegate {
+    public interface AutosyncCallback {
         void autosyncFinished(double displayLag);
     }
     
@@ -55,7 +72,7 @@ public class Render implements GameWindowCallback
     /** player options */
     private final GameOptions opt;
     
-    private static final double AUTOPLAY_THRESHOLD = 40;
+    private static final double AUTOPLAY_THRESHOLD = 0;
 
     /** skin info and entities */
     Skin skin;
@@ -84,23 +101,16 @@ public class Render implements GameWindowCallback
     /** The recorded fps */
     int fps;
 
-    /** the hispeed values*/
-    private double last_speed;
-    private double speed;
-    private double next_speed;
-    private static final double SPEED_STEP = 0.5d;
+    /** the current "calculated" speed */
+    double speed;
     
-    boolean xr_speed = false;
-    boolean w_speed = false;
-    private final List<Double> speed_xR_values = new ArrayList<Double>();
-
-    private static final double SPEED_FACTOR = 0.005d;
+    /** the base speed multiplier */
+    private Speed speedObj;
     
-    //TODO make it changeable in options... maybe?
-    private static final double W_SPEED_FACTOR = 0.0005d;
-    private double w_speed_time = 3000d;
-    double w_time = 0;
-    boolean w_positive = true;
+    /** the note distance calculator */
+    private NoteDistanceCalculator distance;
+    
+    private boolean gameStarted = true;
 
     /** the layer of the notes */
     private int note_layer;
@@ -108,12 +118,7 @@ public class Render implements GameWindowCallback
     /** the bpm at which the entities are falling */
     private double bpm;
 
-    /** this queue hold the available sources
-     * that may be used to play sounds */
-    LinkedList<Integer> source_queue;
-    private Iterator<Integer> source_queue_iterator;
-
-    /** maps the Event value to OpenGL sample ID's */
+    /** maps the Event value to Sound objects */
     private Map<Integer, Sound> sounds;
 
     /** The time at which the last rendering looped started from the point of view of the game logic */
@@ -168,8 +173,10 @@ public class Render implements GameWindowCallback
     NumberEntity fps_entity;
 
     NumberEntity score_entity;
+    
     /** JamCombo variables */
     ComboCounterEntity jamcombo_entity;
+    
     /**
      * Cools: +2
      * Goods: +1
@@ -209,9 +216,16 @@ public class Render implements GameWindowCallback
     private Latency displayLatency;
     private Latency audioLatency;
     
+    /** points to a latency that's currenly syncing:
+     * either displayLatency, audioLatency, or null.
+     */
     private Latency syncingLatency;
     
-    AutosyncDelegate autosyncDelegate;
+    /** what to do after autosync? */
+    AutosyncCallback autosyncCallback;
+    
+    /** local matching */
+    private Client localMatching;
     
     /** song finish time [leave 10 seconds] */
     long finish_time = -1;
@@ -221,7 +235,10 @@ public class Render implements GameWindowCallback
     private final static float VOLUME_FACTOR = 0.05f;
     
     /** timing data */
-    private TimingData timing = new TimingData(); 
+    private TimingData timing = new TimingData();
+    
+    /** status list */
+    private StatusList statusList = new StatusList();
 
     static {
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
@@ -244,25 +261,31 @@ public class Render implements GameWindowCallback
         entities_matrix = new EntityMatrix();
         this.chart = chart;
         this.opt = opt;
-
-        this.next_speed = this.last_speed = speed = opt.getHiSpeed();
+        
+        // speed multiplier
+        speed = opt.getSpeedMultiplier();
+        speedObj = new SpeedMultiplier(speed);
+        
+        distance = new HiSpeed(timing, 385);
+        
+        // TODO: refactor this
         switch(opt.getSpeedType())
         {
             case xRSpeed:
-            xr_speed = true;
-            break;
+                distance = new XRSpeed(distance);
+                break;
             case WSpeed:
-            w_speed = true;
-            //we use the speed as a multiply to get the time
-            w_speed_time = speed * 1000; 
-            this.speed = this.next_speed = this.last_speed = 0;
-            break;
+                distance = new WSpeed(distance, speedObj);
+                break;
+            case RegulSpeed:
+                distance = new RegulSpeed(385);
+                break;
         }
 	
-	AUTOSOUND = opt.getAutosound();
+	AUTOSOUND = opt.isAutosound();
 	
 	//TODO Should get values from gameoptions, but i'm lazy as hell
-	if(opt.getAutoplay()) 
+	if(opt.isAutoplay()) 
 	{
 	    for(Event.Channel c : Event.Channel.values())
 	    {
@@ -272,16 +295,45 @@ public class Render implements GameWindowCallback
 
 //	    Event.Channel.NOTE_4.enableAutoplay();
 //	    Event.Channel.NOTE_1.enableAutoplay();
-	}
+	} else {
+            
+	    for(Event.Channel c : Event.Channel.values())
+	    {
+		if(c.toString().startsWith(("NOTE_")))
+		    c.disableAutoplay();
+	    }
+        }
         
         displayLatency = new Latency(opt.getDisplayLag());
         audioLatency = new Latency(opt.getAudioLatency());
-	
-        window.setDisplay(dm,opt.getVsync(),opt.getFullScreen(),opt.getBilinear());
+        
+        statusList.add(new StatusItem() {
+
+            @Override
+            public String getText() {
+                return distance + ": " + speedObj;
+            }
+
+            @Override
+            public boolean isVisible() { return true; }
+        });
+        
+        statusList.add(new StatusItem() {
+
+            @Override
+            public String getText() {
+                return "Current Measure: " + current_measure;
+            }
+
+            @Override
+            public boolean isVisible() { return true; }
+        });
+        
+        window.setDisplay(dm,opt.isDisplayVsync(),opt.isDisplayFullscreen(),opt.isDisplayBilinear());
     }
 
-    public void setAutosyncDelegate(AutosyncDelegate autosyncDelegate) {
-        this.autosyncDelegate = autosyncDelegate;
+    public void setAutosyncCallback(AutosyncCallback autosyncDelegate) {
+        this.autosyncCallback = autosyncDelegate;
     }
     
     public void setJudge(JudgmentStrategy judge) {
@@ -295,6 +347,19 @@ public class Render implements GameWindowCallback
     public void setAutosyncAudio() {
         this.syncingLatency = audioLatency;
     }
+    
+    public void setStartPaused() {
+        this.gameStarted = false;
+    }
+    
+    public void setLocalMatchingServer(String text) {
+        this.localMatchingServer = text;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
+    }
+
     
     /**
     * initialize the common elements for the game.
@@ -332,13 +397,6 @@ public class Render implements GameWindowCallback
         }
 
 	changeSpeed(0);
-
-        Random rnd = new Random();
-
-        for(int i = 0;i<chart.getKeys(); i++)
-        {
-            speed_xR_values.add(i, rnd.nextDouble());
-        }
 
         bpm = chart.getBPM();
 
@@ -378,8 +436,6 @@ public class Render implements GameWindowCallback
         entities_matrix.add(jambar_entity);
 
         lifebar_entity = (BarEntity) skin.getEntityMap().get("LIFE_BAR");
-        lifebar_entity.setLimit(1000);
-        lifebar_entity.setNumber(1000);
         entities_matrix.add(lifebar_entity);
 
         combo_entity = (ComboCounterEntity) skin.getEntityMap().get("COMBO_COUNTER");
@@ -405,6 +461,8 @@ public class Render implements GameWindowCallback
         judgment_line = skin.getEntityMap().get("JUDGMENT_LINE");
         entities_matrix.add(judgment_line);
 
+        initLifeBar();
+        
         for(Event.Channel c : keyboard_map.keySet())
         {
             keyboard_key_pressed.put(c, Boolean.FALSE);
@@ -456,11 +514,10 @@ public class Render implements GameWindowCallback
 		    Sprite s = ResourceFactory.get().getSprite(img);
 		    bga_sprites.put(entry.getKey(), s);
 		} catch (IOException ex) {
-		    java.util.logging.Logger.getLogger(Render.class.getName()).log(Level.SEVERE, null, ex);
+		    java.util.logging.Logger.getLogger(Render.class.getName()).log(Level.SEVERE, "{0}", ex);
 		}    
 	    }
 	}
-
 	
         // adding static entities
         for(Entity e : skin.getEntityList()){
@@ -473,11 +530,6 @@ public class Render implements GameWindowCallback
         // load up initial buffer
         update_note_buffer(0, 0);
 
-        // create sound sources
-        source_queue = new LinkedList<Integer>();
-
-        source_queue_iterator = source_queue.iterator();
-
         // get the chart sound samples
 	sounds = new HashMap<Integer, Sound>();
         for(Entry<Integer, SampleData> entry : chart.getSamples().entrySet())
@@ -487,12 +539,12 @@ public class Render implements GameWindowCallback
                 Sound sound = soundSystem.load(sampleData);
                 sounds.put(entry.getKey(), sound);
             } catch (SoundSystemException ex) {
-                java.util.logging.Logger.getLogger(Render.class.getName()).log(Level.SEVERE, null, ex);
+                java.util.logging.Logger.getLogger(Render.class.getName()).log(Level.SEVERE, "{0}", ex);
             }
 	    try {
 		entry.getValue().dispose();
 	    } catch (IOException ex) {
-		java.util.logging.Logger.getLogger(Render.class.getName()).log(Level.SEVERE, null, ex);
+		java.util.logging.Logger.getLogger(Render.class.getName()).log(Level.SEVERE, "{0}", ex);
 	    }
 	}
 	
@@ -506,6 +558,66 @@ public class Render implements GameWindowCallback
 
         lastLoopTime = SystemTimer.getTime();
         start_time = lastLoopTime + DELAY_TIME;
+        
+        try {
+            String[] data = localMatchingServer.trim().split(":");
+            if (data.length == 2) {
+                String host = data[0];
+                int port = Integer.parseInt(data[1]);
+                localMatching = new Client(host, port, (long)audioLatency.getLatency());
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        
+        if (localMatching != null) {
+            
+            gameStarted = false;
+            new Thread(localMatching).start();
+            statusList.add(new StatusItem() {
+
+                @Override
+                public String getText() {
+                    return "" + localMatching.getStatus();
+                }
+
+                @Override
+                public boolean isVisible() { return true; }
+            });
+	
+        } else if (!gameStarted) {
+            
+            statusList.add(new StatusItem() {
+
+                @Override
+                public String getText() {
+                    return "Press any note button to start the game.";
+                }
+
+                @Override
+                public boolean isVisible() { return !gameStarted; }
+            });
+            
+        }
+        
+    }
+    
+    /**
+     * Initializes the life bar based on rank
+     */
+    private void initLifeBar() {
+        int base = 12000; // base health bar size
+        int multiplier;
+        if (rank >= 2) {
+            multiplier = 4; // hard coefficient
+        } else if (rank >= 1) {
+            multiplier = 3; // normal coefficient
+        } else {
+            multiplier = 2; // easy coefficient
+        }
+        int maxLife = base * multiplier;
+        lifebar_entity.setLimit(maxLife);
+        lifebar_entity.setNumber(maxLife);
     }
 
     /* make the rendering start */
@@ -548,18 +660,27 @@ public class Render implements GameWindowCallback
         
         changeSpeed(delta); // TODO: is everything here really needed every frame ?
 
+        if (!gameStarted && localMatching != null) {
+            if (localMatching.isReady()) gameStarted = true;
+        }
+        
+        if (!gameStarted) {
+            start_time = SystemTimer.getTime();
+        }
+        
         now = SystemTimer.getTime() - start_time;
+
         if (AUTOSOUND) now -= audioLatency.getLatency();
         
         double now_display = now + displayLatency.getLatency();
         
         update_note_buffer(now, now_display);
+        distance.update(now_display, delta);
 
         soundSystem.update();
 	do_autoplay(now);
         Keyboard.poll();
         check_keyboard(now);
-
         
         for(LinkedList<Entity> layer : entities_matrix) // loop over layers
         {
@@ -584,18 +705,23 @@ public class Render implements GameWindowCallback
                     
                     if(te.getTime() - timeToJudge <= 0) te.judgment();
 
-                    //channel needed by the xR speed
-                    Event.Channel channel = Event.Channel.NONE;
-                    if(e instanceof NoteEntity) channel = ((NoteEntity)e).getChannel();
-
-                    double y = getViewport() - calculateNoteDistance(now_display,te.getTime(), channel);
+                    NoteEntity ne = e instanceof NoteEntity ? (NoteEntity)e : null;
+                    
+                    double y = getViewport() - distance.calculate(now_display, te.getTime(), speed, ne);
 
                     //TODO Fix this, maybe an option in the skin
                     //o2jam overlaps 1 px of the note with the measure and, because of this
                     //our skin should do it too xD
                     if(e instanceof MeasureEntity) y -= 1;
+                    
 		    if(!(e instanceof BgaEntity))
 			e.setPos(e.getX(), y);
+                    
+                    if(e instanceof LongNoteEntity) {
+                        LongNoteEntity lne = (LongNoteEntity)e;
+                        double ey = getViewport() - distance.calculate(now_display, lne.getEndTime(), speed, ne);
+                        lne.setEndDistance(Math.abs(ey - y));
+                    }
 
                     if(e instanceof NoteEntity) check_judgment((NoteEntity)e, now);
                 }
@@ -605,8 +731,12 @@ public class Render implements GameWindowCallback
             }
         }
 
-        if(!w_speed) trueTypeFont.drawString(780, 300, "HI-SPEED: "+next_speed, 1, -1, TrueTypeFont.ALIGN_RIGHT);
-	trueTypeFont.drawString(780, 330, "Current Measure: "+current_measure, 1, -1, TrueTypeFont.ALIGN_RIGHT);
+        int y = 300;
+        
+        for (String s : statusList) {
+            trueTypeFont.drawString(780, y, s, 1, -1, TrueTypeFont.ALIGN_RIGHT);
+            y += 30;
+        }
         
         if(!buffer_iterator.hasNext() && entities_matrix.isEmpty(note_layer)){
             if (finish_time == -1) {
@@ -648,7 +778,7 @@ public class Render implements GameWindowCallback
             if(ne == null)continue;
 
             double hit = ne.testTimeHit(now);
-            if(hit < AUTOPLAY_THRESHOLD)continue;
+            if(hit > AUTOPLAY_THRESHOLD)continue;
             ne.updateHit(now);
             
             if(ne instanceof LongNoteEntity)
@@ -656,7 +786,7 @@ public class Render implements GameWindowCallback
                 if(ne.getState() == NoteEntity.State.NOT_JUDGED)
                 {
                     disableAutoSound = false;
-                    ne.emitSound();
+                    ne.keysound();
                     ne.setState(NoteEntity.State.LN_HEAD_JUDGE);
                     Entity ee = skin.getEntityMap().get("PRESSED_"+ne.getChannel()).copy();
                     entities_matrix.add(ee);
@@ -673,7 +803,7 @@ public class Render implements GameWindowCallback
             else
             {
                 disableAutoSound = false;
-                ne.emitSound();
+                ne.keysound();
                 ne.setState(NoteEntity.State.JUDGE);
             }
         }
@@ -696,6 +826,8 @@ public class Render implements GameWindowCallback
             
             if(keyDown && !keyWasDown){ // started holding now
                 
+                if (!gameStarted && localMatching == null) gameStarted = true;  
+                
                 keyboard_key_pressed.put(c, true);
 
                 Entity ee = skin.getEntityMap().get("PRESSED_"+c).copy();
@@ -706,7 +838,7 @@ public class Render implements GameWindowCallback
                 NoteEntity e = nextNoteKey(c);
                 if(e == null){
                     SampleEntity i = last_sound.get(c);
-                    if(i != null) i.play();
+                    if(i != null) i.extrasound();
                     continue;
                 }
 
@@ -715,7 +847,7 @@ public class Render implements GameWindowCallback
                 // don't continue if the note is too far
                 if(judge.accept(e)) {
                     disableAutoSound = false;
-                    e.emitSound();
+                    e.keysound();
                     if(e instanceof LongNoteEntity) {
                         longnote_holded.put(c, (LongNoteEntity) e);
                         if(e.getState() == NoteEntity.State.NOT_JUDGED)
@@ -724,7 +856,7 @@ public class Render implements GameWindowCallback
                         e.setState(NoteEntity.State.JUDGE);
                     }
                 } else {
-                    e.getSampleEntity().play();
+                    e.getSampleEntity().extrasound();
                 }
                 
             }else if(!keyDown && keyWasDown) { // key released now
@@ -822,6 +954,11 @@ public class Render implements GameWindowCallback
         
         result = handleJudgment(result);
         
+        // stop the sound if missed
+        if (result == JudgmentResult.MISS) {
+            ne.missed();
+        }
+        
         // display the judgment
         if(judgment_entity != null)judgment_entity.setDead(true);
         judgment_entity = skin.getEntityMap().get("EFFECT_"+result).copy();
@@ -831,7 +968,7 @@ public class Render implements GameWindowCallback
         note_counter.get(result).incNumber();
         
         // for cool: display the effect
-        if (result == JudgmentResult.COOL) {
+        if (result == JudgmentResult.COOL || result == JudgmentResult.GOOD) {
             Entity ee = skin.getEntityMap().get("EFFECT_CLICK").copy();
             ee.setPos(ne.getX()+ne.getWidth()/2-ee.getWidth()/2,
             getViewport()-ee.getHeight()/2);
@@ -872,7 +1009,7 @@ public class Render implements GameWindowCallback
             case COOL:
                 jambar_entity.addNumber(2);
                 consecutive_cools++;
-                lifebar_entity.addNumber(2);
+                lifebar_entity.addNumber(rank >= 2 ? 24 : 48);
                 score_value = 200 + (jamcombo_entity.getNumber()*10);
                 break;
 
@@ -895,6 +1032,7 @@ public class Render implements GameWindowCallback
                 {
                     jambar_entity.setNumber(0);
                     jamcombo_entity.resetNumber();
+                    lifebar_entity.subtractNumber(120);
 
                     score_value = 4;
                 }
@@ -906,8 +1044,7 @@ public class Render implements GameWindowCallback
                 jamcombo_entity.resetNumber();
                 consecutive_cools = 0;
 
-                if(lifebar_entity.getNumber() >= 30)lifebar_entity.addNumber(-30);
-                else lifebar_entity.setNumber(0);
+                lifebar_entity.subtractNumber(720);
 
                 if(score_entity.getNumber() >= 10)score_value = -10;
                 else score_value = -score_entity.getNumber();
@@ -940,18 +1077,19 @@ public class Render implements GameWindowCallback
     }
     
     /* play a sample */
-    public void queueSample(Event.SoundSample soundSample)
+    public SoundInstance queueSample(Event.SoundSample soundSample)
     {
-        if(soundSample == null) return;
+        if(soundSample == null) return null;
 	
 	Sound sound = sounds.get(soundSample.sample_id);
-        if(sound == null)return;
+        if(sound == null)return null;
         
         try {
-            sound.play(soundSample.isBGM() ? SoundChannel.BGM : SoundChannel.KEY,
+            return sound.play(soundSample.isBGM() ? SoundChannel.BGM : SoundChannel.KEY,
                     1.0f, soundSample.pan);
         } catch (SoundSystemException ex) {
-            java.util.logging.Logger.getLogger(Render.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Render.class.getName()).log(Level.SEVERE, "{0}", ex);
+            return null;
         }
     }
     
@@ -969,52 +1107,8 @@ public class Render implements GameWindowCallback
             
     private void changeSpeed(double delta)
     {
-        if(w_speed)
-        {
-            w_time += delta;
-            if(w_time < w_speed_time)
-            {
-                speed += (w_positive ? 1 : -1) * W_SPEED_FACTOR * delta;                
-                speed = clamp(speed, 0.5, 10);
-            }
-            else
-            {
-                w_time = 0;
-                w_positive = !w_positive;
-            }
-        }
-        else
-        {
-            if(speed == next_speed && delta != 0) return;
-            
-            if(last_speed > next_speed)
-            {
-                speed -= SPEED_FACTOR * delta;
-
-                if(speed < next_speed) speed = next_speed;
-            }
-            else if (last_speed < next_speed)
-            {
-                speed += SPEED_FACTOR * delta;
-
-                if(speed > next_speed) speed = next_speed;    
-            }
-            else
-            {
-                speed = next_speed;
-            }
-        }
-                
-        //update the longnotes end time
-        for(LinkedList<Entity> layer : entities_matrix) // loop over layers
-        {
-            for (Entity e : layer) {
-                if (e instanceof LongNoteEntity) {
-                    LongNoteEntity le = (LongNoteEntity) e;
-                    le.setEndDistance(calculateNoteDistance(le.getTime(), le.getEndTime(), le.getChannel()));
-                }
-            }
-        }
+        speedObj.update(delta);
+        speed = speedObj.getCurrentSpeed();
     }
 
     double getViewport() { return skin.getJudgmentLine(); }
@@ -1046,7 +1140,7 @@ public class Render implements GameWindowCallback
     **/
     void update_note_buffer(double now, double now_display)
     {
-        while(buffer_iterator.hasNext() && getViewport() - calculateNoteDistance(now_display,buffer_timer) > -10)
+        while(buffer_iterator.hasNext() && getViewport() - distance.calculate(now_display, buffer_timer, speed, null) > -10)
         {
             Event e = buffer_iterator.next();
 
@@ -1093,7 +1187,7 @@ public class Render implements GameWindowCallback
                     if(lne == null){
                         Logger.global.log(Level.WARNING, "Attempted to RELEASE note {0} @ "+e.getTotalPosition(), e.getChannel());
                     }else{
-                        lne.setEndTime(e.getTime(),calculateNoteDistance(lne.getTime(),e.getTime(), lne.getChannel()));
+                        lne.setEndTime(e.getTime());
                     }
                 }
                 break;
@@ -1164,12 +1258,10 @@ public class Render implements GameWindowCallback
                 switch(event)
                 {
                     case SPEED_UP:
-                        last_speed = next_speed;
-                        next_speed = clamp(next_speed+SPEED_STEP, 0.5, 10);
+                        speedObj.increase();
                     break;
                     case SPEED_DOWN:
-                        last_speed = next_speed;
-                        next_speed = clamp(next_speed-SPEED_STEP, 0.5, 10);
+                        speedObj.decrease();
                     break;
                     case MAIN_VOL_UP:
                         opt.setMasterVolume(opt.getMasterVolume() + VOLUME_FACTOR);
@@ -1286,33 +1378,6 @@ public class Render implements GameWindowCallback
         return new_list;
     }
 
-    double calculateNoteDistance(double now, double target)
-    {
-        double measure_size = 0.8 * getViewport();
-        return speed * (timing.getBeat(target) - timing.getBeat(now)) * measure_size / 4;
-    }
-
-    double calculateNoteDistance(double now, double target, Event.Channel chan)
-    {
-        if(!xr_speed) return calculateNoteDistance(now, target);
-
-
-        double factor = 1;
-
-        switch(chan)
-        {
-            case NOTE_1: factor += speed_xR_values.get(0); break;
-            case NOTE_2: factor += speed_xR_values.get(1); break;
-            case NOTE_3: factor += speed_xR_values.get(2); break;
-            case NOTE_4: factor += speed_xR_values.get(3); break;
-            case NOTE_5: factor += speed_xR_values.get(4); break;
-            case NOTE_6: factor += speed_xR_values.get(5); break;
-            case NOTE_7: factor += speed_xR_values.get(6); break;
-        }
-
-        return calculateNoteDistance(now, target) * factor;
-    }
-
     private void visibility(GameOptions.VisibilityMod value)
     {
         int height = 0;
@@ -1361,8 +1426,13 @@ public class Render implements GameWindowCallback
 	bgaEntity.release();
         soundSystem.release();
 	System.gc();        
-        if (syncingLatency != null && autosyncDelegate != null) {
-            autosyncDelegate.autosyncFinished(syncingLatency.getLatency());
+        if (syncingLatency != null && autosyncCallback != null) {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    autosyncCallback.autosyncFinished(syncingLatency.getLatency());
+                }
+            });
         }
     }
     

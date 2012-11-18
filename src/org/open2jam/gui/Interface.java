@@ -2,6 +2,7 @@ package org.open2jam.gui;
 
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import org.open2jam.Open2jam;
 import org.open2jam.gui.parts.Configuration;
 import org.open2jam.gui.parts.MusicSelection;
 
@@ -18,6 +19,7 @@ public class Interface extends javax.swing.JFrame implements WindowListener
     /** Creates new form Interface */
     public Interface() {
         initComponents();
+        setTitle(Open2jam.getProductTitle() + " - " + getTitle());
         
         this.setLocationRelativeTo(null);
         
@@ -27,6 +29,7 @@ public class Interface extends javax.swing.JFrame implements WindowListener
         Tabs.addTab("Configuration", new Configuration());
         
         this.addWindowListener(this);
+	pack();
     }
     
     
@@ -43,7 +46,7 @@ public class Interface extends javax.swing.JFrame implements WindowListener
         Tabs = new javax.swing.JTabbedPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Open2Jam");
+        setTitle("Music Select");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

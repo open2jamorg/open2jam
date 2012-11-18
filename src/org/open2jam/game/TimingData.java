@@ -1,5 +1,5 @@
 
-package org.open2jam.util;
+package org.open2jam.game;
 
 import java.util.Arrays;
 import java.util.LinkedList;

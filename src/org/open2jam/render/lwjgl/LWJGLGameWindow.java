@@ -112,7 +112,7 @@ public class LWJGLGameWindow implements GameWindow {
             try {
                 Display.create();
             } catch (LWJGLException ex) {
-                Logger.global.log(Level.SEVERE, null, ex);
+                Logger.global.log(Level.SEVERE, "{0}", ex);
                 callback.windowClosed();
                 return;
             }

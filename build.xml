@@ -72,4 +72,12 @@
     nbproject/build-impl.xml file. 
 
     -->
+    <target name="-post-jar">
+      <copy todir="${dist.dir}/lib/fmodex">
+        <fileset dir="lib/fmodex"/>
+      </copy>
+      <copy todir="${dist.dir}/lib/native">
+        <fileset dir="lib/native"/>
+      </copy>
+    </target>
 </project>

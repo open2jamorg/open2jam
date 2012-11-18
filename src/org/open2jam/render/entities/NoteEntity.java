@@ -46,8 +46,18 @@ public class NoteEntity extends AnimatedEntity implements TimeEntity
         return sampleEntity;
     }
     
-    public void emitSound() {
-        if (sampleEntity != null) sampleEntity.judgment(false);
+    /**
+     * Triggers the note's keysound. Must be from user event.
+     */
+    public void keysound() {
+        if (sampleEntity != null) sampleEntity.keysound();
+    }
+    
+    /**
+     * Stops the note's keysound.
+     */
+    public void missed() {
+        if (sampleEntity != null) sampleEntity.missed();
     }
 
     public void setHitTime(double hit) { this.hitTime = hit; }

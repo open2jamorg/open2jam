@@ -29,6 +29,9 @@ public class LWJGLSprite implements Sprite {
 
     /** the alpha */
     private float alpha = 1f;
+    
+    /** do blend alpha */
+    private boolean blend_alpha = false;
 
     /**
      * Create a new sprite from a specified image.
@@ -200,9 +203,12 @@ public class LWJGLSprite implements Sprite {
     void draw(float px, float py, float sx, float sy, int w, int h, ByteBuffer buffer)
     {
         if(texture == null)return;
-        
+                
         // store the current model matrix
         GL11.glPushMatrix();
+        
+        // set to blend if necessary
+        if(blend_alpha)GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_DST_ALPHA);
 
         // bind to the appropriate texture for this sprite
         texture.bind();
@@ -225,6 +231,9 @@ public class LWJGLSprite implements Sprite {
 
         // draw a quad textured to match the sprite
         GL11.glCallList(list_id);
+        
+        // undo the blend
+        if(blend_alpha)GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         // restore the model view matrix to prevent contamination
         GL11.glPopMatrix();
@@ -266,5 +275,10 @@ public class LWJGLSprite implements Sprite {
     @Override
     public void draw(double x, double y, float scale_x, float scale_y, int w, int h, ByteBuffer buffer) {
 	this.draw((float)x, (float)y, scale_x, scale_y, w, h, buffer);
+    }
+    
+    @Override
+    public void setBlendAlpha(boolean b) {
+        blend_alpha = b;
     }
 }

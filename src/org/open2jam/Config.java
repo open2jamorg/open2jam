@@ -1,9 +1,19 @@
 package org.open2jam;
 
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.lwjgl.input.Keyboard;
 import org.open2jam.parsers.ChartList;
 import org.open2jam.parsers.Event;
@@ -20,6 +30,32 @@ public abstract class Config
     
     private static VoileMap<String, Serializable> VMap;
     private static GameOptions options;
+            
+    public static final String OPTIONS_FILE = "game-options.xml";
+
+    private static GameOptions loadGameOptions() {
+        try {
+            XMLDecoder decoder = new XMLDecoder(new BufferedInputStream(new FileInputStream(OPTIONS_FILE)));
+            Object result = decoder.readObject();
+            decoder.close();
+            if (result instanceof GameOptions) return (GameOptions)result;
+        } catch(FileNotFoundException fnf) {
+            return null; // thats ok a new file will be created
+        } catch (IOException ex) {
+            Logger.getLogger(Config.class.getName()).log(Level.SEVERE, "{0}", ex);
+        }
+        return null;
+    }
+    
+    public static void saveGameOptions() {
+        try {
+            XMLEncoder encoder = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(OPTIONS_FILE)));
+            encoder.writeObject(options);
+            encoder.close();
+        } catch (IOException ex) {
+            Logger.getLogger(GameOptions.class.getName()).log(Level.SEVERE, "{0}", ex);
+        }
+    }
 
     public enum KeyboardType {K4, K5, K6, K7, K8, /*K9*/}
     
@@ -34,7 +70,11 @@ public abstract class Config
     
     public static void openDB() {
         
-        options = new GameOptions();
+        options = loadGameOptions();
+        
+        if (options == null) {
+            options = new GameOptions();
+        }
         
         if(!CONFIG_FILE.exists()) { // create now
             
@@ -108,6 +148,7 @@ public abstract class Config
         } else {           
             VMap = new VoileMap<String, Serializable>(CONFIG_FILE);
         }
+        
     }
 
     @SuppressWarnings("unchecked")
@@ -146,7 +187,8 @@ public abstract class Config
     }
     
     public static void setGameOptions(GameOptions go) {
-        options.save();
+        options = go;
+        saveGameOptions();
     }
     
     public static GameOptions getGameOptions() {

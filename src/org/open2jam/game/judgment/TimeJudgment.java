@@ -1,5 +1,5 @@
 
-package org.open2jam.render.judgment;
+package org.open2jam.game.judgment;
 
 import org.open2jam.render.entities.NoteEntity;
 

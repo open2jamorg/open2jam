@@ -10,6 +10,6 @@ package org.open2jam.sound;
  */
 public interface Sound {
     
-    void play(SoundChannel soundChannel, float volume, float pan) throws SoundSystemException;
+    SoundInstance play(SoundChannel soundChannel, float volume, float pan) throws SoundSystemException;
     
 }

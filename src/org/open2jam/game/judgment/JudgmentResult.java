@@ -1,5 +1,5 @@
 
-package org.open2jam.render.judgment;
+package org.open2jam.game.judgment;
 
 /**
  *
