@@ -53,7 +53,10 @@ public class SampleEntity extends Entity implements TimeEntity, SoundEntity
     }
     
     public void autosound() {
-        if (!render.isDisableAutoSound()) keysound();
+        if (!note || !render.isDisableAutoSound()) {
+            keysound();
+        }
+        setDead(true);
     }
     
     public void keysound() {
