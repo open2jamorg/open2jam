@@ -261,13 +261,16 @@ public class SkinParser extends DefaultHandler
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
             e = new JudgmentEntity(s,0, 0);
         }
-        // TODO: change the name of this ???
         else if(id.equals("EFFECT_LONGFLARE")){
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
+            // FIXME put this in the skin xml
+            for(Sprite p : s)p.setBlendAlpha(true);
             e = new AnimatedEntity(s,0,0);
         }
         else if(id.equals("EFFECT_CLICK")){
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
+            // FIXME put this in the skin xml
+            for(Sprite p : s)p.setBlendAlpha(true);
             e = new AnimatedEntity(s,0, 0, false);
         }
         else if(id.startsWith("PRESSED_NOTE_")){
