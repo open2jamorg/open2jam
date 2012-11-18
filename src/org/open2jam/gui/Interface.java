@@ -29,6 +29,7 @@ public class Interface extends javax.swing.JFrame implements WindowListener
         Tabs.addTab("Configuration", new Configuration());
         
         this.addWindowListener(this);
+	pack();
     }
     
     

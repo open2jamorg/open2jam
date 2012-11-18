@@ -514,7 +514,7 @@ public class Render implements GameWindowCallback
 		    Sprite s = ResourceFactory.get().getSprite(img);
 		    bga_sprites.put(entry.getKey(), s);
 		} catch (IOException ex) {
-		    java.util.logging.Logger.getLogger(Render.class.getName()).log(Level.SEVERE, null, ex);
+		    java.util.logging.Logger.getLogger(Render.class.getName()).log(Level.SEVERE, "{0}", ex);
 		}    
 	    }
 	}
@@ -539,12 +539,12 @@ public class Render implements GameWindowCallback
                 Sound sound = soundSystem.load(sampleData);
                 sounds.put(entry.getKey(), sound);
             } catch (SoundSystemException ex) {
-                java.util.logging.Logger.getLogger(Render.class.getName()).log(Level.SEVERE, null, ex);
+                java.util.logging.Logger.getLogger(Render.class.getName()).log(Level.SEVERE, "{0}", ex);
             }
 	    try {
 		entry.getValue().dispose();
 	    } catch (IOException ex) {
-		java.util.logging.Logger.getLogger(Render.class.getName()).log(Level.SEVERE, null, ex);
+		java.util.logging.Logger.getLogger(Render.class.getName()).log(Level.SEVERE, "{0}", ex);
 	    }
 	}
 	
@@ -1088,7 +1088,7 @@ public class Render implements GameWindowCallback
             return sound.play(soundSample.isBGM() ? SoundChannel.BGM : SoundChannel.KEY,
                     1.0f, soundSample.pan);
         } catch (SoundSystemException ex) {
-            java.util.logging.Logger.getLogger(Render.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Render.class.getName()).log(Level.SEVERE, "{0}", ex);
             return null;
         }
     }

@@ -304,7 +304,7 @@ class SMParser
 		}
             }
         } catch (IOException ex) {
-            Logger.global.log(Level.SEVERE, null, ex);
+            Logger.global.log(Level.SEVERE, "{0}", ex);
         } catch(NoSuchElementException ignored) {}
 	
 	//add the music
@@ -341,7 +341,7 @@ class SMParser
 		    }
 		}
 	    } catch (IOException ex) {
-		Logger.global.log(Level.SEVERE, null, ex);
+		Logger.global.log(Level.SEVERE, "{0}", ex);
 	    }
 	}
 	return samples;

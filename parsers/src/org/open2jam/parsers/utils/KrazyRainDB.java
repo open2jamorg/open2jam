@@ -145,12 +145,12 @@ public class KrazyRainDB extends DefaultHandler {
 	    try {
 		SAXParserFactory.newInstance().newSAXParser().parse(resources_xml.openStream(), this);
 	    } catch (ParserConfigurationException ex) {
-		java.util.logging.Logger.getLogger(KrazyRainDB.class.getName()).log(Level.SEVERE, null, ex);
+		java.util.logging.Logger.getLogger(KrazyRainDB.class.getName()).log(Level.SEVERE, "{0}", ex);
 	    }
 	} catch (SAXException ex) {
-	    java.util.logging.Logger.getLogger(KrazyRainDB.class.getName()).log(Level.SEVERE, null, ex);
+	    java.util.logging.Logger.getLogger(KrazyRainDB.class.getName()).log(Level.SEVERE, "{0}", ex);
 	} catch (IOException ex) {
-	    java.util.logging.Logger.getLogger(KrazyRainDB.class.getName()).log(Level.SEVERE, null, ex);
+	    java.util.logging.Logger.getLogger(KrazyRainDB.class.getName()).log(Level.SEVERE, "{0}", ex);
 	}	
     }
     

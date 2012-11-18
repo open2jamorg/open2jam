@@ -135,6 +135,7 @@ public class MusicSelection extends javax.swing.JPanel
     public MusicSelection() {
         initLogic();
         initComponents();
+        load_progress.setVisible(false);
         
         List<File> list = Config.getDirsList();
         for(File f : list)combo_dirs.addItem(new FileItem(f));
@@ -155,7 +156,6 @@ public class MusicSelection extends javax.swing.JPanel
         else
             loadDir(cwd);
         
-        load_progress.setVisible(false);
         table_sorter = new TableRowSorter<ChartListTableModel>(model_songlist);
         table_songlist.setRowSorter(table_sorter);
         txt_filter.getDocument().addDocumentListener(new DocumentListener() {
@@ -204,7 +204,7 @@ public class MusicSelection extends javax.swing.JPanel
 		try {
 		    BMSWriter.export(selected_header, "converted");
 		} catch (IOException ex) {
-		    java.util.logging.Logger.getLogger(MusicSelection.class.getName()).log(Level.SEVERE, null, ex);
+		    java.util.logging.Logger.getLogger(MusicSelection.class.getName()).log(Level.SEVERE, "{0}", ex);
 		} finally {
 		    System.gc();
 		}
@@ -293,7 +293,7 @@ public class MusicSelection extends javax.swing.JPanel
         bt_choose_dir = new javax.swing.JButton();
         load_progress = new javax.swing.JProgressBar();
         jLabel2 = new javax.swing.JLabel();
-        combo_dirs = new javax.swing.JComboBox();
+        combo_dirs = new javax.swing.JComboBox<FileItem>();
         btn_reload = new javax.swing.JButton();
         btn_delete = new javax.swing.JButton();
         panel_setting = new javax.swing.JPanel();
@@ -1177,7 +1177,7 @@ public class MusicSelection extends javax.swing.JPanel
             
             new RenderThread(this.getTopLevelAncestor(), r).start();
         } catch (SoundSystemException ex) {
-            java.util.logging.Logger.getLogger(MusicSelection.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MusicSelection.class.getName()).log(Level.SEVERE, "{0}", ex);
         }
 }//GEN-LAST:event_bt_playActionPerformed
 
@@ -1285,7 +1285,7 @@ public class MusicSelection extends javax.swing.JPanel
     private javax.swing.JCheckBox cb_autoSyncDisplay;
     private javax.swing.JCheckBox cb_startPaused;
     private javax.swing.JComboBox combo_channelModifier;
-    private javax.swing.JComboBox combo_dirs;
+    private javax.swing.JComboBox<FileItem> combo_dirs;
     private javax.swing.JComboBox combo_displays;
     private javax.swing.JComboBox combo_speedType;
     private javax.swing.JComboBox combo_visibilityModifier;
