@@ -40,6 +40,10 @@ public class SampleEntity extends Entity implements TimeEntity, SoundEntity
         this.render = org.render;
     }
 
+    /**
+     * Sets the "belongs to a note" flag.
+     * @param note true if this SampleEntity belongs to a note, false otherwise.
+     */
     public void setNote(boolean note) {
         this.note = note;
     }
@@ -52,6 +56,10 @@ public class SampleEntity extends Entity implements TimeEntity, SoundEntity
         autosound();
     }
     
+    /**
+     * Invoked when the sound is played automatically (either by autosound or
+     * that the note is an autokeysound).
+     */
     public void autosound() {
         if (!note || !render.isDisableAutoSound()) {
             keysound();
@@ -59,6 +67,10 @@ public class SampleEntity extends Entity implements TimeEntity, SoundEntity
         setDead(true);
     }
     
+    /**
+     * Invoked when the sound is triggered by the player when it's time to hit
+     * the note.
+     */
     public void keysound() {
         if (!played) {
             played = true;
@@ -66,10 +78,17 @@ public class SampleEntity extends Entity implements TimeEntity, SoundEntity
         }
     }
     
+    /**
+     * Invoked when the sound is triggered by the player when it's not the time
+     * to hit the note.
+     */
     public void extrasound() {
         play();
     }
     
+    /**
+     * Invoked when the note was missed and the sound should stop.
+     */
     public void missed() {
         if (instance == null) return;
         instance.stop();
