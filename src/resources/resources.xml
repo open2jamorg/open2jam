@@ -215,34 +215,34 @@
 
         <!-- Score numbers are from PointNum.ojs, resized and then nicely positioned --> 
         <sprite id="score_number_0">
-            <frame x="29" y="0" w="24" h="18" file="Numbers.png" />
+            <frame x="28" y="0" w="24" h="18" file="Numbers.png" />
         </sprite>
         <sprite id="score_number_1">
-            <frame x="29" y="18" w="24" h="18" file="Numbers.png" />
+            <frame x="28" y="19" w="24" h="18" file="Numbers.png" />
         </sprite>
         <sprite id="score_number_2">
-            <frame x="29" y="36" w="24" h="18" file="Numbers.png" />
+            <frame x="28" y="38" w="24" h="18" file="Numbers.png" />
         </sprite>
         <sprite id="score_number_3">
-            <frame x="29" y="54" w="24" h="18" file="Numbers.png" />
+            <frame x="28" y="57" w="24" h="18" file="Numbers.png" />
         </sprite>
         <sprite id="score_number_4">
-            <frame x="29" y="72" w="24" h="18" file="Numbers.png" />
+            <frame x="28" y="76" w="24" h="18" file="Numbers.png" />
         </sprite>
         <sprite id="score_number_5">
-            <frame x="29" y="90" w="24" h="18" file="Numbers.png" />
+            <frame x="28" y="95" w="24" h="18" file="Numbers.png" />
         </sprite>
         <sprite id="score_number_6">
-            <frame x="29" y="108" w="24" h="18" file="Numbers.png" />
+            <frame x="28" y="114" w="24" h="18" file="Numbers.png" />
         </sprite>
         <sprite id="score_number_7">
-            <frame x="29" y="126" w="24" h="18" file="Numbers.png" />
+            <frame x="28" y="133" w="24" h="18" file="Numbers.png" />
         </sprite>
         <sprite id="score_number_8">
-            <frame x="29" y="144" w="24" h="18" file="Numbers.png" />
+            <frame x="28" y="152" w="24" h="18" file="Numbers.png" />
         </sprite>
         <sprite id="score_number_9">
-            <frame x="29" y="162" w="24" h="18" file="Numbers.png" />
+            <frame x="28" y="171" w="24" h="18" file="Numbers.png" />
         </sprite>
 
 

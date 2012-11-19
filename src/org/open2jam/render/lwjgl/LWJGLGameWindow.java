@@ -134,9 +134,10 @@ public class LWJGLGameWindow implements GameWindow {
             
             //the color of the COLOR_BUFFER_BIT, to be changed by the skin... i guess
             GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            
 
             // enable apha blending
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
             GL11.glEnable(GL11.GL_BLEND);
 	    
 	    //Enable scissor test

@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Properties;
 import javax.imageio.ImageIO;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
 /**
  * A utility class to load textures for JOGL. This source is based
@@ -91,8 +92,8 @@ class TextureLoader {
        return createTexture(image,
                          GL11.GL_TEXTURE_2D, // target
                          GL11.GL_RGBA,     // dst pixel format
-                         GL11.GL_NEAREST, // min filter (unused)
-                         GL11.GL_NEAREST);
+                         GL11.GL_LINEAR, // min filter (unused)
+                         GL11.GL_LINEAR);
     }
     
     /**
@@ -123,7 +124,7 @@ class TextureLoader {
         
         // bind this texture 
         GL11.glBindTexture(target, textureID);
-
+        
 
         if (image.getColorModel().hasAlpha()) {
             srcPixelFormat = GL11.GL_RGBA;
@@ -139,6 +140,12 @@ class TextureLoader {
             GL11.glTexParameteri(target, GL11.GL_TEXTURE_MIN_FILTER, minFilter);
             GL11.glTexParameteri(target, GL11.GL_TEXTURE_MAG_FILTER, magFilter);
         }
+
+        GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+        GL11.glTexParameteri(target, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+        GL11.glTexParameteri(target, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+        GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_REPLACE);
+
  
         // produce a texture from the byte buffer
         GL11.glTexImage2D(target, 
@@ -149,7 +156,7 @@ class TextureLoader {
                       0,
                       srcPixelFormat, 
                       GL11.GL_UNSIGNED_BYTE, 
-                      textureBuffer ); 
+                      textureBuffer );
         
         return texture; 
     }
@@ -197,7 +204,8 @@ class TextureLoader {
 		g.setColor(new Color(0f,0f,0f,0f));
 		g.fillRect(0,0,texWidth,texHeight);
 		g.drawImage(image,0,0,null);
-		
+                g.dispose();
+                
 		// build a byte buffer from the temporary image 
 		// that be used by OpenGL to produce a texture.
 		byte[] data = ((DataBufferByte) texImage.getRaster().getDataBuffer()).getData(); 
@@ -206,7 +214,6 @@ class TextureLoader {
 		imageBuffer.order(ByteOrder.nativeOrder()); 
 		imageBuffer.put(data, 0, data.length); 
 		imageBuffer.flip();
-		g.dispose();
 
 		return imageBuffer; 
 	}
