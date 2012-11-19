@@ -69,10 +69,10 @@ public class Entity implements Copyable<Entity>
     }
 
     /**
-     * Request that this entity move itself based on a certain ammount
+     * Request that this entity move itself based on a certain amount
      * of time passing.
      *
-     * @param delta The ammount of time that has passed in milliseconds
+     * @param delta The amount of time that has passed in milliseconds
      */
     public void move(double delta) {
         // update the location of the entity based on move speeds

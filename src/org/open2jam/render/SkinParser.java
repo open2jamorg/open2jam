@@ -133,6 +133,7 @@ public class SkinParser extends DefaultHandler
                     break;
                 }
                 s.setScale(sx, sy);
+                
                 frame_buffer.add(s);
             }break;
             case sprite:{
@@ -147,9 +148,15 @@ public class SkinParser extends DefaultHandler
                     break;
                 }
 
+                        
                 SpriteList sl = new SpriteList(framespeed);
                 sl.addAll(frame_buffer);
-
+                
+                // TODO: change to blendmode for theme customizability.
+                Boolean alpha = false;
+                if(atts.containsKey("alpha")) alpha = Boolean.parseBoolean(atts.get("alpha"));
+                for (Sprite s : sl) s.setBlendAlpha(alpha);
+                
                 sprite_buffer.put(id, sl);
 
                 frame_buffer.clear();
@@ -263,14 +270,10 @@ public class SkinParser extends DefaultHandler
         }
         else if(id.equals("EFFECT_LONGFLARE")){
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
-            // FIXME put this in the skin xml
-            for(Sprite p : s)p.setBlendAlpha(true);
             e = new AnimatedEntity(s,0,0);
         }
         else if(id.equals("EFFECT_CLICK")){
             SpriteList s = sprite_buffer.get(atts.get("sprite"));
-            // FIXME put this in the skin xml
-            for(Sprite p : s)p.setBlendAlpha(true);
             e = new AnimatedEntity(s,0, 0, false);
         }
         else if(id.startsWith("PRESSED_NOTE_")){
