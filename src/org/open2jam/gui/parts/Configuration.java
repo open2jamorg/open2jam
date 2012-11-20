@@ -50,10 +50,9 @@ public class Configuration extends javax.swing.JPanel {
 	    return "libvlc file";
 	}
     };
-    private final JFrame frame;
     
     /** Creates new form Configuration */
-    public Configuration(JFrame frame) {
+    public Configuration() {
         initComponents();
         
         loadTableKeys(Config.KeyboardType.K7);
@@ -64,8 +63,6 @@ public class Configuration extends javax.swing.JPanel {
 	} else {
 	    lbl_vlc.setText("VLC Path: "+vlc_path);
 	}
-        this.frame = frame;
-
     }
 
 
@@ -225,7 +222,7 @@ public class Configuration extends javax.swing.JPanel {
     private void tKeysMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tKeysMouseClicked
         final int row = tKeys.getSelectedRow();
         if(tKeys.getValueAt(row, 0) == null) return;
-        frame.setEnabled(false);
+        getTopLevelAncestor().setEnabled(false);
         new Thread() {
 
             @Override
@@ -234,7 +231,7 @@ public class Configuration extends javax.swing.JPanel {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        frame.setEnabled(true);
+                        getTopLevelAncestor().setEnabled(true);
                     }
                 });
             }

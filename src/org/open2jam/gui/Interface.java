@@ -26,7 +26,7 @@ public class Interface extends javax.swing.JFrame implements WindowListener
         musicSelection = new MusicSelection();
         
         Tabs.addTab("Music Selection", musicSelection);
-        Tabs.addTab("Configuration", new Configuration(this));
+        Tabs.addTab("Configuration", new Configuration());
         
         this.addWindowListener(this);
 	pack();
