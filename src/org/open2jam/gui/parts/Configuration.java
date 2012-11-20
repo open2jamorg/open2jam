@@ -217,21 +217,27 @@ public class Configuration extends javax.swing.JPanel {
 }//GEN-LAST:event_bSaveActionPerformed
 
     private void tKeysMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tKeysMouseClicked
-        int row = tKeys.getSelectedRow();
+        final int row = tKeys.getSelectedRow();
         if(tKeys.getValueAt(row, 0) == null) return;
-        
-        int code;
-        int lastkey = Keyboard.getKeyIndex(tKeys.getValueAt(row, 1).toString());
-        try {
-            code = read_keyboard_key(lastkey);
-        } catch(LWJGLException e) {
-            // FML
-            return;
-        }
-        if(kb_map.containsValue(code)) return; //check for duplicates, TODO something informing about the duplicate
-        Event.Channel c = table_map.get(row);
-        kb_map.put(c, code);
-        tKeys.setValueAt(Keyboard.getKeyName(code), row, 1);
+        new Thread() {
+
+            @Override
+            public void run() {
+                int lastkey = Keyboard.getKeyIndex(tKeys.getValueAt(row, 1).toString());
+                int code;
+                try {
+                    code = read_keyboard_key(lastkey);
+                } catch(LWJGLException e) {
+                    // FML
+                    return;
+                }
+                if(kb_map.containsValue(code)) return; //check for duplicates, TODO something informing about the duplicate
+                Event.Channel c = table_map.get(row);
+                kb_map.put(c, code);
+                tKeys.setValueAt(Keyboard.getKeyName(code), row, 1);
+            }
+            
+        }.start();
 }//GEN-LAST:event_tKeysMouseClicked
 
     private void combo_keyboardConfigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_keyboardConfigActionPerformed
