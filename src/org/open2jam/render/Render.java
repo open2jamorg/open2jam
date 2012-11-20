@@ -829,10 +829,15 @@ public class Render implements GameWindowCallback
                 if (!gameStarted && localMatching == null) gameStarted = true;  
                 
                 keyboard_key_pressed.put(c, true);
-
-                Entity ee = skin.getEntityMap().get("PRESSED_"+c).copy();
-                entities_matrix.add(ee);
-                Entity to_kill = key_pressed_entity.put(c, ee);
+                Entity baseEntity = skin.getEntityMap().get("PRESSED_"+c);
+                Entity to_kill = null;
+                
+                if (baseEntity != null) {
+                    Entity ee = baseEntity.copy();
+                    entities_matrix.add(ee);
+                    to_kill = key_pressed_entity.put(c, ee);
+                }
+                
                 if(to_kill != null)to_kill.setDead(true);
 
                 NoteEntity e = nextNoteKey(c);
@@ -862,7 +867,9 @@ public class Render implements GameWindowCallback
             }else if(!keyDown && keyWasDown) { // key released now
 
                 keyboard_key_pressed.put(c, false);
-                key_pressed_entity.get(c).setDead(true);
+                Entity to_kill = key_pressed_entity.get(c);
+                
+                if(to_kill != null)to_kill.setDead(true);
 
                 Entity lf = longflare.remove(c);
                 if(lf !=null)lf.setDead(true);

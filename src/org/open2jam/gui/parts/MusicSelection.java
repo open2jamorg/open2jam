@@ -1480,10 +1480,15 @@ public class MusicSelection extends javax.swing.JPanel
     public void valueChanged(ListSelectionEvent e) {
         int i = table_songlist.getSelectedRow();
         if(i < 0 && last_model_idx >= 0){
-            i = last_model_idx;
-            int i_view = table_songlist.convertRowIndexToView(i);
-            table_songlist.getSelectionModel().setSelectionInterval(0, i_view);
-            table_scroll.getVerticalScrollBar().setValue(table_songlist.getCellRect(i_view, 0, false).y);
+            try {
+                i = last_model_idx;
+                int i_view = table_songlist.convertRowIndexToView(i);
+                table_songlist.getSelectionModel().setSelectionInterval(0, i_view);
+                table_scroll.getVerticalScrollBar().setValue(table_songlist.getCellRect(i_view, 0, false).y);
+            } catch (IndexOutOfBoundsException up) {
+                table_songlist.getSelectionModel().setSelectionInterval(0, -1);
+                // not sure what to do with it here...
+            }
         }else{
             i = table_songlist.convertRowIndexToModel(i);
         }
