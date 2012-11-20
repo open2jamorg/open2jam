@@ -6,6 +6,8 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import org.lwjgl.LWJGLException;
@@ -15,6 +17,7 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.open2jam.Config;
 import org.open2jam.GameOptions;
+import org.open2jam.gui.Interface;
 import org.open2jam.parsers.Event;
 import org.open2jam.render.lwjgl.TrueTypeFont;
 
@@ -47,9 +50,10 @@ public class Configuration extends javax.swing.JPanel {
 	    return "libvlc file";
 	}
     };
+    private final JFrame frame;
     
     /** Creates new form Configuration */
-    public Configuration() {
+    public Configuration(JFrame frame) {
         initComponents();
         
         loadTableKeys(Config.KeyboardType.K7);
@@ -60,8 +64,10 @@ public class Configuration extends javax.swing.JPanel {
 	} else {
 	    lbl_vlc.setText("VLC Path: "+vlc_path);
 	}
+        this.frame = frame;
 
     }
+
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -219,16 +225,25 @@ public class Configuration extends javax.swing.JPanel {
     private void tKeysMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tKeysMouseClicked
         final int row = tKeys.getSelectedRow();
         if(tKeys.getValueAt(row, 0) == null) return;
+        frame.setEnabled(false);
         new Thread() {
 
             @Override
             public void run() {
+                work();
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        frame.setEnabled(true);
+                    }
+                });
+            }
+            private void work() {
                 int lastkey = Keyboard.getKeyIndex(tKeys.getValueAt(row, 1).toString());
                 int code;
                 try {
                     code = read_keyboard_key(lastkey);
                 } catch(LWJGLException e) {
-                    // FML
                     return;
                 }
                 if(kb_map.containsValue(code)) return; //check for duplicates, TODO something informing about the duplicate
