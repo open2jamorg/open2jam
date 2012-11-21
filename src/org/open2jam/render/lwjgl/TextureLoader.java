@@ -1,7 +1,7 @@
 package org.open2jam.render.lwjgl;
 
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.color.ColorSpace;
 import java.awt.image.*;
 import java.io.IOException;
@@ -24,6 +24,11 @@ import org.lwjgl.opengl.GL12;
  * loaded from disk may not match this format this loader introduces
  * a intermediate image which the source image is copied into. In turn,
  * this image is used as source for the OpenGL texture.
+ * 
+ * code shameless stolen from Slick lib
+ * https://bitbucket.org/kevglass/slick
+ * org/newdawn/slick/opengl/ImageIOImageData.java
+ * org/newdawn/slick/opengl/InternalTextureLoader.java
  *
  * @author Kevin Glass
  * @author Brian Matzon
@@ -141,10 +146,10 @@ class TextureLoader {
             GL11.glTexParameteri(target, GL11.GL_TEXTURE_MAG_FILTER, magFilter);
         }
 
-        GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
-        GL11.glTexParameteri(target, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
-        GL11.glTexParameteri(target, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
-        GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_REPLACE);
+        //GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+        //GL11.glTexParameteri(target, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+        //GL11.glTexParameteri(target, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+        //GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_REPLACE);
 
  
         // produce a texture from the byte buffer
@@ -200,11 +205,20 @@ class TextureLoader {
 		}
 		
 		// copy the source image into the produced image
-		Graphics g = texImage.getGraphics();
+		Graphics2D g = (Graphics2D) texImage.getGraphics();
 		g.setColor(new Color(0f,0f,0f,0f));
 		g.fillRect(0,0,texWidth,texHeight);
 		g.drawImage(image,0,0,null);
                 g.dispose();
+                
+                if (image.getHeight(null) < texHeight - 1) {
+                        copyArea(texImage, 0, 0, image.getWidth(null), 1, 0, texHeight-1);
+                        copyArea(texImage, 0, image.getHeight(null)-1, image.getWidth(null), 1, 0, 1);
+                }
+                if (image.getWidth(null) < texWidth - 1) {
+                        copyArea(texImage, 0,0,1,image.getHeight(null),texWidth-1,0);
+                        copyArea(texImage, image.getWidth(null)-1,0,1,image.getHeight(null),1,0);
+                }
                 
 		// build a byte buffer from the temporary image 
 		// that be used by OpenGL to produce a texture.
@@ -216,7 +230,11 @@ class TextureLoader {
 		imageBuffer.flip();
 
 		return imageBuffer; 
-	}
+	}        
+        private void copyArea(BufferedImage image, int x, int y, int width, int height, int dx, int dy) {
+                Graphics2D g = (Graphics2D) image.getGraphics();
+                g.drawImage(image.getSubimage(x, y, width, height),x+dx,y+dy,null);
+        }
     
 	/** 
 	* Load a given resource as a buffered image
