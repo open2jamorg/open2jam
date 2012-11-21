@@ -233,7 +233,7 @@ public class LWJGLSprite implements Sprite {
         GL11.glCallList(list_id);
         
         // undo the blend
-        if(blend_alpha)GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        if(blend_alpha)GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         // restore the model view matrix to prevent contamination
         GL11.glPopMatrix();

@@ -38,8 +38,6 @@ public class LWJGLGameWindow implements GameWindow {
 	/** The height of the game display area */
 	private int height;
 
-        /** The bilinear filter */
-        private boolean bilinear;
 	/** The loader responsible for converting images into OpenGL textures */
 	private TextureLoader textureLoader;
   
@@ -85,14 +83,13 @@ public class LWJGLGameWindow implements GameWindow {
 	 * Set the resolution of the game display area.
 	 *
      */
-	public void setDisplay(DisplayMode dm, boolean vsync, boolean fs, boolean bilinear) {
+	public void setDisplay(DisplayMode dm, boolean vsync, boolean fs) {
             try{
                 Display.setDisplayMode(dm);
                 Display.setVSyncEnabled(vsync);
                 Display.setFullscreen(fs);
                 width = dm.getWidth();
                 height = dm.getHeight();
-                this.bilinear = bilinear;
             }catch(LWJGLException e){
                 Logger.global.log(Level.WARNING, "LWJGL Error: {0}", e.getMessage());
             }
@@ -134,9 +131,10 @@ public class LWJGLGameWindow implements GameWindow {
             
             //the color of the COLOR_BUFFER_BIT, to be changed by the skin... i guess
             GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            
 
             // enable apha blending
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
             GL11.glEnable(GL11.GL_BLEND);
 	    
 	    //Enable scissor test
@@ -153,9 +151,6 @@ public class LWJGLGameWindow implements GameWindow {
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glLoadIdentity();
-            
-            if(bilinear)
-                bilinear = initFBO();
 
             callback.initialise();
 
@@ -191,9 +186,6 @@ public class LWJGLGameWindow implements GameWindow {
         public void initScales(double w, double h){
             scale_x = (float) (width/w);
             scale_y = (float) (height/h);
-        //TODO idk :/ it works so... needs a refactor
-            scale_x2 = (float) (w/width);
-            scale_y2 = (float) (h/height);
         }
 
 	/**
@@ -207,20 +199,9 @@ public class LWJGLGameWindow implements GameWindow {
                     // clear screen
                     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
                     GL11.glLoadIdentity();
-                    if(bilinear)
-                    {
-                        //first we draw everything in the fbo
-                        drawToFBO();
-                        //then scale
-                        GL11.glScalef(scale_x >= 1f ? scale_x : scale_x2, scale_y >= 1f ? scale_y : scale_y2, 1);
-                        //then draw back the fbo texture
-                        drawFBO();
-                    }
-                    else
-                    {
-                        GL11.glScalef(scale_x, scale_y, 1);
-                        callback.frameRendering();
-                    }
+                    
+                    GL11.glScalef(scale_x, scale_y, 1);
+                    callback.frameRendering();
 
                     Display.update();
                     
@@ -232,90 +213,7 @@ public class LWJGLGameWindow implements GameWindow {
 	}
 
     public void destroy() {
-        destroyFBO();
         gameRunning = false;
         callback.windowClosed();
-    }
-
-    int fboID;
-    int texID;
-    public boolean initFBO()
-    {
-        //create the framebuffer object
-        IntBuffer tmp = ByteBuffer.allocateDirect(1*4).order(ByteOrder.nativeOrder()).asIntBuffer();
-        EXTFramebufferObject.glGenFramebuffersEXT(tmp);
-        fboID = tmp.get();
-
-        //now the texture
-        tmp = ByteBuffer.allocateDirect(1*4).order(ByteOrder.nativeOrder()).asIntBuffer();
-        GL11.glGenTextures(tmp);
-        texID = tmp.get();
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, texID);
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, width, height, 0,
-                          GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE,(IntBuffer) null);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-
-        //attach the texture to the fbo
-        EXTFramebufferObject.glBindFramebufferEXT( EXTFramebufferObject.GL_FRAMEBUFFER_EXT, fboID );
-
-        EXTFramebufferObject.glFramebufferTexture2DEXT( EXTFramebufferObject.GL_FRAMEBUFFER_EXT,
-                                                        EXTFramebufferObject.GL_COLOR_ATTACHMENT0_EXT,
-                                                        GL11.GL_TEXTURE_2D, texID, 0);
-
-        // check if everything is ok
-        int framebuffer = EXTFramebufferObject.glCheckFramebufferStatusEXT( EXTFramebufferObject.GL_FRAMEBUFFER_EXT );
-
-        if(framebuffer != EXTFramebufferObject.GL_FRAMEBUFFER_COMPLETE_EXT){
-            Logger.global.log(Level.WARNING, "FBO wasn't initialized!!!");
-            return false;
-        }
-
-        EXTFramebufferObject.glBindFramebufferEXT( EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0 );
-
-        return true;
-    }
-
-    public void drawToFBO()
-    {
-        EXTFramebufferObject.glBindFramebufferEXT( EXTFramebufferObject.GL_FRAMEBUFFER_EXT, fboID );
-
-            GL11.glPushAttrib(GL11.GL_VIEWPORT_BIT);
-            GL11.glViewport( 0, 0, width, height );
-
-            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-            GL11.glLoadIdentity();
-
-            GL11.glScalef(scale_x < 1f ? scale_x : 1f, scale_y < 1f ? scale_y : 1f, 1);
-
-            callback.frameRendering();
-
-            GL11.glPopAttrib();
-        EXTFramebufferObject.glBindFramebufferEXT( EXTFramebufferObject.GL_FRAMEBUFFER_EXT, 0 );
-    }
-
-    public void drawFBO()
-    {
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, texID);
-            GL11.glBegin(GL11.GL_QUADS);
-
-            GL11.glTexCoord2f(0f, 1f);
-            GL11.glVertex2f(0, 0);
-
-            GL11.glTexCoord2f(0f, 0f);
-            GL11.glVertex2f(0, height);
-
-            GL11.glTexCoord2f(1f, 0f);
-            GL11.glVertex2f(width,height);
-
-            GL11.glTexCoord2f(1f, 1f);
-            GL11.glVertex2f(width,0);
-
-            GL11.glEnd();
-    }
-
-    public void destroyFBO()
-    {
-        EXTFramebufferObject.glDeleteFramebuffersEXT(fboID);
     }
 }

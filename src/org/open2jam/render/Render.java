@@ -8,10 +8,7 @@ import com.github.dtinth.partytime.Client;
 import org.open2jam.sound.FmodExSoundSystem;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map.Entry;
@@ -329,7 +326,7 @@ public class Render implements GameWindowCallback
             public boolean isVisible() { return true; }
         });
         
-        window.setDisplay(dm,opt.isDisplayVsync(),opt.isDisplayFullscreen(),opt.isDisplayBilinear());
+        window.setDisplay(dm,opt.isDisplayVsync(),opt.isDisplayFullscreen());
     }
 
     public void setAutosyncCallback(AutosyncCallback autosyncDelegate) {

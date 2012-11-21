@@ -81,7 +81,7 @@ public class Configuration extends javax.swing.JPanel {
         lbl_vlc = new javax.swing.JLabel();
         btn_vlc = new javax.swing.JButton();
 
-        bSave.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        bSave.setFont(new java.awt.Font("Tahoma", 1, 11));
         bSave.setText("Save");
         bSave.setMaximumSize(new java.awt.Dimension(65, 23));
         bSave.setMinimumSize(new java.awt.Dimension(65, 23));
