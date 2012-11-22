@@ -22,7 +22,7 @@ public interface GameWindow {
 	 * Set the game display resolution
 	 *
      */
-        public void setDisplay(DisplayMode dm, boolean vsync, boolean fs, boolean bilinear);
+        public void setDisplay(DisplayMode dm, boolean vsync, boolean fs);
 
 	public int getResolutionHeight();
         public int getResolutionWidth();

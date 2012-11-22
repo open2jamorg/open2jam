@@ -1,7 +1,7 @@
 package org.open2jam.render.lwjgl;
 
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.color.ColorSpace;
 import java.awt.image.*;
 import java.io.IOException;
@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Properties;
 import javax.imageio.ImageIO;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
 /**
  * A utility class to load textures for JOGL. This source is based
@@ -23,6 +24,11 @@ import org.lwjgl.opengl.GL11;
  * loaded from disk may not match this format this loader introduces
  * a intermediate image which the source image is copied into. In turn,
  * this image is used as source for the OpenGL texture.
+ * 
+ * code shameless stolen from Slick lib
+ * https://bitbucket.org/kevglass/slick
+ * org/newdawn/slick/opengl/ImageIOImageData.java
+ * org/newdawn/slick/opengl/InternalTextureLoader.java
  *
  * @author Kevin Glass
  * @author Brian Matzon
@@ -91,8 +97,8 @@ class TextureLoader {
        return createTexture(image,
                          GL11.GL_TEXTURE_2D, // target
                          GL11.GL_RGBA,     // dst pixel format
-                         GL11.GL_NEAREST, // min filter (unused)
-                         GL11.GL_NEAREST);
+                         GL11.GL_LINEAR, // min filter (unused)
+                         GL11.GL_LINEAR);
     }
     
     /**
@@ -123,7 +129,7 @@ class TextureLoader {
         
         // bind this texture 
         GL11.glBindTexture(target, textureID);
-
+        
 
         if (image.getColorModel().hasAlpha()) {
             srcPixelFormat = GL11.GL_RGBA;
@@ -139,6 +145,12 @@ class TextureLoader {
             GL11.glTexParameteri(target, GL11.GL_TEXTURE_MIN_FILTER, minFilter);
             GL11.glTexParameteri(target, GL11.GL_TEXTURE_MAG_FILTER, magFilter);
         }
+
+        //GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+        //GL11.glTexParameteri(target, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
+        //GL11.glTexParameteri(target, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
+        //GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_REPLACE);
+
  
         // produce a texture from the byte buffer
         GL11.glTexImage2D(target, 
@@ -149,7 +161,7 @@ class TextureLoader {
                       0,
                       srcPixelFormat, 
                       GL11.GL_UNSIGNED_BYTE, 
-                      textureBuffer ); 
+                      textureBuffer );
         
         return texture; 
     }
@@ -193,11 +205,21 @@ class TextureLoader {
 		}
 		
 		// copy the source image into the produced image
-		Graphics g = texImage.getGraphics();
+		Graphics2D g = (Graphics2D) texImage.getGraphics();
 		g.setColor(new Color(0f,0f,0f,0f));
 		g.fillRect(0,0,texWidth,texHeight);
 		g.drawImage(image,0,0,null);
-		
+                g.dispose();
+                
+                if (image.getHeight(null) < texHeight - 1) {
+                        copyArea(texImage, 0, 0, image.getWidth(null), 1, 0, texHeight-1);
+                        copyArea(texImage, 0, image.getHeight(null)-1, image.getWidth(null), 1, 0, 1);
+                }
+                if (image.getWidth(null) < texWidth - 1) {
+                        copyArea(texImage, 0,0,1,image.getHeight(null),texWidth-1,0);
+                        copyArea(texImage, image.getWidth(null)-1,0,1,image.getHeight(null),1,0);
+                }
+                
 		// build a byte buffer from the temporary image 
 		// that be used by OpenGL to produce a texture.
 		byte[] data = ((DataBufferByte) texImage.getRaster().getDataBuffer()).getData(); 
@@ -206,10 +228,13 @@ class TextureLoader {
 		imageBuffer.order(ByteOrder.nativeOrder()); 
 		imageBuffer.put(data, 0, data.length); 
 		imageBuffer.flip();
-		g.dispose();
 
 		return imageBuffer; 
-	}
+	}        
+        private void copyArea(BufferedImage image, int x, int y, int width, int height, int dx, int dy) {
+                Graphics2D g = (Graphics2D) image.getGraphics();
+                g.drawImage(image.getSubimage(x, y, width, height),x+dx,y+dy,null);
+        }
     
 	/** 
 	* Load a given resource as a buffered image

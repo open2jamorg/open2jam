@@ -1,18 +1,7 @@
 package org.open2jam;
 
-import java.beans.XMLEncoder;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.lwjgl.opengl.DisplayMode;
 import org.open2jam.parsers.Event;
 
@@ -73,7 +62,6 @@ public class GameOptions {
 
     // display options
     private boolean displayFullscreen = false;
-    private boolean displayBilinear = true;
     private boolean displayVsync = true;
     private int displayWidth = 0;
     private int displayHeight = 0;
@@ -277,14 +265,6 @@ public class GameOptions {
 
     public void setAutoplayChannels(List<Boolean> autoplayChannels) {
         this.autoplayChannels = new ArrayList<Boolean>(autoplayChannels);
-    }
-
-    public boolean isDisplayBilinear() {
-        return displayBilinear;
-    }
-
-    public void setDisplayBilinear(boolean displayBilinear) {
-        this.displayBilinear = displayBilinear;
     }
 
     public int getDisplayBitsPerPixel() {

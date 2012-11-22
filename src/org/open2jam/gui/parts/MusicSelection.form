@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.6" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <NonVisualComponents>
@@ -106,7 +106,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="btn_delete" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="table_scroll" alignment="2" pref="573" max="32767" attributes="1"/>
+                      <Component id="table_scroll" alignment="2" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -114,12 +114,12 @@
                   <EmptySpace min="10" pref="10" max="10" attributes="0"/>
                   <Component id="lbl_search" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="txt_filter" pref="538" max="32767" attributes="1"/>
+                  <Component id="txt_filter" max="32767" attributes="1"/>
                   <EmptySpace min="10" pref="10" max="10" attributes="0"/>
               </Group>
               <Group type="102" alignment="0" attributes="0">
                   <Component id="panel_setting" min="-2" max="-2" attributes="1"/>
-                  <EmptySpace pref="227" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -136,7 +136,7 @@
                       <Component id="load_progress" alignment="3" min="-2" pref="27" max="-2" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="table_scroll" pref="334" max="32767" attributes="1"/>
+                  <Component id="table_scroll" pref="370" max="32767" attributes="1"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="txt_filter" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -257,16 +257,14 @@
                                   <Component id="jc_vsync" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace min="-2" pref="58" max="-2" attributes="0"/>
                                       <Component id="jc_full_screen" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jc_bilinear" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                           <Component id="txt_displayLag" max="32767" attributes="0"/>
                                           <Component id="txt_audioLatency" pref="164" max="32767" attributes="0"/>
                                       </Group>
@@ -300,7 +298,6 @@
                       <Group type="103" groupAlignment="2" attributes="0">
                           <Component id="jc_vsync" alignment="2" min="-2" max="-2" attributes="0"/>
                           <Component id="jc_full_screen" alignment="2" min="-2" max="-2" attributes="0"/>
-                          <Component id="jc_bilinear" alignment="2" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace pref="13" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -368,12 +365,6 @@
             <Component class="javax.swing.JCheckBox" name="jc_full_screen">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Full screen"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JCheckBox" name="jc_bilinear">
-              <Properties>
-                <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="Bilinear filter"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel1">
