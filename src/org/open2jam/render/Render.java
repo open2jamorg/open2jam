@@ -74,9 +74,6 @@ public class Render implements GameWindowCallback
     /** skin info and entities */
     Skin skin;
 
-    /** store the sound sources being played */
-    private static final int MAX_SOURCES = 64;
-
     /** the mapping of note channels to KeyEvent keys  */
     final EnumMap<Event.Channel, Integer> keyboard_map;
 
@@ -1416,9 +1413,10 @@ public class Render implements GameWindowCallback
                 e.setLayer(++l);
         }
 
-//        skin.getEntityMap().get("MEASURE_MARK").setLayer(layer);
+        // FIXME this is a hack
         if(value != GameOptions.VisibilityMod.Sudden)skin.getEntityMap().get("JUDGMENT_LINE").setLayer(layer);
-
+        skin.getEntityMap().get("MEASURE_MARK").setLayer(layer);
+        
         entities_matrix.add(visibility_entity);
     }
 
