@@ -102,47 +102,47 @@ public class LWJGLSprite implements Sprite {
 
     private void createRectangle(int width, int height, GameOptions.VisibilityMod type)
     {
-        int split = height/4;
+        float split = height/4f;
 
         GL11.glNewList(list_id, GL11.GL_COMPILE);
             GL11.glBegin(GL11.GL_QUAD_STRIP);
                 switch(type)
                 {
                     case Hidden: //hidden (hidden lower part)
-                    GL11.glColor4f(0.0f,0.0f,0.0f,0f); // middle alpha
-                    GL11.glVertex2f(0,split*1.8f);
-                    GL11.glVertex2f(width, split*1.8f);
-                    GL11.glColor3f(0.0f,0.0f,0.0f); // second black rec
-                    GL11.glVertex2f(0,split*2.4f);
-                    GL11.glVertex2f(width, split*2.4f);
+                    GL11.glColor4f(0f,0f,0f,0f); // middle alpha
+                    GL11.glVertex2f(0,split*1.9f);
+                    GL11.glVertex2f(width, split*1.9f);
+                    GL11.glColor3f(0f,0f,0f); // second black rec
+                    GL11.glVertex2f(0,split*2f);
+                    GL11.glVertex2f(width, split*2f);
                     GL11.glVertex2f(0,height);
                     GL11.glVertex2f(width, height);
                     break;
                     case Sudden: //sudden (only shows the lower part)
-                    GL11.glColor3f(0.0f,0.0f,0.0f); // first black rec
+                    GL11.glColor3f(0f,0f,0f); // first black rec
                     GL11.glVertex2f(0, 0);
                     GL11.glVertex2f(width,0);
-                    GL11.glVertex2f(0,split*1.8f);
-                    GL11.glVertex2f(width, split*1.8f);
-                    GL11.glColor4f(0.0f,0.0f,0.0f,0f); // middle alpha
-                    GL11.glVertex2f(0,split*2.4f);
-                    GL11.glVertex2f(width, split*2.4f);
+                    GL11.glVertex2f(0,split*1.9f);
+                    GL11.glVertex2f(width, split*1.9f);
+                    GL11.glColor4f(0f,0f,0f,0f); // middle alpha
+                    GL11.glVertex2f(0,split*2f);
+                    GL11.glVertex2f(width, split*2f);
                     break;
                     case Dark: //dark (only shows the middle part)
-                    GL11.glColor3f(0.0f,0.0f,0.0f); // first black rec
+                    GL11.glColor3f(0f,0f,0f); // first black rec
                     GL11.glVertex2f(0, 0);
                     GL11.glVertex2f(width,0);
-                    GL11.glVertex2f(0,split*1.78f);
-                    GL11.glVertex2f(width, split*1.78f);
-                    GL11.glColor4f(0.0f,0.0f,0.0f,0f); // 1st middle alpha
-                    GL11.glVertex2f(0,split*1.8f);
-                    GL11.glVertex2f(width, split*1.8f);
-                    GL11.glColor4f(0.0f,0.0f,0.0f,0f); // 2nd middle alpha
-                    GL11.glVertex2f(0,split*2.4f);
-                    GL11.glVertex2f(width, split*2.4f);
+                    GL11.glVertex2f(0,split*1.3f);
+                    GL11.glVertex2f(width, split*1.3f);
+                    GL11.glColor4f(0f,0f,0f,0f); // 1st middle alpha
+                    GL11.glVertex2f(0,split*1.5f);
+                    GL11.glVertex2f(width, split*1.5f);
+                    GL11.glColor4f(0f,0f,0f,0f); // 2nd middle alpha
+                    GL11.glVertex2f(0,split*2.5f);
+                    GL11.glVertex2f(width, split*2.5f);
                     GL11.glColor3f(0.0f,0.0f,0.0f); // second black rec
-                    GL11.glVertex2f(0,split*2.42f);
-                    GL11.glVertex2f(width, split*2.42f);
+                    GL11.glVertex2f(0,split*2.7f);
+                    GL11.glVertex2f(width, split*2.7f);
                     GL11.glVertex2f(0,height);
                     GL11.glVertex2f(width, height);
                     break;
@@ -201,9 +201,7 @@ public class LWJGLSprite implements Sprite {
      * @param sy the scale of the image height
      */
     void draw(float px, float py, float sx, float sy, int w, int h, ByteBuffer buffer)
-    {
-        if(texture == null)return;
-                
+    {                
         // store the current model matrix
         GL11.glPushMatrix();
         
@@ -211,7 +209,8 @@ public class LWJGLSprite implements Sprite {
         if(blend_alpha)GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_DST_ALPHA);
 
         // bind to the appropriate texture for this sprite
-        texture.bind();
+        if(texture != null)texture.bind();
+        else GL11.glDisable(GL11.GL_TEXTURE_2D);
 
         // translate to the right location and prepare to draw
         GL11.glTranslatef(px, py, 0);
@@ -234,6 +233,7 @@ public class LWJGLSprite implements Sprite {
         
         // undo the blend
         if(blend_alpha)GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        if(texture == null)GL11.glEnable(GL11.GL_TEXTURE_2D);
 
         // restore the model view matrix to prevent contamination
         GL11.glPopMatrix();
