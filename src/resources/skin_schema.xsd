@@ -108,6 +108,13 @@ The duration of the animation.
                     </xsd:documentation>
                 </xsd:annotation>
             </xsd:attribute>
+            <xsd:attribute name="alpha" type="xsd:boolean">
+                <xsd:annotation>
+                    <xsd:documentation>
+Will the sprite use alpha something?
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
         </xsd:complexType>
     </xsd:element>
     <xsd:element name="frame">
