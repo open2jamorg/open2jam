@@ -6,6 +6,8 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import org.lwjgl.LWJGLException;
@@ -15,6 +17,7 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.open2jam.Config;
 import org.open2jam.GameOptions;
+import org.open2jam.gui.Interface;
 import org.open2jam.parsers.Event;
 import org.open2jam.render.lwjgl.TrueTypeFont;
 
@@ -60,8 +63,8 @@ public class Configuration extends javax.swing.JPanel {
 	} else {
 	    lbl_vlc.setText("VLC Path: "+vlc_path);
 	}
-
     }
+
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -217,21 +220,36 @@ public class Configuration extends javax.swing.JPanel {
 }//GEN-LAST:event_bSaveActionPerformed
 
     private void tKeysMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tKeysMouseClicked
-        int row = tKeys.getSelectedRow();
+        final int row = tKeys.getSelectedRow();
         if(tKeys.getValueAt(row, 0) == null) return;
-        
-        int code;
-        int lastkey = Keyboard.getKeyIndex(tKeys.getValueAt(row, 1).toString());
-        try {
-            code = read_keyboard_key(lastkey);
-        } catch(LWJGLException e) {
-            // FML
-            return;
-        }
-        if(kb_map.containsValue(code)) return; //check for duplicates, TODO something informing about the duplicate
-        Event.Channel c = table_map.get(row);
-        kb_map.put(c, code);
-        tKeys.setValueAt(Keyboard.getKeyName(code), row, 1);
+        getTopLevelAncestor().setEnabled(false);
+        new Thread() {
+
+            @Override
+            public void run() {
+                work();
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        getTopLevelAncestor().setEnabled(true);
+                    }
+                });
+            }
+            private void work() {
+                int lastkey = Keyboard.getKeyIndex(tKeys.getValueAt(row, 1).toString());
+                int code;
+                try {
+                    code = read_keyboard_key(lastkey);
+                } catch(LWJGLException e) {
+                    return;
+                }
+                if(kb_map.containsValue(code)) return; //check for duplicates, TODO something informing about the duplicate
+                Event.Channel c = table_map.get(row);
+                kb_map.put(c, code);
+                tKeys.setValueAt(Keyboard.getKeyName(code), row, 1);
+            }
+            
+        }.start();
 }//GEN-LAST:event_tKeysMouseClicked
 
     private void combo_keyboardConfigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_combo_keyboardConfigActionPerformed
