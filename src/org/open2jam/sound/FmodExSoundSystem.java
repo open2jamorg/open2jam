@@ -34,7 +34,7 @@ public class FmodExSoundSystem implements SoundSystem {
 
     private org.jouvieje.fmodex.System system;
     
-    private ChannelGroup masterGroup = new ChannelGroup();
+    private SoundGroup masterGroup = new SoundGroup();
     private ChannelGroup bgmGroup = new ChannelGroup();
     private ChannelGroup keyGroup = new ChannelGroup();
     
@@ -55,7 +55,7 @@ public class FmodExSoundSystem implements SoundSystem {
         errorCheck(system.setDSPBufferSize(1024, 2));
         errorCheck(system.setSoftwareChannels(512));
         errorCheck(system.init(4093, FMOD_INITFLAGS.FMOD_INIT_NORMAL, null));
-        errorCheck(system.getMasterChannelGroup(masterGroup));
+        errorCheck(system.getMasterSoundGroup(masterGroup));
         errorCheck(system.createChannelGroup("BGM", bgmGroup));
         errorCheck(system.createChannelGroup("KEY", keyGroup));
         
