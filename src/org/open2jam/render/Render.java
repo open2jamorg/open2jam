@@ -1010,7 +1010,7 @@ public class Render implements GameWindowCallback
             case COOL:
                 jambar_entity.addNumber(2);
                 consecutive_cools++;
-                lifebar_entity.addNumber(rank >= 2 ? 24 : 48);
+                lifebar_entity.addNumber(rank >= 2 ? 48 : 96);
                 score_value = 200 + (jamcombo_entity.getNumber()*10);
                 break;
 
@@ -1033,7 +1033,7 @@ public class Render implements GameWindowCallback
                 {
                     jambar_entity.setNumber(0);
                     jamcombo_entity.resetNumber();
-                    lifebar_entity.subtractNumber(120);
+                    lifebar_entity.subtractNumber(240);
 
                     score_value = 4;
                 }
@@ -1045,7 +1045,7 @@ public class Render implements GameWindowCallback
                 jamcombo_entity.resetNumber();
                 consecutive_cools = 0;
 
-                lifebar_entity.subtractNumber(720);
+                lifebar_entity.subtractNumber(1440);
 
                 if(score_entity.getNumber() >= 10)score_value = -10;
                 else score_value = -score_entity.getNumber();

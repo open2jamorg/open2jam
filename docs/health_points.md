@@ -42,9 +42,9 @@ Maximum health:
 
 Health gaining and draining:
 
-* Miss: -720 points
-* Bad: -120 points
-* Cool: 48 points for easy and normal, 24 points for hard
+* Miss: -1440 points
+* Bad: -240 points
+* Cool: 96 points for easy and normal, 48 points for hard
 
 
 
