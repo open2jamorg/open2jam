@@ -52,9 +52,9 @@ public class FmodExSoundSystem implements SoundSystem {
         
         system = new org.jouvieje.fmodex.System();
         errorCheck(FmodEx.System_Create(system));
-        errorCheck(system.setDSPBufferSize(1024, 2));
+        errorCheck(system.setDSPBufferSize(128, 2));
         errorCheck(system.setSoftwareChannels(512));
-        errorCheck(system.init(4093, FMOD_INITFLAGS.FMOD_INIT_NORMAL, null));
+        errorCheck(system.init(512, FMOD_INITFLAGS.FMOD_INIT_NORMAL, null));
         errorCheck(system.getMasterSoundGroup(masterGroup));
         errorCheck(system.createChannelGroup("BGM", bgmGroup));
         errorCheck(system.createChannelGroup("KEY", keyGroup));
