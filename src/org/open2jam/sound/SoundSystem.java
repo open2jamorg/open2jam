@@ -20,4 +20,6 @@ public interface SoundSystem {
     void setKeyVolume(float factor);
     void setMasterVolume(float factor);
     
+    void setSpeed(float factor);
+    
 }

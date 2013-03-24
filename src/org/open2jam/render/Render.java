@@ -120,6 +120,9 @@ public class Render implements GameWindowCallback
 
     /** The time since the last record of fps */
     double lastFpsTime = 0;
+    
+    /** The cumulative time in this game */
+    double gameTime = 0;
 
     /** the time it started rendering */
     double start_time;
@@ -234,6 +237,14 @@ public class Render implements GameWindowCallback
     /** status list */
     private StatusList statusList = new StatusList();
 
+    /** haste mode: effective pitch */
+    private int pitchShift;
+    private double gameSpeed = 1;
+    private double effectiveSpeed; /* set by updatePitch */
+    private double effectiveJudgmentFactor; /* set by updatePitch */
+    
+    private boolean haste = true;
+    
     static {
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
     }
@@ -653,16 +664,17 @@ public class Render implements GameWindowCallback
         check_misc_keyboard();
         
         changeSpeed(delta); // TODO: is everything here really needed every frame ?
+        updatePitch(delta);
 
         if (!gameStarted && localMatching != null) {
             if (localMatching.isReady()) gameStarted = true;
         }
         
-        if (!gameStarted) {
-            start_time = SystemTimer.getTime();
+        if (gameStarted) {
+            gameTime += delta * effectiveSpeed;
         }
         
-        now = SystemTimer.getTime() - start_time;
+        now = gameTime;
 
         if (AUTOSOUND) now -= audioLatency.getLatency();
         
@@ -761,6 +773,30 @@ public class Render implements GameWindowCallback
                 second_entity.incNumber();
         }
     }
+    
+    void updatePitch(double delta) {
+        
+        int pitch = (int)Math.round(12.0 * Math.log(gameSpeed) / Math.log(2));
+        
+        effectiveSpeed = Math.pow(2, pitch / 12.0);
+        effectiveJudgmentFactor = effectiveSpeed;
+        
+        if (pitchShift != pitch) {
+            pitchShift = pitch;
+            soundSystem.setSpeed((float)effectiveSpeed);
+        }
+        
+        if (haste) {
+            if (gameTime >= 15000) {
+                double maxSpeed = 0.33 + Math.min(1.67, 2.67 * (double)lifebar_entity.getNumber() / lifebar_entity.getLimit());
+                gameSpeed = Math.min(maxSpeed, gameSpeed + delta / 90000);
+            }
+            if (effectiveJudgmentFactor < 1) {
+                effectiveJudgmentFactor = 1;
+            }
+        }
+        
+    }
 
     void do_autoplay(double now)
     {
@@ -773,7 +809,7 @@ public class Render implements GameWindowCallback
 
             double hit = ne.testTimeHit(now);
             if(hit > AUTOPLAY_THRESHOLD)continue;
-            ne.updateHit(now);
+            ne.updateHit(now, effectiveJudgmentFactor);
             
             if(ne instanceof LongNoteEntity)
             {
@@ -841,7 +877,7 @@ public class Render implements GameWindowCallback
                     continue;
                 }
 
-                e.updateHit(now);
+                e.updateHit(now, effectiveJudgmentFactor);
 
                 // don't continue if the note is too far
                 if(judge.accept(e)) {
@@ -871,7 +907,7 @@ public class Render implements GameWindowCallback
                 LongNoteEntity e = longnote_holded.remove(c);
                 if(e == null || e.getState() != NoteEntity.State.LN_HOLD)continue;
 
-                e.updateHit(now);
+                e.updateHit(now, effectiveJudgmentFactor);
                 e.setState(NoteEntity.State.JUDGE);
                 
             }
@@ -891,7 +927,7 @@ public class Render implements GameWindowCallback
         switch (ne.getState())
         {
             case NOT_JUDGED: // you missed it (no keyboard input)
-                ne.updateHit(now);
+                ne.updateHit(now, effectiveJudgmentFactor);
                 if (judge.missed(ne)) {
                     disableAutoSound = true;
                     setNoteJudgment(ne, JudgmentResult.MISS);
@@ -908,7 +944,7 @@ public class Render implements GameWindowCallback
                 break;
                 
             case LN_HOLD:    // You kept too much time the note held that it misses
-                ne.updateHit(now);
+                ne.updateHit(now, effectiveJudgmentFactor);
                 if (judge.missed(ne)) {
                     setNoteJudgment(ne, JudgmentResult.MISS);
                     
