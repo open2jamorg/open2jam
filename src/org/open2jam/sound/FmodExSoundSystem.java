@@ -67,6 +67,7 @@ public class FmodExSoundSystem implements SoundSystem {
         errorCheck(system.getMasterChannelGroup(masterChannelGroup));
         errorCheck(system.createDSPByType(FMOD_DSP_TYPE.FMOD_DSP_TYPE_PITCHSHIFT, dsp));
         errorCheck(system.addDSP(dsp, null));
+        dsp.setParameter(FMOD_DSP_PITCHSHIFT.FMOD_DSP_PITCHSHIFT_FFTSIZE.asInt(), 1024);
         
         SoundGroup soundGroup = new SoundGroup();
         errorCheck(system.getMasterSoundGroup(soundGroup));

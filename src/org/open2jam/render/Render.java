@@ -54,6 +54,7 @@ public class Render implements GameWindowCallback
     private String localMatchingServer = "";
     private int rank;
     
+    
     public interface AutosyncCallback {
         void autosyncFinished(double displayLag);
     }
@@ -245,6 +246,27 @@ public class Render implements GameWindowCallback
     
     private boolean haste = true;
     
+    /** adjust the final speed */
+    private double speedFactor = 1.0;
+
+    private class AdjustDistance implements NoteDistanceCalculator {
+        private final NoteDistanceCalculator distance;
+
+        public AdjustDistance(NoteDistanceCalculator distance) {
+            this.distance = distance;
+        }
+
+        @Override
+        public void update(double now, double delta) {
+            distance.update(now, delta);
+        }
+
+        @Override
+        public double calculate(double now, double target, double speed, NoteEntity noteEntity) {
+            return distance.calculate(now, target, speed, noteEntity) * speedFactor;
+        }
+    }
+    
     static {
         ResourceFactory.get().setRenderingType(ResourceFactory.OPENGL_LWJGL);
     }
@@ -286,6 +308,8 @@ public class Render implements GameWindowCallback
                 distance = new RegulSpeed(385);
                 break;
         }
+        
+        distance = new AdjustDistance(distance);
 	
 	AUTOSOUND = opt.isAutosound();
 	
@@ -791,9 +815,8 @@ public class Render implements GameWindowCallback
                 double maxSpeed = 0.33 + Math.min(1.67, 2.67 * (double)lifebar_entity.getNumber() / lifebar_entity.getLimit());
                 gameSpeed = Math.min(maxSpeed, gameSpeed + delta / 90000);
             }
-            if (effectiveJudgmentFactor < 1) {
-                effectiveJudgmentFactor = 1;
-            }
+            double target = 1 / gameSpeed;
+            speedFactor += (target - speedFactor) * 0.1;
         }
         
     }
