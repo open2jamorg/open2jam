@@ -44,6 +44,7 @@ import org.open2jam.util.Logger;
 
 public class MusicSelection extends javax.swing.JPanel
     implements PropertyChangeListener, ListSelectionListener {
+    private Server lastServer;
 
     private class RenderThread extends Thread {
 
@@ -1164,6 +1165,10 @@ public class MusicSelection extends javax.swing.JPanel
                     ? new TimeJudgment()
                     : new BeatJudgment());
             
+            if (lastServer != null && !lastServer.isClosed()) {
+                r.setServer(lastServer);
+            }
+            
             new RenderThread(this.getTopLevelAncestor(), r).start();
         } catch (SoundSystemException ex) {
             java.util.logging.Logger.getLogger(MusicSelection.class.getName()).log(Level.SEVERE, "{0}", ex);
@@ -1260,6 +1265,7 @@ public class MusicSelection extends javax.swing.JPanel
         
         SwingUtilities.invokeLater(ui);
         server.start();
+        lastServer = server;
 
     }//GEN-LAST:event_btnCreateServerActionPerformed
 

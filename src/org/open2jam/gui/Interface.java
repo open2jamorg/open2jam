@@ -3,6 +3,7 @@ package org.open2jam.gui;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import org.open2jam.Open2jam;
+import org.open2jam.gui.parts.AdvancedOptions;
 import org.open2jam.gui.parts.Configuration;
 import org.open2jam.gui.parts.MusicSelection;
 
@@ -24,9 +25,9 @@ public class Interface extends javax.swing.JFrame implements WindowListener
         this.setLocationRelativeTo(null);
         
         musicSelection = new MusicSelection();
-        
         Tabs.addTab("Music Selection", musicSelection);
         Tabs.addTab("Configuration", new Configuration());
+        Tabs.addTab("Advanced Options", new AdvancedOptions());
         
         this.addWindowListener(this);
 	pack();

@@ -54,7 +54,11 @@ public class ChartListTableModel implements TableModel
 
     public ChartList getRow(int row)
     {
-        return items.get(row);
+        try {
+            return items.get(row);
+        } catch (IndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
     @Override
