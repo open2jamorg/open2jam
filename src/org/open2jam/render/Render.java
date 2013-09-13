@@ -5,6 +5,8 @@ import org.open2jam.sound.SoundInstance;
 import org.open2jam.game.TimingData;
 import org.open2jam.game.Latency;
 import com.github.dtinth.partytime.Client;
+import com.github.dtinth.partytime.server.Connection;
+import com.github.dtinth.partytime.server.Server;
 import org.open2jam.sound.FmodExSoundSystem;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
@@ -53,6 +55,12 @@ public class Render implements GameWindowCallback
 {
     private String localMatchingServer = "";
     private int rank;
+    private final boolean normalizeSpeed;
+
+    private Server server = null;
+    public void setServer(Server lastServer) {
+        server = lastServer;
+    }
     
     
     public interface AutosyncCallback {
@@ -124,6 +132,13 @@ public class Render implements GameWindowCallback
     
     /** The cumulative time in this game */
     double gameTime = 0;
+    int gameMeasure = 0;
+    Runnable increaseMeasureRunnable = new Runnable() {
+        @Override
+        public void run() {
+            gameMeasure += 1;
+        }
+    };
 
     /** the time it started rendering */
     double start_time;
@@ -244,7 +259,7 @@ public class Render implements GameWindowCallback
     private double effectiveSpeed; /* set by updatePitch */
     private double effectiveJudgmentFactor; /* set by updatePitch */
     
-    private boolean haste = true;
+    private boolean haste = false;
     
     /** adjust the final speed */
     private double speedFactor = 1.0;
@@ -265,6 +280,12 @@ public class Render implements GameWindowCallback
         public double calculate(double now, double target, double speed, NoteEntity noteEntity) {
             return distance.calculate(now, target, speed, noteEntity) * speedFactor;
         }
+
+        @Override
+        public String toString() {
+            return distance.toString();
+        }
+        
     }
     
     static {
@@ -280,7 +301,7 @@ public class Render implements GameWindowCallback
         keyboard_misc = Config.getKeyboardMisc();
         window = ResourceFactory.get().getGameWindow();
         
-        soundSystem = new FmodExSoundSystem();
+        soundSystem = new FmodExSoundSystem(opt.getBufferSize());
         soundSystem.setMasterVolume(opt.getMasterVolume());
         soundSystem.setBGMVolume(opt.getBGMVolume());
         soundSystem.setKeyVolume(opt.getKeyVolume());
@@ -351,13 +372,26 @@ public class Render implements GameWindowCallback
 
             @Override
             public String getText() {
-                return "Current Measure: " + current_measure;
+                return "Current Measure: " + gameMeasure;
             }
 
             @Override
             public boolean isVisible() { return true; }
         });
         
+        statusList.add(new StatusItem() {
+
+            @Override
+            public String getText() {
+                return "Game Speed: " + String.format("%+d", pitchShift);
+            }
+
+            @Override
+            public boolean isVisible() { return true; }
+        });
+        
+        haste = opt.isHasteMode();
+        normalizeSpeed = opt.isHasteModeNormalizeSpeed();
         window.setDisplay(dm,opt.isDisplayVsync(),opt.isDisplayFullscreen());
     }
 
@@ -688,7 +722,7 @@ public class Render implements GameWindowCallback
         check_misc_keyboard();
         
         changeSpeed(delta); // TODO: is everything here really needed every frame ?
-        updatePitch(delta);
+        updateGameSpeed(delta);
 
         if (!gameStarted && localMatching != null) {
             if (localMatching.isReady()) gameStarted = true;
@@ -733,7 +767,7 @@ public class Render implements GameWindowCallback
                         timeToJudge += audioLatency.getLatency();
                     }
                     
-                    if(te.getTime() - timeToJudge <= 0) te.judgment();
+                    if(te.getTime() - timeToJudge <= 0 && gameStarted) te.judgment();
 
                     NoteEntity ne = e instanceof NoteEntity ? (NoteEntity)e : null;
                     
@@ -768,6 +802,18 @@ public class Render implements GameWindowCallback
             y += 30;
         }
         
+        // TODO: THIS IS SPAGHETTI. IMPROVE SOON.
+        y = 64;
+        if (server != null) {
+            trueTypeFont.drawString(780, y, "Server: " + server.getStatus(), 1, -1, TrueTypeFont.ALIGN_RIGHT);
+            y += 24;
+            for (Connection conn : server.getConnections()) {
+                String s = conn.toString() + ": " + conn.getStatus();
+                trueTypeFont.drawString(780, y, s, 1, -1, TrueTypeFont.ALIGN_RIGHT);
+                y += 18;
+            }
+        }
+        
         if(!buffer_iterator.hasNext() && entities_matrix.isEmpty(note_layer)){
             if (finish_time == -1) {
                 finish_time = System.currentTimeMillis() + 10000;
@@ -798,7 +844,10 @@ public class Render implements GameWindowCallback
         }
     }
     
-    void updatePitch(double delta) {
+    int lastSpeedChangeMeasure = 0;
+    int lastUpdateMeasure = 0;
+    double lastSpeedChangeTime = 0;
+    void updateGameSpeed(double delta) {
         
         int pitch = (int)Math.round(12.0 * Math.log(gameSpeed) / Math.log(2));
         
@@ -811,12 +860,31 @@ public class Render implements GameWindowCallback
         }
         
         if (haste) {
-            if (gameTime >= 15000) {
-                double maxSpeed = 0.33 + Math.min(1.67, 2.67 * (double)lifebar_entity.getNumber() / lifebar_entity.getLimit());
-                gameSpeed = Math.min(maxSpeed, gameSpeed + delta / 90000);
+            double maxSpeed = Math.min(2, Math.max(0.5, 3 * (double)lifebar_entity.getNumber() / lifebar_entity.getLimit()));
+            if (gameMeasure > lastUpdateMeasure) {
+                int measureDelta = gameMeasure - lastSpeedChangeMeasure;
+                
+                boolean increase = false;
+    
+                if (gameTime - lastSpeedChangeTime >= 5333 * Math.pow(Math.min(gameSpeed, 1.0), 4) && gameMeasure >= 6) {
+                    if ((measureDelta & (measureDelta - 1)) == 0) increase = true;
+                    if (measureDelta >= 8) increase = true;
+                    if (lastSpeedChangeMeasure == 0) increase = true;
+                }
+                
+                if (increase) {
+                    gameSpeed = gameSpeed * Math.pow(2, 1 / 12.0);
+                    lastSpeedChangeMeasure = gameMeasure;
+                    lastSpeedChangeTime = gameTime;
+                }
+                
+                lastUpdateMeasure = gameMeasure;
             }
-            double target = 1 / gameSpeed;
-            speedFactor += (target - speedFactor) * 0.1;
+            if (gameSpeed > maxSpeed) gameSpeed = maxSpeed;
+            if (normalizeSpeed) {
+                double target = 1 / gameSpeed;
+                speedFactor += (target - speedFactor) * 0.1;
+            }
         }
         
     }
@@ -868,6 +936,11 @@ public class Render implements GameWindowCallback
 
     public void check_keyboard(double now)
     {
+        
+        if (window.isKeyDown(Keyboard.KEY_RETURN) && server != null) {
+            server.startGame();
+            server = null;
+        }
         
 	for(Map.Entry<Event.Channel,Integer> entry : keyboard_map.entrySet())
         {
@@ -1193,7 +1266,6 @@ public class Render implements GameWindowCallback
 
     private double buffer_timer = 0;
     
-    private int current_measure = 0;
 
     /* update the note layer of the entities_matrix.
     *** note buffering is equally distributed between the frames
@@ -1211,9 +1283,9 @@ public class Render implements GameWindowCallback
                 case MEASURE:
                     MeasureEntity m = (MeasureEntity) skin.getEntityMap().get("MEASURE_MARK").copy();
                     m.setTime(e.getTime());
+                    m.setOnJudge(increaseMeasureRunnable);
                     entities_matrix.add(m);
 		    
-		    current_measure = e.getMeasure();
                 break;
                     
                 case NOTE_1:case NOTE_2:

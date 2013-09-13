@@ -1,5 +1,7 @@
 package org.open2jam;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 import org.lwjgl.opengl.DisplayMode;
@@ -67,6 +69,10 @@ public class GameOptions {
     private int displayHeight = 0;
     private int displayBitsPerPixel = 0;
     private int displayFrequency = 0;
+    
+    // sound options
+    private int bufferSize = 512;
+    
     
     // VLC lib path
     private String vlc = "";
@@ -338,5 +344,84 @@ public class GameOptions {
     public void setJudgmentType(JudgmentType judgmentType) {
         this.judgmentType = judgmentType;
     }
+
+    public int getBufferSize() {
+        return bufferSize;
+    }
+
+    public void setBufferSize(int bufferSize) {
+        this.bufferSize = bufferSize;
+    }
+    
+    private boolean hasteMode;
+    public static final String PROP_HASTEMODE = "hasteMode";
+
+    /**
+     * Get the value of hasteMode
+     *
+     * @return the value of hasteMode
+     */
+    public boolean isHasteMode() {
+        return hasteMode;
+    }
+
+    /**
+     * Set the value of hasteMode
+     *
+     * @param hasteMode new value of hasteMode
+     */
+    public void setHasteMode(boolean hasteMode) {
+        boolean oldHasteMode = this.hasteMode;
+        this.hasteMode = hasteMode;
+        propertyChangeSupport.firePropertyChange(PROP_HASTEMODE, oldHasteMode, hasteMode);
+    }
+
+        private boolean hasteModeNormalizeSpeed = true;
+    public static final String PROP_HASTEMODENORMALIZESPEED = "hasteModeNormalizeSpeed";
+
+    /**
+     * Get the value of hasteModeNormalizeSpeed
+     *
+     * @return the value of hasteModeNormalizeSpeed
+     */
+    public boolean isHasteModeNormalizeSpeed() {
+        return hasteModeNormalizeSpeed;
+    }
+
+    /**
+     * Set the value of hasteModeNormalizeSpeed
+     *
+     * @param hasteModeNormalizeSpeed new value of hasteModeNormalizeSpeed
+     */
+    public void setHasteModeNormalizeSpeed(boolean hasteModeNormalizeSpeed) {
+        boolean oldHasteModeNormalizeSpeed = this.hasteModeNormalizeSpeed;
+        this.hasteModeNormalizeSpeed = hasteModeNormalizeSpeed;
+        propertyChangeSupport.firePropertyChange(PROP_HASTEMODENORMALIZESPEED, oldHasteModeNormalizeSpeed, hasteModeNormalizeSpeed);
+    }
+
+    
+    private transient final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+    
+    /**
+     * Add PropertyChangeListener.
+     *
+     * @param listener
+     */
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    /**
+     * Remove PropertyChangeListener.
+     *
+     * @param listener
+     */
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
+    }
+
+    
+    
+    
     
 }

@@ -70,6 +70,7 @@ public class BgaEntity extends Entity implements TimeEntity, RenderCallback {
 	    playerFactory = new MediaPlayerFactory(new String[] {"--no-video-title-show", "--noaudio"});
 	    player = playerFactory.newDirectMediaPlayer("RGBA", WIDTH, HEIGHT, WIDTH * DEPTH, this);
 	    player.prepareMedia(videoFile.getAbsolutePath());
+            player.pause();
 	} catch(Throwable t) {
 	    isVideo = false;
             t.printStackTrace();

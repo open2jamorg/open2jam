@@ -46,7 +46,8 @@ public class FmodExSoundSystem implements SoundSystem {
     
     private int nextChannelID = 0;
     
-    public FmodExSoundSystem() throws SoundSystemException {
+    public FmodExSoundSystem(int bufferSize) throws SoundSystemException {
+        
         try
         {
             Init.loadLibraries();
@@ -58,16 +59,17 @@ public class FmodExSoundSystem implements SoundSystem {
         
         system = new org.jouvieje.fmodex.System();
         errorCheck(FmodEx.System_Create(system));
-        errorCheck(system.setDSPBufferSize(128, 2));
+        errorCheck(system.setDSPBufferSize(bufferSize, 2));
         errorCheck(system.setSoftwareChannels(512));
         errorCheck(system.init(512, FMOD_INITFLAGS.FMOD_INIT_NORMAL, null));
         errorCheck(system.getMasterSoundGroup(masterSoundGroup));
         errorCheck(system.createChannelGroup("BGM", bgmGroup));
         errorCheck(system.createChannelGroup("KEY", keyGroup));
         errorCheck(system.getMasterChannelGroup(masterChannelGroup));
-        errorCheck(system.createDSPByType(FMOD_DSP_TYPE.FMOD_DSP_TYPE_PITCHSHIFT, dsp));
-        errorCheck(system.addDSP(dsp, null));
-        dsp.setParameter(FMOD_DSP_PITCHSHIFT.FMOD_DSP_PITCHSHIFT_FFTSIZE.asInt(), 1024);
+        
+//        errorCheck(system.createDSPByType(FMOD_DSP_TYPE.FMOD_DSP_TYPE_PITCHSHIFT, dsp));
+//        errorCheck(bgmGroup.addDSP(dsp, null));
+//        dsp.setParameter(FMOD_DSP_PITCHSHIFT.FMOD_DSP_PITCHSHIFT_FFTSIZE.asInt(), 1024);
         
         SoundGroup soundGroup = new SoundGroup();
         errorCheck(system.getMasterSoundGroup(soundGroup));
@@ -75,7 +77,6 @@ public class FmodExSoundSystem implements SoundSystem {
         
         System.out.println("Audio engine : FMOD Sound System by Firelight Technologies");
     }
-    
     private void errorCheck(FMOD_RESULT result) throws SoundSystemException {
         if (result != FMOD_RESULT.FMOD_OK) {
             throw new SoundSystemException(FmodEx.FMOD_ErrorString(result));
@@ -130,7 +131,7 @@ public class FmodExSoundSystem implements SoundSystem {
     public void setSpeed(float factor) {
         keyGroup.setPitch(factor);
         bgmGroup.setPitch(factor);
-        dsp.setParameter(FMOD_DSP_PITCHSHIFT.FMOD_DSP_PITCHSHIFT_PITCH.asInt(), 1.0f / factor);
+//        dsp.setParameter(FMOD_DSP_PITCHSHIFT.FMOD_DSP_PITCHSHIFT_PITCH.asInt(), 1.0f / factor);
     }
     
     class FmodSound implements org.open2jam.sound.Sound {
