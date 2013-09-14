@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jouvieje.fmodex.Channel;
 import org.jouvieje.fmodex.ChannelGroup;
+import org.jouvieje.fmodex.DSP;
 import org.jouvieje.fmodex.FmodEx;
 import org.jouvieje.fmodex.Init;
 import org.jouvieje.fmodex.Sound;
@@ -19,6 +20,8 @@ import org.jouvieje.fmodex.SoundGroup;
 import org.jouvieje.fmodex.defines.FMOD_INITFLAGS;
 import org.jouvieje.fmodex.defines.FMOD_MODE;
 import org.jouvieje.fmodex.enumerations.FMOD_CHANNELINDEX;
+import org.jouvieje.fmodex.enumerations.FMOD_DSP_PITCHSHIFT;
+import org.jouvieje.fmodex.enumerations.FMOD_DSP_TYPE;
 import org.jouvieje.fmodex.enumerations.FMOD_RESULT;
 import org.jouvieje.fmodex.enumerations.FMOD_SOUND_FORMAT;
 import org.jouvieje.fmodex.exceptions.InitException;
@@ -34,13 +37,17 @@ public class FmodExSoundSystem implements SoundSystem {
 
     private org.jouvieje.fmodex.System system;
     
-    private SoundGroup masterGroup = new SoundGroup();
+    private SoundGroup masterSoundGroup = new SoundGroup();
+    private ChannelGroup masterChannelGroup = new ChannelGroup();
     private ChannelGroup bgmGroup = new ChannelGroup();
     private ChannelGroup keyGroup = new ChannelGroup();
     
+    private DSP dsp = new DSP();
+    
     private int nextChannelID = 0;
     
-    public FmodExSoundSystem() throws SoundSystemException {
+    public FmodExSoundSystem(int bufferSize) throws SoundSystemException {
+        
         try
         {
             Init.loadLibraries();
@@ -52,13 +59,17 @@ public class FmodExSoundSystem implements SoundSystem {
         
         system = new org.jouvieje.fmodex.System();
         errorCheck(FmodEx.System_Create(system));
-        errorCheck(system.setDSPBufferSize(128, 2));
+        errorCheck(system.setDSPBufferSize(bufferSize, 2));
         errorCheck(system.setSoftwareChannels(512));
         errorCheck(system.init(512, FMOD_INITFLAGS.FMOD_INIT_NORMAL, null));
-        errorCheck(system.getMasterSoundGroup(masterGroup));
+        errorCheck(system.getMasterSoundGroup(masterSoundGroup));
         errorCheck(system.createChannelGroup("BGM", bgmGroup));
         errorCheck(system.createChannelGroup("KEY", keyGroup));
+        errorCheck(system.getMasterChannelGroup(masterChannelGroup));
         
+//        errorCheck(system.createDSPByType(FMOD_DSP_TYPE.FMOD_DSP_TYPE_PITCHSHIFT, dsp));
+//        errorCheck(bgmGroup.addDSP(dsp, null));
+//        dsp.setParameter(FMOD_DSP_PITCHSHIFT.FMOD_DSP_PITCHSHIFT_FFTSIZE.asInt(), 1024);
         
         SoundGroup soundGroup = new SoundGroup();
         errorCheck(system.getMasterSoundGroup(soundGroup));
@@ -66,7 +77,6 @@ public class FmodExSoundSystem implements SoundSystem {
         
         System.out.println("Audio engine : FMOD Sound System by Firelight Technologies");
     }
-    
     private void errorCheck(FMOD_RESULT result) throws SoundSystemException {
         if (result != FMOD_RESULT.FMOD_OK) {
             throw new SoundSystemException(FmodEx.FMOD_ErrorString(result));
@@ -109,12 +119,19 @@ public class FmodExSoundSystem implements SoundSystem {
 
     @Override
     public void setMasterVolume(float factor) {
-        masterGroup.setVolume(factor);
+        masterSoundGroup.setVolume(factor);
     }
     
     @Override
     public void update() {
         system.update();
+    }
+
+    @Override
+    public void setSpeed(float factor) {
+        keyGroup.setPitch(factor);
+        bgmGroup.setPitch(factor);
+//        dsp.setParameter(FMOD_DSP_PITCHSHIFT.FMOD_DSP_PITCHSHIFT_PITCH.asInt(), 1.0f / factor);
     }
     
     class FmodSound implements org.open2jam.sound.Sound {

@@ -70,9 +70,9 @@ public class NoteEntity extends AnimatedEntity implements TimeEntity
         return time_to_hit;
     }
     
-    public void updateHit(double now)
+    public void updateHit(double now, double effectiveSpeed)
     {
-        setHitTime(testTimeHit(now));
+        setHitTime(testTimeHit(now) / effectiveSpeed);
     }
 
     public double testTimeHit(double now)

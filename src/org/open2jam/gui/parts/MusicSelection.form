@@ -136,7 +136,7 @@
                       <Component id="load_progress" alignment="3" min="-2" pref="27" max="-2" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="table_scroll" pref="370" max="32767" attributes="1"/>
+                  <Component id="table_scroll" pref="353" max="32767" attributes="1"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="txt_filter" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -273,13 +273,12 @@
                                           <Component id="cb_autoSyncDisplay" min="-2" max="-2" attributes="0"/>
                                           <Component id="cb_autoSyncAudio" min="-2" max="-2" attributes="0"/>
                                       </Group>
-                                      <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                           </Group>
                           <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="20" max="32767" attributes="0"/>
+                      <EmptySpace pref="24" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
