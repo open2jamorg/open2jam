@@ -1434,6 +1434,8 @@ public class Render implements GameWindowCallback
         double measure_size = 0.8 * getViewport();
         double my_note_speed = (my_bpm * measure_size) / BEATS_PER_MSEC;
         
+	double event_position;
+
         EventList new_list = new EventList();
 	
         timing.add(timer, bpm);
@@ -1455,9 +1457,14 @@ public class Render implements GameWindowCallback
                 frac_measure = 1;
                 measure_pointer = 0;
             }
-	    double position = e.getPosition() * frac_measure;
-            timer += (BEATS_PER_MSEC * (position-measure_pointer)) / my_bpm;
-            measure_pointer = position;
+
+	    if(chart.type == Chart.TYPE.OJN) {
+		event_position = e.getPosition();
+	    } else {
+		event_position = e.getPosition() * frac_measure;
+	    }
+            timer += (BEATS_PER_MSEC * (event_position-measure_pointer)) / my_bpm;
+            measure_pointer = event_position;
 
             switch(e.getChannel())
             {
