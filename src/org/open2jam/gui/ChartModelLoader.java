@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import javax.swing.SwingWorker;
 import org.open2jam.Config;
@@ -30,14 +31,16 @@ public class ChartModelLoader extends SwingWorker<ChartListTableModel,ChartList>
     protected ChartListTableModel doInBackground() {
         try{
         table_model.clear();
-        ArrayList<File> files = new ArrayList<File>(Arrays.asList(dir.listFiles()));
+        ArrayList<File> files = dir.listFiles() != null ? new ArrayList<>(Arrays.asList(Objects.requireNonNull(dir.listFiles()))) : new ArrayList<>();
         double perc = files.size() / 100d;
         for(int i=0;i<files.size();i++)
         {
             ChartList cl = ChartParser.parseFile(files.get(i));
-            if(cl != null)publish(cl);
+            if(cl != null) {
+                publish(cl);
+            }
             else if(files.get(i).isDirectory()){
-                List<File> nl = Arrays.asList(files.get(i).listFiles());
+                List<File> nl = files.get(i).listFiles() != null ? Arrays.asList(Objects.requireNonNull(files.get(i).listFiles())) : new ArrayList<>();
                 files.addAll(nl);
                 perc = files.size() / 100d;
             }

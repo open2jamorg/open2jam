@@ -32,7 +32,7 @@ class BMSParser
         if(!f.isDirectory())return false;
 
         File[] bms = f.listFiles(bms_filter);
-        return bms.length > 0;
+			return bms != null && bms.length > 0;
     }
 
     public static ChartList parseFile(File file)
