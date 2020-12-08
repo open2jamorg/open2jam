@@ -30,8 +30,7 @@ public class AdvancedOptions extends javax.swing.JPanel {
     private void initComponents() {
         bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        go = Config.getGameOptions()
-        ;
+        go = Config.getGameOptions();
         hasteModeCheckbox = new javax.swing.JCheckBox();
         bufferSize = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
